@@ -74,7 +74,7 @@ export const deleteImpactUpdate = async (req: AuthRequest, res: Response) => {
   try {
     const nonprofitId = await resolveNonprofitId(req.user!.id);
     if (!nonprofitId) return res.status(403).json({ error: 'Nonprofit account required' });
-    await ImpactUpdateService.unpublish(req.params.id, nonprofitId);
+    await ImpactUpdateService.unpublish(String(req.params.id), nonprofitId);
     res.json({ ok: true });
   } catch (err: any) { res.status(500).json({ error: err.message }); }
 };
@@ -106,7 +106,7 @@ export const runExport = async (req: AuthRequest, res: Response) => {
     const { format, dateFrom, dateTo } = exportSchema.parse(req.body);
 
     const { rows, format: fmt } = await DmsExportService.runExport(
-      nonprofitId, fmt as 'CSV' | 'JSON',
+      nonprofitId, format as 'CSV' | 'JSON',
       new Date(dateFrom), new Date(dateTo),
       req.user!.id
     );

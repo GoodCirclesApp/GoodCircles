@@ -32,7 +32,7 @@ Be specific and persuasive — this analysis is used to help merchants understan
 }
 
 export async function generateTaxStatement(orders: Order[], entityName: string, year: string) {
-  const totalImpact = orders.reduce((sum, o) => sum + (o as any).accounting?.donationAmount ?? 0, 0);
+  const totalImpact = orders.reduce((sum, o) => sum + ((o as any).accounting?.donationAmount || 0), 0);
   const prompt = `Draft a professional, IRS-compliant 501(c)(3) tax receipt summary letter.
 
 Entity: ${entityName}

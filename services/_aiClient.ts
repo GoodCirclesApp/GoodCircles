@@ -4,9 +4,10 @@ const MODEL = 'claude-sonnet-4-6';
 
 let _client: Anthropic | null = null;
 
-function getClient(): Anthropic {
+function getClient(): Anthropic | null {
+  if (!process.env.ANTHROPIC_API_KEY) return null;
   if (!_client) {
-    _client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY ?? '' });
+    _client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   }
   return _client;
 }
@@ -21,8 +22,10 @@ export async function safeGenerate(
   contents: string,
   config?: { systemInstruction?: string; temperature?: number }
 ): Promise<string> {
+  const client = getClient();
+  if (!client) return 'AI advisor is not yet configured. Please check back soon.';
   try {
-    const msg = await getClient().messages.create({
+    const msg = await client.messages.create({
       model: MODEL,
       max_tokens: 2048,
       ...(config?.systemInstruction ? { system: config.systemInstruction } : {}),
@@ -41,10 +44,12 @@ export async function safeGenerateJSON(
   contents: string,
   config?: { systemInstruction?: string; temperature?: number }
 ): Promise<any> {
+  const client = getClient();
+  if (!client) return null;
   try {
     const system = (config?.systemInstruction ?? '') +
       '\n\nRespond with valid JSON only — no markdown fences, no explanation, just the raw JSON object or array.';
-    const msg = await getClient().messages.create({
+    const msg = await client.messages.create({
       model: MODEL,
       max_tokens: 2048,
       system,
