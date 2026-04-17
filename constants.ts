@@ -25,7 +25,7 @@ const DEFAULT_POLICY: FiscalPolicy = {
 
 export interface FAQItem {
   id: string;
-  category: 'CORE' | 'ECONOMY' | 'SECURITY' | 'GOVERNANCE' | 'MERCHANT' | 'NONPROFIT';
+  category: 'CORE' | 'ECONOMY' | 'SECURITY' | 'GOVERNANCE' | 'MERCHANT' | 'NONPROFIT' | 'SHOPPING';
   question: string;
   answer: string;
 }
@@ -34,125 +34,277 @@ const FAQ_CORE: FAQItem[] = [
   {
     id: 'core-1',
     category: 'CORE',
-    question: 'What is the 10/10/1 Economic Model?',
-    answer: 'The 10/10/1 Model is our baseline "Constitution": (1) Merchants provide an automatic 10% discount to members. (2) Merchants donate 10% of net profits to a community-elected nonprofit. (3) A 1% platform fee covers network maintenance. This ensures capital is redirected from external banks and ad networks back into the local community.'
+    question: 'What is Good Circles?',
+    answer: 'Good Circles is a community marketplace where you shop with local businesses and automatically fund a nonprofit you care about — all at the same time. Every purchase you make gives you a 10% discount, supports a local cause, and keeps money inside your community instead of sending it to a distant corporation.'
   },
   {
     id: 'core-2',
     category: 'CORE',
-    question: 'How is "Net Profit" calculated for the 10% donation?',
-    answer: 'Net Profit is calculated as (Sale Price - COGS). The 10% donation floor is applied to this margin. However, the "Impact Floor" safeguard ensures that even if a merchant has low margins, a minimum of 2% of the total sale is always disbursed to the community.'
-  }
+    question: 'What is the 10/10/1 model?',
+    answer: 'It\'s our simple three-part rule. (1) You get a 10% discount on every purchase. (2) The merchant donates 10% of their profit to your chosen nonprofit. (3) A 1% fee keeps the platform running. For example: buy a $100 service, pay $90, and roughly $7.50 flows to your chosen nonprofit. No extra steps. It happens automatically.'
+  },
+  {
+    id: 'core-3',
+    category: 'CORE',
+    question: 'Who can use Good Circles?',
+    answer: 'Anyone. Neighbors (shoppers) sign up to browse, buy, and designate a nonprofit. Merchants sign up to list products and services. Nonprofits sign up to receive community funding. All three groups work together to create a self-sustaining local economy.'
+  },
+  {
+    id: 'core-4',
+    category: 'CORE',
+    question: 'What is a "node"?',
+    answer: 'A node is a geographic community — like a city or metro area. Good Circles is launching first in Central Mississippi (the Jackson metro area). Later, North Mississippi (Oxford/Tupelo area) and South Mississippi (Hattiesburg/Biloxi area) will each become their own nodes. Each node sets its own rates and elects its own funded nonprofits.'
+  },
+  {
+    id: 'core-5',
+    category: 'CORE',
+    question: 'How is Good Circles different from Amazon or Walmart?',
+    answer: 'When you shop on Amazon, your money leaves your community. When you shop on Good Circles, your money stays. Local merchants keep their profits. A local nonprofit gets funded. You get a discount. Amazon keeps none of it — the whole cycle benefits the place where you live.'
+  },
+  {
+    id: 'core-6',
+    category: 'CORE',
+    question: 'How is the nonprofit donation calculated?',
+    answer: 'The donation comes from the merchant\'s net profit — not from your pocket. Net profit = sale price minus the cost of goods. The merchant gives 10% of that profit to your elected nonprofit. For example: a $100 service with $40 in costs has $60 net profit. The nonprofit receives $6 from that sale, automatically.'
+  },
 ];
 
 const FAQ_ECONOMY: FAQItem[] = [
   {
     id: 'econ-1',
     category: 'ECONOMY',
-    question: 'What is the Circle Ledger Account (GCLA)?',
-    answer: 'The GCLA is our internal community banking system. By pre-funding your wallet, you bypass the 3% credit card surcharges and pay only a 0.5% internal maintenance fee. This keeps millions in capital within the community mesh instead of "leaking" to external financial institutions.'
+    question: 'What is the Circle Account (GCLA)?',
+    answer: 'Your Good Circles Ledger Account (GCLA) is a digital wallet inside the platform. You add money to it like a prepaid card. When you pay with your GCLA balance, there\'s no credit card processing fee — saving you (and the merchant) an extra 3%. It\'s faster, cheaper, and keeps your money in the community.'
   },
   {
     id: 'econ-2',
     category: 'ECONOMY',
-    question: 'What is "Tax Alpha" or Fiscal Arbitrage?',
-    answer: 'Tax Alpha is the mathematical advantage for Good Circles merchants. By converting traditional operating losses (like credit card fees and marketing costs) into tax-deductible community donations, every dollar earned within the circle is significantly more efficient than external revenue.'
+    question: 'How much does the GCLA actually save me?',
+    answer: 'Two ways. First, you get the 10% Good Circles discount on every purchase. Second, paying with your GCLA wallet instead of a card avoids a 3% card fee — that savings gets split between you and the merchant. Over a year of everyday spending, this adds up fast. Our AI Personal Shopper can show you the exact numbers for your habits.'
   },
   {
     id: 'econ-3',
     category: 'ECONOMY',
-    question: 'How do refunds work in a circular economy?',
-    answer: 'To prevent capital flight, refunds are processed via the "Recapture Protocol." Funds are returned instantly to your Circle Wallet for zero fee, allowing you to reinvest that capital into another local merchant immediately.'
+    question: 'How do I add money to my Circle Account?',
+    answer: 'You can fund your Circle Account using a debit card, credit card, or bank transfer. The funds show up as a balance in your wallet. You can then use that balance to pay any merchant on the platform.'
   },
   {
     id: 'econ-4',
     category: 'ECONOMY',
-    question: 'Are there fees for withdrawing GCLA balance to a bank?',
-    answer: 'Yes. External withdrawals trigger a 3.5% Conversion Fee. This reflects the cost of capital leaving the community circle and is designed to encourage internal circulation (velocity).'
-  }
+    question: 'What are platform credits?',
+    answer: 'Credits are bonus funds you earn when a merchant chooses "Platform Credits" mode instead of giving you a direct price discount. You receive the credit in your account and can use it on any future purchase. Credits never expire and never leave the community economy.'
+  },
+  {
+    id: 'econ-5',
+    category: 'ECONOMY',
+    question: 'How do refunds work?',
+    answer: 'If you need a refund, the money goes back to your Circle Account right away — no waiting, no fee. We call this the Recapture Protocol. It keeps the money inside the local economy so you can use it again at another local merchant immediately.'
+  },
+  {
+    id: 'econ-6',
+    category: 'ECONOMY',
+    question: 'Is there a fee to withdraw money from my Circle Account to my bank?',
+    answer: 'Yes — there\'s a 3.5% withdrawal fee. This fee reflects the cost of moving money out of the community network. Most members choose to keep their balance inside the platform and spend it locally, where it keeps generating discounts and nonprofit donations.'
+  },
+  {
+    id: 'econ-7',
+    category: 'ECONOMY',
+    question: 'What is "Tax Alpha" for merchants?',
+    answer: 'Tax Alpha is the financial advantage local merchants get by joining Good Circles. Instead of paying 3% to a credit card company (which is not deductible), merchants route a similar amount to a nonprofit — which IS tax-deductible. They save on fees, save on taxes, and build community goodwill. Every dollar earned internally is worth more than a dollar earned externally.'
+  },
+];
+
+const FAQ_SHOPPING: FAQItem[] = [
+  {
+    id: 'shop-1',
+    category: 'SHOPPING',
+    question: 'How does the search tool work?',
+    answer: 'Type anything into the search bar — a product, a service, a store name, or even a category like "auto repair." The search shows local Good Circles merchant results first. If no local merchant carries it, external affiliate products (from retailers like Amazon) appear below, clearly labeled as external. Local results always come first.'
+  },
+  {
+    id: 'shop-2',
+    category: 'SHOPPING',
+    question: 'What is an affiliate product?',
+    answer: 'An affiliate product is something sold by an outside retailer (like Amazon or Etsy) that we link to when no local merchant carries it. We add a special tracking tag to the link. If you buy through that link, the retailer pays Good Circles a small commission — usually 3–5% of the sale price. You pay the same price you would anywhere else.'
+  },
+  {
+    id: 'shop-3',
+    category: 'SHOPPING',
+    question: 'Does buying an affiliate product still help my nonprofit?',
+    answer: 'Yes — just less directly. Half of any commission Good Circles earns from affiliate sales goes into a pool that benefits nonprofits on the platform. The other half helps pay for platform operations. It\'s not the same impact as buying from a local merchant, but it\'s still better than buying with no community benefit at all.'
+  },
+  {
+    id: 'shop-4',
+    category: 'SHOPPING',
+    question: 'Why should I buy local instead of external?',
+    answer: 'When you buy from a local Good Circles merchant, you get a guaranteed 10% discount, your elected nonprofit gets a donation, the merchant keeps their profit in the community, and your money stays in Central Mississippi. External affiliate products don\'t give you the discount and only generate a small commission. Local is always the better deal — for you and your community.'
+  },
+  {
+    id: 'shop-5',
+    category: 'SHOPPING',
+    question: 'Can I use a keyboard shortcut to open search?',
+    answer: 'Yes. Press Cmd+K (Mac) or Ctrl+K (Windows) anywhere in the app to open the search bar instantly. You can also press Escape to close it.'
+  },
+  {
+    id: 'shop-6',
+    category: 'SHOPPING',
+    question: 'Can I filter search results by price or category?',
+    answer: 'Yes. Click the slider icon next to the search bar to open filters. You can choose a product category (like Dining or Auto) and set a minimum and maximum price. Hit Apply and your results update right away.'
+  },
+];
+
+const FAQ_MERCHANT: FAQItem[] = [
+  {
+    id: 'merch-1',
+    category: 'MERCHANT',
+    question: 'How do I join Good Circles as a merchant?',
+    answer: 'Sign up with your business name and email, then list your products or services. Set your price and your cost of goods (COGS). Our system calculates the 10/10/1 split automatically. You can start accepting customers the same day you list.'
+  },
+  {
+    id: 'merch-2',
+    category: 'MERCHANT',
+    question: 'Do merchants have to lower their prices?',
+    answer: 'No. Your listed price is your full price (MSRP). The 10% member discount comes out of the transaction automatically — you don\'t manually cut your price. The discount and the nonprofit donation both come from the profit side of the sale, not from your cost structure.'
+  },
+  {
+    id: 'merch-3',
+    category: 'MERCHANT',
+    question: 'How does booking work for service businesses?',
+    answer: 'Service merchants can enable bookings for any listing. Customers pick a date and time, and the booking appears in your merchant dashboard. The system sends reminders automatically — to both you and the customer — 48 hours and 2 hours before the appointment.'
+  },
+  {
+    id: 'merch-4',
+    category: 'MERCHANT',
+    question: 'What is a merchant cooperative?',
+    answer: 'A cooperative is a group of merchants who pool their buying power together. By joining a purchasing cooperative, small businesses can negotiate wholesale prices that are normally only available to large chains. This lowers your cost of goods and increases your profit margin — which in turn increases the amount donated to local nonprofits.'
+  },
+  {
+    id: 'merch-5',
+    category: 'MERCHANT',
+    question: 'What is merchant netting?',
+    answer: 'When merchants buy from each other on the platform, they build up small debts. Instead of settling every transaction individually, the netting system adds them all up and settles the difference at the end of a cycle — one net payment instead of dozens of small ones. This cuts transaction fees and keeps more money inside the network.'
+  },
+  {
+    id: 'merch-6',
+    category: 'MERCHANT',
+    question: 'What is the supply chain tool?',
+    answer: 'The supply chain tool lets you find other Good Circles merchants who supply what you need — ingredients, materials, equipment. Sourcing from within the network keeps your spending inside the community and qualifies for the same discounts and profit-sharing. The AI tool also suggests lower-cost sources to help you reduce your COGS.'
+  },
+  {
+    id: 'merch-7',
+    category: 'MERCHANT',
+    question: 'How does in-person (QR) checkout work?',
+    answer: 'At your physical location, a customer opens their Good Circles app and shows their QR code. You scan it — we call this the "Optical Handshake" — and the payment processes instantly from their Circle Account to yours. No card reader needed. The 10/10/1 split happens in real time.'
+  },
+];
+
+const FAQ_NONPROFIT: FAQItem[] = [
+  {
+    id: 'np-faq-1',
+    category: 'NONPROFIT',
+    question: 'How does my nonprofit receive funding through Good Circles?',
+    answer: 'When a community member (neighbor) designates your organization as their elected nonprofit, a portion of every purchase they make at any Good Circles merchant flows to you — automatically, with no extra steps. The more members who elect your nonprofit, and the more they shop, the more funding you receive.'
+  },
+  {
+    id: 'np-faq-2',
+    category: 'NONPROFIT',
+    question: 'What is the Donor Management System (DMS)?',
+    answer: 'The DMS is your nonprofit\'s command center inside Good Circles. It shows you how many supporters you have, how much total funding you\'ve received, a full donor list (with privacy controls respected), and tools to export that data or connect it to your existing CRM software.'
+  },
+  {
+    id: 'np-faq-3',
+    category: 'NONPROFIT',
+    question: 'What are impact updates?',
+    answer: 'Impact updates are short posts your nonprofit can publish — like social media updates — that show donors how their contributions are being used. Supporters see these updates in their account feed. A strong update with a real story builds trust and encourages more people to elect your organization.'
+  },
+  {
+    id: 'np-faq-4',
+    category: 'NONPROFIT',
+    question: 'What are donor milestones?',
+    answer: 'Donor milestones are automatic thank-you emails sent when a supporter hits a giving milestone — their first donation, $100 lifetime, $500 lifetime, and $1,000 lifetime. The system handles this for you with no setup required. Each email reminds the donor of their cumulative impact.'
+  },
+  {
+    id: 'np-faq-5',
+    category: 'NONPROFIT',
+    question: 'Can I export my donor list?',
+    answer: 'Yes. From your DMS dashboard, you can export your full donor list as a CSV or JSON file for any date range. Donor names and emails are included only if the donor has enabled sharing in their privacy settings. You can download this file for use in any email or fundraising platform.'
+  },
+  {
+    id: 'np-faq-6',
+    category: 'NONPROFIT',
+    question: 'What is a CRM webhook?',
+    answer: 'A webhook is a way for Good Circles to automatically send data to your existing software — like Salesforce, HubSpot, or any custom tool — the moment something happens. For example, when a new donation comes in, a webhook can instantly create or update a record in your donor database. You set it up once from your DMS settings.'
+  },
+  {
+    id: 'np-faq-7',
+    category: 'NONPROFIT',
+    question: 'What can a nonprofit see about its donors?',
+    answer: 'By default, nonprofits can see a donor\'s first name and total giving amount. Email addresses are hidden unless the donor chooses to share them. Donors control their own privacy settings in their profile. This design protects supporter privacy while still giving your team the data you need to build relationships.'
+  },
+  {
+    id: 'np-faq-8',
+    category: 'NONPROFIT',
+    question: 'Can a nonprofit also sell products or services?',
+    answer: 'Yes. Nonprofits can set up as a merchant and list their own products or services in the marketplace. Revenue from those sales follows the same 10/10/1 model — the nonprofit still benefits from the profit-sharing while also keeping the sale proceeds from their own listings.'
+  },
 ];
 
 const FAQ_SECURITY: FAQItem[] = [
   {
     id: 'sec-1',
     category: 'SECURITY',
-    question: 'How does the Privacy Shield protect my identity?',
-    answer: 'While transaction amounts are public for auditing purposes, your personal identity is masked. The ledger uses "Hash Masking" so you appear as an anonymous ID (e.g., Member #B2A9). Only you and the platform stewards can link your real identity to your shopping history.'
+    question: 'How is my personal information protected?',
+    answer: 'Your transaction history is private by default. On the public ledger, you appear as an anonymous member ID — not your name. Only you and platform admins can connect your identity to your purchase history. We never sell your personal data to third parties.'
   },
   {
     id: 'sec-2',
     category: 'SECURITY',
-    question: 'What happens if a Merchant "Price Hikes" to offset the discount?',
-    answer: 'Our "Price Sentinel AI" benchmarks every listing MSRP against global market averages. If a price is found to be significantly inflated to hide the 10% discount, the listing is automatically flagged for governance review and may be frozen from the marketplace.'
+    question: 'What can nonprofits see about me?',
+    answer: 'By default, nonprofits can see your first name and total donation amount. Your email is hidden unless you turn on sharing in your privacy settings. You can update these settings any time from your account profile under "Donor Privacy."'
   },
   {
     id: 'sec-3',
     category: 'SECURITY',
-    question: 'How do you verify Merchant COGS integrity?',
-    answer: 'COGS are audited via pattern analysis. If a merchant reports abnormally high COGS to reduce their 10% donation liability, the Sentinel AI detects the margin anomaly and triggers a "Deep Integrity Audit" of their settlement history.'
+    question: 'How does Good Circles prevent price gouging?',
+    answer: 'Our Price Sentinel tool checks every listing against normal market prices. If a merchant inflates their price to hide the 10% discount, the system flags the listing for review. Listings that are significantly above market rates can be paused until reviewed by platform staff.'
   },
   {
     id: 'sec-4',
     category: 'SECURITY',
-    question: 'What are the specific insurance requirements for platform merchants?',
-    answer: '' // BLANK: For admins to complete
-  }
+    question: 'Is my payment information safe?',
+    answer: 'Yes. Card payments are processed by Stripe, which is used by millions of businesses worldwide and meets the highest payment security standards (PCI DSS Level 1). Good Circles never sees or stores your card number directly. Circle Account (GCLA) payments are processed internally with bank-grade encryption.'
+  },
 ];
 
 const FAQ_GOVERNANCE: FAQItem[] = [
   {
     id: 'gov-1',
     category: 'GOVERNANCE',
-    question: 'How can I change the 10/10/1 rates in my city?',
-    answer: 'Good Circles is a Decentralized Economic Democracy. Members can submit "Rate Adjustment Proposals" via the Community Council. If the proposal reaches the consensus threshold (usually 66%), the new fiscal policy is applied to that specific Metropolitan Statistical Area (MSA).'
+    question: 'Can the community change the 10/10/1 rates?',
+    answer: 'Yes. Good Circles is built on community governance. Any member can submit a rate adjustment proposal — for example, to change the nonprofit share from 10% to 12% in your node. If the proposal gets enough support (usually 66% of active voters), the new rate takes effect in your community. Other nodes are not affected.'
   },
   {
     id: 'gov-2',
     category: 'GOVERNANCE',
-    question: 'What is "Priority Voting" and how do I earn it?',
-    answer: 'Members earn "Impact Points" for every purchase. Once you reach 100 points, you reach the "Governance Threshold," allowing you to cast Priority Votes on which Community Projects (like parks or clinics) should be funded first by the collective pool.'
+    question: 'How do I vote on governance proposals?',
+    answer: 'Active members earn voting rights automatically by shopping on the platform. When a proposal is open, you\'ll see it in your account. You can vote yes, no, or abstain. Every vote is recorded on the ledger so the process is transparent and tamper-proof.'
   },
   {
     id: 'gov-3',
     category: 'GOVERNANCE',
-    question: 'What is the "Proposer Stake" requirement?',
-    answer: 'To prevent governance spam, proposing a new initiative requires staking 250 Impact Points. These points are locked during the voting cycle and returned if the proposal passes or reaches a "Seriousness Threshold" of 20% support.'
-  }
-];
-
-const FAQ_ENTITIES: FAQItem[] = [
-  {
-    id: 'ent-1',
-    category: 'NONPROFIT',
-    question: 'What is Direct Asset Funding?',
-    answer: 'Nonprofits can list specific equipment or resources as "Needs" (e.g., a $500 laptop). Members can fulfill these needs directly at checkout instead of giving general cash. This ensures 100% transparency in how impact funds are utilized.'
+    question: 'What is required to submit a proposal?',
+    answer: 'You must be an active member with enough Impact Points (earned through purchases). When you submit a proposal, a small stake of your Impact Points is held until the vote closes. If your proposal gets at least 20% support, your stake is returned in full — this prevents spam proposals while keeping governance open to real members.'
   },
-  {
-    id: 'ent-2',
-    category: 'NONPROFIT',
-    question: 'How are donation conflicts managed (Safeguard #2)?',
-    answer: 'We prohibit "Self-Cycling Loops." A merchant cannot donate to a nonprofit they own or have significant control over. The platform automatically flags affiliated entities to ensure community funds flow to independent initiatives.'
-  },
-  {
-    id: 'ent-3',
-    category: 'MERCHANT',
-    question: 'How does "Cash Local" work for in-person sales?',
-    answer: 'Merchants maintain an "Impact Reserve" (collateral). When a cash sale occurs, the member presents a QR code. The merchant scans this via the "Optical Handshake," and the 10% community impact is instantly debited from the merchant\'s reserve and credited to the nonprofit.'
-  },
-  {
-    id: 'ent-4',
-    category: 'MERCHANT',
-    question: 'What is the Scaling Consortium?',
-    answer: 'Merchants in the same category can join a "Consortium" to pool their purchasing power. This allows small local businesses to negotiate wholesale prices previously reserved for big-box retailers, significantly lowering their COGS.'
-  }
 ];
 
 export const INITIAL_FAQ: FAQItem[] = [
   ...FAQ_CORE,
+  ...FAQ_SHOPPING,
   ...FAQ_ECONOMY,
+  ...FAQ_MERCHANT,
+  ...FAQ_NONPROFIT,
   ...FAQ_SECURITY,
   ...FAQ_GOVERNANCE,
-  ...FAQ_ENTITIES
 ];
 
 export const PRODUCT_CATEGORIES = [

@@ -3,6 +3,7 @@ import { Product, UserRole, FiscalPolicy, CartItem } from '../types';
 import { getEffectiveRates } from '../utils/financeEngine';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { AffiliateProductCard, AffiliateListingData } from '../components/AffiliateProductCard';
+import { UniversalSearch } from '../components/UniversalSearch';
 
 interface PaginationInfo {
   currentPage: number;
@@ -60,6 +61,12 @@ export const MarketplaceView: React.FC<Props> = ({ products, cart, effectiveRole
           <p className="text-slate-500 text-base sm:text-2xl font-medium mt-4 sm:mt-8 leading-relaxed">
             Optimized discounts for you. High-integrity profit for <span className="text-black font-black">{selectedNonprofitName}</span>.
           </p>
+          <div className="mt-6 sm:mt-8">
+            <UniversalSearch
+              onSelectProduct={p => onProductClick(p as any)}
+              placeholder="Search local merchants, services, products…"
+            />
+          </div>
         </div>
         <div className="flex flex-col gap-4">
            <button onClick={onShopperClick} className="bg-black text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-3xl font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-2xl hover:bg-[#7851A9] transition-all">✨ AI Personal Shopper</button>
