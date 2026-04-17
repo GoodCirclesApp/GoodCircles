@@ -35,6 +35,10 @@ const SCALE_PRESETS: ScalePreset[] = [
   { name: 'Amazon Scale', category: 'global', population: 4000000000, adoptionRate: 8, avgTransaction: 52, transactionsPerMonth: 8, merchantParticipation: 12, description: '310M+ buyers, $575B GMV' },
 ];
 
+// Assumed average net profit margin used to project nonprofit/platform shares from gross volume.
+// Actual per-transaction values depend on each merchant's COGS.
+const ASSUMED_MARGIN = 0.35;
+
 const BRAND = { purple: '#7851A9', lavender: '#CA9CE1', gold: '#C2A76F', crimson: '#A20021', dark: '#1A1A1A', light: '#FDFCFE' };
 const PIE_COLORS = [BRAND.purple, BRAND.gold, BRAND.crimson, BRAND.lavender, '#34D399', '#60A5FA'];
 const CATEGORY_COLORS: Record<string, string> = { local: BRAND.purple, regional: BRAND.gold, national: BRAND.crimson, global: '#34D399' };
@@ -84,9 +88,9 @@ export const MunicipalDemoSimulator: React.FC = () => {
     const monthlyGrossVolume = monthlyTransactions * avgTransactionSize;
     const annualGrossVolume = monthlyGrossVolume * 12;
     const annualConsumerSavings = annualGrossVolume * 0.10;
-    const annualNonprofitFunding = annualGrossVolume * 0.10 * 0.35;
-    const annualPlatformRevenue = annualGrossVolume * 0.01;
-    const annualMerchantRevenue = annualGrossVolume - annualConsumerSavings - annualPlatformRevenue;
+    const annualNonprofitFunding = annualGrossVolume * ASSUMED_MARGIN * 0.10;
+    const annualPlatformRevenue = annualGrossVolume * ASSUMED_MARGIN * 0.01;
+    const annualMerchantRevenue = annualGrossVolume - annualConsumerSavings - annualNonprofitFunding - annualPlatformRevenue;
     const additionalLocalRetention = annualGrossVolume * 0.33;
     const multiplierEffect = additionalLocalRetention * 1.7;
     const jobsSupported = Math.round(multiplierEffect / 85000);
@@ -101,7 +105,7 @@ export const MunicipalDemoSimulator: React.FC = () => {
       additionalLocalRetention, multiplierEffect, jobsSupported, additionalTaxRevenue, savingsPerHousehold,
       gcVsAmazonVolume: annualGrossVolume / amazonGMV, gcVsAmazonUsers: activeConsumers / amazonUsers,
       amazonGMV, amazonUsers,
-      amazonIfGC_savings: amazonGMV * 0.10, amazonIfGC_nonprofit: amazonGMV * 0.10 * 0.35, amazonIfGC_platform: amazonGMV * 0.01,
+      amazonIfGC_savings: amazonGMV * 0.10, amazonIfGC_nonprofit: amazonGMV * ASSUMED_MARGIN * 0.10, amazonIfGC_platform: amazonGMV * ASSUMED_MARGIN * 0.01,
     };
   }, [population, adoptionRate, merchantParticipation, avgTransactionSize, transactionsPerMonth]);
 
@@ -137,7 +141,7 @@ export const MunicipalDemoSimulator: React.FC = () => {
       const p = SCALE_PRESETS.find(pr => pr.name === name)!;
       const c = Math.round(p.population * (p.adoptionRate / 100));
       const v = c * p.transactionsPerMonth * p.avgTransaction * 12;
-      return { name, consumers: c, volume: v, savings: v * 0.10, nonprofit: v * 0.10 * 0.35, platform: v * 0.01 };
+      return { name, consumers: c, volume: v, savings: v * 0.10, nonprofit: v * ASSUMED_MARGIN * 0.10, platform: v * ASSUMED_MARGIN * 0.01 };
     });
   }, []);
 
@@ -370,7 +374,7 @@ export const MunicipalDemoSimulator: React.FC = () => {
                 const p = SCALE_PRESETS.find(pr=>pr.name===name)!;
                 const c = Math.round(p.population*(p.adoptionRate/100));
                 const v = c*p.transactionsPerMonth*p.avgTransaction*12;
-                return {name,consumers:c,volume:v,savings:v*0.10,nonprofit:v*0.10*0.35,platform:v*0.01,jobs:Math.round(v*0.33*1.7/85000)};
+                return {name,consumers:c,volume:v,savings:v*0.10,nonprofit:v*ASSUMED_MARGIN*0.10,platform:v*ASSUMED_MARGIN*0.01,jobs:Math.round(v*0.33*1.7/85000)};
               });
               return [{l:'Active Users',k:'consumers',f:formatNumber},{l:'Annual Volume',k:'volume',f:formatCurrency},{l:'Consumer Savings',k:'savings',f:formatCurrency},{l:'Nonprofit Funding',k:'nonprofit',f:formatCurrency},{l:'Platform Revenue',k:'platform',f:formatCurrency},{l:'Jobs Supported',k:'jobs',f:formatNumber}].map((row,i) => (
                 <tr key={row.l} className={i%2===0?'bg-slate-50/50':''}>
