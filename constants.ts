@@ -182,70 +182,60 @@ export const PRODUCT_CATEGORIES = [
 ];
 
 export const MOCK_COMMUNITIES: Community[] = [
-  { id: 'msa-la', name: 'Los Angeles-Long Beach-Anaheim', memberCount: 12400, fiscalPolicy: DEFAULT_POLICY },
-  { id: 'msa-ny', name: 'New York-Newark-Jersey City', memberCount: 18500, fiscalPolicy: { ...DEFAULT_POLICY, taxRate: 0.08875 } },
-  { 
-    id: 'msa-lon', 
-    name: 'Greater London Authority', 
-    memberCount: 5200, 
-    fiscalPolicy: { 
-      discountRate: 0.12, 
-      donationRate: 0.08, 
-      platformFeeRate: 0.015, 
-      taxRate: 0.20, 
-      currencyCode: 'GBP', 
-      symbol: '£' 
-    } 
-  },
-  { 
-    id: 'msa-ber', 
-    name: 'Berlin Metropolitan Region', 
-    memberCount: 3100, 
-    fiscalPolicy: { 
-      discountRate: 0.05, 
-      donationRate: 0.15, 
-      platformFeeRate: 0.01, 
-      taxRate: 0.19, 
-      currencyCode: 'EUR', 
-      symbol: '€' 
-    } 
-  },
-  { id: 'msa-ch', name: 'Chicago-Naperville-Elgin', memberCount: 8900, fiscalPolicy: DEFAULT_POLICY },
-  { id: 'msa-dfw', name: 'Dallas-Fort Worth-Arlington', memberCount: 7600, fiscalPolicy: DEFAULT_POLICY },
+  { id: 'msa-cjx', name: 'Central Mississippi — Jackson Metro', memberCount: 1847, fiscalPolicy: { ...DEFAULT_POLICY, taxRate: 0.07 } },
+  { id: 'msa-njx', name: 'North Mississippi — Oxford/Tupelo', memberCount: 0, fiscalPolicy: { ...DEFAULT_POLICY, taxRate: 0.07 } },
+  { id: 'msa-sjx', name: 'South Mississippi — Hattiesburg/Biloxi', memberCount: 0, fiscalPolicy: { ...DEFAULT_POLICY, taxRate: 0.07 } },
 ];
 
 export const MOCK_NONPROFITS: Nonprofit[] = [
   {
     id: 'np-1',
-    name: 'Green Earth Initiative',
-    description: 'Protecting local forests and promoting urban gardening.',
-    category: 'Environment',
-    logoUrl: 'https://picsum.photos/seed/env/100/100',
+    name: 'Mississippi Food Network',
+    description: "Mississippi's largest food bank, serving 43,000 people per week across all 82 counties through 500+ partner agencies.",
+    category: 'Food Security',
+    logoUrl: 'https://picsum.photos/seed/msfoodnet/100/100',
     impactStories: [
       {
         id: 'st-1',
         nonprofitId: 'np-1',
-        title: 'Central Park Reforestation',
-        description: 'Planting 500 native oak trees using Q1 community funds.',
-        imageUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=400',
-        date: '2024-03-15'
+        title: 'Summer Feeding Program Expansion',
+        description: 'Good Circles funding helped us add 3 new summer feeding sites in Hinds County, reaching 420 additional children.',
+        imageUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=400',
+        date: '2025-07-10'
       }
     ]
   },
   {
     id: 'np-2',
-    name: 'Future Scholars Fund',
-    description: 'Providing school supplies and scholarships.',
-    category: 'Education',
-    logoUrl: 'https://picsum.photos/seed/edu/100/100',
+    name: 'Boys & Girls Club of Central Mississippi',
+    description: 'Providing after-school programs, summer camps, and youth development for children in Hinds, Rankin, and Madison counties.',
+    category: 'Youth Development',
+    logoUrl: 'https://picsum.photos/seed/bgcms/100/100',
     impactStories: [
       {
         id: 'st-2',
         nonprofitId: 'np-2',
-        title: 'Laptops for Learning',
-        description: 'Distributed 50 tablets to the local middle school.',
+        title: 'STEM Lab Renovation — Brandon Club',
+        description: 'Community shopping dollars funded new computers and robotics kits for 85 Brandon-area youth.',
         imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=400',
-        date: '2024-02-20'
+        date: '2025-09-05'
+      }
+    ]
+  },
+  {
+    id: 'np-3',
+    name: 'Habitat for Humanity Mississippi Capital Area',
+    description: 'Building and renovating affordable homes alongside low-income families in the Jackson metro area.',
+    category: 'Housing',
+    logoUrl: 'https://picsum.photos/seed/habitatms/100/100',
+    impactStories: [
+      {
+        id: 'st-3',
+        nonprofitId: 'np-3',
+        title: 'West Jackson Rehab Project',
+        description: 'Four homes fully renovated in West Jackson using Good Circles neighborhood funding.',
+        imageUrl: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80&w=400',
+        date: '2025-11-01'
       }
     ]
   }
@@ -253,25 +243,36 @@ export const MOCK_NONPROFITS: Nonprofit[] = [
 
 export const MOCK_PROJECTS: CommunityProject[] = [
   {
-    id: 'proj-clinic',
-    name: 'Mobile Health Clinic',
-    description: 'A fully equipped mobile medical unit to serve under-resourced neighborhoods.',
-    imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800',
-    goalAmount: 50000,
-    currentAmount: 12450,
-    nonprofitId: 'np-2',
-    nonprofitName: 'Future Scholars Fund',
+    id: 'proj-pantry',
+    name: 'West Jackson Community Pantry',
+    description: 'Establishing a permanent walk-in food pantry at Westside Community Center to serve 800 families per month in Hinds County.',
+    imageUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=800',
+    goalAmount: 35000,
+    currentAmount: 11240,
+    nonprofitId: 'np-1',
+    nonprofitName: 'Mississippi Food Network',
     status: 'ACTIVE'
   },
   {
-    id: 'proj-garden',
-    name: 'Urban Garden Expansion',
-    description: 'Transforming 5 vacant lots into productive community gardens and composting centers.',
-    imageUrl: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&q=80&w=800',
-    goalAmount: 15000,
-    currentAmount: 9800,
-    nonprofitId: 'np-1',
-    nonprofitName: 'Green Earth Initiative',
+    id: 'proj-stem',
+    name: 'Rankin County STEM Expansion',
+    description: 'Equipping three Boys & Girls Club sites in Brandon, Pearl, and Flowood with robotics kits, 3D printers, and coding workstations.',
+    imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800',
+    goalAmount: 22000,
+    currentAmount: 8750,
+    nonprofitId: 'np-2',
+    nonprofitName: 'Boys & Girls Club of Central Mississippi',
+    status: 'ACTIVE'
+  },
+  {
+    id: 'proj-homes',
+    name: 'Madison County First-Time Homebuyer Fund',
+    description: 'Down-payment assistance for five low-income first-time homebuyers in Canton and Madison through Habitat for Humanity.',
+    imageUrl: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80&w=800',
+    goalAmount: 50000,
+    currentAmount: 19600,
+    nonprofitId: 'np-3',
+    nonprofitName: 'Habitat for Humanity Mississippi Capital Area',
     status: 'ACTIVE'
   }
 ];
@@ -279,48 +280,48 @@ export const MOCK_PROJECTS: CommunityProject[] = [
 export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'h-1',
-    name: 'Downtown Loft Lease',
-    description: 'Modern 1-bedroom loft. Monthly recurring lease payment.',
-    price: 1850.00,
-    cogs: 1100.00,
+    name: 'Jackson Midtown Rental',
+    description: 'Updated 2-bedroom home in Midtown Jackson. Monthly lease.',
+    price: 1150.00,
+    cogs: 700.00,
     category: 'Housing & Real Estate',
-    merchantId: 'm-metro-prop',
-    merchantName: 'Metro Property Group',
-    imageUrl: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=400&h=300',
+    merchantId: 'm-capital-prop',
+    merchantName: 'Capital City Properties',
+    imageUrl: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    latitude: 34.0522,
-    longitude: -118.2437,
-    regionId: 'msa-la'
+    latitude: 32.2988,
+    longitude: -90.1848,
+    regionId: 'msa-cjx'
   },
   {
     id: 'u-1',
-    name: 'Clean Energy Power Plan',
-    description: '100% renewable wind and solar energy plan.',
-    price: 185.00,
-    cogs: 110.00,
+    name: 'Entergy MS Monthly Plan',
+    description: 'Standard residential electric service through Entergy Mississippi.',
+    price: 145.00,
+    cogs: 95.00,
     category: 'Utilities & Power',
-    merchantId: 'm-cleangrid',
-    merchantName: 'CleanGrid Energy',
+    merchantId: 'm-entergy',
+    merchantName: 'Entergy Mississippi',
     imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    latitude: 34.0522,
-    longitude: -118.2437,
-    regionId: 'msa-la'
+    latitude: 32.2988,
+    longitude: -90.1848,
+    regionId: 'msa-cjx'
   },
   {
     id: 'e-1',
-    name: 'Brooklyn Fiber Internet',
-    description: 'Ultra-high speed connectivity for residents of the NY MSA.',
-    price: 85.00,
-    cogs: 40.00,
+    name: 'C Spire Home Internet',
+    description: 'High-speed fiber internet from Mississippi-based C Spire. Up to 1 Gbps.',
+    price: 75.00,
+    cogs: 35.00,
     category: 'Connectivity',
-    merchantId: 'm-ny-fiber',
-    merchantName: 'Empire Connect',
+    merchantId: 'm-cspire',
+    merchantName: 'C Spire',
     imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    latitude: 40.7128,
-    longitude: -74.0060,
-    regionId: 'msa-ny'
+    latitude: 32.2988,
+    longitude: -90.1848,
+    regionId: 'msa-cjx'
   },
   {
     id: 'g-1',
@@ -333,7 +334,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Farm Fresh Collective',
     imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'PRODUCT',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'hp-1',
@@ -346,7 +347,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Community Health Hub',
     imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'PRODUCT',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'w-1',
@@ -359,7 +360,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Zen Space Studio',
     imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 't-1',
@@ -372,7 +373,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'EcoRide Mobility',
     imageUrl: 'https://images.unsplash.com/photo-1571068316344-75bc76f77891?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'hm-1',
@@ -385,7 +386,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Fix-It Local',
     imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6958?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'ps-1',
@@ -398,7 +399,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Justice Partners',
     imageUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'edu-1',
@@ -411,7 +412,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Tech Academy',
     imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'ins-1',
@@ -424,7 +425,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'SafeGuard Insurance',
     imageUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'd-1',
@@ -437,7 +438,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'The Harvest Table',
     imageUrl: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'r-1',
@@ -450,7 +451,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Craft Guild Artisans',
     imageUrl: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'PRODUCT',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'el-1',
@@ -463,7 +464,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Re-Tech Solutions',
     imageUrl: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'PRODUCT',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'ent-1',
@@ -476,7 +477,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Stage Lights Theater',
     imageUrl: 'https://images.unsplash.com/photo-1503095396549-807039045349?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'tr-1',
@@ -489,7 +490,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Nature Stays',
     imageUrl: 'https://images.unsplash.com/photo-1449156001437-3a145b9bb286?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'pc-1',
@@ -502,7 +503,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Paws & Claws',
     imageUrl: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'PRODUCT',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'cc-1',
@@ -515,7 +516,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Bright Futures Center',
     imageUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'biz-1',
@@ -528,7 +529,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'The Hub Workspaces',
     imageUrl: 'https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'sp-1',
@@ -541,7 +542,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Active Life Sports',
     imageUrl: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'PRODUCT',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'art-1',
@@ -554,7 +555,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'Art Vibe Studio',
     imageUrl: 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'fit-1',
@@ -567,7 +568,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'PowerHouse Fitness',
     imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'SERVICE',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   },
   {
     id: 'gift-1',
@@ -580,7 +581,7 @@ export const MOCK_PRODUCTS: Product[] = [
     merchantName: 'The Gift Box',
     imageUrl: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=400&h=300',
     type: 'PRODUCT',
-    regionId: 'msa-la'
+    regionId: 'msa-cjx'
   }
 ];
 
@@ -605,9 +606,9 @@ export const MOCK_ORDERS: Order[] = [
     nonprofitShare: 56.50,
     platformFee: 5.65,
     neighborId: 'neighbor-1',
-    neighborName: 'Alex Rivera',
+    neighborName: 'Marcus Johnson',
     neighborPublicId: '82A9',
-    communityId: 'msa-la',
+    communityId: 'msa-cjx',
     accounting: {
       grossProfit: 565.00,
       donationAmount: 56.50,
@@ -637,9 +638,9 @@ export const MOCK_ORDERS: Order[] = [
     nonprofitShare: 5.65,
     platformFee: 0.57,
     neighborId: 'neighbor-1',
-    neighborName: 'Alex Rivera',
+    neighborName: 'Marcus Johnson',
     neighborPublicId: '82A9',
-    communityId: 'msa-la',
+    communityId: 'msa-cjx',
     accounting: {
       grossProfit: 56.50,
       donationAmount: 5.65,
@@ -669,9 +670,9 @@ export const MOCK_ORDERS: Order[] = [
     nonprofitShare: 56500.00,
     platformFee: 5650.00,
     neighborId: 'neighbor-1',
-    neighborName: 'Alex Rivera',
+    neighborName: 'Marcus Johnson',
     neighborPublicId: '82A9',
-    communityId: 'msa-la',
+    communityId: 'msa-cjx',
     accounting: {
       grossProfit: 565000.00,
       donationAmount: 56500.00,
@@ -701,9 +702,9 @@ export const MOCK_ORDERS: Order[] = [
     nonprofitShare: 70587.00,
     platformFee: 7058.70,
     neighborId: 'neighbor-1',
-    neighborName: 'Alex Rivera',
+    neighborName: 'Marcus Johnson',
     neighborPublicId: '82A9',
-    communityId: 'msa-ny',
+    communityId: 'msa-cjx',
     accounting: {
       grossProfit: 705870.00,
       donationAmount: 70587.00,
@@ -733,9 +734,9 @@ export const MOCK_ORDERS: Order[] = [
     nonprofitShare: 6000.00,
     platformFee: 600.00,
     neighborId: 'neighbor-1',
-    neighborName: 'Alex Rivera',
+    neighborName: 'Marcus Johnson',
     neighborPublicId: '82A9',
-    communityId: 'msa-la',
+    communityId: 'msa-cjx',
     accounting: {
       grossProfit: 60000.00,
       donationAmount: 6000.00,
@@ -752,13 +753,13 @@ export const MOCK_USERS: any[] = [
     id: 'neighbor-1',
     email: 'member@goodcircles.org',
     password: 'password123',
-    name: 'Alex Rivera',
+    name: 'Marcus Johnson',
     role: 'NEIGHBOR',
     status: 'ACTIVE',
     impactScore: 125,
     impactPoints: 450,
-    communityId: 'msa-la',
-    createdAt: '2024-01-10T10:00:00Z',
+    communityId: 'msa-cjx',
+    createdAt: '2026-01-10T10:00:00Z',
     platformCredits: 25.00,
     discountMode: 'PRICE_REDUCTION'
   },
@@ -766,12 +767,12 @@ export const MOCK_USERS: any[] = [
     id: 'merchant-1',
     email: 'merchant@goodcircles.org',
     password: 'password123',
-    name: 'Sarah Chen',
+    name: 'Tamara Williams',
     role: 'MERCHANT',
     status: 'ACTIVE',
-    merchantId: 'm-metro-prop',
-    communityId: 'msa-la',
-    createdAt: '2024-01-12T14:30:00Z',
+    merchantId: 'm-walkers',
+    communityId: 'msa-cjx',
+    createdAt: '2026-01-12T14:30:00Z',
     platformCredits: 0,
     discountMode: 'PRICE_REDUCTION'
   },
@@ -779,12 +780,12 @@ export const MOCK_USERS: any[] = [
     id: 'nonprofit-1',
     email: 'impact@goodcircles.org',
     password: 'password123',
-    name: 'David Miller',
+    name: 'Darius Davis',
     role: 'NONPROFIT',
     status: 'ACTIVE',
     nonprofitId: 'np-1',
-    communityId: 'msa-la',
-    createdAt: '2024-01-15T09:00:00Z',
+    communityId: 'msa-cjx',
+    createdAt: '2026-01-15T09:00:00Z',
     platformCredits: 0,
     discountMode: 'PRICE_REDUCTION'
   }

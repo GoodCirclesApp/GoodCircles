@@ -21,9 +21,10 @@ router.get('/municipal-partners', adminController.getMunicipalPartners);
 router.get('/data-coop', adminController.getDataCoopStatus);
 router.get('/system-health', adminController.getSystemHealth);
 
-// Mock data management (beta testing)
+// Mock data management
 router.get('/mock-data/status', mockDataController.getMockDataStatus);
 router.post('/mock-data/load', mockDataController.loadMockData);
 router.post('/mock-data/unload', mockDataController.unloadMockData);
+router.post('/mock-data/wipe-legacy', mockDataController.wipeLegacyData);
 
 export default router;
