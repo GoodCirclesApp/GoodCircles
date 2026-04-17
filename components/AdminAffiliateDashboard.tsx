@@ -11,8 +11,12 @@ const authHeaders = () => {
   };
 };
 
-const apiFetch = (path: string, opts?: RequestInit) =>
-  fetch(`/api/affiliate${path}`, { headers: authHeaders(), ...opts }).then(r => r.json());
+const apiFetch = async (path: string, opts?: RequestInit) => {
+  const r = await fetch(`/api/affiliate${path}`, { headers: authHeaders(), ...opts });
+  const json = await r.json();
+  if (!r.ok) throw new Error(json?.error ?? `Request failed (${r.status})`);
+  return json;
+};
 
 // ── StatCard ─────────────────────────────────────────────────────────────────
 
@@ -31,10 +35,11 @@ const StatCard = ({ title, value, icon, sub }: { title: string; value: string; i
 
 const ProgramsTab = () => {
   const [programs, setPrograms] = useState<any[]>([]);
+  const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: '', platform: 'AMAZON', trackingId: '', baseCommRate: 0.04, logoUrl: '' });
 
-  const load = () => apiFetch('/programs?all=true').then(setPrograms);
+  const load = () => apiFetch('/programs?all=true').then(d => setPrograms(Array.isArray(d) ? d : [])).catch(e => setError(e.message));
   useEffect(() => { load(); }, []);
 
   const submit = async () => {
@@ -54,6 +59,7 @@ const ProgramsTab = () => {
 
   return (
     <div className="space-y-6">
+      {error && <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-medium">{error}</div>}
       <div className="flex justify-between items-center">
         <p className="text-sm text-slate-500">Manage affiliate partner programs. Each program can have multiple listings.</p>
         <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-amber-600 transition-colors">
@@ -128,6 +134,7 @@ const ProgramsTab = () => {
 const ListingsTab = () => {
   const [listings, setListings] = useState<any[]>([]);
   const [programs, setPrograms] = useState<any[]>([]);
+  const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     programId: '', title: '', description: '', imageUrl: '',
@@ -135,9 +142,9 @@ const ListingsTab = () => {
   });
 
   const load = () => Promise.all([
-    apiFetch('/listings/admin').then(setListings),
-    apiFetch('/programs?all=false').then(setPrograms),
-  ]);
+    apiFetch('/listings/admin').then(d => setListings(Array.isArray(d) ? d : [])),
+    apiFetch('/programs?all=false').then(d => setPrograms(Array.isArray(d) ? d : [])),
+  ]).catch(e => setError(e.message));
   useEffect(() => { load(); }, []);
 
   const submit = async () => {
@@ -157,6 +164,7 @@ const ListingsTab = () => {
 
   return (
     <div className="space-y-6">
+      {error && <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-medium">{error}</div>}
       <div className="flex justify-between items-center">
         <p className="text-sm text-slate-500">Individual affiliate product listings shown in the marketplace.</p>
         <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-amber-600 transition-colors">
@@ -251,15 +259,16 @@ const ListingsTab = () => {
 const ConversionsTab = () => {
   const [conversions, setConversions] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
+  const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [listings, setListings] = useState<any[]>([]);
   const [form, setForm] = useState({ listingId: '', saleAmount: '', externalRef: '' });
 
   const load = () => Promise.all([
-    apiFetch('/conversions').then(setConversions),
-    apiFetch('/stats').then(setStats),
-    apiFetch('/listings/admin').then(setListings),
-  ]);
+    apiFetch('/conversions').then(d => setConversions(Array.isArray(d) ? d : [])),
+    apiFetch('/stats').then(d => { if (d && !d.error) setStats(d); }),
+    apiFetch('/listings/admin').then(d => setListings(Array.isArray(d) ? d : [])),
+  ]).catch(e => setError(e.message));
   useEffect(() => { load(); }, []);
 
   const submit = async () => {
@@ -274,6 +283,7 @@ const ConversionsTab = () => {
 
   return (
     <div className="space-y-8">
+      {error && <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-medium">{error}</div>}
       {stats && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard title="DAF Balance" value={`$${Number(stats.dafBalance).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
