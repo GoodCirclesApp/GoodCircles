@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import * as adminImpactController from '../controllers/adminImpactController';
+import { authenticateToken, authorizeRole } from '../middleware/authMiddleware';
 
 const router = Router();
+router.use(authenticateToken, authorizeRole(['PLATFORM']));
 
 router.get('/regions', adminImpactController.getRegions);
 router.get('/regions/:id/dashboard', adminImpactController.getRegionDashboard);

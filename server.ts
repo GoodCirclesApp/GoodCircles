@@ -65,7 +65,13 @@ async function startServer() {
     ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
     : ['http://localhost:3000', 'http://localhost:5173'];
 
-  app.use(cors());
+  app.use(cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  }));
 
   // ── Rate limiting ──────────────────────────────────────────────
   const apiLimiter = rateLimit({
@@ -137,33 +143,6 @@ async function startServer() {
     res.json({ status: 'ok', message: 'Good Circles API is running', version: '1.0.0-beta' });
   });
 
-  app.get('/api/debug-dist', async (req, res) => {
-    const fs = await import('fs');
-    const distPath = path.join(process.cwd(), 'dist');
-    try {
-      const exists = fs.existsSync(distPath);
-      const files = exists ? fs.readdirSync(distPath) : [];
-      const assetsPath = path.join(distPath, 'assets');
-      const assetsExist = fs.existsSync(assetsPath);
-      const assets = assetsExist ? fs.readdirSync(assetsPath) : [];
-      res.json({ cwd: process.cwd(), distPath, exists, files, assetsExist, assets });
-    } catch (e: any) {
-      res.json({ error: e.message, cwd: process.cwd(), distPath });
-    }
-  });
-
-  app.get('/api/debug-users', async (req, res) => {
-    const { PrismaClient } = await import('@prisma/client');
-    const p = new PrismaClient();
-    try {
-      const users = await p.user.findMany({ select: { email: true, role: true, firstName: true } });
-      res.json({ count: users.length, users });
-    } catch (e: any) {
-      res.json({ error: e.message });
-    } finally {
-      await p.$disconnect();
-    }
-  });
 
   // ══════════════════════════════════════════════════════════════
   // Static files & SPA fallback (MUST come after API routes)

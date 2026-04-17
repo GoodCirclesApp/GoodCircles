@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import * as cdfiController from '../controllers/cdfiController';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
+router.use(authenticateToken);
 
 router.get('/:id/dashboard', cdfiController.getDashboard);
 router.get('/:id/applications', cdfiController.getApplications);

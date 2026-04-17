@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import * as benefitController from '../controllers/benefitController';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
+router.use(authenticateToken);
 
 router.get('/programs', benefitController.getPrograms);
 router.post('/programs/:id/enroll', benefitController.enroll);

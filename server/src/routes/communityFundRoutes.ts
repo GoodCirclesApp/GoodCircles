@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import * as communityFundController from '../controllers/communityFundController';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
+router.use(authenticateToken);
 
 router.get('/', communityFundController.getFunds);
 router.post('/contribute', communityFundController.contribute);

@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { sendEmail } from '../services/emailService';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
+router.use(authenticateToken);
 
 // POST /api/email/send
 // Body: { to: string, toName: string, subject: string, html: string }
