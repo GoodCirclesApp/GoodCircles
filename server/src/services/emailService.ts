@@ -1,7 +1,5 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FROM_ADDRESS = process.env.EMAIL_FROM || 'Good Circles <onboarding@resend.dev>';
 
 export async function sendEmail(options: {
@@ -15,8 +13,10 @@ export async function sendEmail(options: {
     console.log(`To: ${options.toName} (${options.to})`);
     console.log(`Subject: ${options.subject}`);
     console.groupEnd();
-    return true; 
+    return true;
   }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const { data, error } = await resend.emails.send({
