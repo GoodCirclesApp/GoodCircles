@@ -66,20 +66,18 @@ export const loadMockData = async (req: AuthRequest, res: Response) => {
       const user = await prisma.user.create({
         data: {
           email: np.email,
-          password: DEMO_PASSWORD_HASH,
+          passwordHash: DEMO_PASSWORD_HASH,
           firstName: np.name.split(' ')[0],
           lastName: np.name.split(' ').slice(1).join(' '),
           role: 'NONPROFIT',
-          isActive: true,
           wallet: { create: { balance: 0 } },
         },
       });
       const nonprofit = await prisma.nonprofit.create({
         data: {
           userId: user.id,
-          name: np.name,
-          description: getNpDescription(np.name),
-          category: getNpCategory(np.name),
+          orgName: np.name,
+          missionStatement: getNpDescription(np.name),
           ein: np.ein,
           isVerified: true,
         },
@@ -93,11 +91,10 @@ export const loadMockData = async (req: AuthRequest, res: Response) => {
       const user = await prisma.user.create({
         data: {
           email: m.email,
-          password: DEMO_PASSWORD_HASH,
+          passwordHash: DEMO_PASSWORD_HASH,
           firstName: m.name.split(' ')[0],
           lastName: m.name.split(' ').slice(1).join(' ') || 'Owner',
           role: 'MERCHANT',
-          isActive: true,
           wallet: { create: { balance: 500 + Math.random() * 2000 } },
         },
       });
@@ -105,12 +102,8 @@ export const loadMockData = async (req: AuthRequest, res: Response) => {
         data: {
           userId: user.id,
           businessName: m.name,
-          category: getMerchantCategory(m.name),
-          city: m.city,
-          state: m.state,
-          zipCode: getMsZip(m.city),
-          isActive: true,
-          acceptsCredits: true,
+          businessType: getMerchantCategory(m.name),
+          creditAcceptance: 'FULL',
         },
       });
       merchantRecords.push({ id: merchant.id, userId: user.id });
@@ -142,11 +135,10 @@ export const loadMockData = async (req: AuthRequest, res: Response) => {
       const user = await prisma.user.create({
         data: {
           email: n.email,
-          password: DEMO_PASSWORD_HASH,
+          passwordHash: DEMO_PASSWORD_HASH,
           firstName: n.firstName,
           lastName: n.lastName,
           role: 'NEIGHBOR',
-          isActive: true,
           wallet: { create: { balance: 50 + Math.random() * 400 } },
         },
       });
@@ -279,7 +271,7 @@ export const wipeLegacyData = async (req: AuthRequest, res: Response) => {
 
     // Delete in FK-safe order
     await prisma.donorMilestone.deleteMany({ where: { userId: { in: userIds } } });
-    await prisma.donationReceipt.deleteMany({ where: { neighborId: { in: userIds } } });
+    await prisma.donationReceipt.deleteMany({ where: { OR: [{ merchantId: { in: merchantIds } }, { nonprofitId: { in: nonprofitIds } }] } });
     await prisma.creditLedger.deleteMany({ where: { userId: { in: userIds } } });
     await prisma.ledgerEntry.deleteMany({ where: { walletId: { in: walletIds } } });
     await prisma.booking.deleteMany({ where: { merchantId: { in: merchantIds } } });
@@ -313,7 +305,7 @@ async function wipeDemoData() {
   const walletIds = (await prisma.wallet.findMany({ where: { userId: { in: userIds } }, select: { id: true } })).map(w => w.id);
 
   await prisma.donorMilestone.deleteMany({ where: { userId: { in: userIds } } });
-  await prisma.donationReceipt.deleteMany({ where: { neighborId: { in: userIds } } });
+  await prisma.donationReceipt.deleteMany({ where: { OR: [{ merchantId: { in: merchantIds } }, { nonprofitId: { in: nonprofitIds } }] } });
   await prisma.creditLedger.deleteMany({ where: { userId: { in: userIds } } });
   await prisma.ledgerEntry.deleteMany({ where: { walletId: { in: walletIds } } });
   await prisma.booking.deleteMany({ where: { merchantId: { in: merchantIds } } });
