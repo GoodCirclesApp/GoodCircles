@@ -1,0 +1,8 @@
+{
+  "name": "Good Circles",
+  "description": "A socially responsible shopping platform where merchants offer 10% discounts, donate 10% of net profits to nonprofits, and pay a 1% platform fee. Features integrated accounting, COGS tracking, and transparent reporting.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}

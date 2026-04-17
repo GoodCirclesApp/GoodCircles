@@ -1,0 +1,201 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #7851A9;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #64748B;
+  margin: 0;
+  font-weight: 500;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  position: relative;
+  padding: 1.5rem;
+  border: 2px solid #E2E8F0;
+  border-radius: 1.5rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card:hover {
+  border-color: #CA9CE1;
+  box-shadow: 0 4px 12px rgba(120, 81, 169, 0.1);
+  transform: translateY(-2px);
+}
+
+.card.selected {
+  border-color: #7851A9;
+  background: #7851A9;
+  color: white;
+  box-shadow: 0 8px 24px rgba(120, 81, 169, 0.2);
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.name {
+  font-size: 1.125rem;
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.card.selected .name {
+  color: white;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.card.selected .description {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.impact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-top: 0.75rem;
+  border-top: 1px solid #E2E8F0;
+}
+
+.card.selected .impact {
+  border-top-color: rgba(255, 255, 255, 0.2);
+}
+
+.impactLabel {
+  color: #94A3B8;
+}
+
+.card.selected .impactLabel {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.impactValue {
+  font-weight: 900;
+  color: #7851A9;
+}
+
+.card.selected .impactValue {
+  color: #FFD700;
+}
+
+.checkmark {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 28px;
+  height: 28px;
+  background: #7851A9;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.125rem;
+}
+
+.card.selected .checkmark {
+  background: #FFD700;
+  color: #7851A9;
+}
+
+.error {
+  background: #FEE2E2;
+  border: 1px solid #FECACA;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.error p {
+  color: #DC2626;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+}
+
+.retryButton {
+  padding: 0.5rem 1rem;
+  background: #DC2626;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.retryButton:hover {
+  background: #B91C1C;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #94A3B8;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+}

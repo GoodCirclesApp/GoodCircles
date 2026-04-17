@@ -1,0 +1,389 @@
+// =============================================================================
+// GoodCircles AI Catalog Upload Tool — Prisma Schema Additions
+// =============================================================================
+// These models should be added to the existing prisma/schema.prisma file.
+// Run `npx prisma migrate dev --name add-catalog-upload` after adding.
+// =============================================================================
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum SourcePlatform {
+  SHOPIFY
+  ETSY
+  AMAZON
+}
+
+enum CatalogTier {
+  STARTER       // 1–50 products, $75
+  GROWTH        // 51–250 products, $150
+  PROFESSIONAL  // 251–1,000 products, $300
+  ENTERPRISE    // 1,000+ products, $500
+}
+
+enum ImportStatus {
+  QUEUED
+  FETCHING
+  TRANSFORMING
+  REVIEW_READY
+  PUBLISHING
+  COMPLETED
+  FAILED
+}
+
+enum CatalogProductStatus {
+  PENDING
+  AI_PROCESSED
+  ACCEPTED
+  REJECTED
+  PUBLISHED
+}
+
+enum BillingStatus {
+  PENDING
+  PAID
+  PROCESSING
+  COMPLETED
+  REFUND_REQUESTED
+  REFUNDED
+}
+
+// ---------------------------------------------------------------------------
+// CatalogImport — Tracks each import job
+// ---------------------------------------------------------------------------
+
+model CatalogImport {
+  id                String         @id @default(uuid())
+  merchantId        String
+  merchant          Merchant       @relation(fields: [merchantId], references: [id])
+
+  sourcePlatform    SourcePlatform
+  sourceCredentials Json?          // Encrypted OAuth tokens
+  tier              CatalogTier
+  productCount      Int
+
+  status            ImportStatus   @default(QUEUED)
+  lastCompletedStep String?        // For resume capability after failure
+
+  // COGS tracking
+  apiCallCount      Int            @default(0)
+  aiTokensUsed      Int            @default(0)
+  actualCogs        Decimal?       @db.Decimal(10, 2)
+
+  // Error tracking
+  errorLog          Json?
+
+  // Timestamps
+  startedAt         DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  // Relations
+  products          CatalogProduct[]
+  billing           CatalogBilling?
+
+  @@index([merchantId])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// CatalogProduct — Individual products within an import
+// ---------------------------------------------------------------------------
+
+model CatalogProduct {
+  id                String               @id @default(uuid())
+  catalogImportId   String
+  catalogImport     CatalogImport        @relation(fields: [catalogImportId], references: [id])
+
+  // Source platform data (original)
+  sourceId          String
+  originalTitle     String
+  originalDescription String             @db.Text
+  originalPrice     Decimal              @db.Decimal(10, 2)
+  originalImages    Json                 // String[] of URLs
+  originalCategory  String?
+  originalVariants  Json?
+
+  // AI-transformed data
+  aiTitle           String?
+  aiDescription     String?              @db.Text
+  suggestedCogs     Decimal?             @db.Decimal(10, 2)
+  suggestedPrice    Decimal?             @db.Decimal(10, 2)
+  gcCategory        String?
+  flags             Json?                // ProductFlag[]
+
+  // Merchant edits (overrides AI suggestions)
+  merchantEdits     Json?
+
+  // Final values (after merchant review)
+  finalTitle        String?
+  finalDescription  String?              @db.Text
+  finalCogs         Decimal?             @db.Decimal(10, 2)
+  finalPrice        Decimal?             @db.Decimal(10, 2)
+
+  // Status
+  status            CatalogProductStatus @default(PENDING)
+
+  // Link to published product in GoodCircles
+  publishedProductId String?             @unique
+  publishedProduct   ProductService?     @relation(fields: [publishedProductId], references: [id])
+
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  @@index([catalogImportId])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// CatalogBilling — Payment records for catalog uploads
+// ---------------------------------------------------------------------------
+
+model CatalogBilling {
+  id                     String        @id @default(uuid())
+  catalogImportId        String        @unique
+  catalogImport          CatalogImport @relation(fields: [catalogImportId], references: [id])
+  merchantId             String
+
+  tier                   CatalogTier
+  productCount           Int
+  amountCharged          Int           // In cents (Stripe convention)
+
+  stripePaymentIntentId  String?
+  stripeCheckoutSessionId String?
+  idempotencyKey         String        @unique
+
+  status                 BillingStatus @default(PENDING)
+
+  // Post-import financials
+  actualCogs             Int?          // In cents
+  grossMargin            Decimal?      @db.Decimal(5, 2) // Percentage
+  refundAmount           Int?          // In cents
+  refundReason           String?
+
+  // Timestamps
+  paidAt                 DateTime?
+  completedAt            DateTime?
+  createdAt              DateTime      @default(now())
+
+  // Relations
+  revenueEntry           CatalogRevenue?
+
+  @@index([merchantId])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// CatalogRevenue — Revenue tracking for financial model
+// ---------------------------------------------------------------------------
+// This feeds into the GoodCircles analytics dashboard.
+// Tracked: merchant_id, tier, product_count, amount_paid, cogs_actual, gross_margin
+// ---------------------------------------------------------------------------
+
+model CatalogRevenue {
+  id            String        @id @default(uuid())
+  billingId     String        @unique
+  billing       CatalogBilling @relation(fields: [billingId], references: [id])
+
+  merchantId    String
+  tier          CatalogTier
+  productCount  Int
+  amountPaid    Decimal       @db.Decimal(10, 2) // In dollars
+  cogsActual    Decimal?      @db.Decimal(10, 2) // In dollars, updated after import
+  grossMargin   Decimal?      @db.Decimal(5, 2)  // Percentage, updated after import
+  platform      SourcePlatform
+
+  timestamp     DateTime      @default(now())
+
+  @@index([tier])
+  @@index([timestamp])
+  @@index([merchantId])
+}
+
+
+// =============================================================================
+// CATALOG UPLOAD TOOL — Schema Additions
+// Append this entire block to the bottom of your existing prisma/schema.prisma
+// =============================================================================
+
+// Add this relation line to your existing Merchant model:
+//   catalogImports    CatalogImport[]
+//
+// Add this relation line to your existing ProductService model:
+//   catalogProducts   CatalogProduct[]
+//
+// Then append everything below this comment block.
+
+// --- Enums ---
+
+enum SourcePlatform {
+  SHOPIFY
+  ETSY
+  AMAZON
+}
+
+enum CatalogTier {
+  STARTER
+  GROWTH
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum ImportStatus {
+  QUEUED
+  FETCHING
+  TRANSFORMING
+  REVIEW_READY
+  PUBLISHING
+  COMPLETED
+  FAILED
+}
+
+enum CatalogProductStatus {
+  PENDING
+  AI_PROCESSED
+  ACCEPTED
+  REJECTED
+  PUBLISHED
+}
+
+enum BillingStatus {
+  PENDING
+  PAID
+  PROCESSING
+  COMPLETED
+  REFUND_REQUESTED
+  REFUNDED
+}
+
+enum CatalogErrorType {
+  CONNECTION_ERROR
+  RATE_LIMIT_ERROR
+  API_ERROR
+  PARSING_ERROR
+  TRANSFORMATION_ERROR
+  VALIDATION_ERROR
+  UNKNOWN_ERROR
+}
+
+// --- Models ---
+
+model CatalogImport {
+  id                 String    @id @default(cuid())
+  merchantId         String
+  merchant           Merchant  @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  sourcePlatform     SourcePlatform
+  tier               CatalogTier
+  productCount       Int
+  status             ImportStatus @default(QUEUED)
+
+  fetchedCount       Int       @default(0)
+  transformedCount   Int       @default(0)
+  publishedCount     Int       @default(0)
+
+  lastCompletedStep  String?
+  errorLog           String?
+
+  actualPlatformCogs Float?
+
+  createdAt          DateTime  @default(now())
+  startedAt          DateTime?
+  completedAt        DateTime?
+
+  products           CatalogProduct[]
+  billing            CatalogBilling?
+
+  @@index([merchantId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CatalogProduct {
+  id                  String    @id @default(cuid())
+  importId            String
+  import              CatalogImport @relation(fields: [importId], references: [id], onDelete: Cascade)
+
+  sourceId            String
+  status              CatalogProductStatus @default(PENDING)
+
+  originalTitle       String
+  originalDescription String?
+  originalPrice       Float
+  originalCategory    String?
+
+  aiCategory          String?
+  aiDescription       String?
+  aiPricingSuggestion Float?
+
+  merchantTitle       String?
+  merchantDescription String?
+  merchantPrice       Float?
+  merchantCategory    String?
+
+  finalTitle          String?
+  finalDescription    String?
+  finalPrice          Float?
+  finalCategory       String?
+
+  publishedProductId  String?
+  publishedProduct    ProductService? @relation(fields: [publishedProductId], references: [id])
+
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([importId])
+  @@index([status])
+}
+
+model CatalogBilling {
+  id                      String    @id @default(cuid())
+  importId                String    @unique
+  import                  CatalogImport @relation(fields: [importId], references: [id], onDelete: Cascade)
+
+  merchantId              String
+  tier                    CatalogTier
+  productCount            Int
+  amountCharged           Int                    // in cents
+  amountChargedDisplay    Float?                 // in dollars
+
+  status                  BillingStatus @default(PENDING)
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+
+  idempotencyKey          String    @unique
+
+  actualCogs              Int?                   // in cents, after import completes
+  grossMargin             Float?                 // percentage
+
+  paidAt                  DateTime?
+  completedAt             DateTime?
+  refundedAt              DateTime?
+  refundAmount            Int?
+  refundReason            String?
+
+  createdAt               DateTime  @default(now())
+
+  @@index([merchantId])
+  @@index([status])
+}
+
+model CatalogRevenue {
+  id           String    @id @default(cuid())
+  billingId    String
+  merchantId   String
+  tier         CatalogTier
+  productCount Int
+  amountPaid   Float                             // in dollars
+  cogsActual   Float?                            // in dollars
+  grossMargin  Float?                            // percentage
+  platform     SourcePlatform
+
+  timestamp    DateTime  @default(now())
+
+  @@index([merchantId])
+  @@index([tier])
+  @@index([timestamp])
+}

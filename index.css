@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-accent: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── GoodCircles Brand System (Powerup Media) ──────────────────── */
+:root {
+  --gc-purple: #7851A9;
+  --gc-lavender: #CA9CE1;
+  --gc-gold: #C2A76F;
+  --gc-crimson: #A20021;
+  --gc-black: #000000;
+  --gc-white: #FFFFFF;
+  --gc-bg: #FAFAFA;
+  --gc-card: #FFFFFF;
+  --gc-text: #1A1A1A;
+  --gc-text-secondary: #6B7280;
+  --gc-border: #E5E7EB;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900;
+  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+}
+
+.font-accent {
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 500;
+}

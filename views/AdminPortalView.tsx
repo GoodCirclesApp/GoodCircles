@@ -1,0 +1,276 @@
+
+import React, { useState, useEffect } from 'react';
+import { 
+  LayoutDashboard, 
+  Users, 
+  History, 
+  DollarSign, 
+  Building2, 
+  ShieldCheck, 
+  Map, 
+  Database, 
+  Activity,
+  Menu,
+  X,
+  ChevronRight,
+  Search,
+  Filter,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  ArrowUpRight,
+  ArrowDownRight,
+  MoreVertical,
+  RefreshCw,
+  Presentation,
+  FlaskConical,
+  Link
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { adminService } from '../services/adminService';
+import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
+import { MunicipalDemoSimulator } from '../components/MunicipalDemoSimulator';
+import { MockDataManager } from '../components/MockDataManager';
+import { AdminAffiliateDashboard } from '../components/AdminAffiliateDashboard';
+
+// Sub-components
+
+const SystemDashboard = () => {
+  const [stats, setStats] = useState<any>(null);
+  useEffect(() => { adminService.getStats().then(setStats); }, []);
+  if (!stats) return <div className="p-8">Loading...</div>;
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard title="Platform Revenue" value={`$${stats.totalRevenue.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} trend="+12%" />
+        <StatCard title="Transaction Volume" value={`$${stats.totalTransactionVolume.toLocaleString()}`} icon={<History className="w-5 h-5" />} trend="+8%" />
+        <StatCard title="Nonprofit Funding" value={`$${stats.totalNonprofitFunding.toLocaleString()}`} icon={<Heart className="w-5 h-5" />} trend="+15%" />
+        <StatCard title="Active Users" value={Object.values(stats.activeUsersByRole).reduce((a: any, b: any) => a + b, 0).toString()} icon={<Users className="w-5 h-5" />} trend="+5%" />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100">
+          <h4 className="text-lg font-bold mb-6">Users by Role</h4>
+          <div className="space-y-4">
+            {Object.entries(stats.activeUsersByRole).map(([role, count]: [string, any]) => (
+              <div key={role} className="flex items-center justify-between">
+                <span className="text-slate-500 font-medium">{role}</span>
+                <span className="font-bold">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-2xl border border-slate-100">
+          <h4 className="text-lg font-bold mb-6">Banking Adoption</h4>
+          <div className="flex items-center justify-center h-40">
+            <div className="text-center">
+              <div className="text-4xl font-black">{(stats.internalBankingAdoption * 100).toFixed(0)}%</div>
+              <div className="text-slate-400 text-sm">Internal Banking Adoption Rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const UserManagement = () => {
+  const [users, setUsers] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  useEffect(() => { adminService.getUsers().then(setUsers); }, []);
+  const filteredUsers = users.filter(u => u.email.toLowerCase().includes(searchTerm.toLowerCase()) || (u.firstName + ' ' + u.lastName).toLowerCase().includes(searchTerm.toLowerCase()));
+  const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
+    try { await adminService.updateUserStatus(userId, !currentStatus); setUsers(await adminService.getUsers()); } catch (err) { console.error('Failed to update user status:', err); }
+  };
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input type="text" placeholder="Search users by name or email..." className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        </div>
+        <div className="flex gap-2"><button className="px-4 py-2 rounded-xl border border-slate-200 flex items-center gap-2 text-sm font-medium"><Filter className="w-4 h-4" /> Filter</button></div>
+      </div>
+      <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <table className="w-full text-left">
+          <thead className="bg-slate-50 border-bottom border-slate-100">
+            <tr>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">User</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Role</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Joined</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {filteredUsers.map(user => (
+              <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                <td className="px-6 py-4"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs">{user.firstName?.[0] || user.email[0].toUpperCase()}</div><div><div className="font-bold text-sm">{user.firstName ? `${user.firstName} ${user.lastName || ''}` : 'No Name'}</div><div className="text-xs text-slate-400">{user.email}</div></div></div></td>
+                <td className="px-6 py-4 text-sm font-medium text-slate-600">{user.role}</td>
+                <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${user.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{user.isActive ? 'ACTIVE' : 'INACTIVE'}</span></td>
+                <td className="px-6 py-4 text-sm text-slate-500">{new Date(user.createdAt).toLocaleDateString()}</td>
+                <td className="px-6 py-4 text-right"><button onClick={() => toggleUserStatus(user.id, user.isActive)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${user.isActive ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'}`}>{user.isActive ? 'DEACTIVATE' : 'ACTIVATE'}</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const TransactionMonitoring = () => {
+  const [transactions, setTransactions] = useState<any[]>([]);
+  useEffect(() => { adminService.getTransactions().then(setTransactions); }, []);
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <table className="w-full text-left">
+          <thead className="bg-slate-50"><tr><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Transaction</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Amount</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Date</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th></tr></thead>
+          <tbody className="divide-y divide-slate-100">{transactions.map(tx => (<tr key={tx.id} className="hover:bg-slate-50"><td className="px-6 py-4"><div className="text-sm font-bold">{tx.merchant?.businessName || 'Merchant'}</div><div className="text-xs text-slate-400">ID: {tx.id.slice(0, 8)}...</div></td><td className="px-6 py-4 font-bold text-sm">${Number(tx.grossAmount).toFixed(2)}</td><td className="px-6 py-4"><span className="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">COMPLETED</span></td><td className="px-6 py-4 text-sm text-slate-500">{new Date(tx.createdAt).toLocaleString()}</td><td className="px-6 py-4 text-right"><button className="text-xs font-bold text-rose-600">REFUND</button></td></tr>))}</tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const FinancialOverview = () => {
+  const [financials, setFinancials] = useState<any>(null);
+  useEffect(() => { adminService.getFinancials().then(setFinancials); }, []);
+  if (!financials) return <div className="p-8">Loading...</div>;
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard title="Platform Fees" value={`$${financials.platformFeeRevenue.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} />
+        <StatCard title="Processing Fees" value={`$${financials.processingFeePassThrough.toLocaleString()}`} icon={<RefreshCw className="w-5 h-5" />} />
+        <StatCard title="Netting Savings" value={`$${financials.nettingSavings.toLocaleString()}`} icon={<ArrowDownRight className="w-5 h-5" />} />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Payment Split</h4><div className="flex items-center gap-4"><div className="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden flex"><div style={{ width: `${financials.paymentSplit.internal}%` }} className="bg-emerald-500 h-full" /><div style={{ width: `${financials.paymentSplit.card}%` }} className="bg-blue-500 h-full" /></div></div><div className="mt-4 flex justify-between text-xs font-bold"><div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded-full" /> Internal ({financials.paymentSplit.internal}%)</div><div className="flex items-center gap-2"><div className="w-3 h-3 bg-blue-500 rounded-full" /> Card ({financials.paymentSplit.card}%)</div></div></div>
+        <div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Aggregate Wallet Balance</h4><div className="text-3xl font-black">${financials.aggregateWalletBalance.toLocaleString()}</div><p className="text-slate-400 text-sm mt-2">Total capital held in platform wallets</p></div>
+      </div>
+    </div>
+  );
+};
+
+const CooperativeManagement = () => {
+  const [coops, setCoops] = useState<any[]>([]);
+  useEffect(() => { adminService.getCooperatives().then(setCoops); }, []);
+  return (<div className="grid grid-cols-1 md:grid-cols-2 gap-6">{coops.map(coop => (<div key={coop.id} className="bg-white p-6 rounded-2xl border border-slate-100"><div className="flex justify-between items-start mb-4"><div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><Building2 className="w-6 h-6" /></div><span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${coop.dividendStatus === 'DISTRIBUTED' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{coop.dividendStatus}</span></div><h4 className="font-bold text-lg">{coop.name}</h4><div className="mt-4 flex items-center gap-4 text-sm text-slate-500"><div className="flex items-center gap-1"><Users className="w-4 h-4" /> {coop.members} Members</div></div></div>))}</div>);
+};
+
+const CommunityFundOversight = () => {
+  const [fund, setFund] = useState<any>(null);
+  useEffect(() => { adminService.getCommunityFund().then(setFund); }, []);
+  if (!fund) return <div className="p-8">Loading...</div>;
+  return (<div className="space-y-8"><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"><StatCard title="Fund Balance" value={`$${fund.fundBalance.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} /><StatCard title="Deployed Capital" value={`$${fund.deployedCapital.toLocaleString()}`} icon={<ArrowUpRight className="w-5 h-5" />} /><StatCard title="Loan Performance" value={`${(fund.loanPerformance * 100).toFixed(1)}%`} icon={<CheckCircle2 className="w-5 h-5" />} /><StatCard title="Return Distributions" value={`$${fund.returnDistributions.toLocaleString()}`} icon={<RefreshCw className="w-5 h-5" />} /></div></div>);
+};
+
+const MunicipalPartnerships = () => {
+  const [partners, setPartners] = useState<any[]>([]);
+  useEffect(() => { adminService.getMunicipalPartners().then(setPartners); }, []);
+  return (<div className="grid grid-cols-1 md:grid-cols-2 gap-6">{partners.map(p => (<div key={p.id} className="bg-white p-6 rounded-2xl border border-slate-100"><div className="flex justify-between items-center mb-4"><h4 className="font-bold text-lg">{p.name}</h4><div className="text-emerald-600 font-black">{p.impactScore} Impact</div></div><div className="text-sm text-slate-500">{p.activeUsers.toLocaleString()} Active Users</div><div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden"><div style={{ width: `${p.impactScore}%` }} className="bg-emerald-500 h-full" /></div></div>))}</div>);
+};
+
+const DataCooperative = () => {
+  const [dataCoop, setDataCoop] = useState<any>(null);
+  useEffect(() => { adminService.getDataCoop().then(setDataCoop); }, []);
+  if (!dataCoop) return <div className="p-8">Loading...</div>;
+  return (<div className="space-y-8"><div className="grid grid-cols-1 md:grid-cols-3 gap-6"><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Aggregation Status</h4><div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" /><span className="text-2xl font-black">{dataCoop.aggregationStatus}</span></div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Last Insight Log</h4><div className="text-2xl font-black">{new Date(dataCoop.lastInsightLog).toLocaleDateString()}</div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Premium Revenue</h4><div className="text-2xl font-black">${dataCoop.premiumRevenue.toLocaleString()}</div></div></div></div>);
+};
+
+const SystemHealth = () => {
+  const [health, setHealth] = useState<any>(null);
+  useEffect(() => { adminService.getSystemHealth().then(setHealth); }, []);
+  if (!health) return <div className="p-8">Loading...</div>;
+  return (<div className="space-y-8"><div className="grid grid-cols-1 md:grid-cols-2 gap-6"><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">API Performance</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{health.apiResponseTime}ms</span><span className="text-emerald-500 text-sm font-bold mb-1">Healthy</span></div><p className="text-slate-400 text-sm mt-2">Average response time across all endpoints</p></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Error Rate</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{(health.errorRate * 100).toFixed(2)}%</span><span className="text-emerald-500 text-sm font-bold mb-1">Normal</span></div><p className="text-slate-400 text-sm mt-2">Percentage of failed requests in last 24h</p></div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Scheduled Jobs</h4><div className="space-y-4">{health.jobs.map((job: any) => (<div key={job.name} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl"><div className="flex items-center gap-3"><div className={`w-2 h-2 rounded-full ${job.status === 'SUCCESS' ? 'bg-emerald-500' : 'bg-rose-500'}`} /><span className="font-bold">{job.name}</span></div><div className="text-xs text-slate-400">Last run: {new Date(job.lastRun).toLocaleString()}</div></div>))}</div></div></div>);
+};
+
+// Main View
+
+type AdminSubView =
+  | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
+  | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
+  | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE';
+
+export const AdminPortalView: React.FC = () => {
+  const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const store = useGoodCirclesStore();
+
+  const menuItems = [
+    { id: 'DASHBOARD', label: 'System Dashboard', icon: LayoutDashboard },
+    { id: 'USERS', label: 'User Management', icon: Users },
+    { id: 'TRANSACTIONS', label: 'Transaction Monitoring', icon: History },
+    { id: 'FINANCIALS', label: 'Financial Overview', icon: DollarSign },
+    { id: 'COOPS', label: 'Cooperative Management', icon: Building2 },
+    { id: 'FUND', label: 'Community Fund', icon: ShieldCheck },
+    { id: 'MUNICIPAL', label: 'Municipal Partners', icon: Map },
+    { id: 'DATA', label: 'Data Cooperative', icon: Database },
+    { id: 'HEALTH', label: 'System Health', icon: Activity },
+    { id: 'DEMO', label: 'Municipal Demo', icon: Presentation },
+    { id: 'MOCK_DATA', label: 'Demo Data Manager', icon: FlaskConical },
+    { id: 'AFFILIATE', label: 'Affiliate Marketplace', icon: Link },
+  ];
+
+  const renderContent = () => {
+    switch (activeSubView) {
+      case 'DASHBOARD': return <SystemDashboard />;
+      case 'USERS': return <UserManagement />;
+      case 'TRANSACTIONS': return <TransactionMonitoring />;
+      case 'FINANCIALS': return <FinancialOverview />;
+      case 'COOPS': return <CooperativeManagement />;
+      case 'FUND': return <CommunityFundOversight />;
+      case 'MUNICIPAL': return <MunicipalPartnerships />;
+      case 'DATA': return <DataCooperative />;
+      case 'HEALTH': return <SystemHealth />;
+      case 'DEMO': return <MunicipalDemoSimulator />;
+      case 'MOCK_DATA': return <MockDataManager />;
+      case 'AFFILIATE': return <AdminAffiliateDashboard />;
+      default: return <SystemDashboard />;
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-slate-50 overflow-hidden">
+      <motion.aside initial={false} animate={{ width: isSidebarOpen ? 280 : 80 }} className="bg-white border-r border-slate-100 flex flex-col z-20">
+        <div className="p-6 flex items-center justify-between">
+          <div className="flex items-center gap-3 overflow-hidden"><div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white shrink-0"><ShieldCheck className="w-5 h-5" /></div>{isSidebarOpen && <span className="font-black italic uppercase tracking-tighter text-xl">Admin</span>}</div>
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 hover:bg-slate-50 rounded-lg transition-colors">{isSidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}</button>
+        </div>
+        <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+          <button onClick={() => store.setActiveView('MAIN')} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-500 hover:bg-slate-50 mb-4 border-b border-slate-50 pb-4"><ChevronRight className="w-5 h-5 shrink-0 rotate-180" />{isSidebarOpen && <span className="font-bold text-sm whitespace-nowrap">Back to Platform</span>}</button>
+          {menuItems.map((item) => (
+            <button key={item.id} onClick={() => setActiveSubView(item.id as AdminSubView)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${activeSubView === item.id ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' : 'text-slate-500 hover:bg-slate-50'}`}>
+              <item.icon className="w-5 h-5 shrink-0" />{isSidebarOpen && <span className="font-bold text-sm whitespace-nowrap">{item.label}</span>}
+            </button>
+          ))}
+        </nav>
+        <div className="p-4 border-t border-slate-100"><div className={`flex items-center gap-3 p-3 rounded-xl bg-slate-50 ${!isSidebarOpen && 'justify-center'}`}><div className="w-8 h-8 rounded-full bg-slate-200 shrink-0" />{isSidebarOpen && (<div className="overflow-hidden"><div className="font-bold text-xs truncate">Platform Admin</div><div className="text-[10px] text-slate-400 truncate">admin@goodcircles.org</div></div>)}</div></div>
+      </motion.aside>
+
+      <main className="flex-1 overflow-y-auto">
+        <header className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-10 px-8 py-4">
+          <div className="flex justify-between items-center">
+            <div><h2 className="text-2xl font-black italic uppercase tracking-tighter">{menuItems.find(i => i.id === activeSubView)?.label}</h2><p className="text-slate-400 text-xs font-medium">Platform Management Portal</p></div>
+            <div className="flex items-center gap-4"><div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full"><div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" /><span className="text-[10px] font-bold text-emerald-700 uppercase">System Online</span></div></div>
+          </div>
+        </header>
+        <div className="p-8 max-w-7xl mx-auto">
+          <AnimatePresence mode="wait"><motion.div key={activeSubView} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>{renderContent()}</motion.div></AnimatePresence>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+const StatCard = ({ title, value, icon, trend }: { title: string, value: string, icon: React.ReactNode, trend?: string }) => (
+  <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+    <div className="flex justify-between items-start mb-4"><div className="p-2 bg-slate-50 rounded-xl text-slate-600">{icon}</div>{trend && (<span className={`text-xs font-bold ${trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>{trend}</span>)}</div>
+    <div className="text-2xl font-black">{value}</div>
+    <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mt-1">{title}</div>
+  </div>
+);
+
+const Heart = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></svg>
+);

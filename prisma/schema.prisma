@@ -1,0 +1,1227 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  passwordHash String
+  role String @default("NEIGHBOR")
+  firstName String?
+  lastName String?
+  phone String?
+  address String?
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  discountMode String @default("PRICE_REDUCTION")
+  // "PRICE_REDUCTION" or "PLATFORM_CREDITS"
+  electedNonprofitId String?
+  electedNonprofit Nonprofit? @relation("UserElectedNonprofit", fields: [electedNonprofitId], references: [id])
+  merchant Merchant?
+  nonprofit Nonprofit? @relation("NonprofitUser")
+  cdfiPartner CDFIPartner?
+  wallet Wallet?
+  transactions Transaction[]
+  initiatives CommunityInitiative[]
+  credits CreditLedger[]
+  consumerBookings Booking[] @relation("ConsumerBookings")
+  fundContributions FundContribution[]
+  governanceProposals GovernanceProposal[]
+  proposalVotes       ProposalVote[]
+  qrTokens            QrCheckoutToken[]
+}
+
+model MerchantReferral {
+  id String @id @default(uuid())
+  referringNonprofitId String
+  referringNonprofit Nonprofit @relation("NonprofitReferrals", fields: [referringNonprofitId], references: [id])
+  merchantId String @unique
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+  referralCodeUsed String
+  is_active Boolean @default(true)
+  referredAt DateTime @default(now())
+  payouts ReferralBonusPayout[]
+  @@index([referringNonprofitId])
+  @@index([merchantId])
+}
+
+model ReferralBonusTier {
+  id String @id @default(uuid())
+  tierName String
+  nonprofitFundingThreshold Decimal
+  bonusAmount Decimal
+  createdAt DateTime @default(now())
+  payouts ReferralBonusPayout[]
+}
+
+model ReferralBonusPayout {
+  id String @id @default(uuid())
+  referralId String
+  referral MerchantReferral @relation(fields: [referralId], references: [id])
+  tierId String
+  tier ReferralBonusTier @relation(fields: [tierId], references: [id])
+  amount Decimal
+  nonprofitFundingAtPayout Decimal
+  paidAt DateTime @default(now())
+  @@index([referralId])
+  @@index([tierId])
+}
+
+model CreditLedger {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount Decimal
+  entryType String @default("CREDIT")
+  // "CREDIT" or "DEBIT"
+  source String
+  // "DISCOUNT", "WAIVER_RETURN", "REFERRAL", "COMMUNITY_FUND", "REFERRAL_BONUS", "COMMUNITY_FUND_RETURN", "MERCHANT_REWARD", "PROMOTIONAL", "TRANSFER"
+  transactionId String?
+  // Transaction that earned the credit
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+  redeemedTransactionId String?
+  // Transaction where credit was spent
+  transferId String?
+  // ID of the transfer if source is "TRANSFER"
+  circulationCount Int @default(0)
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([userId])
+}
+
+model Merchant {
+  id String @id @default(uuid())
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName String
+  businessType String
+  taxId String?
+  isVerified Boolean @default(false)
+  onboardedAt DateTime?
+  stripeAccountId String? @unique
+  latitude Float?
+  longitude Float?
+  regionId String?
+  creditAcceptance String @default("NONE")
+  // "NONE", "PARTIAL", "FULL"
+  maxCreditPercentage Int @default(0)
+  // 0-100
+  createdAt DateTime @default(now())
+  listings ProductService[]
+  transactions Transaction[]
+  groupMemberships GroupMember[]
+  commitments GroupCommitment[]
+  referral MerchantReferral?
+  availability MerchantAvailability[]
+  blocks MerchantBlock[]
+  bookings Booking[]
+  dataCoopMember DataCoopMember?
+  dataCoopAccess DataCoopAccess[]
+  coopMemberships CoopMember[]
+  patronageRecords PatronageRecord[]
+  coopAsMerchant Cooperative? @relation("CoopAsMerchant")
+  fundDeployments FundDeployment[]
+  benefitEnrollments BenefitEnrollment[]
+  buyerRelationships SupplyRelationship[] @relation("BuyerRelationships")
+  supplierRelationships SupplyRelationship[] @relation("SupplierRelationships")
+  buyerMatches SupplyMatch[] @relation("BuyerMatches")
+  supplierMatches SupplyMatch[] @relation("SupplierMatches")
+  catalogImports CatalogImport[]
+  region Region? @relation(fields: [regionId], references: [id])
+  donationReceipts    DonationReceipt[]
+  cogsSuggestions     CogsSuggestion[]
+}
+
+model DataCoopMember {
+  id String @id @default(uuid())
+  merchantId String @unique
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  optedInAt DateTime @default(now())
+  optedOutAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([merchantId])
+}
+
+model MarketInsight {
+  id String @id @default(uuid())
+  category String
+  regionId String?
+  metricName String
+  metricValue Float
+  period String
+  // YYYY-MM
+  statisticalConfidence Float
+  memberCountAtGeneration Int
+  generatedAt DateTime @default(now())
+  @@index([category, regionId, period])
+}
+
+model DataCoopActivation {
+  id String @id @default(uuid())
+  checkDate DateTime @default(now())
+  category String
+  regionId String?
+  optedInMemberCount Int
+  thresholdRequired Int
+  thresholdMet Boolean
+  insightsAvailable Boolean @default(false)
+  createdAt DateTime @default(now())
+  @@index([category, regionId])
+}
+
+model AnonymizedTransaction {
+  id String @id @default(uuid())
+  category String
+  regionId String?
+  grossAmount Float
+  nonprofitShare Float
+  platformFee Float
+  merchantNet Float
+  transactionDate DateTime
+  createdAt DateTime @default(now())
+  @@index([category, regionId, transactionDate])
+}
+
+model DataCoopAccess {
+  id String @id @default(uuid())
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  category String
+  regionId String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  @@index([merchantId, category, regionId])
+}
+
+model PurchasingGroup {
+  id String @id @default(uuid())
+  name String
+  coopType String
+  // "CROSS_CATEGORY" or "CATEGORY_SPECIFIC"
+  category String?
+  // Null for cross-category
+  regionId String?
+  // Null for cross-category
+  minMembers Int
+  status String @default("MONITORING")
+  // "MONITORING" or "ACTIVE"
+  activatedAt DateTime?
+  createdAt DateTime @default(now())
+  members GroupMember[]
+  deals GroupDeal[]
+}
+
+model GroupMember {
+  id String @id @default(uuid())
+  groupId String
+  group PurchasingGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  joinedAt DateTime @default(now())
+  isActive Boolean @default(true)
+  @@unique([groupId, merchantId])
+}
+
+model GroupDeal {
+  id String @id @default(uuid())
+  groupId String
+  group PurchasingGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  supplierName String
+  productDescription String
+  unitPriceRetail Decimal
+  unitPriceGroup Decimal
+  minQuantity Int
+  currentCommitments Int @default(0)
+  deadline DateTime
+  status String @default("OPEN")
+  // "OPEN", "COMMITTED", "FULFILLED", "EXPIRED"
+  createdAt DateTime @default(now())
+  commitments GroupCommitment[]
+}
+
+model GroupCommitment {
+  id String @id @default(uuid())
+  dealId String
+  deal GroupDeal @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  quantity Int
+  committedAt DateTime @default(now())
+  @@unique([dealId, merchantId])
+}
+
+model CoopActivationTracking {
+  id String @id @default(uuid())
+  checkDate DateTime @default(now())
+  coopType String
+  // "CROSS_CATEGORY" or "CATEGORY_SPECIFIC"
+  category String?
+  regionId String?
+  merchantCount Int
+  thresholdRequired Int
+  thresholdMet Boolean
+  progressPct Float
+  createdAt DateTime @default(now())
+}
+
+model CreditTransfer {
+  id String @id @default(uuid())
+  fromUserId String
+  toUserId String
+  amount Decimal
+  createdAt DateTime @default(now())
+  @@index([fromUserId])
+  @@index([toUserId])
+}
+
+model Nonprofit {
+  id String @id @default(uuid())
+  userId String @unique
+  user User @relation("NonprofitUser", fields: [userId], references: [id], onDelete: Cascade)
+  orgName String
+  ein String @unique
+  missionStatement String?
+  isVerified Boolean @default(false)
+  verifiedAt DateTime?
+  stripeAccountId String? @unique
+  referralCode String? @unique
+  createdAt DateTime @default(now())
+  electedByUsers User[] @relation("UserElectedNonprofit")
+  transactions Transaction[]
+  initiatives CommunityInitiative[]
+  referrals MerchantReferral[] @relation("NonprofitReferrals")
+  bookings Booking[]
+  donationReceipts    DonationReceipt[]
+}
+
+model ProductService {
+  id String @id @default(uuid())
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  name String
+  description String?
+  price Decimal
+  cogs Decimal @default(0)
+  isClearance Boolean @default(false)
+  type String
+  category String
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  transactions Transaction[]
+  bookings Booking[]
+  catalogProducts CatalogProduct[]
+  priceSentinelFlags  PriceSentinelFlag[]
+  cogsSuggestions     CogsSuggestion[]
+}
+
+model Transaction {
+  id String @id @default(uuid())
+  neighborId String
+  neighbor User @relation(fields: [neighborId], references: [id])
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+  productServiceId String
+  productService ProductService @relation(fields: [productServiceId], references: [id])
+  nonprofitId String
+  nonprofit Nonprofit @relation(fields: [nonprofitId], references: [id])
+  grossAmount Decimal
+  discountAmount Decimal @default(0)
+  nonprofitShare Decimal @default(0)
+  platformFee Decimal @default(0)
+  merchantNet Decimal @default(0)
+  paymentMethod String
+  discountWaived Boolean @default(false)
+  waivedToInitiativeId String?
+  waivedToInitiative CommunityInitiative? @relation(fields: [waivedToInitiativeId], references: [id])
+  waivedToFundId String?
+  waivedToFund CommunityFund? @relation(fields: [waivedToFundId], references: [id])
+  discountMode String @default("PRICE_REDUCTION")
+  // "PRICE_REDUCTION" | "PLATFORM_CREDITS"
+  appliedCredits Decimal @default(0)
+  ledgerEntries LedgerEntry[]
+  creditLedgerEntries CreditLedger[]
+  merchantObligation MerchantObligation?
+  booking Booking?
+  donationReceipt     DonationReceipt?
+  refund              TransactionRefund?
+  createdAt DateTime @default(now())
+  @@index([neighborId])
+  @@index([merchantId])
+  @@index([nonprofitId])
+}
+
+model Wallet {
+  id String @id @default(uuid())
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance Decimal @default(0)
+  currency String @default("USD")
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ledgerEntries LedgerEntry[]
+}
+
+model LedgerEntry {
+  id String @id @default(uuid())
+  walletId String
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  transactionId String?
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+  entryType String
+  // "CREDIT" or "DEBIT"
+  amount Decimal
+  balanceAfter Decimal
+  description String?
+  createdAt DateTime @default(now())
+  @@index([walletId])
+  @@index([transactionId])
+}
+
+// Singleton treasury for all platform-level revenue. Never tied to a user wallet.
+// Created on first credit via upsert; id is always "gc-platform-treasury".
+model PlatformAccount {
+  id           String               @id @default("gc-platform-treasury")
+  balance      Decimal              @default(0) @db.Decimal(18, 4)
+  totalRevenue Decimal              @default(0) @db.Decimal(18, 4)
+  updatedAt    DateTime             @updatedAt
+  entries      PlatformLedgerEntry[]
+}
+
+model PlatformLedgerEntry {
+  id            String          @id @default(uuid())
+  accountId     String
+  account       PlatformAccount @relation(fields: [accountId], references: [id])
+  entryType     String
+  // "PLATFORM_FEE" | "INTERNAL_FEE" | "CONVERSION_FEE"
+  amount        Decimal         @db.Decimal(18, 4)
+  balanceAfter  Decimal         @db.Decimal(18, 4)
+  transactionId String?
+  description   String
+  createdAt     DateTime        @default(now())
+
+  @@index([accountId])
+  @@index([createdAt])
+}
+
+model MerchantObligation {
+  id String @id @default(uuid())
+  debtorMerchantId String
+  creditorMerchantId String
+  amount Decimal
+  transactionId String @unique
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  isSettled Boolean @default(false)
+  batchId String?
+  batch NettingBatch? @relation(fields: [batchId], references: [id])
+  createdAt DateTime @default(now())
+  @@index([debtorMerchantId])
+  @@index([creditorMerchantId])
+  @@index([batchId])
+}
+
+model NettingBatch {
+  id String @id @default(uuid())
+  batchDate DateTime @default(now())
+  grossObligations Decimal
+  netSettled Decimal
+  savings Decimal
+  status String
+  // "SIMULATED" or "EXECUTED"
+  merchantCount Int
+  cycleCount Int
+  createdAt DateTime @default(now())
+  obligations MerchantObligation[]
+}
+
+model NettingActivation {
+  id String @id @default(uuid())
+  checkDate DateTime @default(now())
+  m2mTransactionCount30d Int
+  uniqueMerchantPairs30d Int
+  simulatedMonthlySavings Decimal
+  trigger1Met Boolean
+  trigger2Met Boolean
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now())
+}
+
+model CommunityInitiative {
+  id String @id @default(uuid())
+  title String
+  description String?
+  fundingGoal Decimal
+  currentFunding Decimal @default(0)
+  createdBy String
+  creator User @relation(fields: [createdBy], references: [id])
+  nonprofitId String?
+  nonprofit Nonprofit? @relation(fields: [nonprofitId], references: [id])
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  transactions Transaction[]
+  fundDeployments FundDeployment[]
+}
+
+model MerchantAvailability {
+  id String @id @default(uuid())
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  dayOfWeek Int
+  // 0-6 (Sunday-Saturday)
+  startTime String
+  // HH:mm
+  endTime String
+  // HH:mm
+  isActive Boolean @default(true)
+  @@index([merchantId])
+}
+
+model MerchantBlock {
+  id String @id @default(uuid())
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  startDate DateTime
+  endDate DateTime
+  reason String?
+  @@index([merchantId])
+}
+
+model Booking {
+  id String @id @default(uuid())
+  listingId String
+  listing ProductService @relation(fields: [listingId], references: [id])
+  consumerId String
+  consumer User @relation("ConsumerBookings", fields: [consumerId], references: [id])
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+  nonprofitId String
+  nonprofit Nonprofit @relation(fields: [nonprofitId], references: [id])
+  scheduledDate DateTime
+  scheduledTime String
+  // HH:mm
+  durationMinutes Int
+  status String @default("PENDING")
+  // "PENDING", "CONFIRMED", "PAYMENT_PENDING", "COMPLETED", "CANCELLED", "NO_SHOW"
+  transactionId String? @unique
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+  cancelReason String?
+  createdAt DateTime @default(now())
+  reminders BookingReminder[]
+  @@index([listingId])
+  @@index([consumerId])
+  @@index([merchantId])
+  @@index([transactionId])
+}
+
+model BookingReminder {
+  id String @id @default(uuid())
+  bookingId String
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  remindAt DateTime
+  sent Boolean @default(false)
+  channel String
+  // "EMAIL", "SMS", "PUSH"
+  @@index([bookingId])
+}
+
+model Cooperative {
+  id String @id @default(uuid())
+  name String
+  type String
+  // "PURCHASING", "MARKETING", "SHARED_SERVICES"
+  ein String @unique
+  formationDate DateTime @default(now())
+  fiscalYearEnd String
+  // e.g., "12-31"
+  isActive Boolean @default(true)
+  // Link to a Merchant record so it can act as a buyer/seller on the platform
+  merchantId String? @unique
+  merchant Merchant? @relation("CoopAsMerchant", fields: [merchantId], references: [id])
+  members CoopMember[]
+  patronageRecords PatronageRecord[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CoopMember {
+  id String @id @default(uuid())
+  coopId String
+  cooperative Cooperative @relation(fields: [coopId], references: [id], onDelete: Cascade)
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  equityShares Decimal @default(0)
+  joinedAt DateTime @default(now())
+  status String @default("ACTIVE")
+  // "ACTIVE", "WITHDRAWN"
+  withdrawnAt DateTime?
+  @@unique([coopId, merchantId])
+}
+
+model PatronageRecord {
+  id String @id @default(uuid())
+  coopId String
+  cooperative Cooperative @relation(fields: [coopId], references: [id], onDelete: Cascade)
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  fiscalYear Int
+  totalPurchasesThroughCoop Decimal @default(0)
+  patronageDividendAmount Decimal @default(0)
+  distributedAt DateTime?
+  form1099Issued Boolean @default(false)
+  createdAt DateTime @default(now())
+  @@unique([coopId, merchantId, fiscalYear])
+}
+
+model CDFIPartner {
+  id String @id @default(uuid())
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orgName String
+  cdfiCertificationNumber String @unique
+  treasuryFundEligible Boolean @default(false)
+  newMarketsTaxCreditEligible Boolean @default(false)
+  lendingRegions String
+  // JSON array of region IDs
+  isVerified Boolean @default(false)
+  verifiedAt DateTime?
+  partnershipStatus String @default("applied")
+  // "applied", "under_review", "active", "suspended"
+  activatedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  managedFunds CommunityFund[]
+  approvedDeployments FundDeployment[] @relation("CDFIApprovedDeployments")
+}
+
+model CommunityFund {
+  id String @id @default(uuid())
+  name String
+  type String
+  // "donation_pool", "investment_fund", "loan_fund"
+  regionId String?
+  totalCapital Decimal @default(0)
+  deployedCapital Decimal @default(0)
+  returnRate Decimal?
+  // Target return rate for investment funds
+  cdfiPartnerId String?
+  cdfiPartner CDFIPartner? @relation(fields: [cdfiPartnerId], references: [id])
+  isActive Boolean @default(true)
+  activatedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  contributions FundContribution[]
+  deployments FundDeployment[]
+  waivedTransactions Transaction[]
+}
+
+model FundContribution {
+  id String @id @default(uuid())
+  fundId String
+  fund CommunityFund @relation(fields: [fundId], references: [id])
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  amount Decimal
+  source String
+  // "waived_discount", "direct"
+  createdAt DateTime @default(now())
+  returns FundReturn[]
+}
+
+model FundReturn {
+  id String @id @default(uuid())
+  contributionId String
+  contribution FundContribution @relation(fields: [contributionId], references: [id])
+  amount Decimal
+  returnedAt DateTime @default(now())
+}
+
+model FundDeployment {
+  id String @id @default(uuid())
+  fundId String
+  fund CommunityFund @relation(fields: [fundId], references: [id])
+  recipientMerchantId String?
+  recipientMerchant Merchant? @relation(fields: [recipientMerchantId], references: [id])
+  recipientInitiativeId String?
+  recipientInitiative CommunityInitiative? @relation(fields: [recipientInitiativeId], references: [id])
+  amount Decimal
+  deploymentType String
+  // "grant", "loan", "investment"
+  interestRate Decimal?
+  // For loans
+  repaymentTermMonths Int?
+  // For loans
+  status String @default("active")
+  // "active", "repaid", "defaulted"
+  cdfiApprovedBy String?
+  approver CDFIPartner? @relation("CDFIApprovedDeployments", fields: [cdfiApprovedBy], references: [id])
+  deployedAt DateTime @default(now())
+  repaidAmount Decimal @default(0)
+  repayments FundRepayment[]
+}
+
+model FundRepayment {
+  id String @id @default(uuid())
+  deploymentId String
+  deployment FundDeployment @relation(fields: [deploymentId], references: [id])
+  amount Decimal
+  principalAmount Decimal
+  interestAmount Decimal
+  repaidAt DateTime @default(now())
+}
+
+model Region {
+  id String @id @default(uuid())
+  name String
+  cityName String
+  state String
+  geoBounds String?
+  // JSON string: { type: "circle", lat: number, lng: number, radius: number } or polygon
+  createdAt DateTime @default(now())
+  merchants Merchant[]
+  metrics RegionalMetric[]
+  partner MunicipalPartner?
+  fiscalPolicy FiscalPolicy?
+}
+
+model RegionalMetric {
+  id String @id @default(uuid())
+  regionId String
+  region Region @relation(fields: [regionId], references: [id])
+  period String
+  // YYYY-MM
+  totalTransactions Int
+  totalGtv Decimal
+  totalLocalSpendRetained Decimal
+  totalNonprofitFunding Decimal
+  totalCommunityFundDeployed Decimal
+  totalJobsSupported Float
+  merchantsActive Int
+  consumersActive Int
+  internalPaymentPct Float
+  avgTransactionValue Decimal
+  generatedAt DateTime @default(now())
+  @@unique([regionId, period])
+}
+
+model MunicipalPartner {
+  id String @id @default(uuid())
+  regionId String @unique
+  region Region @relation(fields: [regionId], references: [id])
+  cityName String
+  state String
+  contactName String
+  contactEmail String
+  partnershipStatus String @default("none")
+  // none, in_discussion, active, suspended
+  activatedAt DateTime?
+  isActive Boolean @default(false)
+  tokens MunicipalAccessToken[]
+  incentives MunicipalIncentive[]
+}
+
+model MunicipalAccessToken {
+  id String @id @default(uuid())
+  partnerId String
+  partner MunicipalPartner @relation(fields: [partnerId], references: [id])
+  tokenHash String @unique
+  permissions String
+  // JSON string: string[]
+  issuedAt DateTime @default(now())
+  expiresAt DateTime?
+}
+
+model MunicipalIncentive {
+  id String @id @default(uuid())
+  partnerId String
+  partner MunicipalPartner @relation(fields: [partnerId], references: [id])
+  incentiveType String
+  // permitting, tif, procurement_priority, tax_abatement
+  description String
+  eligibilityCriteria String
+  // JSON string: { minTransactions: number, minGtv: number, etc }
+  isActive Boolean @default(true)
+}
+
+model BenefitProgram {
+  id String @id @default(uuid())
+  type String
+  // health, dental, vision, liability, workers_comp, retirement
+  providerName String
+  groupRateMonthly Decimal
+  individualRateMonthly Decimal
+  minParticipants Int
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  enrollments BenefitEnrollment[]
+}
+
+model BenefitEnrollment {
+  id String @id @default(uuid())
+  programId String
+  program BenefitProgram @relation(fields: [programId], references: [id])
+  merchantId String
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+  enrolledAt DateTime @default(now())
+  status String @default("active")
+  // active, cancelled
+  @@unique([programId, merchantId])
+}
+
+model BenefitActivation {
+  id String @id @default(uuid())
+  checkDate DateTime @default(now())
+  totalActiveMerchants Int
+  thresholdMet Boolean
+  benefitsAvailable Boolean @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SupplyRelationship {
+  id String @id @default(uuid())
+  buyerMerchantId String
+  buyer Merchant @relation("BuyerRelationships", fields: [buyerMerchantId], references: [id])
+  supplierType String
+  // internal, external
+  supplierMerchantId String?
+  supplierMerchant Merchant? @relation("SupplierRelationships", fields: [supplierMerchantId], references: [id])
+  externalSupplierName String?
+  productCategory String
+  avgMonthlySpend Decimal
+  createdAt DateTime @default(now())
+  @@index([buyerMerchantId])
+  @@index([productCategory])
+}
+
+model SupplyMatch {
+  id String @id @default(uuid())
+  buyerMerchantId String
+  buyer Merchant @relation("BuyerMatches", fields: [buyerMerchantId], references: [id])
+  suggestedSupplierMerchantId String
+  suggestedSupplier Merchant @relation("SupplierMatches", fields: [suggestedSupplierMerchantId], references: [id])
+  productCategory String
+  potentialSavings Decimal
+  matchConfidence Float
+  status String @default("suggested")
+  // suggested, accepted, rejected
+  createdAt DateTime @default(now())
+  cogsSuggestions CogsSuggestion[]
+  @@index([buyerMerchantId])
+  @@index([productCategory])
+}
+
+// ============================================================================
+// CATALOG UPLOAD TOOL MODELS
+// ============================================================================
+
+enum SourcePlatform {
+  SHOPIFY
+  ETSY
+  AMAZON
+}
+
+enum CatalogTier {
+  STARTER
+  GROWTH
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum ImportStatus {
+  QUEUED
+  FETCHING
+  TRANSFORMING
+  REVIEW_READY
+  PUBLISHING
+  COMPLETED
+  FAILED
+}
+
+enum CatalogProductStatus {
+  PENDING
+  AI_PROCESSED
+  ACCEPTED
+  REJECTED
+  PUBLISHED
+}
+
+enum BillingStatus {
+  PENDING
+  PAID
+  PROCESSING
+  COMPLETED
+  REFUND_REQUESTED
+  REFUNDED
+}
+
+enum CatalogErrorType {
+  CONNECTION_ERROR
+  RATE_LIMIT_ERROR
+  API_ERROR
+  PARSING_ERROR
+  TRANSFORMATION_ERROR
+  VALIDATION_ERROR
+  UNKNOWN_ERROR
+}
+
+model CatalogImport {
+  id                 String         @id @default(cuid())
+  merchantId         String
+  merchant           Merchant       @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  sourcePlatform     SourcePlatform
+  tier               CatalogTier
+  productCount       Int
+  status             ImportStatus   @default(QUEUED)
+
+  fetchedCount       Int            @default(0)
+  transformedCount   Int            @default(0)
+  publishedCount     Int            @default(0)
+
+  lastCompletedStep  String?
+  errorLog           String?
+
+  actualPlatformCogs Float?
+
+  createdAt          DateTime       @default(now())
+  startedAt          DateTime?
+  completedAt        DateTime?
+
+  products           CatalogProduct[]
+  billing            CatalogBilling?
+
+  @@index([merchantId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CatalogProduct {
+  id                  String               @id @default(cuid())
+  importId            String
+  import              CatalogImport        @relation(fields: [importId], references: [id], onDelete: Cascade)
+
+  sourceId            String
+  status              CatalogProductStatus @default(PENDING)
+
+  originalTitle       String
+  originalDescription String?
+  originalPrice       Float
+  originalCategory    String?
+
+  aiCategory          String?
+  aiDescription       String?
+  aiPricingSuggestion Float?
+
+  merchantTitle       String?
+  merchantDescription String?
+  merchantPrice       Float?
+  merchantCogs        Float?
+  merchantCategory    String?
+  cogsVerified        Boolean              @default(false)
+
+  finalTitle          String?
+  finalDescription    String?
+  finalPrice          Float?
+  finalCogs           Float?
+  finalCategory       String?
+
+  publishedProductId  String?
+  publishedProduct    ProductService?      @relation(fields: [publishedProductId], references: [id])
+
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  @@index([importId])
+  @@index([status])
+}
+
+model CatalogBilling {
+  id                      String        @id @default(cuid())
+  importId                String        @unique
+  import                  CatalogImport @relation(fields: [importId], references: [id], onDelete: Cascade)
+
+  merchantId              String
+  tier                    CatalogTier
+  productCount            Int
+  amountCharged           Int
+  amountChargedDisplay    Float?
+
+  status                  BillingStatus @default(PENDING)
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+
+  idempotencyKey          String        @unique
+
+  actualCogs              Int?
+  grossMargin             Float?
+
+  paidAt                  DateTime?
+  completedAt             DateTime?
+  refundedAt              DateTime?
+  refundAmount            Int?
+  refundReason            String?
+
+  createdAt               DateTime      @default(now())
+
+  @@index([merchantId])
+  @@index([status])
+}
+
+model CatalogRevenue {
+  id           String         @id @default(cuid())
+  billingId    String
+  merchantId   String
+  tier         CatalogTier
+  productCount Int
+  amountPaid   Float
+  cogsActual   Float?
+  grossMargin  Float?
+  platform     SourcePlatform
+
+  timestamp    DateTime       @default(now())
+
+  @@index([merchantId])
+  @@index([tier])
+  @@index([timestamp])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Affiliate Marketplace
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AffiliateProgram {
+  id           String             @id @default(uuid())
+  name         String
+  platform     String             // e.g. "AMAZON", "ETSY", "CUSTOM"
+  trackingId   String             // our affiliate/associate tag with the partner
+  baseCommRate Decimal            @default(0.04) @db.Decimal(5, 4)
+  logoUrl      String?
+  isActive     Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  listings     AffiliateListing[]
+}
+
+model AffiliateListing {
+  id           String                @id @default(uuid())
+  programId    String
+  program      AffiliateProgram      @relation(fields: [programId], references: [id])
+  externalId   String?               // product ID on partner platform
+  title        String
+  description  String?
+  imageUrl     String?
+  price        Decimal               @db.Decimal(10, 2)
+  affiliateUrl String
+  category     String
+  commRate     Decimal?              @db.Decimal(5, 4) // overrides program default when set
+  isActive     Boolean               @default(true)
+  createdBy    String                // admin user id
+  createdAt    DateTime              @default(now())
+  clicks       AffiliateClick[]
+  conversions  AffiliateConversion[]
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model AffiliateClick {
+  id         String            @id @default(uuid())
+  listingId  String
+  listing    AffiliateListing  @relation(fields: [listingId], references: [id])
+  userId     String?           // null for guests
+  userRole   String?           // NEIGHBOR | MERCHANT | NONPROFIT
+  clickedAt  DateTime          @default(now())
+  conversion AffiliateConversion?
+
+  @@index([listingId])
+  @@index([clickedAt])
+}
+
+model AffiliateConversion {
+  id            String           @id @default(uuid())
+  listingId     String
+  listing       AffiliateListing @relation(fields: [listingId], references: [id])
+  clickId       String?          @unique
+  click         AffiliateClick?  @relation(fields: [clickId], references: [id])
+  saleAmount    Decimal          @db.Decimal(10, 2)
+  commRate      Decimal          @db.Decimal(5, 4)
+  commTotal     Decimal          @db.Decimal(10, 2)
+  dafShare      Decimal          @db.Decimal(10, 2) // 50% → donor advised fund
+  platformShare Decimal          @db.Decimal(10, 2) // 50% → platform operations
+  status        String           @default("PENDING") // PENDING | CONFIRMED | PAID
+  externalRef   String?          // order ID from partner for reconciliation
+  confirmedAt   DateTime?
+  createdAt     DateTime         @default(now())
+
+  @@index([listingId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Price Sentinel
+// ─────────────────────────────────────────────────────────────────────────────
+
+model PriceSentinelFlag {
+  id           String         @id @default(uuid())
+  listingId    String
+  listing      ProductService @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  flagReason   String         // "ABOVE_CATEGORY_MEDIAN" | "AI_FLAGGED"
+  suggestedMax Decimal        @db.Decimal(10, 2)
+  marketMedian Decimal?       @db.Decimal(10, 2)
+  isResolved   Boolean        @default(false)
+  resolvedAt   DateTime?
+  createdAt    DateTime       @default(now())
+
+  @@index([listingId])
+  @@index([isResolved])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Donation Receipts (IRS-compliant documentation for merchant tax deductions)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model DonationReceipt {
+  id             String      @id @default(uuid())
+  transactionId  String      @unique
+  transaction    Transaction @relation(fields: [transactionId], references: [id])
+  nonprofitId    String
+  nonprofit      Nonprofit   @relation(fields: [nonprofitId], references: [id])
+  merchantId     String
+  merchant       Merchant    @relation(fields: [merchantId], references: [id])
+  donationAmount Decimal     @db.Decimal(10, 2)
+  fiscalYear     Int
+  receiptNumber  String      @unique
+  nonprofitEin   String
+  nonprofitName  String
+  merchantName   String
+  issuedAt       DateTime    @default(now())
+
+  @@index([nonprofitId])
+  @@index([merchantId])
+  @@index([fiscalYear])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Governance
+// ─────────────────────────────────────────────────────────────────────────────
+
+model FiscalPolicy {
+  id               String               @id @default(uuid())
+  regionId         String?              @unique
+  region           Region?              @relation(fields: [regionId], references: [id])
+  isGlobal         Boolean              @default(false)
+  discountRate     Decimal              @default(0.10) @db.Decimal(5, 4)
+  nonprofitRate    Decimal              @default(0.10) @db.Decimal(5, 4)
+  platformRate     Decimal              @default(0.01) @db.Decimal(5, 4)
+  categoryOverrides Json?               // { "FOOD": { "discountRate": 0.12 } }
+  updatedAt        DateTime             @updatedAt
+  createdAt        DateTime             @default(now())
+  proposals        GovernanceProposal[]
+}
+
+model GovernanceProposal {
+  id              String       @id @default(uuid())
+  policyId        String
+  policy          FiscalPolicy @relation(fields: [policyId], references: [id])
+  proposerId      String
+  proposer        User         @relation(fields: [proposerId], references: [id])
+  title           String
+  description     String
+  proposedChanges Json         // { "discountRate": 0.11 } or { "category": "FOOD", "discountRate": 0.12 }
+  stakeAmount     Decimal      @default(0) @db.Decimal(10, 2)
+  status          String       @default("OPEN")
+  // "OPEN" | "PASSED" | "REJECTED" | "EXPIRED"
+  votesFor        Int          @default(0)
+  votesAgainst    Int          @default(0)
+  quorum          Int
+  expiresAt       DateTime
+  executedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  votes           ProposalVote[]
+
+  @@index([policyId])
+  @@index([status])
+}
+
+model ProposalVote {
+  id         String             @id @default(uuid())
+  proposalId String
+  proposal   GovernanceProposal @relation(fields: [proposalId], references: [id])
+  voterId    String
+  voter      User               @relation(fields: [voterId], references: [id])
+  voteWeight Int                @default(1)
+  inFavor    Boolean
+  createdAt  DateTime           @default(now())
+
+  @@unique([proposalId, voterId])
+  @@index([proposalId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Refund Recapture
+// ─────────────────────────────────────────────────────────────────────────────
+
+model TransactionRefund {
+  id              String      @id @default(uuid())
+  transactionId   String      @unique
+  transaction     Transaction @relation(fields: [transactionId], references: [id])
+  initiatedBy     String      // userId of requester
+  reason          String?
+  neighborRefund  Decimal     @db.Decimal(10, 2)
+  merchantDebit   Decimal     @db.Decimal(10, 2)
+  nonprofitDebit  Decimal     @db.Decimal(10, 2)
+  platformDebit   Decimal     @db.Decimal(10, 2)
+  refundedToWallet Boolean    @default(true)
+  createdAt       DateTime    @default(now())
+
+  @@index([initiatedBy])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// QR Checkout Tokens (in-person optical handshake)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model QrCheckoutToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COGS Suggestions (supply chain cost reduction feedback loop)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model CogsSuggestion {
+  id             String          @id @default(uuid())
+  merchantId     String
+  merchant       Merchant        @relation(fields: [merchantId], references: [id])
+  listingId      String?
+  listing        ProductService? @relation(fields: [listingId], references: [id])
+  supplyMatchId  String
+  supplyMatch    SupplyMatch     @relation(fields: [supplyMatchId], references: [id])
+  currentCogs    Decimal         @db.Decimal(10, 2)
+  suggestedCogs  Decimal         @db.Decimal(10, 2)
+  savingsPct     Float
+  status         String          @default("PENDING")
+  // "PENDING" | "ACCEPTED" | "DISMISSED"
+  createdAt      DateTime        @default(now())
+
+  @@index([merchantId])
+  @@index([status])
+}
