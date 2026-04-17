@@ -26,8 +26,12 @@ export const MerchantAdvisor: React.FC<Props> = ({
   allProducts,
   orders
 }) => {
+  const productCount = currentProducts.length;
+  const orderCount = orders.length;
+  const greeting = `Welcome back${merchantProfile?.name ? `, ${merchantProfile.name}` : ''}. I'm your Good Circles Merchant Advisor — powered by Claude.\n\nI'm here to help you on three fronts: optimizing your ${productCount > 0 ? productCount + ' current listing' + (productCount !== 1 ? 's' : '') : 'listings'}, identifying product gaps in your niche that the ecosystem doesn't yet serve, and strengthening your community node through referrals, supply chain connections, and operational cost reduction.\n\nWhere would you like to start?`;
+
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: `Welcome, ${merchantProfile.name}. I am your Good Circles Strategic Advisor. My goal is to help you reduce operating costs, optimize your listings, and maximize your community impact. Would you like a walkthrough of your setup, or perhaps some tips on sharing Good Circles with your network?` }
+    { role: 'assistant', content: greeting }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -109,7 +113,7 @@ export const MerchantAdvisor: React.FC<Props> = ({
 
         {/* Suggestions */}
         <div className="px-10 pb-4 flex gap-2 overflow-x-auto scrollbar-hide bg-[#FDFCFE]">
-          {["Setup Walkthrough", "Optimize Listings", "How to share GC", "Competitive Data"].map(s => (
+          {["What's missing from my niche?", "Reduce my COGS", "How to recruit merchants", "Cut processing fees", "Strengthen my node"].map(s => (
             <button 
               key={s} 
               onClick={() => { setInput(s); }}

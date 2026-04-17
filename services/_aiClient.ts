@@ -1,42 +1,61 @@
-import { GoogleGenAI } from "@google/genai";
+import Anthropic from '@anthropic-ai/sdk';
 
-let _ai: GoogleGenAI | null = null;
+const MODEL = 'claude-sonnet-4-6';
 
-function getAI(): GoogleGenAI | null {
-  if (_ai) return _ai;
-  try {
-    const key = typeof process !== 'undefined' ? (process.env?.GEMINI_API_KEY || process.env?.API_KEY || '') : '';
-    if (key) {
-      _ai = new GoogleGenAI({ apiKey: key });
-    }
-  } catch (e) {
-    // Not available (browser without key, etc.)
+let _client: Anthropic | null = null;
+
+function getClient(): Anthropic {
+  if (!_client) {
+    _client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY ?? '' });
   }
-  return _ai;
+  return _client;
 }
 
-export async function safeGenerate(model: string, contents: string, config?: any): Promise<string> {
-  const ai = getAI();
-  if (!ai) return 'AI features require a Gemini API key. Please configure GEMINI_API_KEY.';
+// Kept for any legacy code that calls getAI() directly
+export function getAI() {
+  return getClient();
+}
+
+export async function safeGenerate(
+  _model: string,
+  contents: string,
+  config?: { systemInstruction?: string; temperature?: number }
+): Promise<string> {
   try {
-    const response = await ai.models.generateContent({ model, contents, ...(config ? { config } : {}) });
-    return response.text || 'No response generated.';
-  } catch (error) {
-    console.error('Gemini error:', error);
-    return 'AI is temporarily unavailable.';
+    const msg = await getClient().messages.create({
+      model: MODEL,
+      max_tokens: 2048,
+      ...(config?.systemInstruction ? { system: config.systemInstruction } : {}),
+      messages: [{ role: 'user', content: contents }],
+    });
+    const block = msg.content[0];
+    return block.type === 'text' ? block.text : '';
+  } catch (err) {
+    console.error('[AI] safeGenerate error:', err);
+    return 'AI is temporarily unavailable. Please try again shortly.';
   }
 }
 
-export async function safeGenerateJSON(model: string, contents: string, config?: any): Promise<any> {
-  const ai = getAI();
-  if (!ai) return null;
+export async function safeGenerateJSON(
+  _model: string,
+  contents: string,
+  config?: { systemInstruction?: string; temperature?: number }
+): Promise<any> {
   try {
-    const response = await ai.models.generateContent({ model, contents, ...(config ? { config } : {}) });
-    return JSON.parse(response.text);
-  } catch (error) {
-    console.error('Gemini JSON error:', error);
+    const system = (config?.systemInstruction ?? '') +
+      '\n\nRespond with valid JSON only — no markdown fences, no explanation, just the raw JSON object or array.';
+    const msg = await getClient().messages.create({
+      model: MODEL,
+      max_tokens: 2048,
+      system,
+      messages: [{ role: 'user', content: contents }],
+    });
+    const block = msg.content[0];
+    const text = block.type === 'text' ? block.text.trim() : '{}';
+    const clean = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    return JSON.parse(clean);
+  } catch (err) {
+    console.error('[AI] safeGenerateJSON error:', err);
     return null;
   }
 }
-
-export { getAI };

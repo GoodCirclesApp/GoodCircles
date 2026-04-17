@@ -34,8 +34,15 @@ export const PersonalShopper: React.FC<Props> = ({
   onAddToCart
 }) => {
   const { walletBalance } = useGoodCirclesStore();
+  const totalSaved = orders.reduce((s: number, o: any) => s + (Number(o.discountAmount) || 0), 0);
+  const totalImpact = orders.reduce((s: number, o: any) => s + (Number(o.nonprofitShare) || 0), 0);
+  const nonprofitName = currentNonprofit?.name ?? 'your chosen nonprofit';
+  const greeting = walletBalance > 0
+    ? `Welcome back. I'm your Good Circles Personal Shopper — powered by Claude.\n\nYou have $${walletBalance.toFixed(2)} in your Circle Account. Using it saves you 2.5% compared to card fees on every purchase.\n\nTo date, your Good Circles shopping has saved you $${totalSaved.toFixed(2)} and generated $${totalImpact.toFixed(2)} for ${nonprofitName} — automatically, through your normal spending.\n\nLet me help you find more of what you need right here in the ecosystem. What are you looking to buy?`
+    : `Welcome. I'm your Good Circles Personal Shopper — powered by Claude.\n\nMy job is simple: help you get everything you need from local Good Circles merchants so you save 10% on every purchase AND automatically fund ${nonprofitName} with every transaction — with no extra effort from you.\n\nWhat would you like to find today?`;
+
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: `Greetings! I am your Good Circles Personal Shopper. I've analyzed your community contributions. I see you have $${walletBalance.toFixed(2)} in your Circle Account—using this will save you 2.5% compared to card fees today. How can I assist you?` }
+    { role: 'assistant', content: greeting }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -121,7 +128,7 @@ export const PersonalShopper: React.FC<Props> = ({
 
         {/* Quick Actions */}
         <div className="px-10 pb-6 flex gap-3 overflow-x-auto scrollbar-hide bg-[#FDFCFE]">
-          {["Fee comparison", "Reinvestment strategy", "Available balance"].map(s => (
+          {["What can I buy locally?", "How much am I saving?", "Fund my Circle Account", "Show my impact", "Find local alternatives"].map(s => (
             <button 
               key={s} 
               onClick={() => { setInput(s); }}

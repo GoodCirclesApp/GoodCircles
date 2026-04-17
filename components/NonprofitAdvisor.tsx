@@ -22,8 +22,12 @@ export const NonprofitAdvisor: React.FC<Props> = ({
   nonprofitProfile,
   orders
 }) => {
+  const supporterCount = new Set(orders.map((o: any) => o.neighborId).filter(Boolean)).size;
+  const totalFunding = orders.reduce((s: number, o: any) => s + (Number(o.nonprofitShare) || 0), 0);
+  const greeting = `Hello${nonprofitProfile?.name ? ` — welcome, ${nonprofitProfile.name}` : ''}. I'm your Good Circles Impact Advisor, powered by Claude.\n\nMy job is to help you grow the number of community members who choose ${nonprofitProfile?.name ?? 'your organization'} as their designated nonprofit partner — because every Neighbor who selects you generates automatic funding through their everyday shopping, with no donation ask required.\n\n${supporterCount > 0 ? `You currently have ${supporterCount} active supporter${supporterCount !== 1 ? 's' : ''} generating $${totalFunding.toFixed(2)} in funding. Let's grow that.` : "Let's build your supporter base and turn daily spending into your most reliable funding stream."}\n\nWhere would you like to start — member acquisition, marketing campaigns, or ecosystem integration?`;
+
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: `Hello, leader. I am your Good Circles Impact Advisor. I'm here to help ${nonprofitProfile.name} thrive in our community ecosystem. Whether you need help setting up your payment details, optimizing your impact story, or finding new ways to engage your supporters, I'm at your service. How shall we begin?` }
+    { role: 'assistant', content: greeting }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +107,7 @@ export const NonprofitAdvisor: React.FC<Props> = ({
 
         {/* Suggestions */}
         <div className="px-10 pb-4 flex gap-2 overflow-x-auto scrollbar-hide bg-[#FDFCFE]">
-          {["Setup Guide", "Payment Details", "Marketing Tips", "Profile Optimization"].map(s => (
+          {["Grow my supporter base", "Write a campaign post", "Draft a press release", "How Waived Discounts work", "Set up as a vendor"].map(s => (
             <button 
               key={s} 
               onClick={() => { setInput(s); }}
