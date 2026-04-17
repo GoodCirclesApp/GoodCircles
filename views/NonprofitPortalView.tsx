@@ -22,8 +22,9 @@ import { NonprofitReferrals } from '../components/NonprofitReferrals';
 import { NonprofitInitiatives } from '../components/NonprofitInitiatives';
 import { NonprofitProfile } from '../components/NonprofitProfile';
 import { NonprofitPayouts } from '../components/NonprofitPayouts';
+import { NonprofitDMS } from '../components/NonprofitDMS';
 
-type NonprofitSubView = 'DASHBOARD' | 'TRANSACTIONS' | 'ANALYTICS' | 'REFERRALS' | 'INITIATIVES' | 'PROFILE' | 'PAYOUTS';
+type NonprofitSubView = 'DASHBOARD' | 'TRANSACTIONS' | 'ANALYTICS' | 'REFERRALS' | 'INITIATIVES' | 'PROFILE' | 'PAYOUTS' | 'DMS';
 
 export const NonprofitPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<NonprofitSubView>('DASHBOARD');
@@ -38,6 +39,7 @@ export const NonprofitPortalView: React.FC = () => {
     { id: 'INITIATIVES', label: 'Community Initiatives', icon: Target },
     { id: 'PROFILE', label: 'Org Profile', icon: UserCircle },
     { id: 'PAYOUTS', label: 'Payout History', icon: CreditCard },
+    { id: 'DMS', label: 'Donor Management', icon: Heart },
   ];
 
   const renderSubView = () => {
@@ -49,6 +51,7 @@ export const NonprofitPortalView: React.FC = () => {
       case 'INITIATIVES': return <NonprofitInitiatives />;
       case 'PROFILE': return <NonprofitProfile />;
       case 'PAYOUTS': return <NonprofitPayouts />;
+      case 'DMS': return <NonprofitDMS />;
       default: return <NonprofitDashboard />;
     }
   };

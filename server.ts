@@ -33,6 +33,7 @@ import catalogRoutes from './server/src/routes/catalogRoutes';
 import affiliateRoutes from './server/src/routes/affiliateRoutes';
 import governanceRoutes from './server/src/routes/governanceRoutes';
 import refundRoutes from './server/src/routes/refundRoutes';
+import dmsRoutes from './server/src/routes/dmsRoutes';
 
 import { ReferralService } from './server/src/services/referralService';
 import { GovernanceService } from './server/src/services/governanceService';
@@ -128,6 +129,7 @@ async function startServer() {
   app.use('/api/affiliate', affiliateRoutes);
   app.use('/api/governance', governanceRoutes);
   app.use('/api/transactions', refundRoutes);
+  app.use('/api/dms', dmsRoutes);
 
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Good Circles API is running', version: '1.0.0-beta' });

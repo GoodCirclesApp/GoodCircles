@@ -5,6 +5,8 @@ import { CreditService } from './creditService';
 import { ReferralService } from './referralService';
 import { createCheckoutSession } from './stripeService';
 import { DonationReceiptService } from './donationReceiptService';
+import { DonorMilestoneService } from './donorMilestoneService';
+import { CrmWebhookService } from './crmWebhookService';
 
 
 
@@ -292,9 +294,15 @@ export class TransactionService {
     // prisma client can read the new transaction row.
     const { transaction: committedTx, breakdown } = txResult;
     if (committedTx.paymentMethod === 'INTERNAL' || breakdown.neighborPays.equals(0)) {
-      DonationReceiptService.createForTransaction(committedTx.id).catch(() => {
-        // Non-fatal: missing nonprofit EIN or zero donation — silently skip
-      });
+      DonationReceiptService.createForTransaction(committedTx.id).catch(() => {});
+
+      // Non-blocking: check donor milestones and fire CRM webhook
+      DonorMilestoneService.checkAndFire(committedTx.neighborId, committedTx.nonprofitId).catch(() => {});
+      CrmWebhookService.fire(committedTx.nonprofitId, 'donation.received', {
+        transactionId: committedTx.id,
+        neighborId: committedTx.neighborId,
+        donationAmount: Number(breakdown.nonprofitShare),
+      }).catch(() => {});
     }
 
     return txResult;

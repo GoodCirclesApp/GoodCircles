@@ -38,6 +38,8 @@ model User {
   governanceProposals GovernanceProposal[]
   proposalVotes       ProposalVote[]
   qrTokens            QrCheckoutToken[]
+  donorProfile        DonorProfile?
+  donorMilestones     DonorMilestone[]
 }
 
 model MerchantReferral {
@@ -302,6 +304,10 @@ model Nonprofit {
   referrals MerchantReferral[] @relation("NonprofitReferrals")
   bookings Booking[]
   donationReceipts    DonationReceipt[]
+  impactUpdates       ImpactUpdate[]
+  exportJobs          DmsExportJob[]
+  crmWebhook          CrmWebhook?
+  donorMilestones     DonorMilestone[]
 }
 
 model ProductService {
@@ -1224,4 +1230,84 @@ model CogsSuggestion {
 
   @@index([merchantId])
   @@index([status])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Donor Management System (DMS)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model DonorProfile {
+  id                       String   @id @default(uuid())
+  userId                   String   @unique
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shareNameWithNonprofits  Boolean  @default(true)
+  shareEmailWithNonprofits Boolean  @default(false)
+  updatedAt                DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model ImpactUpdate {
+  id          String    @id @default(uuid())
+  nonprofitId String
+  nonprofit   Nonprofit @relation(fields: [nonprofitId], references: [id], onDelete: Cascade)
+  title       String
+  body        String
+  imageUrl    String?
+  ctaLabel    String?
+  ctaUrl      String?
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([nonprofitId])
+  @@index([createdAt])
+}
+
+model DmsExportJob {
+  id          String    @id @default(uuid())
+  nonprofitId String
+  nonprofit   Nonprofit @relation(fields: [nonprofitId], references: [id])
+  format      String    @default("CSV")
+  // "CSV" | "JSON"
+  status      String    @default("PENDING")
+  // "PENDING" | "RUNNING" | "DONE" | "FAILED"
+  dateFrom    DateTime
+  dateTo      DateTime
+  rowCount    Int?
+  error       String?
+  requestedBy String
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([nonprofitId])
+  @@index([status])
+}
+
+model CrmWebhook {
+  id          String    @id @default(uuid())
+  nonprofitId String    @unique
+  nonprofit   Nonprofit @relation(fields: [nonprofitId], references: [id])
+  url         String
+  secret      String
+  events      String[]
+  // e.g. ["donation.received", "export.complete", "milestone.reached"]
+  isActive    Boolean   @default(true)
+  lastFiredAt DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model DonorMilestone {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  nonprofitId String
+  nonprofit   Nonprofit @relation(fields: [nonprofitId], references: [id])
+  milestone   String
+  // "FIRST_DONATION" | "TOTAL_100" | "TOTAL_500" | "TOTAL_1000"
+  firedAt     DateTime  @default(now())
+
+  @@unique([userId, nonprofitId, milestone])
+  @@index([userId])
+  @@index([nonprofitId])
 }
