@@ -201,7 +201,7 @@ export const resolveSentinelFlag = async (req: AuthRequest, res: Response) => {
   if (!req.user || req.user.role !== 'PLATFORM') {
     return res.status(403).json({ error: 'Unauthorized' });
   }
-  const { flagId } = req.params;
+  const flagId = req.params.flagId as string;
   const { approve } = req.body as { approve: boolean };
   try {
     const flag = await PriceSentinelService.resolveFlag(flagId, approve);
