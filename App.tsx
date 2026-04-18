@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { MarketplaceView } from './views/MarketplaceView';
 import { CartDrawer } from './components/CartDrawer';
 import { ProductDetailModal } from './components/ProductDetailModal';
@@ -12,6 +12,7 @@ import { AuthSystem } from './components/AuthSystem';
 import { marketplaceService } from './services/marketplaceService';
 import { authService } from './services/authService';
 import ErrorBoundary from './components/ErrorBoundary';
+import { registerToastHandler } from './hooks/toast';
 
 // --- Lazy-loaded views (code-split per route for faster mobile loads) ---
 const TimelineView = React.lazy(() => import('./views/TimelineView').then(m => ({ default: m.TimelineView })));
@@ -62,7 +63,17 @@ const App: React.FC = () => {
   const [showPublicImpact, setShowPublicImpact] = useState(false);
   const [showMerchantLanding, setShowMerchantLanding] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const selectedNonprofit = nonprofits[0];
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast({ message, type });
+    toastTimer.current = setTimeout(() => setToast(null), 4000);
+  };
+
+  useEffect(() => { registerToastHandler(showToast); }, []);
 
   useEffect(() => {
     if (!localStorage.getItem('gc_mock_users')) {
@@ -120,10 +131,10 @@ const App: React.FC = () => {
       }
       store.setIsCartOpen(false);
       store.setCart([]);
-      alert('Checkout successful! Your impact has been recorded.');
+      showToast('Checkout successful! Your impact has been recorded.', 'success');
     } catch (error) {
       console.error('Checkout failed:', error);
-      alert('Checkout failed. Please try again.');
+      showToast('Checkout failed. Please try again.', 'error');
     }
   };
 
@@ -151,9 +162,44 @@ const App: React.FC = () => {
 
   const filteredProducts = store.products;
 
+  const viewLabels: Partial<Record<typeof store.activeView, string>> = {
+    MAIN: 'Marketplace',
+    PUBLIC_LEDGER: 'Public Ledger',
+    IMPACT: 'My Impact',
+    WALLET: 'Wallet',
+    COMMUNITY_NEEDS: 'Community Needs',
+    COMMUNITY_INITIATIVES: 'Initiatives',
+    ORDER_HISTORY: 'Order History',
+    NONPROFIT_SELECTION: 'Choose a Cause',
+    GOVERNANCE: 'Governance',
+    LEADERBOARD: 'Leaderboard',
+    FAQ: 'FAQ',
+    IMPACT_MAP: 'Impact Map',
+    NONPROFIT_PORTAL: 'Nonprofit Portal',
+    MERCHANT_PORTAL: 'Merchant Portal',
+    ADMIN_PORTAL: 'Admin Portal',
+    PROFILE: 'My Profile',
+    WALLET_VIEW: 'Wallet',
+    TAX_CENTER: 'Tax Center',
+    SCHEDULE: 'Schedule',
+    CATALOG_UPLOAD: 'Catalog Upload',
+  };
+  const currentViewLabel = viewLabels[store.activeView] || '';
+
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-[#FDFCFE] flex flex-col font-sans relative overflow-x-hidden">
+        {store.impersonationRole && (
+          <div className="sticky top-0 z-[110] bg-[#A20021] text-white px-4 py-2 flex items-center justify-between text-xs font-black uppercase tracking-widest">
+            <span>Admin Impersonation Active — Viewing as {store.impersonationRole}</span>
+            <button
+              onClick={() => store.setImpersonationRole(null)}
+              className="px-3 py-1 bg-white text-[#A20021] rounded-lg hover:bg-red-50 transition-colors"
+            >
+              Return to Admin
+            </button>
+          </div>
+        )}
         <nav className="sticky top-0 z-[100] bg-white/90 backdrop-blur-xl border-b border-[#CA9CE1]/30 shadow-sm">
           {/* Top bar */}
           <div className="px-2 sm:px-4 py-3 flex items-center justify-between gap-2">
@@ -169,6 +215,11 @@ const App: React.FC = () => {
                 <BrandLogo variant="GOLD" className="transform scale-[0.6] sm:scale-75 origin-left cursor-pointer" onClick={() => { store.setActiveView('MAIN'); setIsMenuOpen(false); }} />
               </div>
             </div>
+            {currentViewLabel && (
+              <span className="hidden sm:block text-xs font-bold text-slate-400 truncate max-w-[160px]">
+                {currentViewLabel}
+              </span>
+            )}
             <div className="flex items-center gap-1 shrink-0">
               <button onClick={() => setIsWishlistOpen(true)} className="p-1.5 sm:p-2.5 bg-white rounded-xl sm:rounded-2xl border border-[#CA9CE1]/30 relative">
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
@@ -181,13 +232,13 @@ const App: React.FC = () => {
               <button onClick={() => store.setActiveView('PROFILE')} className="p-1.5 sm:p-2.5 bg-white rounded-xl sm:rounded-2xl border border-[#CA9CE1]/30">
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               </button>
-              <button onClick={store.logout} className="px-2 sm:px-3 py-1.5 sm:py-2 bg-white rounded-xl sm:rounded-2xl text-[#A20021] border border-red-100 font-black text-[9px] sm:text-[10px] uppercase tracking-wide">Out</button>
+              <button onClick={store.logout} className="px-2 sm:px-3 py-1.5 sm:py-2 bg-white rounded-xl sm:rounded-2xl text-[#A20021] border border-red-100 font-black text-[10px] sm:text-[10px] uppercase tracking-wide">Out</button>
             </div>
           </div>
 
           {/* Dropdown menu */}
           {isMenuOpen && (
-            <div className="border-t border-slate-100 px-3 py-3 flex flex-col gap-0.5 max-h-[75vh] overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 z-[99] bg-white border-t border-slate-100 px-3 py-3 flex flex-col gap-0.5 max-h-[75vh] overflow-y-auto shadow-xl">
               <MenuBtn active={store.activeView === 'MAIN'} onClick={() => { store.setActiveView('MAIN'); setIsMenuOpen(false); }} label="Marketplace" />
               <MenuBtn active={store.activeView === 'PUBLIC_LEDGER'} onClick={() => { store.setActiveView('PUBLIC_LEDGER'); setIsMenuOpen(false); }} label="Public Ledger" />
               <MenuBtn active={store.activeView === 'IMPACT'} onClick={() => { store.setActiveView('IMPACT'); setIsMenuOpen(false); }} label="Impact" />
@@ -203,7 +254,7 @@ const App: React.FC = () => {
 
               {store.effectiveRole === 'NONPROFIT' && (
                 <>
-                  <div className="mt-3 mb-1 px-3 text-[9px] font-black text-[#7851A9] uppercase tracking-widest border-t border-slate-100 pt-3">Nonprofit</div>
+                  <div className="mt-3 mb-1 px-3 text-[10px] font-black text-[#7851A9] uppercase tracking-widest border-t border-slate-100 pt-3">Nonprofit</div>
                   <MenuBtn active={store.activeView === 'NONPROFIT_PORTAL'} onClick={() => { store.setActiveView('NONPROFIT_PORTAL'); setIsMenuOpen(false); }} label="Nonprofit Portal" />
                   <MenuBtn active={store.activeView === 'TAX_CENTER'} onClick={() => { store.setActiveView('TAX_CENTER'); setIsMenuOpen(false); }} label="Tax Center" />
                 </>
@@ -211,7 +262,7 @@ const App: React.FC = () => {
 
               {store.effectiveRole === 'MERCHANT' && (
                 <>
-                  <div className="mt-3 mb-1 px-3 text-[9px] font-black text-[#7851A9] uppercase tracking-widest border-t border-slate-100 pt-3">Merchant</div>
+                  <div className="mt-3 mb-1 px-3 text-[10px] font-black text-[#7851A9] uppercase tracking-widest border-t border-slate-100 pt-3">Merchant</div>
                   <MenuBtn active={store.activeView === 'MERCHANT_PORTAL'} onClick={() => { store.setActiveView('MERCHANT_PORTAL'); setIsMenuOpen(false); }} label="Merchant Portal" />
                   <MenuBtn active={store.activeView === 'SCHEDULE'} onClick={() => { store.setActiveView('SCHEDULE'); setIsMenuOpen(false); }} label="Schedule" />
                   <MenuBtn active={store.activeView === 'NETTING'} onClick={() => { store.setActiveView('NETTING'); setIsMenuOpen(false); }} label="Netting" />
@@ -226,14 +277,14 @@ const App: React.FC = () => {
 
               {store.effectiveRole === 'CDFI' && (
                 <>
-                  <div className="mt-3 mb-1 px-3 text-[9px] font-black text-[#7851A9] uppercase tracking-widest border-t border-slate-100 pt-3">CDFI</div>
+                  <div className="mt-3 mb-1 px-3 text-[10px] font-black text-[#7851A9] uppercase tracking-widest border-t border-slate-100 pt-3">CDFI</div>
                   <MenuBtn active={store.activeView === 'CDFI_DASHBOARD'} onClick={() => { store.setActiveView('CDFI_DASHBOARD'); setIsMenuOpen(false); }} label="CDFI Portal" />
                 </>
               )}
 
               {store.effectiveRole === 'PLATFORM' && (
                 <>
-                  <div className="mt-3 mb-1 px-3 text-[9px] font-black text-[#7851A9] uppercase tracking-widest border-t border-slate-100 pt-3">Admin</div>
+                  <div className="mt-3 mb-1 px-3 text-[10px] font-black text-[#7851A9] uppercase tracking-widest border-t border-slate-100 pt-3">Admin</div>
                   <MenuBtn active={store.activeView === 'ADMIN_NETTING'} onClick={() => { store.setActiveView('ADMIN_NETTING'); setIsMenuOpen(false); }} label="Netting Admin" />
                   <MenuBtn active={store.activeView === 'ADMIN_COOP'} onClick={() => { store.setActiveView('ADMIN_COOP'); setIsMenuOpen(false); }} label="Co-op Admin" />
                   <MenuBtn active={store.activeView === 'ADMIN_DATA_COOP'} onClick={() => { store.setActiveView('ADMIN_DATA_COOP'); setIsMenuOpen(false); }} label="Data Coop Admin" />
@@ -244,7 +295,7 @@ const App: React.FC = () => {
           )}
         </nav>
 
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-12">
+        <main id="main-content" className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-12">
           <Suspense fallback={<div className="flex-1 flex items-center justify-center py-32">
             <div className="flex flex-col items-center gap-4">
               <div className="w-10 h-10 border-4 border-[#7851A9]/20 border-t-[#7851A9] rounded-full animate-spin" />
@@ -268,6 +319,7 @@ const App: React.FC = () => {
                 onTopUp={store.topUp}
                 onWithdraw={store.withdraw}
                 isLoading={store.isLoading}
+                onToast={showToast}
               />
             )}
             {store.activeView === 'ORDER_HISTORY' && <OrderHistoryView />}
@@ -287,7 +339,7 @@ const App: React.FC = () => {
                 currentUser={store.currentUser}
               />
             )}
-            {store.activeView === 'PUBLIC_LEDGER' && <PublicLedgerView orders={store.orders} batches={store.batches} globalStats={store.globalStats} />}
+            {store.activeView === 'PUBLIC_LEDGER' && <PublicLedgerView orders={store.orders} batches={store.batches} globalStats={store.globalStats} onToast={showToast} />}
             {store.activeView === 'LEADERBOARD' && <ImpactLeaderboard orders={store.orders} />}
             {store.activeView === 'FAQ' && <FAQSection role={store.effectiveRole!} />}
             {store.activeView === 'GOVERNANCE' && <GovernanceView proposals={store.proposals} waivedFundsLog={store.waivedFundsLog} currentUser={store.currentUser} onVote={store.castVote} onCreateProposal={store.createProposal} globalStats={store.globalStats} />}
@@ -336,6 +388,7 @@ const App: React.FC = () => {
                   onShopperClick={() => store.setIsShopperOpen(true)}
                   regionName={store.selectedRegion.name}
                   policy={store.activePolicy}
+                  isLoading={store.isLoading}
                   pagination={{
                     currentPage: store.currentPage,
                     totalPages: store.totalPages,
@@ -379,7 +432,7 @@ const App: React.FC = () => {
                           <button
                             key={role || 'PLATFORM'}
                             onClick={() => store.setImpersonationRole(role)}
-                            className={`px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${store.impersonationRole === role ? 'bg-[#A20021] text-white' : 'bg-white border border-slate-200 text-slate-400'}`}
+                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${store.impersonationRole === role ? 'bg-[#A20021] text-white' : 'bg-white border border-slate-200 text-slate-400'}`}
                           >
                             {role || 'RESET'}
                           </button>
@@ -437,6 +490,7 @@ const App: React.FC = () => {
           reviews={reviews}
           onAddReview={handleAddReview}
           orders={store.orders}
+          onToast={showToast}
         />
         <WishlistDrawer
           isOpen={isWishlistOpen}
@@ -447,6 +501,11 @@ const App: React.FC = () => {
           onRemoveFromWishlist={handleRemoveFromWishlist}
         />
         <ActivityTicker />
+        {toast && (
+          <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 rounded-2xl shadow-2xl text-white text-sm font-black uppercase tracking-widest transition-all animate-in slide-in-from-bottom-4 duration-300 ${toast.type === 'error' ? 'bg-[#A20021]' : toast.type === 'info' ? 'bg-slate-700' : 'bg-emerald-600'}`}>
+            {toast.message}
+          </div>
+        )}
       </div>
     </ErrorBoundary>
   );
@@ -454,7 +513,7 @@ const App: React.FC = () => {
 
 const SyncIndicator = ({ label, value }: { label: string, value: string }) => (
   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
     <p className="text-sm font-black text-black">{value}</p>
   </div>
 );

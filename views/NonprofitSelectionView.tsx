@@ -4,6 +4,7 @@ import { Nonprofit } from '../types';
 import { neighborService } from '../services/neighborService';
 import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
 import { BrandSubmark } from '../components/BrandAssets';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   currentNonprofitId?: string;
@@ -37,7 +38,7 @@ export const NonprofitSelectionView: React.FC<Props> = ({ currentNonprofitId, on
       onSelect(id);
     } catch (err) {
       console.error('Failed to select nonprofit:', err);
-      alert('Failed to update selection. Please try again.');
+      showToast('Failed to update selection. Please try again.', 'error');
     } finally {
       setIsSelecting(null);
     }
@@ -85,7 +86,7 @@ export const NonprofitSelectionView: React.FC<Props> = ({ currentNonprofitId, on
                      <h3 className="text-3xl font-black italic uppercase tracking-tighter">{n.orgName}</h3>
                    </div>
                    {currentNonprofitId === n.id && (
-                     <div className="px-4 py-2 bg-[#C2A76F] text-black rounded-full text-[8px] font-black uppercase tracking-widest">Selected</div>
+                     <div className="px-4 py-2 bg-[#C2A76F] text-black rounded-full text-[10px] font-black uppercase tracking-widest">Selected</div>
                    )}
                 </div>
                 
@@ -95,7 +96,7 @@ export const NonprofitSelectionView: React.FC<Props> = ({ currentNonprofitId, on
                 
                 <div className="flex items-end justify-between">
                   <div>
-                    <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${currentNonprofitId === n.id ? 'text-white/40' : 'text-slate-400'}`}>Total Platform Funding</p>
+                    <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${currentNonprofitId === n.id ? 'text-white/40' : 'text-slate-400'}`}>Total Platform Funding</p>
                     <p className={`text-4xl font-black italic tracking-tighter ${currentNonprofitId === n.id ? 'text-[#C2A76F]' : 'text-black'}`}>${n.totalFunding.toLocaleString()}</p>
                   </div>
                   

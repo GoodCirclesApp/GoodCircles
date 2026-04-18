@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { User } from '../types';
+import { showToast } from '../hooks/toast';
 
 export const MerchantApprovals: React.FC = () => {
   const [pendingMerchants, setPendingMerchants] = useState<User[]>([]);
@@ -17,9 +18,9 @@ export const MerchantApprovals: React.FC = () => {
     setPendingMerchants(prev => prev.filter(u => u.id !== userId));
     
     if (newStatus === 'ACTIVE') {
-      alert("Merchant account officially activated. Sentinel Credentials issued.");
+      showToast('Merchant account officially activated. Sentinel Credentials issued.', 'success');
     } else {
-      alert("Merchant application declined. Entity notified of compliance gaps.");
+      showToast('Merchant application declined. Entity notified of compliance gaps.', 'info');
     }
   };
 
@@ -45,17 +46,17 @@ export const MerchantApprovals: React.FC = () => {
                 
                 <div className="grid grid-cols-2 gap-4 bg-white p-6 rounded-2xl border border-slate-100">
                    <div>
-                     <p className="text-[8px] font-black text-slate-400 uppercase">KYB Score</p>
+                     <p className="text-[10px] font-black text-slate-400 uppercase">KYB Score</p>
                      <p className={`text-xl font-black italic ${m.kybScore && m.kybScore > 75 ? 'text-emerald-500' : 'text-amber-500'}`}>{m.kybScore || 0}%</p>
                    </div>
                    <div>
-                     <p className="text-[8px] font-black text-slate-400 uppercase">EIN Number</p>
+                     <p className="text-[10px] font-black text-slate-400 uppercase">EIN Number</p>
                      <p className="text-sm font-bold text-black">{m.taxId || 'N/A'}</p>
                    </div>
                 </div>
 
                 <div className="p-4 bg-slate-100/50 rounded-xl">
-                   <p className="text-[9px] font-black text-[#7851A9] uppercase tracking-widest font-accent italic">AI Audit Note</p>
+                   <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest font-accent italic">AI Audit Note</p>
                    <p className="text-[10px] text-slate-600 font-medium italic mt-1 leading-relaxed">"{m.kybNote || 'Initial digital footprint scan successful.'}"</p>
                 </div>
               </div>

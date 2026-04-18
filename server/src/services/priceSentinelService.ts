@@ -35,27 +35,50 @@ export class PriceSentinelService {
           marketMedian: new Decimal(median.toFixed(2)),
         },
       });
+
+      // Pause listing until staff review
+      await prisma.productService.update({
+        where: { id: listingId },
+        data: { isActive: false },
+      });
     } else {
-      // Price is within bounds — resolve any stale flags
-      await prisma.priceSentinelFlag.updateMany({
+      // Price is within bounds — resolve any stale flags and re-activate
+      const resolved = await prisma.priceSentinelFlag.updateMany({
         where: { listingId, isResolved: false },
         data: { isResolved: true, resolvedAt: new Date() },
       });
+
+      if (resolved.count > 0) {
+        await prisma.productService.update({
+          where: { id: listingId },
+          data: { isActive: true },
+        });
+      }
     }
   }
 
   static async getFlags(listingId?: string) {
     return prisma.priceSentinelFlag.findMany({
       where: listingId ? { listingId, isResolved: false } : { isResolved: false },
-      include: { listing: { select: { name: true, category: true, merchant: { select: { businessName: true } } } } },
+      include: { listing: { select: { name: true, category: true, price: true, merchant: { select: { businessName: true } } } } },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  static async resolveFlag(flagId: string) {
-    return prisma.priceSentinelFlag.update({
+  static async resolveFlag(flagId: string, approve: boolean) {
+    const flag = await prisma.priceSentinelFlag.update({
       where: { id: flagId },
       data: { isResolved: true, resolvedAt: new Date() },
     });
+
+    // Re-activate listing if staff approves the price as acceptable
+    if (approve) {
+      await prisma.productService.update({
+        where: { id: flag.listingId },
+        data: { isActive: true },
+      });
+    }
+
+    return flag;
   }
 }

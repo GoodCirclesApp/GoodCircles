@@ -3,9 +3,12 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { WalletService } from './walletService';
 
 export class RefundService {
-  // Refunds a completed INTERNAL transaction back to the neighbor's wallet.
-  // Reverses all wallet movements. For STRIPE transactions, records the refund
-  // but does not move Stripe funds (deferred to live-testing webhook).
+  // Partial refund policy: the nonprofit donation is non-refundable once disbursed.
+  // The neighbor receives back: merchantNet + platformFee (= neighborPays - nonprofitShare).
+  // The merchant is debited their full net (COGS + profit share).
+  // The platform treasury is debited the platform fee.
+  // The nonprofit wallet is never touched on refund — they retain the donation and the
+  // merchant retains the associated tax deduction incentive.
   static async refundTransaction(transactionId: string, initiatedBy: string, reason?: string) {
     const tx = await prisma.transaction.findUnique({
       where: { id: transactionId },
@@ -19,27 +22,21 @@ export class RefundService {
     if (!tx) throw new Error('Transaction not found');
     if (tx.refund) throw new Error('Transaction has already been refunded');
 
-    // Recompute what the neighbor originally paid (same formula as walletService)
-    const applyPriceReduction =
-      !tx.discountWaived && tx.discountMode === 'PRICE_REDUCTION';
-    const baseCharge = applyPriceReduction
-      ? tx.grossAmount.sub(tx.discountAmount)
-      : tx.grossAmount;
-    const neighborPays = baseCharge.sub(tx.appliedCredits).lessThan(0)
-      ? new Decimal(0)
-      : baseCharge.sub(tx.appliedCredits);
+    // The refund amount = what the neighbor paid minus the non-refundable donation.
+    // Algebraically equivalent to merchantNet + platformFee.
+    const neighborRefundAmount = tx.merchantNet.add(tx.platformFee);
 
     return prisma.$transaction(async (client) => {
       if (tx.paymentMethod === 'INTERNAL') {
-        // 1. Credit neighbor back (what they originally paid)
+        // 1. Credit neighbor (purchase price less the non-refundable donation)
         await WalletService.fundWallet(
           tx.neighborId,
-          neighborPays.toNumber(),
-          `Refund for transaction ${transactionId}`,
+          neighborRefundAmount.toNumber(),
+          `Recapture refund for transaction ${transactionId} (donation non-refundable)`,
           client
         );
 
-        // 2. Debit merchant (their net earnings)
+        // 2. Debit merchant (their COGS + profit share)
         const merchantWallet = await WalletService.getOrCreateWallet(tx.merchant.userId, client);
         if (merchantWallet.balance.lt(tx.merchantNet)) {
           throw new Error('Merchant has insufficient balance to process refund');
@@ -57,25 +54,7 @@ export class RefundService {
           },
         });
 
-        // 3. Debit nonprofit
-        const nonprofitWallet = await WalletService.getOrCreateWallet(tx.nonprofit.userId, client);
-        const safeNonprofitDebit = nonprofitWallet.balance.lt(tx.nonprofitShare)
-          ? nonprofitWallet.balance
-          : tx.nonprofitShare;
-        const newNpBalance = nonprofitWallet.balance.sub(safeNonprofitDebit);
-        await client.wallet.update({ where: { id: nonprofitWallet.id }, data: { balance: newNpBalance } });
-        await client.ledgerEntry.create({
-          data: {
-            walletId: nonprofitWallet.id,
-            transactionId,
-            entryType: 'DEBIT',
-            amount: safeNonprofitDebit,
-            balanceAfter: newNpBalance,
-            description: `Donation reversal for refund ${transactionId}`,
-          },
-        });
-
-        // 4. Debit platform treasury — decrement balance directly
+        // 3. Debit platform treasury (platform fee returned to neighbor)
         const treasuryAfterRefund = await client.platformAccount.upsert({
           where: { id: 'gc-platform-treasury' },
           create: { id: 'gc-platform-treasury', balance: 0, totalRevenue: 0 },
@@ -88,21 +67,23 @@ export class RefundService {
             amount: tx.platformFee.neg(),
             balanceAfter: treasuryAfterRefund.balance,
             transactionId,
-            description: `Platform fee reversal for refund ${transactionId}`,
+            description: `Platform fee returned on refund ${transactionId}`,
           },
         });
+
+        // Nonprofit wallet is intentionally NOT debited — donation is final and non-refundable.
       }
       // For STRIPE transactions: record the refund record only.
-      // TODO: Stripe refund execution deferred to live-testing webhook.
+      // TODO: Stripe partial refund execution deferred to live-testing webhook.
 
       const refund = await client.transactionRefund.create({
         data: {
           transactionId,
           initiatedBy,
           reason: reason ?? null,
-          neighborRefund: neighborPays,
+          neighborRefund: neighborRefundAmount,
           merchantDebit: tx.merchantNet,
-          nonprofitDebit: tx.nonprofitShare,
+          nonprofitDebit: new Decimal(0), // Donation is non-refundable
           platformDebit: tx.platformFee,
           refundedToWallet: tx.paymentMethod === 'INTERNAL',
         },

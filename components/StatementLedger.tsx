@@ -14,21 +14,21 @@ export const StatementLedger: React.FC<Props> = ({ orders, role }) => {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-100">
-              <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Date</th>
-              <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Reference</th>
-              <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Gross (10% Off)</th>
+              <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Date</th>
+              <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Reference</th>
+              <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Gross (10% Off)</th>
               {role === 'MERCHANT' && (
                 <>
-                  <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">COGS</th>
-                  <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Platform (1%)</th>
-                  <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] text-[#C2A76F]">Internal (0.5%)</th>
+                  <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">COGS</th>
+                  <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Platform (1%)</th>
+                  <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-[#C2A76F]">Internal (0.5%)</th>
                 </>
               )}
-              <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] text-[#7851A9]">
+              <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-[#7851A9]">
                 {role === 'MERCHANT' ? 'Community (10%)' : 'Revenue Generated'}
               </th>
-              <th className="p-8 text-[9px] font-black text-emerald-500 uppercase tracking-[0.3em]">Wealth Saved</th>
-              <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] text-right">Net Settlement</th>
+              <th className="p-8 text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em]">Wealth Saved</th>
+              <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-right">Net Settlement</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -46,7 +46,7 @@ export const StatementLedger: React.FC<Props> = ({ orders, role }) => {
                   <td className="p-8 text-sm font-black text-slate-900">
                     ${o.subtotal.toFixed(2)}
                     {o.isDiscountWaived && (
-                      <span className="block text-[8px] text-emerald-500 uppercase font-black tracking-widest mt-1">Discount Waived</span>
+                      <span className="block text-[10px] text-emerald-500 uppercase font-black tracking-widest mt-1">Discount Waived</span>
                     )}
                   </td>
                   

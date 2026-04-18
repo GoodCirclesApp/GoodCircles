@@ -224,7 +224,7 @@ export const MerchantOnboarding: React.FC<Props> = ({ onComplete, onCancel }) =>
                 <p className="text-[10px] font-black uppercase text-red-400">Risk Markers</p>
                 <div className="flex flex-wrap gap-2">
                   {kybResult.riskFactors.map((r, i) => (
-                    <span key={i} className="px-3 py-1 bg-red-50 text-red-500 text-[8px] font-black uppercase rounded-lg border border-red-100">
+                    <span key={i} className="px-3 py-1 bg-red-50 text-red-500 text-[10px] font-black uppercase rounded-lg border border-red-100">
                       {r}
                     </span>
                   ))}
@@ -234,7 +234,7 @@ export const MerchantOnboarding: React.FC<Props> = ({ onComplete, onCancel }) =>
           </div>
 
           <div className="bg-emerald-50 p-6 rounded-3xl border border-emerald-100">
-            <p className="text-[9px] font-bold text-emerald-700 uppercase leading-relaxed text-center">
+            <p className="text-[10px] font-bold text-emerald-700 uppercase leading-relaxed text-center">
               ✓ Beta accounts are automatically approved and funded. Click below to complete setup.
             </p>
           </div>

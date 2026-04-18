@@ -40,11 +40,11 @@ export const ReferralCenter: React.FC<Props> = ({ user, onReferralSubmit }) => {
           </p>
           <div className="flex items-center gap-10 justify-center lg:justify-start">
              <div>
-                <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">Successful Referrals</p>
+                <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">Successful Referrals</p>
                 <p className="text-3xl font-black italic text-[#C2A76F]">{user.referralCount || 0}</p>
              </div>
              <div>
-                <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">Impact Multiplier</p>
+                <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">Impact Multiplier</p>
                 <p className="text-3xl font-black italic text-emerald-400">1.{(user.referralCount || 0)}x</p>
              </div>
           </div>
@@ -60,7 +60,7 @@ export const ReferralCenter: React.FC<Props> = ({ user, onReferralSubmit }) => {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-white/40 uppercase tracking-widest ml-2">Business Name</label>
+                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-2">Business Name</label>
                 <input 
                   required
                   value={bizName}
@@ -70,7 +70,7 @@ export const ReferralCenter: React.FC<Props> = ({ user, onReferralSubmit }) => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-white/40 uppercase tracking-widest ml-2">Owner / Contact Email</label>
+                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-2">Owner / Contact Email</label>
                 <input 
                   required
                   type="email"

@@ -31,7 +31,7 @@ export const NodeCoordination: React.FC<Props> = ({ circle, onSendMessage }) => 
       {/* Circle Banner */}
       <div className="p-8 bg-black text-white relative overflow-hidden group shrink-0">
          <div className="relative z-10 space-y-1">
-            <p className="text-[8px] font-black text-[#C2A76F] uppercase tracking-[0.4em]">Node Collective</p>
+            <p className="text-[10px] font-black text-[#C2A76F] uppercase tracking-[0.4em]">Node Collective</p>
             <h4 className="text-2xl font-black italic uppercase tracking-tighter">{circle.name}</h4>
          </div>
          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
@@ -50,7 +50,7 @@ export const NodeCoordination: React.FC<Props> = ({ circle, onSendMessage }) => 
            circle.messages?.map(msg => (
              <div key={msg.id} className="animate-in slide-in-from-bottom-2 duration-300">
                 <div className="flex justify-between items-center mb-2">
-                   <p className="text-[9px] font-black text-[#7851A9] uppercase tracking-widest">{msg.senderName}</p>
+                   <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">{msg.senderName}</p>
                    <p className="text-[7px] font-bold text-slate-300 uppercase">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                 </div>
                 <div className={`p-5 rounded-[2rem] text-sm font-medium leading-relaxed shadow-sm ${msg.type === 'MILESTONE' ? 'bg-[#C2A76F]/10 border border-[#C2A76F]/20 italic' : 'bg-white border border-slate-100'}`}>
@@ -81,7 +81,7 @@ export const NodeCoordination: React.FC<Props> = ({ circle, onSendMessage }) => 
          </form>
          <div className="mt-4 flex items-center justify-center gap-2 opacity-30">
             <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></div>
-            <p className="text-[8px] font-black uppercase tracking-widest">End-to-end impact encryption active</p>
+            <p className="text-[10px] font-black uppercase tracking-widest">End-to-end impact encryption active</p>
          </div>
       </div>
     </div>

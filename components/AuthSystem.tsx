@@ -160,7 +160,7 @@ export const AuthSystem: React.FC<Props> = ({ onLogin }) => {
             {view === 'LOGIN' && (
               <button
                 onClick={() => { setView('RECOVERY'); setError(null); }}
-                className="block mx-auto text-[8px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-600"
+                className="block mx-auto text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-600"
               >
                 Forgot Key?
               </button>

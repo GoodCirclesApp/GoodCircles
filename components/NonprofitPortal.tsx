@@ -7,6 +7,7 @@ import { StatementLedger } from './StatementLedger';
 import { BrandSubmark } from './BrandAssets';
 import { generatePressRelease } from '../services/aiReportingService';
 import { NonprofitAdvisor } from './NonprofitAdvisor';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   nonprofit: Nonprofit;
@@ -89,7 +90,7 @@ export const NonprofitPortal: React.FC<Props> = ({ nonprofit, orders, onUpdatePr
                  <div className="bg-white p-10 rounded-[3rem] border border-[#CA9CE1]/20 shadow-sm space-y-8">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent">Current Achievement</p>
                     <div className="space-y-1">
-                      <p className="text-[8px] font-black text-[#7851A9] uppercase">Total Raised</p>
+                      <p className="text-[10px] font-black text-[#7851A9] uppercase">Total Raised</p>
                       <p className="text-4xl font-black italic tracking-tighter">${totalRaised.toFixed(2)}</p>
                     </div>
                     <button 
@@ -112,7 +113,7 @@ export const NonprofitPortal: React.FC<Props> = ({ nonprofit, orders, onUpdatePr
                          </div>
                       </div>
                       <div className="mt-12 pt-8 border-t border-slate-100 flex gap-4">
-                         <button onClick={() => { navigator.clipboard.writeText(prText); alert("Copied to clipboard."); }} className="bg-slate-100 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest">Copy to Clipboard</button>
+                         <button onClick={() => { navigator.clipboard.writeText(prText); showToast('Copied to clipboard.', 'info'); }} className="bg-slate-100 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest">Copy to Clipboard</button>
                          <button onClick={() => window.print()} className="bg-black text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest">Share with Local Media</button>
                       </div>
                    </div>
@@ -163,10 +164,10 @@ export const NonprofitPortal: React.FC<Props> = ({ nonprofit, orders, onUpdatePr
                 <div key={p.id} className={`p-8 rounded-[3rem] border transition-all group ${isOnWishlist ? 'bg-[#7851A9]/5 border-[#7851A9]' : 'bg-slate-50 border-slate-100 hover:border-slate-300'}`}>
                   <img src={p.imageUrl} className="w-full aspect-square rounded-[2rem] object-cover mb-6 shadow-md" />
                   <h4 className="text-[10px] font-black uppercase truncate mb-1">{p.name}</h4>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-6">{p.category}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">{p.category}</p>
                   <button 
                     onClick={() => toggleWishlistItem(p.id)}
-                    className={`w-full py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all shadow-sm ${
+                    className={`w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${
                       isOnWishlist 
                         ? 'bg-[#A20021] text-white hover:bg-black' 
                         : 'bg-white text-slate-500 hover:bg-black hover:text-white'

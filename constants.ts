@@ -92,13 +92,13 @@ const FAQ_ECONOMY: FAQItem[] = [
     id: 'econ-4',
     category: 'ECONOMY',
     question: 'What are platform credits?',
-    answer: 'Credits are bonus funds you earn when a merchant chooses "Platform Credits" mode instead of giving you a direct price discount. You receive the credit in your account and can use it on any future purchase. Credits never expire and never leave the community economy.'
+    answer: 'Platform credits are rewards you can earn through referrals, community programs, and promotional events. They appear in your Circle Account and can be applied to any future purchase. Credits are valid for 12 months from the date they are issued. Your 10% member discount is always applied at checkout automatically — it is a fixed feature of every transaction, not something you or a merchant can opt out of.'
   },
   {
     id: 'econ-5',
     category: 'ECONOMY',
     question: 'How do refunds work?',
-    answer: 'If you need a refund, the money goes back to your Circle Account right away — no waiting, no fee. We call this the Recapture Protocol. It keeps the money inside the local economy so you can use it again at another local merchant immediately.'
+    answer: 'If you need a refund, most of your purchase returns to your Circle Account immediately — no waiting. However, the portion donated to your elected nonprofit is non-refundable. Once a donation is disbursed to the community, it cannot be retrieved. The platform fee is returned to you in full. Example: on a $100 item you paid $90 after your discount. If the donation was $9 and the platform fee was $0.90, you receive $81 back. This policy is intentional — it prevents donation reversals from undermining community impact, and discourages refund abuse.'
   },
   {
     id: 'econ-6',
@@ -110,7 +110,7 @@ const FAQ_ECONOMY: FAQItem[] = [
     id: 'econ-7',
     category: 'ECONOMY',
     question: 'What is "Tax Alpha" for merchants?',
-    answer: 'Tax Alpha is the financial advantage local merchants get by joining Good Circles. Instead of paying 3% to a credit card company (which is not deductible), merchants route a similar amount to a nonprofit — which IS tax-deductible. They save on fees, save on taxes, and build community goodwill. Every dollar earned internally is worth more than a dollar earned externally.'
+    answer: 'Tax alpha is the extra money you keep after taxes by being smart about how your business handles its finances. Most investors focus on earning more. Tax alpha focuses on keeping more of what you already earn — by legally paying less in taxes on every transaction.\n\nHere is how Good Circles creates real tax alpha for merchants:\n\nWhen you sell through Good Circles, 10% of your net profit goes to a local nonprofit as a charitable donation. That donation is fully tax-deductible. A credit card processing fee is not. So instead of losing 2–3% to a payment processor — and writing none of it off — a portion of your Good Circles earnings flows to a cause that directly reduces your taxable income.\n\nExample: a merchant who pays $3,000 a year in card fees gets zero tax benefit. A merchant who donates $3,000 through Good Circles may reduce their taxable income by $3,000. At a 21% business tax rate, that is $630 in real savings — money that stays in your business.\n\nThat gap between a fee that disappears and a donation that comes back as a tax benefit is tax alpha. Good Circles is intentionally built to maximize it — turning every community sale into a tax-smart financial move for your business and a funded outcome for your community.'
   },
 ];
 
@@ -164,7 +164,7 @@ const FAQ_MERCHANT: FAQItem[] = [
     id: 'merch-2',
     category: 'MERCHANT',
     question: 'Do merchants have to lower their prices?',
-    answer: 'No. Your listed price is your full price (MSRP). The 10% member discount comes out of the transaction automatically — you don\'t manually cut your price. The discount and the nonprofit donation both come from the profit side of the sale, not from your cost structure.'
+    answer: 'Yes — a 10% member discount is a required part of selling on Good Circles. Every product and service on the platform is priced 10% below your standard retail price (MSRP) for Good Circles members. This is not optional; it is the core value promise to every neighbor who shops here.\n\nWhat you do not have to do is calculate any of it yourself. You simply enter two numbers when you list a product: your MSRP and your cost of goods (COGS). The platform\'s accounting engine takes it from there — automatically applying the 10% discount at checkout, calculating the nonprofit donation, the platform fee, and your net earnings on every sale. No spreadsheets, no manual adjustments.'
   },
   {
     id: 'merch-3',
@@ -194,7 +194,7 @@ const FAQ_MERCHANT: FAQItem[] = [
     id: 'merch-7',
     category: 'MERCHANT',
     question: 'How does in-person (QR) checkout work?',
-    answer: 'At your physical location, a customer opens their Good Circles app and shows their QR code. You scan it — we call this the "Optical Handshake" — and the payment processes instantly from their Circle Account to yours. No card reader needed. The 10/10/1 split happens in real time.'
+    answer: 'At your physical location, open your merchant dashboard to the "QR Settlement" tab. Your customer opens their Good Circles app, taps "Pay in Person" in their wallet, and a personal identity QR code appears on their screen — it expires in 5 minutes and can only be used once. Scan their code using the camera on your device, then select which product or service they are purchasing from your listing. Tap Confirm. Payment debits instantly from their Circle Account to yours. No card reader needed. The 10/10/1 split is executed in real time by the platform.'
   },
 ];
 

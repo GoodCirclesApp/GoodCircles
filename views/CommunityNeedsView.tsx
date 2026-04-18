@@ -22,6 +22,18 @@ export const CommunityNeedsView: React.FC<Props> = ({ nonprofits, allProducts, c
         <p className="text-slate-500 text-base sm:text-2xl font-medium mt-4 sm:mt-8">Fund specific assets directly for nonprofits. 100% transparent delivery.</p>
       </header>
 
+      {nonprofits.every(np => !allProducts.some(p => np.wishlistProductIds?.includes(p.id))) && (
+        <div className="flex flex-col items-center justify-center py-32 gap-6 text-center">
+          <div className="w-20 h-20 rounded-[2rem] bg-slate-100 flex items-center justify-center">
+            <svg className="w-10 h-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+          </div>
+          <div>
+            <p className="text-xl font-black italic uppercase tracking-tighter text-slate-800">No Active Needs</p>
+            <p className="text-sm text-slate-400 font-medium mt-2 max-w-sm">Local nonprofits haven't published any resource requests yet. Check back soon.</p>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-12">
         {nonprofits.map(np => {
           const wishlist = allProducts.filter(p => np.wishlistProductIds?.includes(p.id));
@@ -38,7 +50,7 @@ export const CommunityNeedsView: React.FC<Props> = ({ nonprofits, allProducts, c
                   </div>
                 </div>
                 <div className="px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100">
-                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Active Requests</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Requests</p>
                   <p className="text-xl font-black italic">{wishlist.length} Assets</p>
                 </div>
               </div>
@@ -52,7 +64,7 @@ export const CommunityNeedsView: React.FC<Props> = ({ nonprofits, allProducts, c
                         <img src={product.imageUrl} className="w-full aspect-square rounded-[2rem] object-cover shadow-md" />
                         {cartItem && (
                           <div className="absolute top-4 right-4 bg-[#A20021] text-white px-3 py-1.5 rounded-xl shadow-lg animate-in zoom-in">
-                            <p className="text-[8px] font-black uppercase tracking-widest">{cartItem.quantity} In Basket</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest">{cartItem.quantity} In Basket</p>
                           </div>
                         )}
                       </div>
@@ -60,12 +72,12 @@ export const CommunityNeedsView: React.FC<Props> = ({ nonprofits, allProducts, c
                     <p className="text-sm text-slate-500 font-medium line-clamp-2 mb-6 italic">"{product.description}"</p>
                     <div className="flex items-center justify-between mt-auto">
                       <div>
-                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Funding Goal</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Funding Goal</p>
                         <p className="text-2xl font-black italic">${product.price.toFixed(2)}</p>
                       </div>
                       <button 
                         onClick={() => onFulfill(product, np)}
-                        className="bg-black text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest hover:bg-[#A20021] transition-all shadow-lg active:scale-95"
+                        className="bg-black text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-[10px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-[#A20021] transition-all shadow-lg active:scale-95"
                       >
                         Fulfill Need
                       </button>

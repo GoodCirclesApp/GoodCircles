@@ -43,5 +43,9 @@ export const neighborService = {
 
   waiveDiscountToInitiative: async (initiativeId: string, amount: number): Promise<any> => {
     return apiClient.post('/neighbor/waive-discount', { initiativeId, amount });
+  },
+
+  getQrToken: async (): Promise<{ token: string; expiresAt: string }> => {
+    return apiClient.get('/neighbor/qr-token');
   }
 };

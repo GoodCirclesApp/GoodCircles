@@ -3,16 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
 import { BrandSubmark } from './BrandAssets';
 import { motion, AnimatePresence } from 'motion/react';
-import { Coins, History, Clock, Settings, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Coins, History, Clock, CheckCircle2 } from 'lucide-react';
 
 export const CreditDashboard: React.FC = () => {
-  const { currentUser, updateUser, globalStats } = useGoodCirclesStore();
+  const { currentUser } = useGoodCirclesStore();
   const [balance, setBalance] = useState(0);
   const [history, setHistory] = useState<any[]>([]);
   const [expiringSoon, setExpiringSoon] = useState<any[]>([]);
-  const [isEligible, setIsEligible] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     fetchCreditData();
@@ -25,10 +23,6 @@ export const CreditDashboard: React.FC = () => {
       // For this demo, we'll simulate with mock data or use the store if available
       // Since we don't have a real backend in this environment, we'll use local state/mock
       
-      // Simulate eligibility check (200 merchants threshold)
-      const eligible = globalStats.merchantCount >= 200;
-      setIsEligible(eligible);
-
       // Mock balance and history
       setBalance(currentUser?.platformCredits || 0);
       
@@ -49,20 +43,6 @@ export const CreditDashboard: React.FC = () => {
       console.error('Failed to fetch credit data', err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleToggleDiscountMode = async () => {
-    if (!isEligible) return;
-    setUpdating(true);
-    try {
-      const newMode = currentUser?.discountMode === 'PLATFORM_CREDITS' ? 'PRICE_REDUCTION' : 'PLATFORM_CREDITS';
-      updateUser({ ...currentUser!, discountMode: newMode });
-      // In a real app: await fetch('/api/credits/settings/discount-mode', { method: 'PUT', ... })
-    } catch (err) {
-      console.error('Failed to update discount mode', err);
-    } finally {
-      setUpdating(false);
     }
   };
 
@@ -118,87 +98,48 @@ export const CreditDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Settings Card */}
+        {/* How Credits Work Card */}
         <div className="bg-white rounded-[4rem] border border-[#CA9CE1]/20 p-12 shadow-sm flex flex-col justify-between">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <Settings className="w-6 h-6 text-[#7851A9]" />
-              <h3 className="text-2xl font-black italic uppercase tracking-tighter">Preferences</h3>
+              <CheckCircle2 className="w-6 h-6 text-[#7851A9]" />
+              <h3 className="text-2xl font-black italic uppercase tracking-tighter">How Credits Work</h3>
             </div>
-            
             <div className="space-y-4">
-              <p className="text-sm text-slate-500 font-medium">
-                Choose how you want to receive your 10% community discount.
+              <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                Your <span className="font-black text-black">10% member discount</span> applies automatically at every checkout — it is a fixed benefit, not a choice.
               </p>
-              
-              <div className="space-y-3">
-                <button 
-                  onClick={handleToggleDiscountMode}
-                  disabled={!isEligible || updating}
-                  className={`w-full p-6 rounded-3xl border-2 transition-all flex items-center justify-between group ${
-                    currentUser?.discountMode === 'PRICE_REDUCTION' 
-                    ? 'border-[#7851A9] bg-[#7851A9]/5' 
-                    : 'border-slate-100 hover:border-slate-200'
-                  } ${!isEligible ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <div className="text-left">
-                    <p className="text-sm font-black uppercase tracking-tight">Direct Discount</p>
-                    <p className="text-[10px] font-medium text-slate-400">Immediate price reduction at checkout.</p>
-                  </div>
-                  {currentUser?.discountMode === 'PRICE_REDUCTION' && <CheckCircle2 className="text-[#7851A9] w-6 h-6" />}
-                </button>
-
-                <button 
-                  onClick={handleToggleDiscountMode}
-                  disabled={!isEligible || updating}
-                  className={`w-full p-6 rounded-3xl border-2 transition-all flex items-center justify-between group ${
-                    currentUser?.discountMode === 'PLATFORM_CREDITS' 
-                    ? 'border-[#7851A9] bg-[#7851A9]/5' 
-                    : 'border-slate-100 hover:border-slate-200'
-                  } ${!isEligible ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <div className="text-left">
-                    <p className="text-sm font-black uppercase tracking-tight">Platform Credits</p>
-                    <p className="text-[10px] font-medium text-slate-400">Earn credits to use on future purchases.</p>
-                  </div>
-                  {currentUser?.discountMode === 'PLATFORM_CREDITS' && <CheckCircle2 className="text-[#7851A9] w-6 h-6" />}
-                </button>
+              <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                Platform credits are separate rewards earned through referrals and community programs. They can be applied to reduce the cost of any future purchase.
+              </p>
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Credit Expiry Policy</p>
+                <p className="text-sm font-bold text-black mt-1">Credits are valid for 12 months from the date issued.</p>
               </div>
-
-              {!isEligible && (
-                <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
-                  <p className="text-[10px] font-bold text-amber-700 uppercase leading-relaxed">
-                    Credit mode activates when the platform reaches 200 active merchants. 
-                    Current progress: {globalStats.merchantCount}/200
-                  </p>
-                </div>
-              )}
             </div>
           </div>
         </div>
 
         {/* Info Card */}
         <div className="bg-[#7851A9] text-white p-12 rounded-[4rem] shadow-xl flex flex-col justify-center space-y-6">
-          <h3 className="text-3xl font-black italic uppercase tracking-tighter">Why Credits?</h3>
+          <h3 className="text-3xl font-black italic uppercase tracking-tighter">Earn Credits.</h3>
           <p className="text-white/80 text-sm font-medium leading-relaxed">
-            By choosing credits, you help merchants maintain higher immediate revenue while building your own community fund. 
-            Credits circulate within the Good Circles ecosystem, strengthening the local economy.
+            Credits are community rewards — earned by growing the network and participating in programs. They supplement your automatic 10% discount and keep value circulating locally.
           </p>
           <div className="pt-4">
             <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest">
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">1</div>
-              <span>Pay Full Price</span>
+              <span>Refer a Merchant</span>
             </div>
             <div className="w-px h-4 bg-white/20 ml-4 my-1"></div>
             <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest">
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">2</div>
-              <span>Earn 10% Back</span>
+              <span>Earn Reward Credits</span>
             </div>
             <div className="w-px h-4 bg-white/20 ml-4 my-1"></div>
             <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest">
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">3</div>
-              <span>Redeem Anytime</span>
+              <span>Redeem Within 12 Months</span>
             </div>
           </div>
         </div>
@@ -211,7 +152,7 @@ export const CreditDashboard: React.FC = () => {
             <History className="w-6 h-6 text-[#7851A9]" />
             <h3 className="text-2xl font-black italic uppercase tracking-tighter">Transaction History</h3>
           </div>
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-accent">Audit-Safe Ledger</span>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent">Audit-Safe Ledger</span>
         </div>
 
         <div className="space-y-4">

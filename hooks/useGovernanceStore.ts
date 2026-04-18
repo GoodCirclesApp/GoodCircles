@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { GovernanceProposal, User, ConsensusVote, WaivedFundLog } from '../types';
+import { showToast } from './toast';
 
 export function useGovernanceStore(currentUser: User | null, onUpdateUser: (u: User) => void) {
   const [proposals, setProposals] = useState<GovernanceProposal[]>([]);
@@ -92,7 +93,7 @@ export function useGovernanceStore(currentUser: User | null, onUpdateUser: (u: U
     const stake = data.stakeAmount || 100;
     
     if ((currentUser.impactPoints || 0) < stake) {
-      alert("Insufficient Impact Points to stake this proposal.");
+      showToast('Insufficient Impact Points to stake this proposal.', 'error');
       return;
     }
 

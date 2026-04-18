@@ -71,6 +71,32 @@ export const merchantService = {
     return apiClient.get<any[]>('/merchant/bookings');
   },
 
+  getAvailability: async (): Promise<any[]> => {
+    return apiClient.get<any[]>('/merchant/availability');
+  },
+
+  setAvailability: async (windows: { dayOfWeek: number; startTime: string; endTime: string }[]): Promise<any> => {
+    return apiClient.put<any>('/merchant/availability', windows);
+  },
+
+  addBlock: async (startDate: string, endDate: string, reason?: string): Promise<any> => {
+    return apiClient.post<any>('/merchant/availability/blocks', { startDate, endDate, reason });
+  },
+
+  downloadCalendarFeed: async (): Promise<void> => {
+    const token = localStorage.getItem('gc_token') || '';
+    const response = await fetch('/api/merchant/calendar/feed.ics', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'goodcircles-schedule.ics';
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+
   updateBookingStatus: async (id: string, status: string): Promise<any> => {
     return apiClient.put<any>(`/merchant/bookings/${id}/status`, { status });
   },
@@ -97,5 +123,9 @@ export const merchantService = {
 
   setupStripe: async (): Promise<{ url: string }> => {
     return apiClient.post<{ url: string }>('/merchant/stripe-setup', {});
+  },
+
+  processQrCheckout: async (qrToken: string, productServiceId: string): Promise<any> => {
+    return apiClient.post<any>('/merchant/qr-checkout', { qrToken, productServiceId });
   }
 };

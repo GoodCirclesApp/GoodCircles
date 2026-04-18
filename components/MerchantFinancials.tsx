@@ -30,13 +30,14 @@ export const MerchantFinancials: React.FC = () => {
   };
 
   const handleExport = () => {
-    const headers = ['Date', 'Product', 'Gross Amount', 'Nonprofit Share', 'Platform Fee', 'Merchant Net', 'Nonprofit'];
+    const headers = ['Date', 'Product', 'Gross (MSRP)', 'Member Discount', 'Nonprofit Donation', 'Platform Fee', 'Merchant Net', 'Nonprofit'];
     const csvContent = [
       headers.join(','),
       ...transactions.map(t => [
         format(new Date(t.createdAt), 'yyyy-MM-dd HH:mm'),
         t.productService?.name || 'Platform',
         t.grossAmount,
+        t.discountWaived ? 0 : t.discountAmount,
         t.nonprofitShare,
         t.platformFee,
         t.merchantNet,
@@ -57,10 +58,11 @@ export const MerchantFinancials: React.FC = () => {
 
   const totals = transactions.reduce((acc, t) => ({
     gross: acc.gross + t.grossAmount,
+    discount: acc.discount + (t.discountWaived ? 0 : t.discountAmount),
     nonprofit: acc.nonprofit + t.nonprofitShare,
     platform: acc.platform + t.platformFee,
     net: acc.net + t.merchantNet
-  }), { gross: 0, nonprofit: 0, platform: 0, net: 0 });
+  }), { gross: 0, discount: 0, nonprofit: 0, platform: 0, net: 0 });
 
   const filteredTransactions = transactions.filter(t => 
     t.productService?.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -94,9 +96,10 @@ export const MerchantFinancials: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <MetricCard label="Gross Volume" value={totals.gross} icon={DollarSign} color="text-blue-600" bg="bg-blue-50" />
-        <MetricCard label="Donations (Tax Credit)" value={totals.nonprofit} icon={Heart} color="text-rose-600" bg="bg-rose-50" />
+        <MetricCard label="Member Discounts Given" value={totals.discount} icon={Percent} color="text-amber-600" bg="bg-amber-50" note="Tax deductible" />
+        <MetricCard label="Nonprofit Donations" value={totals.nonprofit} icon={Heart} color="text-rose-600" bg="bg-rose-50" note="Tax deductible" />
         <MetricCard label="Platform Fees" value={totals.platform} icon={Shield} color="text-indigo-600" bg="bg-indigo-50" />
         <MetricCard label="Merchant Net" value={totals.net} icon={TrendingUp} color="text-emerald-600" bg="bg-emerald-50" />
       </div>
@@ -119,8 +122,9 @@ export const MerchantFinancials: React.FC = () => {
               <tr className="bg-slate-50/50">
                 <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Date</th>
                 <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Asset Node</th>
-                <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Gross</th>
-                <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Impact (10%)</th>
+                <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Gross (MSRP)</th>
+                <th className="p-6 text-[10px] font-black uppercase tracking-widest text-amber-400">Member Discount</th>
+                <th className="p-6 text-[10px] font-black uppercase tracking-widest text-rose-400">Donation (10%)</th>
                 <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Platform (1%)</th>
                 <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Net Settlement</th>
                 <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Nonprofit</th>
@@ -128,15 +132,16 @@ export const MerchantFinancials: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
-                <tr><td colSpan={7} className="p-12 text-center animate-pulse text-slate-400 font-bold italic">Auditing Global Ledger...</td></tr>
+                <tr><td colSpan={8} className="p-12 text-center animate-pulse text-slate-400 font-bold italic">Auditing Global Ledger...</td></tr>
               ) : filteredTransactions.length === 0 ? (
-                <tr><td colSpan={7} className="p-12 text-center text-slate-400 font-bold italic">No transactions found for this period.</td></tr>
+                <tr><td colSpan={8} className="p-12 text-center text-slate-400 font-bold italic">No transactions found for this period.</td></tr>
               ) : (
                 filteredTransactions.map(t => (
                   <tr key={t.id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="p-6 text-[10px] font-bold text-slate-500">{format(new Date(t.createdAt), 'MMM d, yyyy HH:mm')}</td>
                     <td className="p-6 text-[10px] font-black uppercase tracking-tight">{t.productService?.name || 'Platform'}</td>
                     <td className="p-6 text-[10px] font-black italic">${t.grossAmount.toFixed(2)}</td>
+                    <td className="p-6 text-[10px] font-black italic text-amber-500">{t.discountWaived ? <span className="text-slate-300">—</span> : `$${t.discountAmount.toFixed(2)}`}</td>
                     <td className="p-6 text-[10px] font-black italic text-rose-500">${t.nonprofitShare.toFixed(2)}</td>
                     <td className="p-6 text-[10px] font-black italic text-indigo-500">${t.platformFee.toFixed(2)}</td>
                     <td className="p-6 text-[10px] font-black italic text-emerald-500">${t.merchantNet.toFixed(2)}</td>
@@ -153,13 +158,26 @@ export const MerchantFinancials: React.FC = () => {
         <div className="space-y-4 z-10">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-emerald-500/20 text-emerald-400 rounded-2xl"><FileText size={24} /></div>
-            <h3 className="text-3xl font-black italic uppercase tracking-tighter">Tax Credit Summary.</h3>
+            <h3 className="text-3xl font-black italic uppercase tracking-tighter">Tax Deduction Summary.</h3>
           </div>
-          <p className="text-slate-400 font-medium max-w-md">Your 10% nonprofit contributions are eligible for corporate tax deductions. Download your annual impact certificate for filing.</p>
+          <p className="text-slate-400 font-medium max-w-md">Two separate deductions apply to every Good Circles sale: your nonprofit donation (charitable contribution) and the member discount you gave customers (business expense). Both reduce your taxable income. Download your annual certificate for your tax advisor.</p>
+          <div className="flex flex-col sm:flex-row gap-4 pt-2">
+            <div className="bg-white/5 px-6 py-4 rounded-2xl border border-white/10">
+              <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Discounts Given</p>
+              <p className="text-2xl font-black italic text-white">${totals.discount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              <p className="text-[10px] text-slate-500 mt-1">Business expense deduction</p>
+            </div>
+            <div className="bg-white/5 px-6 py-4 rounded-2xl border border-white/10">
+              <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">Donations Made</p>
+              <p className="text-2xl font-black italic text-white">${totals.nonprofit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              <p className="text-[10px] text-slate-500 mt-1">Charitable contribution deduction</p>
+            </div>
+          </div>
         </div>
-        <div className="bg-white/5 p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-white/10 text-center w-full sm:min-w-[240px] z-10">
-          <p className="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Total Deductible Impact</p>
-          <p className="text-5xl font-black italic text-emerald-400">${totals.nonprofit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+        <div className="bg-white/5 p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-white/10 text-center w-full sm:min-w-[260px] z-10 shrink-0">
+          <p className="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Total Deductible</p>
+          <p className="text-5xl font-black italic text-emerald-400">${(totals.nonprofit + totals.discount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+          <p className="text-[10px] text-slate-500 mt-2">Donations + Discounts</p>
           <button className="mt-6 w-full py-4 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-400 transition-all">Download Certificate</button>
         </div>
         <div className="absolute -left-20 -bottom-20 opacity-5">
@@ -170,13 +188,14 @@ export const MerchantFinancials: React.FC = () => {
   );
 };
 
-const MetricCard = ({ label, value, icon: Icon, color, bg }: any) => (
+const MetricCard = ({ label, value, icon: Icon, color, bg, note }: any) => (
   <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
     <div className={`w-10 h-10 ${bg} ${color} rounded-xl flex items-center justify-center mb-4`}>
       <Icon size={20} />
     </div>
     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
     <p className="text-2xl font-black italic mt-1">${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+    {note && <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mt-1">{note}</p>}
   </div>
 );
 

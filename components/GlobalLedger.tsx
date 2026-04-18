@@ -4,6 +4,7 @@ import { Order, PayoutBatch } from '../types';
 import { generateAccountingReport } from '../services/geminiService';
 import { AccountingService } from '../services/accountingService';
 import { SettlementReport } from './SettlementReport';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   orders: Order[];
@@ -22,9 +23,9 @@ export const GlobalLedger: React.FC<Props> = ({ orders, batches = [] }) => {
     setIsAuditing(true);
     try {
       await generateAccountingReport(orders);
-      alert("AI Audit Engine: Financial integrity across all 10/10/1 nodes verified. No drift detected.");
+      showToast('AI Audit Engine: Financial integrity across all 10/10/1 nodes verified. No drift detected.', 'success');
     } catch (err) {
-      alert("AI Audit Engine encountered a synchronization error.");
+      showToast('AI Audit Engine encountered a synchronization error.', 'error');
     } finally {
       setIsAuditing(false);
     }
@@ -40,13 +41,13 @@ export const GlobalLedger: React.FC<Props> = ({ orders, batches = [] }) => {
             <div className="flex gap-4 mt-4">
               <button 
                 onClick={() => setViewMode('ORDERS')} 
-                className={`text-[9px] font-black uppercase tracking-widest px-6 py-2 rounded-xl transition-all ${viewMode === 'ORDERS' ? 'bg-black text-white shadow-xl' : 'bg-slate-50 text-slate-400'}`}
+                className={`text-[10px] font-black uppercase tracking-widest px-6 py-2 rounded-xl transition-all ${viewMode === 'ORDERS' ? 'bg-black text-white shadow-xl' : 'bg-slate-50 text-slate-400'}`}
               >
                 Raw Transactions
               </button>
               <button 
                 onClick={() => setViewMode('BATCHES')} 
-                className={`text-[9px] font-black uppercase tracking-widest px-6 py-2 rounded-xl transition-all ${viewMode === 'BATCHES' ? 'bg-black text-white shadow-xl' : 'bg-slate-50 text-slate-400'}`}
+                className={`text-[10px] font-black uppercase tracking-widest px-6 py-2 rounded-xl transition-all ${viewMode === 'BATCHES' ? 'bg-black text-white shadow-xl' : 'bg-slate-50 text-slate-400'}`}
               >
                 Settlement Batches ({batches.length})
               </button>
@@ -73,7 +74,7 @@ export const GlobalLedger: React.FC<Props> = ({ orders, batches = [] }) => {
           {viewMode === 'ORDERS' ? (
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-[#CA9CE1]/20 text-slate-400 uppercase text-[9px] font-black tracking-[0.3em]">
+                <tr className="border-b border-[#CA9CE1]/20 text-slate-400 uppercase text-[10px] font-black tracking-[0.3em]">
                   <th className="pb-8">Date</th>
                   <th className="pb-8">Hash</th>
                   <th className="pb-8">Revenue</th>
@@ -92,7 +93,7 @@ export const GlobalLedger: React.FC<Props> = ({ orders, batches = [] }) => {
                       <td className="py-10 text-xl font-black text-slate-900 tracking-tighter">${o.subtotal.toFixed(2)}</td>
                       <td className="py-10 text-xl font-black text-[#7851A9] tracking-tighter">+${o.accounting.donationAmount.toFixed(2)}</td>
                       <td className="py-10 text-right">
-                        <span className={`px-4 py-1.5 rounded-xl text-[8px] font-black uppercase ${o.handshakeStatus === 'PENDING' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                        <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase ${o.handshakeStatus === 'PENDING' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'}`}>
                           {o.handshakeStatus === 'PENDING' ? 'Escrow' : 'Settled'}
                         </span>
                       </td>
@@ -104,7 +105,7 @@ export const GlobalLedger: React.FC<Props> = ({ orders, batches = [] }) => {
           ) : (
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-[#CA9CE1]/20 text-slate-400 uppercase text-[9px] font-black tracking-[0.3em]">
+                <tr className="border-b border-[#CA9CE1]/20 text-slate-400 uppercase text-[10px] font-black tracking-[0.3em]">
                   <th className="pb-8">Batch Node ID</th>
                   <th className="pb-8">Date Range</th>
                   <th className="pb-8">Total Impact</th>
@@ -125,7 +126,7 @@ export const GlobalLedger: React.FC<Props> = ({ orders, batches = [] }) => {
                       <td className="py-10 text-right">
                          <button 
                            onClick={() => setSelectedBatch(b)}
-                           className="bg-black text-white px-8 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all hover:bg-[#7851A9] hover:scale-105"
+                           className="bg-black text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all hover:bg-[#7851A9] hover:scale-105"
                          >
                            View Certificate
                          </button>
@@ -146,7 +147,7 @@ export const GlobalLedger: React.FC<Props> = ({ orders, batches = [] }) => {
 
 const ReportStat = ({ label, value, color = "text-black" }: { label: string, value: string, color?: string }) => (
   <div className="space-y-1">
-    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
     <p className={`text-2xl font-black italic tracking-tighter ${color}`}>{value}</p>
   </div>
 );

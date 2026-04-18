@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Product } from '../types';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   products: Product[];
@@ -16,7 +17,7 @@ export const ComplianceAudit: React.FC<Props> = ({ products, onUpdateProduct }) 
       // Fix: 'REJECTED' is now assignable as cogsAuditStatus because types.ts was updated to include this value
       cogsAuditStatus: 'REJECTED' // This removes it from Neighbor views immediately
     });
-    alert(`Asset "${product.name}" has been frozen from the active marketplace pending manual review.`);
+    showToast(`Asset "${product.name}" frozen pending manual review.`, 'info');
   };
 
   return (
@@ -48,17 +49,17 @@ export const ComplianceAudit: React.FC<Props> = ({ products, onUpdateProduct }) 
                   <p className="text-slate-500 font-medium text-xs">Merchant Entity: <span className="text-black font-black">{p.merchantName}</span></p>
                   <div className="flex gap-4 mt-6">
                     {p.cogsAuditStatus === 'SUSPICIOUS' && (
-                      <div className="bg-red-500 text-white px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest animate-pulse">Suspicious COGS Pattern</div>
+                      <div className="bg-red-500 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest animate-pulse">Suspicious COGS Pattern</div>
                     )}
                     {p.msrpAuditStatus === 'FLAGGED' && (
-                      <div className="bg-amber-500 text-white px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest">MSRP Market Anomaly</div>
+                      <div className="bg-amber-500 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">MSRP Market Anomaly</div>
                     )}
                   </div>
                 </div>
               </div>
               <div className="flex flex-col items-end gap-4">
                 <div className="text-right">
-                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-accent">Calculated Net Margin</p>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent">Calculated Net Margin</p>
                    <p className="text-3xl font-black text-red-500 italic leading-none">{(((p.price * 0.9 - p.cogs) / (p.price * 0.9)) * 100).toFixed(1)}%</p>
                 </div>
                 <button 

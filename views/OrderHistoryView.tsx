@@ -76,7 +76,7 @@ export const OrderHistoryView: React.FC = () => {
                   <p className="text-[10px] font-black uppercase tracking-widest text-[#7851A9] mb-1">Financial Breakdown</p>
                   <h4 className="text-3xl font-black italic uppercase tracking-tighter">Receipt.</h4>
                 </div>
-                <div className="px-4 py-2 bg-slate-100 rounded-full text-[8px] font-black uppercase tracking-widest">Paid via {selectedOrder.paymentMethod}</div>
+                <div className="px-4 py-2 bg-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest">Paid via {selectedOrder.paymentMethod}</div>
               </div>
 
               <div className="space-y-4">

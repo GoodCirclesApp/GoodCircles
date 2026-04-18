@@ -171,7 +171,7 @@ export const MerchantLandingPage: React.FC<MerchantLandingProps> = ({ onSignUp, 
           ].map(s => (
             <div key={s.label}>
               <div className="text-2xl font-black text-white">{s.value}</div>
-              <div className="text-[9px] font-bold text-white/50 uppercase tracking-widest">{s.label}</div>
+              <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest">{s.label}</div>
             </div>
           ))}
         </div>

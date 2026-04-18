@@ -4,6 +4,7 @@ import { Product, User } from '../types';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { auditMSRP, benchmarkCOGS } from '../services/aiAuditService';
 import { BrandSubmark } from './BrandAssets';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   merchant: User;
@@ -61,7 +62,7 @@ export const MerchantProductManager: React.FC<Props> = ({ merchant, products, on
     setFormData({ name: '', description: '', price: '', cogs: '', category: PRODUCT_CATEGORIES[0], type: 'PRODUCT', imageUrl: 'https://picsum.photos/seed/product/400/400' });
     
     if (msrpAudit.status === 'FLAGGED') {
-      alert("Note: Price Sentinel has flagged this MSRP as high compared to market averages. A Governance review may be triggered.");
+      showToast('Price Sentinel: This MSRP is high vs. market averages. A Governance review may be triggered.', 'info');
     }
   };
 
@@ -134,7 +135,7 @@ export const MerchantProductManager: React.FC<Props> = ({ merchant, products, on
 
             <div className="p-6 bg-[#7851A9]/5 rounded-3xl border border-[#7851A9]/10 flex gap-4 items-center">
                <div className="text-emerald-600 animate-pulse"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.9L10 .3l7.834 4.6a1 1 0 01.5 1.175l-1.3 4.1a1.01 1.01 0 01-.01.03l-1.6 5.1a1 1 0 01-1.56.59l-3.36-2.52-3.36 2.52a1 1 0 01-1.56-.59l-1.6-5.1-.01-.03-1.3-4.1a1 1 0 01.5-1.175zM10 12.333l2.84 2.13 1.16-3.7L10 8.167l-3.999 2.6 1.16 3.7L10 12.333z" /></svg></div>
-               <p className="text-[9px] font-black text-[#7851A9] uppercase leading-relaxed italic">
+               <p className="text-[10px] font-black text-[#7851A9] uppercase leading-relaxed italic">
                  Sentinel Audit Active: Your MSRP will be benchmarked against global metropolitan averages.
                </p>
             </div>
@@ -192,8 +193,8 @@ export const MerchantProductManager: React.FC<Props> = ({ merchant, products, on
                 </div>
 
                 <div className="mt-8 pt-6 flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="flex-1 bg-slate-100 text-slate-400 py-3 rounded-xl text-[9px] font-black uppercase hover:text-black">Edit Listing</button>
-                  <button onClick={() => onDeleteProduct(p.id)} className="flex-1 bg-red-50 text-red-500 py-3 rounded-xl text-[9px] font-black uppercase hover:bg-red-500 hover:text-white transition-all">Deactivate</button>
+                  <button className="flex-1 bg-slate-100 text-slate-400 py-3 rounded-xl text-[10px] font-black uppercase hover:text-black">Edit Listing</button>
+                  <button onClick={() => onDeleteProduct(p.id)} className="flex-1 bg-red-50 text-red-500 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition-all">Deactivate</button>
                 </div>
                 
                 <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-5 transition-opacity">

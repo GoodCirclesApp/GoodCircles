@@ -32,9 +32,11 @@ router.get('/benefits/programs', merchantController.getBenefitsPrograms);
 router.post('/benefits/enroll', merchantController.enrollInBenefit);
 router.post('/stripe-setup', merchantController.setupStripe);
 
+router.get('/availability', merchantController.getAvailability);
 router.put('/availability', merchantController.updateAvailability);
 router.post('/availability/blocks', merchantController.addBlock);
 router.get('/schedule', merchantController.getSchedule);
+router.get('/calendar/feed.ics', merchantController.getCalendarFeed);
 
 // B2B restocking
 router.post('/b2b/order', merchantController.placeB2BOrder);

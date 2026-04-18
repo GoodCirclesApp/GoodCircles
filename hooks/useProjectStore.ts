@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { CommunityProject, User } from '../types';
 import { neighborService } from '../services/neighborService';
+import { showToast } from './toast';
 
 export function useProjectStore(currentUser: User | null, onUpdateUser: (u: User) => void) {
   const [projects, setProjects] = useState<CommunityProject[]>([]);
@@ -39,7 +40,7 @@ export function useProjectStore(currentUser: User | null, onUpdateUser: (u: User
     const currentPoints = currentUser.impactPoints || 0;
     
     if (currentPoints < 100) {
-      alert("Impact Milestone Required: You need 100 Impact Points to cast a Priority Vote. Shop more to earn points!");
+      showToast('Impact Milestone Required: You need 100 Impact Points to cast a Priority Vote.', 'error');
       return;
     }
 
@@ -56,7 +57,7 @@ export function useProjectStore(currentUser: User | null, onUpdateUser: (u: User
       impactPoints: currentPoints - 100
     });
     
-    alert("Priority Vote Recorded. You have influenced the community funding queue.");
+    showToast('Priority Vote Recorded. You have influenced the community funding queue.', 'success');
   };
 
   const contributeToProject = async (projectId: string, amount: number) => {

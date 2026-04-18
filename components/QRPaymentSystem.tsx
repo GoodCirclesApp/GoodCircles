@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { QrCode, Camera, DollarSign, CheckCircle2, AlertCircle, ArrowLeft, Store, Heart, Receipt, Copy, Download, RefreshCw, Smartphone, Zap } from 'lucide-react';
+import { QrCode, Camera, DollarSign, CheckCircle2, AlertCircle, ArrowLeft, Store, Heart, Receipt, Copy, Download, RefreshCw, Smartphone, Zap, Shield } from 'lucide-react';
+import { neighborService } from '../services/neighborService';
 
 // ═══════════════════════════════════════════════════
 // QR CODE PAYMENT SYSTEM
@@ -238,14 +239,14 @@ export const MerchantQRDisplay: React.FC<MerchantQRProps> = ({
 
           <div className="mt-4 flex items-center justify-center gap-3">
             <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#C2A76F]/10">
-              <span className="text-[9px] font-black text-[#C2A76F]">SAVE 10%</span>
+              <span className="text-[10px] font-black text-[#C2A76F]">SAVE 10%</span>
             </div>
             <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#A20021]/10">
               <Heart size={10} className="text-[#A20021]" />
-              <span className="text-[9px] font-black text-[#A20021]">10% DONATED</span>
+              <span className="text-[10px] font-black text-[#A20021]">10% DONATED</span>
             </div>
             <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#7851A9]/10">
-              <span className="text-[9px] font-black text-[#7851A9]">1% FEE</span>
+              <span className="text-[10px] font-black text-[#7851A9]">1% FEE</span>
             </div>
           </div>
         </div>
@@ -299,252 +300,119 @@ export const MerchantQRDisplay: React.FC<MerchantQRProps> = ({
 };
 
 // ═══════════════════════════════════════════════════
-// CONSUMER QR SCANNER & PAYMENT
-// Consumer scans merchant QR to pay
+// CONSUMER QR DISPLAY
+// Consumer shows their identity QR for merchant to scan.
+// Token is fetched from the backend (5-min TTL, single-use).
 // ═══════════════════════════════════════════════════
 
-interface ConsumerPayProps {
-  onComplete?: (transaction: any) => void;
-  onCancel?: () => void;
-  currentUser?: any;
-  selectedNonprofit?: any;
+interface ConsumerQRDisplayProps {
+  userName?: string;
 }
 
-export const ConsumerQRPay: React.FC<ConsumerPayProps> = ({
-  onComplete,
-  onCancel,
-  currentUser,
-  selectedNonprofit,
-}) => {
-  const [step, setStep] = useState<'SCAN' | 'CONFIRM' | 'PROCESSING' | 'SUCCESS' | 'ERROR'>('SCAN');
-  const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
-  const [amount, setAmount] = useState('');
+export const ConsumerQRDisplay: React.FC<ConsumerQRDisplayProps> = ({ userName }) => {
+  const [token, setToken] = useState<string | null>(null);
+  const [expiresAt, setExpiresAt] = useState<Date | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const scannerRef = useRef<any>(null);
+
+  const fetchToken = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await neighborService.getQrToken();
+      setToken(data.token);
+      const exp = new Date(data.expiresAt);
+      setExpiresAt(exp);
+      setSecondsLeft(Math.max(0, Math.floor((exp.getTime() - Date.now()) / 1000)));
+    } catch {
+      setError('Could not generate QR code. Please check your connection.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchToken(); }, [fetchToken]);
 
   useEffect(() => {
-    if (step !== 'SCAN') return;
-    const initScanner = async () => {
-      try {
-        const { Html5QrcodeScanner } = await import('html5-qrcode');
-        scannerRef.current = new Html5QrcodeScanner(
-          'qr-pay-reader',
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          false
-        );
-        scannerRef.current.render(
-          (decodedText: string) => {
-            const data = decodePaymentData(decodedText);
-            if (data) {
-              setPaymentData(data);
-              if (data.amount) setAmount(data.amount.toString());
-              setStep('CONFIRM');
-              scannerRef.current?.clear();
-            } else {
-              setError('Invalid QR code. Please scan a Good Circles payment QR.');
-            }
-          },
-          (_err: any) => { /* Scanning errors are normal */ }
-        );
-      } catch (err) {
-        console.error('Scanner init failed:', err);
-      }
-    };
-    const timer = setTimeout(initScanner, 100);
-    return () => {
-      clearTimeout(timer);
-      scannerRef.current?.clear();
-    };
-  }, [step]);
+    if (!expiresAt) return;
+    const interval = setInterval(() => {
+      const left = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
+      setSecondsLeft(left);
+      if (left === 0) clearInterval(interval);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [expiresAt]);
 
-  const handlePay = async () => {
-    if (!paymentData || !amount) return;
-    setStep('PROCESSING');
-    try {
-      await new Promise(r => setTimeout(r, 2000));
-      const transaction = {
-        merchantName: paymentData.merchantName,
-        amount: parseFloat(amount),
-        discount: parseFloat(amount) * 0.10,
-        donation: parseFloat(amount) * 0.10 * 0.35,
-        nonprofitName: selectedNonprofit?.name || 'Community Fund',
-        timestamp: new Date().toISOString(),
-      };
-      setStep('SUCCESS');
-      onComplete?.(transaction);
-    } catch (err: any) {
-      setError(err.message || 'Payment failed');
-      setStep('ERROR');
-    }
-  };
+  const qrSvg = token ? generateQRSvg(token, 240) : '';
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const isExpired = secondsLeft === 0 && !loading;
+  const urgency = secondsLeft < 60;
 
-  const parsedAmount = parseFloat(amount) || 0;
-  const discount = parsedAmount * 0.10;
-  const youPay = parsedAmount - discount;
-  const donation = parsedAmount * 0.10 * 0.35;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center py-16 space-y-4">
+      <div className="w-16 h-16 rounded-full border-4 border-[#7851A9] border-t-transparent animate-spin" />
+      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Generating secure token...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex flex-col items-center py-10 space-y-4">
+      <AlertCircle size={40} className="text-red-400" />
+      <p className="text-sm text-slate-500">{error}</p>
+      <button onClick={fetchToken} className="px-6 py-3 bg-[#7851A9] text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-black transition-all">Retry</button>
+    </div>
+  );
 
   return (
-    <div className="max-w-md mx-auto">
-      <AnimatePresence mode="wait">
-        {step === 'SCAN' && (
-          <motion.div key="scan" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#7851A9]/10 flex items-center justify-center">
-                <Camera size={28} className="text-[#7851A9]" />
-              </div>
-              <h2 className="text-xl font-black text-[#7851A9]">Scan to Pay</h2>
-              <p className="text-slate-400 text-sm mt-1">Point your camera at the merchant's QR code</p>
-            </div>
-            <div className="bg-white rounded-3xl border-2 border-[#CA9CE1]/20 p-4 shadow-lg overflow-hidden">
-              <div id="qr-pay-reader" className="rounded-2xl overflow-hidden" />
-            </div>
-            {error && (
-              <div className="flex items-center gap-2 p-3 bg-red-50 rounded-xl">
-                <AlertCircle size={16} className="text-red-500" />
-                <p className="text-xs text-red-600">{error}</p>
-              </div>
-            )}
-            <div className="text-center">
-              <p className="text-[10px] text-slate-300 uppercase tracking-widest mb-2">Or enter payment code manually</p>
-              <input
-                type="text"
-                placeholder="gc:pay:..."
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-center focus:ring-2 focus:ring-[#7851A9]/20 outline-none"
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    const data = decodePaymentData((e.target as HTMLInputElement).value);
-                    if (data) {
-                      setPaymentData(data);
-                      if (data.amount) setAmount(data.amount.toString());
-                      setStep('CONFIRM');
-                    }
-                  }
-                }}
-              />
-            </div>
-            {onCancel && (
-              <button onClick={onCancel} className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-slate-600 transition-colors">
-                <ArrowLeft size={16} /> Back
-              </button>
-            )}
-          </motion.div>
-        )}
+    <div className="flex flex-col items-center space-y-6 max-w-sm mx-auto">
+      <div className="text-center space-y-2">
+        <div className="flex items-center justify-center gap-2">
+          <Shield size={16} className="text-[#7851A9]" />
+          <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">Identity QR — Single Use</p>
+        </div>
+        {userName && <p className="text-lg font-black italic text-slate-700">{userName}</p>}
+      </div>
 
-        {step === 'CONFIRM' && paymentData && (
-          <motion.div key="confirm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#7851A9]/10 flex items-center justify-center">
-                <Store size={28} className="text-[#7851A9]" />
-              </div>
-              <h2 className="text-xl font-black text-[#7851A9]">{paymentData.merchantName}</h2>
-              {paymentData.productName && <p className="text-slate-500 text-sm mt-1">{paymentData.productName}</p>}
-            </div>
-            {!paymentData.amount && (
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-black text-slate-300">$</span>
-                <input
-                  type="number"
-                  value={amount}
-                  onChange={e => setAmount(e.target.value)}
-                  placeholder="0.00"
-                  autoFocus
-                  className="w-full pl-12 pr-4 py-5 text-4xl font-black text-center rounded-2xl border-2 border-[#CA9CE1]/20 focus:border-[#7851A9] focus:ring-4 focus:ring-[#7851A9]/10 outline-none"
-                />
-              </div>
-            )}
-            {parsedAmount > 0 && (
-              <div className="bg-slate-50 rounded-2xl p-5 space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-500">Subtotal</span>
-                  <span className="text-sm font-bold">${parsedAmount.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-emerald-600 flex items-center gap-1"><Zap size={14} /> Your 10% Discount</span>
-                  <span className="text-sm font-bold text-emerald-600">-${discount.toFixed(2)}</span>
-                </div>
-                <div className="border-t border-slate-200 pt-3 flex justify-between items-center">
-                  <span className="text-lg font-black text-[#7851A9]">You Pay</span>
-                  <span className="text-2xl font-black text-[#7851A9]">${youPay.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between items-center pt-2 border-t border-slate-100">
-                  <span className="text-xs text-slate-400 flex items-center gap-1">
-                    <Heart size={12} className="text-[#A20021]" /> Donation to {selectedNonprofit?.name || 'your nonprofit'}
-                  </span>
-                  <span className="text-xs font-bold text-[#A20021]">${donation.toFixed(2)}</span>
-                </div>
-              </div>
-            )}
-            <button
-              onClick={handlePay}
-              disabled={parsedAmount <= 0}
-              className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${
-                parsedAmount > 0
-                  ? 'bg-[#7851A9] text-white shadow-xl hover:bg-[#6841A0] active:scale-[0.98]'
-                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-              }`}
-            >
-              {parsedAmount > 0 ? `Pay $${youPay.toFixed(2)}` : 'Enter Amount'}
-            </button>
-            <button
-              onClick={() => { setStep('SCAN'); setPaymentData(null); setAmount(''); }}
-              className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-slate-600"
-            >
-              <ArrowLeft size={16} /> Scan Different Code
-            </button>
-          </motion.div>
+      <div className={`bg-white rounded-3xl shadow-2xl border-2 p-6 transition-all ${isExpired ? 'border-red-200 opacity-50' : urgency ? 'border-amber-300' : 'border-[#CA9CE1]/30'}`}>
+        {isExpired ? (
+          <div className="w-[240px] h-[240px] flex flex-col items-center justify-center gap-3">
+            <AlertCircle size={48} className="text-red-400" />
+            <p className="text-sm font-black text-red-500 uppercase tracking-widest">Expired</p>
+          </div>
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: qrSvg }} />
         )}
+      </div>
 
-        {step === 'PROCESSING' && (
-          <motion.div key="processing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-16 space-y-6">
-            <div className="w-20 h-20 mx-auto rounded-full border-4 border-[#7851A9] border-t-transparent animate-spin" />
-            <div>
-              <h2 className="text-xl font-black text-[#7851A9]">Processing Payment</h2>
-              <p className="text-slate-400 text-sm mt-2">Splitting funds via 10/10/1 model...</p>
-            </div>
-          </motion.div>
-        )}
+      {/* Countdown */}
+      <div className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-black text-sm ${isExpired ? 'bg-red-50 text-red-500' : urgency ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-600'}`}>
+        <span className="text-[10px] uppercase tracking-widest">Expires in</span>
+        <span className="text-xl font-black tabular-nums">{mins}:{String(secs).padStart(2, '0')}</span>
+      </div>
 
-        {step === 'SUCCESS' && paymentData && (
-          <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="text-center py-8 space-y-6">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 10, delay: 0.2 }} className="w-24 h-24 mx-auto rounded-full bg-emerald-100 flex items-center justify-center">
-              <CheckCircle2 size={48} className="text-emerald-500" />
-            </motion.div>
-            <div>
-              <h2 className="text-2xl font-black text-emerald-600">Payment Complete!</h2>
-              <p className="text-slate-500 text-sm mt-2">Thank you for shopping with Good Circles</p>
-            </div>
-            <div className="bg-slate-50 rounded-2xl p-5 text-left space-y-2 max-w-xs mx-auto">
-              <div className="flex justify-between"><span className="text-xs text-slate-400">Merchant</span><span className="text-xs font-bold">{paymentData.merchantName}</span></div>
-              <div className="flex justify-between"><span className="text-xs text-slate-400">Amount</span><span className="text-xs font-bold">${parsedAmount.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span className="text-xs text-emerald-600">You Saved</span><span className="text-xs font-bold text-emerald-600">${discount.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span className="text-xs text-[#A20021]">Donated</span><span className="text-xs font-bold text-[#A20021]">${donation.toFixed(2)}</span></div>
-            </div>
-            <div className="flex gap-3 justify-center">
-              <button onClick={() => { setStep('SCAN'); setPaymentData(null); setAmount(''); }} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#7851A9] text-white text-xs font-bold">
-                <RefreshCw size={14} /> Scan Another
-              </button>
-              {onCancel && (
-                <button onClick={onCancel} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">Done</button>
-              )}
-            </div>
-          </motion.div>
-        )}
+      <button
+        onClick={fetchToken}
+        className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#7851A9] text-white text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-md"
+      >
+        <RefreshCw size={14} /> {isExpired ? 'Generate New Code' : 'Refresh Early'}
+      </button>
 
-        {step === 'ERROR' && (
-          <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-12 space-y-6">
-            <div className="w-20 h-20 mx-auto rounded-full bg-red-100 flex items-center justify-center">
-              <AlertCircle size={40} className="text-red-500" />
-            </div>
-            <div>
-              <h2 className="text-xl font-black text-red-600">Payment Failed</h2>
-              <p className="text-slate-500 text-sm mt-2">{error || 'Something went wrong. Please try again.'}</p>
-            </div>
-            <button onClick={() => { setStep('SCAN'); setError(''); }} className="px-6 py-3 rounded-xl bg-[#7851A9] text-white text-xs font-bold">
-              Try Again
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="bg-slate-50 rounded-2xl p-5 space-y-3 w-full">
+        <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">How to Pay in Person</p>
+        {[
+          'Open this screen and show the QR code to the merchant.',
+          'The merchant scans your code on their Good Circles dashboard.',
+          'They select the item you\'re buying and tap Confirm.',
+          'Payment debits your Circle Wallet instantly — no card needed.',
+        ].map((s, i) => (
+          <div key={i} className="flex items-start gap-3">
+            <div className="w-5 h-5 rounded-full bg-[#7851A9] text-white flex items-center justify-center text-[9px] font-black shrink-0 mt-0.5">{i + 1}</div>
+            <p className="text-xs text-slate-500 leading-relaxed">{s}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

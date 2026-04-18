@@ -15,4 +15,7 @@ export const adminService = {
   getMunicipalPartners: () => apiClient.get<any[]>('/admin/municipal-partners'),
   getDataCoop: () => apiClient.get<any>('/admin/data-coop'),
   getSystemHealth: () => apiClient.get<any>('/admin/system-health'),
+  getSentinelFlags: () => apiClient.get<any[]>('/admin/sentinel-flags'),
+  resolveSentinelFlag: (flagId: string, approve: boolean) =>
+    apiClient.post<any>(`/admin/sentinel-flags/${flagId}/resolve`, { approve }),
 };

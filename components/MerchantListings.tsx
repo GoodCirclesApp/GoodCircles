@@ -154,9 +154,9 @@ export const MerchantListings: React.FC = () => {
                 <p className="text-[10px] font-black text-[#7851A9] uppercase mt-1">{l.category}</p>
               </div>
               <div className="hidden md:block text-right px-8 border-x border-slate-50">
-                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Pricing</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pricing</p>
                 <p className="text-sm font-black italic">${l.price.toFixed(2)}</p>
-                <p className="text-[9px] font-medium text-slate-400">COGS: ${l.cogs.toFixed(2)}</p>
+                <p className="text-[10px] font-medium text-slate-400">COGS: ${l.cogs.toFixed(2)}</p>
               </div>
               <div className="flex gap-2">
                 <button 

@@ -37,7 +37,7 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
       {/* Sync Status Badge */}
       <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-full w-fit">
         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-        <span className="text-[8px] font-black uppercase text-emerald-600 tracking-widest">Global Ledger Synced: {globalStats?.totalOrders} Verified Transactions</span>
+        <span className="text-[10px] font-black uppercase text-emerald-600 tracking-widest">Global Ledger Synced: {globalStats?.totalOrders} Verified Transactions</span>
       </div>
       <header className="flex flex-col xl:flex-row justify-between items-end gap-4 sm:gap-10">
         <div className="max-w-4xl w-full">
@@ -66,7 +66,7 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
          <div className="bg-black text-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] shadow-2xl relative overflow-hidden group">
             <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-2">My Voting Weight</p>
             <p className="text-3xl sm:text-5xl font-black italic tracking-tighter text-[#C2A76F]">{currentUser?.impactScore || 0}</p>
-            <p className="text-[9px] text-[#CA9CE1] font-medium mt-4 uppercase tracking-widest italic">Weighted by Impact Ledger</p>
+            <p className="text-[10px] text-[#CA9CE1] font-medium mt-4 uppercase tracking-widest italic">Weighted by Impact Ledger</p>
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-1000">
                <BrandSubmark size={120} variant="WHITE" showCrown={false} />
             </div>
@@ -91,11 +91,11 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
            <table className="w-full text-left border-collapse min-w-[600px]">
              <thead>
                <tr className="bg-slate-50 border-b border-slate-100">
-                 <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-widest">Timestamp</th>
-                 <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-widest">Contributor</th>
-                 <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-widest">Amount</th>
-                 <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-widest">Directed To</th>
-                 <th className="p-8 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Verification</th>
+                 <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Timestamp</th>
+                 <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Contributor</th>
+                 <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Amount</th>
+                 <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Directed To</th>
+                 <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Verification</th>
                </tr>
              </thead>
              <tbody className="divide-y divide-slate-50">
@@ -112,7 +112,7 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
                      <td className="p-8 text-sm font-black text-black">{log.userName}</td>
                      <td className="p-8 text-sm font-black text-[#7851A9]">${log.amount.toFixed(2)}</td>
                      <td className="p-8">
-                       <span className="px-4 py-1.5 bg-[#7851A9]/10 text-[#7851A9] text-[9px] font-black uppercase rounded-lg tracking-widest">
+                       <span className="px-4 py-1.5 bg-[#7851A9]/10 text-[#7851A9] text-[10px] font-black uppercase rounded-lg tracking-widest">
                          {log.targetProjectName}
                        </span>
                      </td>
@@ -140,11 +140,11 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
                 <div key={prop.id} className={`p-5 sm:p-12 rounded-2xl sm:rounded-[4rem] border transition-all duration-500 relative overflow-hidden group ${hasVoted ? 'bg-slate-50 border-slate-100 opacity-80' : 'bg-white border-[#CA9CE1]/20 shadow-xl hover:border-[#7851A9]/30'}`}>
                    <div className="flex justify-between items-start mb-8 relative z-10">
                       <div>
-                         <span className="px-4 py-1.5 bg-black text-white text-[8px] font-black uppercase rounded-lg tracking-widest">{prop.type.replace('_', ' ')}</span>
+                         <span className="px-4 py-1.5 bg-black text-white text-[10px] font-black uppercase rounded-lg tracking-widest">{prop.type.replace('_', ' ')}</span>
                          <h4 className="text-xl sm:text-3xl font-black italic tracking-tighter uppercase mt-4 leading-tight">{prop.title}</h4>
                       </div>
                       <div className="text-right">
-                         <p className="text-[8px] font-black text-slate-300 uppercase">Expires</p>
+                         <p className="text-[10px] font-black text-slate-300 uppercase">Expires</p>
                          <p className="text-xs font-bold text-slate-400">{new Date(prop.expiryDate).toLocaleDateString()}</p>
                       </div>
                    </div>
@@ -276,7 +276,7 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
 
 const CircleMetric = ({ label, value }: { label: string, value: string | number }) => (
   <div className="space-y-1">
-    <p className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">{label}</p>
+    <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{label}</p>
     <p className="text-3xl font-black italic tracking-tighter text-[#C2A76F]">{value}</p>
   </div>
 );

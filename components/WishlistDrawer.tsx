@@ -77,7 +77,7 @@ export const WishlistDrawer: React.FC<Props> = ({
                         <p className="text-2xl font-black text-[#000000] tracking-tighter">${(product.price * (1 - GC_DISCOUNT_RATE)).toFixed(2)}</p>
                         <button 
                           onClick={() => { onAddToCart(product); onRemoveFromWishlist(product.id); }}
-                          className="bg-[#000000] text-white font-black px-6 py-3 rounded-2xl text-[9px] uppercase tracking-[0.2em] hover:bg-[#7851A9] transition-all"
+                          className="bg-[#000000] text-white font-black px-6 py-3 rounded-2xl text-[10px] uppercase tracking-[0.2em] hover:bg-[#7851A9] transition-all"
                         >
                           Checkout
                         </button>

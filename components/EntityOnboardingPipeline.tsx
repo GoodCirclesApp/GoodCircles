@@ -88,9 +88,9 @@ export const EntityOnboardingPipeline: React.FC<Props> = ({ user, onUpdateUser, 
               step.status === 'PENDING' ? 'bg-white border-[#7851A9] shadow-xl ring-4 ring-[#7851A9]/5' :
               'bg-slate-50 border-slate-100 opacity-50'
             }`}>
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">Gate 0{idx + 1}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Gate 0{idx + 1}</p>
               <h4 className="text-xs font-black uppercase mb-1">{step.label}</h4>
-              <p className="text-[9px] font-bold text-slate-400 leading-tight uppercase">{step.status}</p>
+              <p className="text-[10px] font-bold text-slate-400 leading-tight uppercase">{step.status}</p>
             </div>
           ))}
         </div>

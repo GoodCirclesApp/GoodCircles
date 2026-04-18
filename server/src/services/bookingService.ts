@@ -197,8 +197,8 @@ export class BookingService {
     scheduledDateTime.setHours(hours, minutes);
 
     const reminders = [
-      { bookingId, remindAt: subHours(scheduledDateTime, 24), channel: 'EMAIL' },
-      { bookingId, remindAt: subHours(scheduledDateTime, 1), channel: 'PUSH' }
+      { bookingId, remindAt: subHours(scheduledDateTime, 48), channel: 'EMAIL' },
+      { bookingId, remindAt: subHours(scheduledDateTime, 2), channel: 'PUSH' }
     ];
 
     // Only schedule if remindAt is in the future

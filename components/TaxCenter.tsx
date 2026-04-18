@@ -4,6 +4,7 @@ import { Order, User, ComplianceData } from '../types';
 import { generateTaxStatement } from '../services/aiReportingService';
 import { BrandLogo, BrandSubmark } from './BrandAssets';
 import { Download, FileText, ShieldCheck } from 'lucide-react';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   orders: Order[];
@@ -45,7 +46,7 @@ export const TaxCenter: React.FC<Props> = ({ orders, user }) => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (err: any) {
-      alert(err.message);
+      showToast((err as Error).message || 'Failed to generate tax statement.', 'error');
     }
   };
 
@@ -94,7 +95,7 @@ export const TaxCenter: React.FC<Props> = ({ orders, user }) => {
                 </div>
                 <div>
                   <h3 className="text-lg font-black uppercase italic tracking-tighter">1099-B Compliance</h3>
-                  <p className="text-[8px] font-bold text-white/50 uppercase tracking-widest">Inter-Merchant Settlement</p>
+                  <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Inter-Merchant Settlement</p>
                 </div>
               </div>
               <p className="text-xs text-white/70 leading-relaxed font-medium">
@@ -132,7 +133,7 @@ export const TaxCenter: React.FC<Props> = ({ orders, user }) => {
                 </div>
                 <div className="pt-10 border-t border-slate-100 flex justify-between items-center">
                   <button onClick={() => window.print()} className="bg-slate-100 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all">Print PDF</button>
-                  <p className="text-[8px] font-bold text-slate-300 uppercase">Certified by Good Circles Compliance Hub</p>
+                  <p className="text-[10px] font-bold text-slate-300 uppercase">Certified by Good Circles Compliance Hub</p>
                 </div>
               </div>
             </div>
@@ -150,7 +151,7 @@ export const TaxCenter: React.FC<Props> = ({ orders, user }) => {
 
 const SummaryItem = ({ label, value, color = "text-slate-500", isBold = false }: { label: string, value: string, color?: string, isBold?: boolean }) => (
   <div className="space-y-1">
-    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest font-accent">{label}</p>
+    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent">{label}</p>
     <p className={`${isBold ? 'text-4xl' : 'text-2xl'} font-black italic tracking-tighter ${color}`}>{value}</p>
   </div>
 );

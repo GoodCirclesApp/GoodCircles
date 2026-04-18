@@ -1,14 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  LayoutDashboard, 
-  Users, 
-  History, 
-  DollarSign, 
-  Building2, 
-  ShieldCheck, 
-  Map, 
-  Database, 
+  LayoutDashboard,
+  Users,
+  History,
+  DollarSign,
+  Building2,
+  ShieldCheck,
+  Map,
+  Database,
   Activity,
   Menu,
   X,
@@ -24,7 +24,10 @@ import {
   RefreshCw,
   Presentation,
   FlaskConical,
-  Link
+  Link,
+  ShieldAlert,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { adminService } from '../services/adminService';
@@ -185,12 +188,119 @@ const SystemHealth = () => {
   return (<div className="space-y-8"><div className="grid grid-cols-1 md:grid-cols-2 gap-6"><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">API Performance</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{health.apiResponseTime}ms</span><span className="text-emerald-500 text-sm font-bold mb-1">Healthy</span></div><p className="text-slate-400 text-sm mt-2">Average response time across all endpoints</p></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Error Rate</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{(health.errorRate * 100).toFixed(2)}%</span><span className="text-emerald-500 text-sm font-bold mb-1">Normal</span></div><p className="text-slate-400 text-sm mt-2">Percentage of failed requests in last 24h</p></div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Scheduled Jobs</h4><div className="space-y-4">{health.jobs.map((job: any) => (<div key={job.name} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl"><div className="flex items-center gap-3"><div className={`w-2 h-2 rounded-full ${job.status === 'SUCCESS' ? 'bg-emerald-500' : 'bg-rose-500'}`} /><span className="font-bold">{job.name}</span></div><div className="text-xs text-slate-400">Last run: {new Date(job.lastRun).toLocaleString()}</div></div>))}</div></div></div>);
 };
 
+const PriceSentinelReview = () => {
+  const [flags, setFlags] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [acting, setActing] = useState<string | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    adminService.getSentinelFlags().then(f => { setFlags(f); setLoading(false); }).catch(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const handle = async (flagId: string, approve: boolean) => {
+    setActing(flagId);
+    try {
+      await adminService.resolveSentinelFlag(flagId, approve);
+      setFlags(prev => prev.filter(f => f.id !== flagId));
+    } finally {
+      setActing(null);
+    }
+  };
+
+  if (loading) return <div className="p-8 text-slate-400 font-medium">Loading flags...</div>;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-slate-500 text-sm font-medium mt-1">
+            Listings automatically paused because their price exceeded 125% of the category median.
+            <strong> Approve</strong> to reinstate the listing as-is, or <strong>Reject</strong> to keep it paused pending merchant correction.
+          </p>
+        </div>
+        <button onClick={load} className="p-2 rounded-xl hover:bg-slate-100 transition-colors"><RefreshCw className="w-4 h-4 text-slate-400" /></button>
+      </div>
+
+      {flags.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-slate-100 p-16 flex flex-col items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center">
+            <CheckCircle2 className="w-7 h-7 text-emerald-500" />
+          </div>
+          <div className="text-center">
+            <p className="font-black italic uppercase tracking-tighter text-xl">All Clear</p>
+            <p className="text-slate-400 text-sm font-medium mt-1">No listings are currently flagged for price review.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+          <div className="bg-amber-50 border-b border-amber-100 px-6 py-3 flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 text-amber-600" />
+            <span className="text-xs font-black uppercase tracking-widest text-amber-700">{flags.length} listing{flags.length !== 1 ? 's' : ''} pending review</span>
+          </div>
+          <table className="w-full text-left">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Listing</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Merchant</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Category</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Listed Price</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Market Median</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Suggested Max</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Flagged</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {flags.map(flag => (
+                <tr key={flag.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="font-bold text-sm">{flag.listing?.name || '—'}</div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{flag.listing?.merchant?.businessName || '—'}</td>
+                  <td className="px-6 py-4">
+                    <span className="px-2 py-1 bg-slate-100 rounded-full text-[10px] font-bold uppercase tracking-wider text-slate-600">{flag.listing?.category || '—'}</span>
+                  </td>
+                  <td className="px-6 py-4 font-black text-sm text-rose-600">${Number(flag.listing?.price ?? 0).toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm font-bold text-slate-500">${Number(flag.marketMedian ?? 0).toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm font-bold text-slate-500">${Number(flag.suggestedMax ?? 0).toFixed(2)}</td>
+                  <td className="px-6 py-4 text-xs text-slate-400">{new Date(flag.createdAt).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        onClick={() => handle(flag.id, true)}
+                        disabled={acting === flag.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold hover:bg-emerald-100 transition-colors disabled:opacity-50"
+                      >
+                        <ThumbsUp className="w-3 h-3" /> Approve
+                      </button>
+                      <button
+                        onClick={() => handle(flag.id, false)}
+                        disabled={acting === flag.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100 transition-colors disabled:opacity-50"
+                      >
+                        <ThumbsDown className="w-3 h-3" /> Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Main View
 
 type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
-  | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE';
+  | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -210,6 +320,7 @@ export const AdminPortalView: React.FC = () => {
     { id: 'DEMO', label: 'Municipal Demo', icon: Presentation },
     { id: 'MOCK_DATA', label: 'Demo Data Manager', icon: FlaskConical },
     { id: 'AFFILIATE', label: 'Affiliate Marketplace', icon: Link },
+    { id: 'SENTINEL', label: 'Price Sentinel', icon: ShieldAlert },
   ];
 
   const renderContent = () => {
@@ -226,6 +337,7 @@ export const AdminPortalView: React.FC = () => {
       case 'DEMO': return <MunicipalDemoSimulator />;
       case 'MOCK_DATA': return <MockDataManager />;
       case 'AFFILIATE': return <AdminAffiliateDashboard />;
+      case 'SENTINEL': return <PriceSentinelReview />;
       default: return <SystemDashboard />;
     }
   };

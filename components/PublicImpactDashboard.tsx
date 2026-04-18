@@ -264,7 +264,7 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
                     </div>
                   </div>
                   <div className="text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">{s.label}</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -316,15 +316,15 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
                   <div className="grid grid-cols-3 gap-3 text-center">
                     <div className="p-3 bg-[#C2A76F]/10 rounded-xl">
                       <div className="text-lg font-black text-[#C2A76F]">1.7x</div>
-                      <div className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Multiplier</div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Multiplier</div>
                     </div>
                     <div className="p-3 bg-[#A20021]/10 rounded-xl">
                       <div className="text-lg font-black text-[#A20021]">Auto</div>
-                      <div className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Donations</div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Donations</div>
                     </div>
                     <div className="p-3 bg-[#7851A9]/10 rounded-xl">
                       <div className="text-lg font-black text-[#7851A9]">1%</div>
-                      <div className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Platform Fee</div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Platform Fee</div>
                     </div>
                   </div>
                 </div>

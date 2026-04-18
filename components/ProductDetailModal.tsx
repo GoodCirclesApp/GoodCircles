@@ -14,16 +14,18 @@ interface Props {
   reviews: Review[];
   onAddReview: (review: Review) => void;
   orders: Order[];
+  onToast?: (message: string, type?: 'success' | 'error') => void;
 }
 
-export const ProductDetailModal: React.FC<Props> = ({ 
-  product, 
-  onClose, 
-  onAddToCart, 
+export const ProductDetailModal: React.FC<Props> = ({
+  product,
+  onClose,
+  onAddToCart,
   onAddToWishlist,
   reviews,
   onAddReview,
-  orders
+  orders,
+  onToast
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedDate, setSelectedDate] = useState(format(addDays(new Date(), 1), 'yyyy-MM-dd'));
@@ -58,15 +60,15 @@ export const ProductDetailModal: React.FC<Props> = ({
         }),
       });
       if (response.ok) {
-        alert('Booking request sent! The merchant will confirm shortly.');
+        onToast?.('Booking request sent! The merchant will confirm shortly.', 'success');
         onClose();
       } else {
         const error = await response.json();
-        alert(`Booking failed: ${error.error}`);
+        onToast?.(`Booking failed: ${error.error}`, 'error');
       }
     } catch (error) {
       console.error('Booking error:', error);
-      alert('An error occurred while booking.');
+      onToast?.('An error occurred while booking.', 'error');
     } finally {
       setIsBooking(false);
     }
@@ -107,9 +109,9 @@ export const ProductDetailModal: React.FC<Props> = ({
           <div className="p-5 sm:p-12 overflow-y-auto flex-1 space-y-6 sm:space-y-10 custom-scrollbar">
             <header>
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-4 py-1.5 bg-[#CA9CE1]/10 text-[#7851A9] text-[9px] font-black uppercase tracking-widest rounded-full">{product.category}</span>
-                <span className="px-4 py-1.5 bg-slate-100 text-slate-400 text-[9px] font-black uppercase tracking-widest rounded-full">Merchant: {product.merchantName}</span>
-                <span className="px-4 py-1.5 bg-black text-white text-[9px] font-black uppercase tracking-widest rounded-full">{product.type}</span>
+                <span className="px-4 py-1.5 bg-[#CA9CE1]/10 text-[#7851A9] text-[10px] font-black uppercase tracking-widest rounded-full">{product.category}</span>
+                <span className="px-4 py-1.5 bg-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-full">Merchant: {product.merchantName}</span>
+                <span className="px-4 py-1.5 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-full">{product.type}</span>
               </div>
               <h2 className="text-5xl font-black text-black tracking-tighter leading-tight italic uppercase mb-6">{product.name}</h2>
               <div className="flex items-baseline gap-6 mb-8">
@@ -213,7 +215,7 @@ export const ProductDetailModal: React.FC<Props> = ({
              <div className="flex items-center gap-4">
                <BrandSubmark size={40} color="#7851A9" />
                <div>
-                 <p className="text-[8px] font-black text-[#7851A9] uppercase tracking-widest">Impact Certified Listing</p>
+                 <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">Impact Certified Listing</p>
                  <p className="text-[10px] font-black text-black">10% Profit Disbursed to Community</p>
                </div>
              </div>

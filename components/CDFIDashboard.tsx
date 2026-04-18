@@ -91,7 +91,7 @@ export const CDFIDashboard: React.FC = () => {
         </div>
         <div className="flex gap-4">
           <div className="p-6 bg-white border border-slate-200 rounded-[2rem] text-center min-w-[160px]">
-            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Applications</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Applications</p>
             <p className="text-2xl font-black text-black italic">{applications.filter(a => a.status === 'PENDING').length}</p>
           </div>
         </div>
@@ -223,7 +223,7 @@ export const CDFIDashboard: React.FC = () => {
 
 const ScoreCard = ({ label, value, max, color }: { label: string, value: number, max: number, color: 'emerald' | 'amber' | 'red' }) => (
   <div className="p-6 bg-white border border-slate-100 rounded-3xl text-center shadow-sm">
-    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-3">{label}</p>
+    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{label}</p>
     <div className="relative inline-flex items-center justify-center">
       <svg className="w-16 h-16 transform -rotate-90">
         <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-slate-100" />
@@ -240,7 +240,7 @@ const ScoreCard = ({ label, value, max, color }: { label: string, value: number,
 
 const StatCard = ({ label, value }: { label: string, value: string }) => (
   <div className="p-6 bg-white border border-slate-100 rounded-3xl text-center shadow-sm flex flex-col justify-center">
-    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">{label}</p>
+    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{label}</p>
     <p className="text-2xl font-black text-black italic">{value}</p>
   </div>
 );

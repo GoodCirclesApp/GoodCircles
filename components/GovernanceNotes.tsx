@@ -128,14 +128,14 @@ export const GovernanceNotes: React.FC = () => {
               </button>
               <div className="flex justify-between items-start mb-8">
                 <div>
-                  <span className="bg-[#C2A76F]/10 text-[#C2A76F] px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest mb-3 inline-block font-accent">
+                  <span className="bg-[#C2A76F]/10 text-[#C2A76F] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block font-accent">
                     {note.category}
                   </span>
                   <h4 className="text-3xl font-black text-black tracking-tighter uppercase italic leading-none">{note.title}</h4>
                 </div>
                 <div className="text-right pt-1">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent">{new Date(note.date).toLocaleDateString()}</p>
-                  <p className="text-[9px] font-bold text-[#C2A76F] uppercase mt-1 tracking-widest">Authored by {note.author}</p>
+                  <p className="text-[10px] font-bold text-[#C2A76F] uppercase mt-1 tracking-widest">Authored by {note.author}</p>
                 </div>
               </div>
               <p className="text-slate-700 text-lg font-medium leading-relaxed whitespace-pre-wrap italic opacity-80">"{note.content}"</p>

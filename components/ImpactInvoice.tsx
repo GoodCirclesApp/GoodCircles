@@ -106,7 +106,7 @@ export const ImpactInvoice: React.FC<Props> = ({ order, nonprofit, onClose }) =>
           {/* Footer / Verification */}
           <div className="pt-12 flex flex-col items-center text-center space-y-8">
              <div className="bg-slate-50 px-10 py-4 rounded-2xl inline-block">
-                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Immutable Verification Hash</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Immutable Verification Hash</p>
                 <p className="text-[10px] font-mono font-bold tracking-widest text-slate-900">GC-SETTLE-${order.id?.toUpperCase() || 'N/A'}</p>
              </div>
              <div className="flex gap-4">
@@ -139,7 +139,7 @@ const SummaryRow = ({ label, value, color = "text-slate-500" }: { label: string,
 
 const ImpactBox = ({ label, value, desc, color }: { label: string, value: string, desc: string, color: string }) => (
   <div className="p-8 border border-slate-100 rounded-[2rem] space-y-3">
-    <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">{label}</p>
+    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
     <p className={`text-3xl font-black italic tracking-tighter ${color}`}>{value}</p>
     <p className="text-[10px] font-medium text-slate-400 leading-relaxed uppercase">{desc}</p>
   </div>

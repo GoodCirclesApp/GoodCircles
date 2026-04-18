@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Wallet, User } from '../types';
 import { BrandSubmark } from './BrandAssets';
 import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   wallet: Wallet | null;
@@ -23,7 +24,7 @@ export const WalletDashboard: React.FC<Props> = ({ wallet, user }) => {
     if (isNaN(val) || val <= 0) return;
     await topUp(val);
     setShowTopUp(false);
-    alert(`$${val} injected into your Circle Node. Total balance updated.`);
+    showToast(`$${val} injected into your Circle Node. Total balance updated.`, 'success');
   };
 
   const handleBridge = async () => {
@@ -39,7 +40,7 @@ export const WalletDashboard: React.FC<Props> = ({ wallet, user }) => {
       // Actually, I'll just skip the fee for the demo bridge to keep it simple
       setRegion(target.id);
       setShowBridge(false);
-      alert(`Capital successfully bridged to ${target.name}. Region policy active.`);
+      showToast(`Capital successfully bridged to ${target.name}. Region policy active.`, 'success');
     }
   };
 
@@ -68,7 +69,7 @@ export const WalletDashboard: React.FC<Props> = ({ wallet, user }) => {
               <div className="flex flex-col gap-4">
                  <div className="flex gap-4">
                    <button onClick={() => setShowTopUp(true)} className="flex-1 bg-white text-black py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#C2A76F] transition-all shadow-xl">Top Up</button>
-                   <button onClick={() => alert("Withdrawals carry a 3.5% conversion fee.")} className="flex-1 border border-white/20 text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Withdraw</button>
+                   <button onClick={() => showToast('Withdrawals carry a 3.5% conversion fee.', 'info')} className="flex-1 border border-white/20 text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Withdraw</button>
                  </div>
                  <button 
                   onClick={() => setShowBridge(true)}
@@ -86,7 +87,7 @@ export const WalletDashboard: React.FC<Props> = ({ wallet, user }) => {
         <div className="lg:col-span-2 bg-white rounded-[4rem] border border-[#CA9CE1]/20 p-12 md:p-16 shadow-sm overflow-hidden flex flex-col">
           <div className="flex justify-between items-center mb-10">
              <h3 className="text-2xl font-black italic uppercase tracking-tighter">Real-Time Ledger</h3>
-             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-accent">Audit-Safe History</span>
+             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent">Audit-Safe History</span>
           </div>
           <div className="space-y-4 flex-1 overflow-y-auto max-h-[350px] pr-4 custom-scrollbar">
              {wallet.transactions.length === 0 ? (
@@ -157,7 +158,7 @@ export const WalletDashboard: React.FC<Props> = ({ wallet, user }) => {
                     </select>
                  </div>
                  <div className="p-6 bg-[#A20021]/5 rounded-3xl border border-[#A20021]/10">
-                    <p className="text-[9px] font-black text-[#A20021] uppercase text-center italic">A 0.5% migration fee will be contributed to your current community node.</p>
+                    <p className="text-[10px] font-black text-[#A20021] uppercase text-center italic">A 0.5% migration fee will be contributed to your current community node.</p>
                  </div>
               </div>
               <div className="flex flex-col gap-4">

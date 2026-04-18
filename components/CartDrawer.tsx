@@ -90,13 +90,13 @@ export const CartDrawer: React.FC<Props> = ({
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-2xl"><BrandSubmark size={32} color="#000" showCrown={false} /></div>
                  </div>
                  <div className="bg-slate-50 px-5 py-4 sm:px-10 sm:py-6 rounded-[2.5rem] border border-slate-100">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 font-accent">Show this to merchant</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 font-accent">Show this to merchant</p>
                     <p className="text-4xl font-black tracking-[0.2em] text-[#7851A9] italic">{handshakeToken}</p>
                  </div>
                  {/* Nonprofit on Receipt */}
                  {selectedNonprofit && (
                    <div className="w-full bg-[#7851A9]/5 px-5 py-4 rounded-2xl border border-[#7851A9]/10">
-                     <p className="text-[9px] font-black text-[#7851A9] uppercase tracking-widest mb-1">Your purchase supports</p>
+                     <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest mb-1">Your purchase supports</p>
                      <p className="text-sm font-black text-black">{selectedNonprofit.name}</p>
                      <p className="text-[10px] text-slate-500 italic mt-1">10% of merchant savings go to this cause</p>
                    </div>
@@ -159,7 +159,7 @@ export const CartDrawer: React.FC<Props> = ({
                       <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[9px] font-black text-[#7851A9] uppercase tracking-widest">Supporting</p>
+                      <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">Supporting</p>
                       <p className="text-sm font-black text-black truncate">{selectedNonprofit.name}</p>
                       <p className="text-[10px] text-slate-500 italic">10% of merchant savings go to this cause</p>
                     </div>
@@ -182,7 +182,7 @@ export const CartDrawer: React.FC<Props> = ({
 
                   {isDiscountWaived && (
                     <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Select Community Initiative</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select Community Initiative</label>
                       <select 
                         value={selectedProjectId}
                         onChange={(e) => setSelectedProjectId(e.target.value)}
@@ -223,7 +223,7 @@ export const CartDrawer: React.FC<Props> = ({
                       />
                     </div>
                     
-                    <p className="text-[9px] font-medium text-white/40 italic">
+                    <p className="text-[10px] font-medium text-white/40 italic">
                       Credits are applied to the subtotal before fees.
                     </p>
                   </div>
@@ -292,7 +292,7 @@ export const CartDrawer: React.FC<Props> = ({
                  <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total to Pay</p>
                     <p className={`text-4xl font-black italic tracking-tighter ${isInsufficientBalance ? 'text-red-500' : ''}`}>${totals.totalPaid.toFixed(2)}</p>
-                    {isInsufficientBalance && <p className="text-[8px] font-bold text-red-500 uppercase mt-1">Insufficient Funds</p>}
+                    {isInsufficientBalance && <p className="text-[10px] font-bold text-red-500 uppercase mt-1">Insufficient Funds</p>}
                  </div>
                  <button 
                    onClick={handleCheckoutClick}
@@ -316,7 +316,7 @@ const PaymentCard = ({ active, onClick, label, desc, tag, tagColor }: any) => (
   >
      <div className="flex justify-between items-start mb-2">
         <h4 className="font-black text-sm uppercase tracking-tight">{label}</h4>
-        <span className={`px-2 py-1 rounded text-[8px] font-black text-white uppercase ${tagColor}`}>{tag}</span>
+        <span className={`px-2 py-1 rounded text-[10px] font-black text-white uppercase ${tagColor}`}>{tag}</span>
      </div>
      <p className="text-xs text-slate-500 font-medium leading-relaxed italic">{desc}</p>
      {active && <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-black rotate-45"></div>}

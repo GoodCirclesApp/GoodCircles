@@ -34,7 +34,7 @@ export const ImpactMapView: React.FC<Props> = ({ circles, myCircle, currentUser,
         {/* Map Header HUD */}
         <div className="absolute top-10 left-10 z-20 space-y-4">
            <div className="bg-black/40 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 space-y-1">
-              <p className="text-[8px] font-black text-[#C2A76F] uppercase tracking-[0.4em]">Mesh Terminal v9.0</p>
+              <p className="text-[10px] font-black text-[#C2A76F] uppercase tracking-[0.4em]">Mesh Terminal v9.0</p>
               <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">Geospatial Velocity.</h3>
            </div>
            <div className="flex bg-white/5 backdrop-blur-xl p-1.5 rounded-[1.5rem] border border-white/5">
@@ -42,7 +42,7 @@ export const ImpactMapView: React.FC<Props> = ({ circles, myCircle, currentUser,
                 <button 
                   key={l}
                   onClick={() => setActiveLayer(l)}
-                  className={`px-6 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all ${activeLayer === l ? 'bg-[#7851A9] text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                  className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeLayer === l ? 'bg-[#7851A9] text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
                 >
                   {l}
                 </button>
@@ -114,7 +114,7 @@ export const ImpactMapView: React.FC<Props> = ({ circles, myCircle, currentUser,
              <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl space-y-6">
                 <div className="flex justify-between items-start">
                    <div>
-                      <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{selectedNode.type} NODE</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{selectedNode.type} NODE</p>
                       <h4 className="text-xl font-black italic uppercase tracking-tighter text-black">{selectedNode.name}</h4>
                    </div>
                    <button onClick={() => setSelectedNodeId(null)} className="text-slate-300 hover:text-black">
@@ -123,15 +123,15 @@ export const ImpactMapView: React.FC<Props> = ({ circles, myCircle, currentUser,
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                    <div className="bg-slate-50 p-4 rounded-2xl">
-                      <p className="text-[8px] font-black text-slate-400 uppercase">Impact Vol.</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase">Impact Vol.</p>
                       <p className="text-lg font-black italic">${selectedNode.impactVolume.toLocaleString()}</p>
                    </div>
                    <div className="bg-slate-50 p-4 rounded-2xl">
-                      <p className="text-[8px] font-black text-slate-400 uppercase">Retention</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase">Retention</p>
                       <p className="text-lg font-black italic text-emerald-500">{(selectedNode.retentionRate * 100).toFixed(0)}%</p>
                    </div>
                 </div>
-                <button className="w-full bg-black text-white py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all shadow-xl">Analyze Circular Flow</button>
+                <button className="w-full bg-black text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all shadow-xl">Analyze Circular Flow</button>
              </div>
           </div>
         )}

@@ -134,6 +134,6 @@ const StatusItem = ({ label, status, time }: { label: string, status: string, ti
       <p className="text-xs font-bold text-white">{label}</p>
       <p className="text-[10px] text-slate-400 mt-0.5">{time}</p>
     </div>
-    <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-500/20">{status}</span>
+    <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">{status}</span>
   </div>
 );

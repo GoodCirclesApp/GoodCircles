@@ -85,11 +85,11 @@ export const AccountingHub: React.FC<Props> = ({ orders, currentRole, products, 
                   <div key={o.id} className="p-10 bg-slate-50 rounded-[3rem] border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-10">
                      <div className="flex-1 space-y-4">
                         <div>
-                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Hash: GC-{o.id?.slice(-8) || 'N/A'}</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Hash: GC-{o.id?.slice(-8) || 'N/A'}</p>
                           <h4 className="text-2xl font-black italic tracking-tighter uppercase">Dispute from {o.items[0]?.product.merchantName}</h4>
                         </div>
                         <div className="p-6 bg-white rounded-2xl border border-red-100">
-                           <p className="text-[9px] font-black text-[#A20021] uppercase mb-2">Claim Reason</p>
+                           <p className="text-[10px] font-black text-[#A20021] uppercase mb-2">Claim Reason</p>
                            <p className="text-sm font-medium italic text-slate-700">"{o.disputeReason}"</p>
                         </div>
                      </div>

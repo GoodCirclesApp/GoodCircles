@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Initiative, neighborService } from '../services/neighborService';
 import { BrandSubmark } from '../components/BrandAssets';
+import { showToast } from '../hooks/toast';
 
 export const CommunityInitiativesView: React.FC = () => {
   const [initiatives, setInitiatives] = useState<Initiative[]>([]);
@@ -34,9 +35,9 @@ export const CommunityInitiativesView: React.FC = () => {
       const data = await neighborService.listInitiatives();
       setInitiatives(data);
       setWaiveAmount({ ...waiveAmount, [id]: '' });
-      alert('Thank you for your contribution!');
+      showToast('Thank you for your contribution!', 'success');
     } catch (err) {
-      alert('Failed to process contribution.');
+      showToast('Failed to process contribution.', 'error');
     } finally {
       setIsProcessing(null);
     }
@@ -68,7 +69,7 @@ export const CommunityInitiativesView: React.FC = () => {
                     <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-[#7851A9] group-hover:text-white transition-all">
                       <BrandSubmark size={32} variant="BLACK" />
                     </div>
-                    <div className="px-4 py-2 bg-[#7851A9]/10 text-[#7851A9] rounded-full text-[8px] font-black uppercase tracking-widest">Active Initiative</div>
+                    <div className="px-4 py-2 bg-[#7851A9]/10 text-[#7851A9] rounded-full text-[10px] font-black uppercase tracking-widest">Active Initiative</div>
                   </div>
                   
                   <h3 className="text-xl sm:text-3xl font-black italic uppercase tracking-tighter">{initiative.title}</h3>
@@ -108,7 +109,7 @@ export const CommunityInitiativesView: React.FC = () => {
                     <button 
                       onClick={() => handleWaive(initiative.id)}
                       disabled={isProcessing !== null || !waiveAmount[initiative.id]}
-                      className="bg-black text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all disabled:opacity-50"
+                      className="bg-black text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-[10px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all disabled:opacity-50"
                     >
                       {isProcessing === initiative.id ? '...' : 'Contribute'}
                     </button>

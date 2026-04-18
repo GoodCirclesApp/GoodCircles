@@ -102,7 +102,7 @@ export const SettlementReport: React.FC<Props> = ({ batch, onClose }) => {
 
           <div className="pt-8 border-t border-slate-100 flex flex-col items-center gap-8">
              <div className="text-center">
-                <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.5em] mb-2">Immutable Ledger Node</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] mb-2">Immutable Ledger Node</p>
                 <code className="text-[10px] font-mono font-bold bg-slate-50 px-6 py-2 rounded-xl text-slate-900 border border-slate-100">HASH_GC_BATCH_{batch.id.toUpperCase()}</code>
              </div>
              <div className="flex gap-4 w-full max-w-md">
@@ -119,7 +119,7 @@ export const SettlementReport: React.FC<Props> = ({ batch, onClose }) => {
 
 const SummaryItem = ({ label, value, color = "text-slate-500", isBold = false }: { label: string, value: string, color?: string, isBold?: boolean }) => (
   <div className="space-y-1">
-    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest font-accent">{label}</p>
+    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent">{label}</p>
     <p className={`${isBold ? 'text-4xl' : 'text-2xl'} font-black italic tracking-tighter ${color}`}>{value}</p>
   </div>
 );

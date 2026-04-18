@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { merchantService } from '../services/merchantService';
 import { Settings, User, CreditCard, Shield, Check, AlertCircle, ExternalLink, Zap, Lock, Globe } from 'lucide-react';
+import { showToast } from '../hooks/toast';
 
 export const MerchantSettings: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -28,7 +29,7 @@ export const MerchantSettings: React.FC = () => {
     setIsSaving(true);
     try {
       await merchantService.updateProfile(profile);
-      alert('Profile updated successfully.');
+      showToast('Profile updated successfully.', 'success');
     } catch (err) {
       console.error('Failed to update profile', err);
     } finally {

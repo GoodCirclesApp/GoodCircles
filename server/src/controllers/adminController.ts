@@ -2,6 +2,7 @@
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { PriceSentinelService } from '../services/priceSentinelService';
 
 
 
@@ -182,4 +183,30 @@ export const getSystemHealth = async (req: AuthRequest, res: Response) => {
       { name: 'Payouts', status: 'SUCCESS', lastRun: '2026-03-22T01:00:00Z' }
     ]
   });
+};
+
+export const getSentinelFlags = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  try {
+    const flags = await PriceSentinelService.getFlags();
+    res.json(flags);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const resolveSentinelFlag = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const { flagId } = req.params;
+  const { approve } = req.body as { approve: boolean };
+  try {
+    const flag = await PriceSentinelService.resolveFlag(flagId, approve);
+    res.json(flag);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 };

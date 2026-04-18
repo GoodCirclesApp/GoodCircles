@@ -40,11 +40,11 @@ export const MerchantDashboard: React.FC = () => {
   }
 
   const metricCards = [
-    { label: 'Total Sales', value: metrics?.totalSales, icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { label: 'Net Revenue', value: metrics?.netRevenue, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Nonprofit Impact', value: metrics?.nonprofitContributions, icon: Heart, color: 'text-rose-600', bg: 'bg-rose-50' },
-    { label: 'Platform Fees', value: metrics?.platformFees, icon: Shield, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-    { label: 'Processing Saved', value: metrics?.processingFeesSaved, icon: Percent, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Total Sales', value: metrics?.totalSales, icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-50', note: undefined },
+    { label: 'Net Revenue', value: metrics?.netRevenue, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', note: undefined },
+    { label: 'Discounts Given', value: metrics?.discountsGiven, icon: Percent, color: 'text-amber-600', bg: 'bg-amber-50', note: 'Tax deductible' },
+    { label: 'Nonprofit Donations', value: metrics?.nonprofitContributions, icon: Heart, color: 'text-rose-600', bg: 'bg-rose-50', note: 'Tax deductible' },
+    { label: 'Processing Saved', value: metrics?.processingFeesSaved, icon: Shield, color: 'text-indigo-600', bg: 'bg-indigo-50', note: undefined },
   ];
 
   return (
@@ -56,7 +56,8 @@ export const MerchantDashboard: React.FC = () => {
               <card.icon size={20} />
             </div>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{card.label}</p>
-            <p className="text-2xl font-black italic mt-1">${card.value?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            <p className="text-2xl font-black italic mt-1">${(card.value ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            {card.note && <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mt-1">{card.note}</p>}
           </div>
         ))}
       </div>
@@ -65,11 +66,22 @@ export const MerchantDashboard: React.FC = () => {
         <div className="lg:col-span-2 bg-white p-4 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-xl font-black italic uppercase tracking-tighter">Revenue Velocity (30D)</h3>
-            <div className="flex gap-2">
-              <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase">+12.5% vs last month</span>
-            </div>
+            {chartData.length > 0 && (
+              <div className="flex gap-2">
+                <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase">Live Data</span>
+              </div>
+            )}
           </div>
           <div className="h-48 sm:h-80">
+            {chartData.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center gap-4 text-center border-2 border-dashed border-slate-100 rounded-[2rem]">
+                <svg className="w-10 h-10 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
+                <div>
+                  <p className="text-sm font-black italic uppercase tracking-tighter text-slate-300">No revenue data yet</p>
+                  <p className="text-xs text-slate-300 font-medium mt-1">Your first sales will appear here</p>
+                </div>
+              </div>
+            ) : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
@@ -94,6 +106,7 @@ export const MerchantDashboard: React.FC = () => {
                 <Area type="monotone" dataKey="revenue" stroke="#7851A9" strokeWidth={4} fillOpacity={1} fill="url(#colorRevenue)" />
               </AreaChart>
             </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -114,7 +127,7 @@ export const MerchantDashboard: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-black italic">${t.grossAmount.toFixed(2)}</p>
-                    <p className="text-[9px] font-black text-[#7851A9] uppercase">Net: ${t.merchantNet.toFixed(2)}</p>
+                    <p className="text-[10px] font-black text-[#7851A9] uppercase">Net: ${t.merchantNet.toFixed(2)}</p>
                   </div>
                 </div>
               ))

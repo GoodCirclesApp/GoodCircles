@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { neighborService } from '../services/neighborService';
 import { BrandSubmark } from '../components/BrandAssets';
+import { showToast } from '../hooks/toast';
 
 export const ImpactDashboardView: React.FC = () => {
   const [impactData, setImpactData] = useState<any>(null);
@@ -97,12 +98,21 @@ export const ImpactDashboardView: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-black text-white p-12 rounded-[4rem] shadow-2xl flex flex-col justify-center items-center text-center space-y-6">
-          <BrandSubmark size={80} variant="WHITE" showCrown={true} />
-          <h4 className="text-3xl font-black italic uppercase tracking-tighter">Your Good Circle is growing.</h4>
-          <p className="text-white/60 text-lg font-medium leading-relaxed">Every transaction strengthens the local economy and supports the causes you care about most. Keep going.</p>
-          <button className="bg-[#C2A76F] text-black px-10 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all mt-4">Share My Impact</button>
-        </div>
+        {impactData?.totalSaved === 0 && impactData?.totalContributed === 0 ? (
+          <div className="bg-[#7851A9] text-white p-12 rounded-[4rem] shadow-2xl flex flex-col justify-center items-center text-center space-y-6">
+            <BrandSubmark size={80} variant="WHITE" showCrown={true} />
+            <h4 className="text-3xl font-black italic uppercase tracking-tighter">Start your Good Circle.</h4>
+            <p className="text-white/60 text-lg font-medium leading-relaxed">Make your first purchase in the marketplace to begin building your impact record and earning community savings.</p>
+            <button onClick={() => {}} className="bg-[#C2A76F] text-black px-10 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all mt-4">Go to Marketplace</button>
+          </div>
+        ) : (
+          <div className="bg-black text-white p-12 rounded-[4rem] shadow-2xl flex flex-col justify-center items-center text-center space-y-6">
+            <BrandSubmark size={80} variant="WHITE" showCrown={true} />
+            <h4 className="text-3xl font-black italic uppercase tracking-tighter">Your Good Circle is growing.</h4>
+            <p className="text-white/60 text-lg font-medium leading-relaxed">Every transaction strengthens the local economy and supports the causes you care about most. Keep going.</p>
+            <button onClick={() => showToast('Impact sharing coming soon.', 'info')} className="bg-[#C2A76F] text-black px-10 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all mt-4">Share My Impact</button>
+          </div>
+        )}
       </div>
     </div>
   );

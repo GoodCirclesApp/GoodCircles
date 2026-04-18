@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { merchantService } from '../services/merchantService';
 import { Heart, Shield, Check, ArrowRight, Plus, Users, Zap, TrendingDown, Star } from 'lucide-react';
+import { showToast } from '../hooks/toast';
 
 export const MerchantBenefits: React.FC = () => {
   const [programs, setPrograms] = useState<any[]>([]);
@@ -27,7 +28,7 @@ export const MerchantBenefits: React.FC = () => {
     if (!confirm('Are you sure you want to enroll in this program?')) return;
     try {
       await merchantService.enrollInBenefit(programId);
-      alert('Enrollment successful. You will be contacted for next steps.');
+      showToast('Enrollment successful. You will be contacted for next steps.', 'success');
       setActiveTab('ENROLLED');
     } catch (err) {
       console.error('Failed to enroll in benefit', err);
@@ -69,7 +70,7 @@ export const MerchantBenefits: React.FC = () => {
                   <span className="text-slate-400">Monthly Cost</span>
                   <span className="text-black">{p.cost}</span>
                 </div>
-                <div className="flex justify-between text-[9px] font-bold text-slate-400">
+                <div className="flex justify-between text-[10px] font-bold text-slate-400">
                   <span>Collective Rate</span>
                   <span>Market Rate: $600+</span>
                 </div>
@@ -98,23 +99,23 @@ export const MerchantBenefits: React.FC = () => {
           <div className="p-8 bg-slate-50 rounded-[3rem] border border-slate-100 text-left max-w-2xl mx-auto">
             <div className="flex justify-between items-center mb-6">
               <h4 className="text-lg font-black uppercase italic tracking-tighter">Community Health Plan</h4>
-              <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[8px] font-black uppercase tracking-widest">Active</span>
+              <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest">Active</span>
             </div>
             <div className="grid grid-cols-2 gap-8">
               <div>
-                <p className="text-[8px] font-black text-slate-400 uppercase mb-1">Enrolled Since</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Enrolled Since</p>
                 <p className="text-sm font-black italic">Jan 1, 2026</p>
               </div>
               <div>
-                <p className="text-[8px] font-black text-slate-400 uppercase mb-1">Monthly Cost</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Monthly Cost</p>
                 <p className="text-sm font-black italic">$450.00</p>
               </div>
               <div>
-                <p className="text-[8px] font-black text-slate-400 uppercase mb-1">Next Renewal</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Next Renewal</p>
                 <p className="text-sm font-black italic">Jan 1, 2027</p>
               </div>
               <div>
-                <p className="text-[8px] font-black text-slate-400 uppercase mb-1">Group ID</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Group ID</p>
                 <p className="text-sm font-black italic">GC-HEALTH-001</p>
               </div>
             </div>
@@ -145,7 +146,7 @@ export const MerchantBenefits: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-black italic text-emerald-500">-${s.savings.toFixed(2)}</p>
-                    <p className="text-[9px] font-black text-slate-400 uppercase">Monthly Savings</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase">Monthly Savings</p>
                   </div>
                 </div>
               ))}

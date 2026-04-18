@@ -75,7 +75,7 @@ export const MerchantOrders: React.FC = () => {
                         <p className="text-sm font-black uppercase tracking-tighter">#{order.id.slice(0, 8)}</p>
                       </div>
                     </div>
-                    <div className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
+                    <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
                       order.status === 'PENDING' ? 'bg-amber-50 text-amber-600' :
                       order.status === 'SHIPPED' ? 'bg-blue-50 text-blue-600' :
                       order.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600' :

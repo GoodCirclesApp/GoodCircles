@@ -8,10 +8,12 @@ interface Props {
   orders: Order[];
   batches: PayoutBatch[];
   globalStats?: GlobalStats;
+  onToast?: (message: string, type?: 'success' | 'error') => void;
 }
 
-export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats }) => {
+export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats, onToast }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [privacyMode, setPrivacyMode] = useState<'public' | 'private'>('public');
 
   const filteredOrders = orders.filter(o => 
     o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -23,7 +25,7 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
   const verificationRate = 100.00; // In this system, all ledger entries are verified by the protocol
 
   const handleExportProof = (order: Order) => {
-    alert(`Exporting Immutable Integrity Certificate for Node GC-${order.id.slice(-8)}...`);
+    onToast?.(`Exporting certificate for Node GC-${order.id.slice(-8)}...`, 'success');
     window.print();
   };
 
@@ -49,15 +51,22 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
               Member identities are fully anonymized via Hash Masking. Transaction sums and impact destinations are public, ensuring 100% auditability without compromising personal shopping habits.
             </p>
          </div>
-         <div className="relative z-10 flex gap-4">
+         <div className="relative z-10 flex flex-col sm:flex-row gap-4">
             <div className="px-6 py-4 bg-white/10 rounded-2xl border border-white/10 text-center">
-               <p className="text-[8px] font-black uppercase text-[#C2A76F] mb-1">Audit Mode</p>
+               <p className="text-[10px] font-black uppercase text-[#C2A76F] mb-1">Audit Mode</p>
                <p className="text-lg font-black italic">Public</p>
             </div>
             <div className="px-6 py-4 bg-white/10 rounded-2xl border border-white/10 text-center">
-               <p className="text-[8px] font-black uppercase text-[#C2A76F] mb-1">Identity Mode</p>
+               <p className="text-[10px] font-black uppercase text-[#C2A76F] mb-1">Identity Mode</p>
                <p className="text-lg font-black italic">Encrypted</p>
             </div>
+            <button
+               onClick={() => setPrivacyMode(p => p === 'public' ? 'private' : 'public')}
+               className={`px-6 py-4 rounded-2xl border text-center transition-all ${privacyMode === 'private' ? 'bg-white text-[#7851A9] border-white' : 'bg-white/10 border-white/10 text-white hover:bg-white/20'}`}
+            >
+               <p className="text-[10px] font-black uppercase text-current/60 mb-1">Merchant Visibility</p>
+               <p className="text-lg font-black italic">{privacyMode === 'public' ? 'Revealed' : 'Masked'}</p>
+            </button>
          </div>
          <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:scale-110 transition-transform duration-1000">
             <BrandSubmark size={140} variant="WHITE" showCrown={false} />
@@ -99,7 +108,7 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-slate-100 text-slate-400 text-[9px] font-black uppercase tracking-widest">
+              <tr className="border-b border-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest">
                 <th className="pb-6">Date</th>
                 <th className="pb-6">Shielded Member ID</th>
                 <th className="pb-6">Ledger Hash</th>
@@ -110,23 +119,27 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filteredOrders.length === 0 ? (
-                <tr><td colSpan={6} className="py-20 text-center text-slate-300 font-bold italic uppercase text-xs">No records matching search.</td></tr>
+                <tr><td colSpan={6} className="py-20 text-center text-slate-300 font-bold italic uppercase text-xs">
+                  {orders.length === 0 ? 'No transactions have settled yet — the ledger is awaiting its first entry.' : 'No records matching search.'}
+                </td></tr>
               ) : (
                 filteredOrders.map(o => (
                   <tr key={o.id} className="hover:bg-slate-50 transition-colors group relative overflow-hidden">
                     <td className="py-8 text-xs font-bold text-slate-500">{new Date(o.date).toLocaleDateString()}</td>
                     <td className="py-8">
-                       <span className="bg-slate-100 px-3 py-1 rounded-lg text-[9px] font-black text-slate-400 uppercase font-mono group-hover:text-black transition-colors">
+                       <span className="bg-slate-100 px-3 py-1 rounded-lg text-[10px] font-black text-slate-400 uppercase font-mono group-hover:text-black transition-colors">
                          SHIELD-#{o.neighborPublicId || o.neighborId.slice(-4).toUpperCase()}
                        </span>
                     </td>
                     <td className="py-8 font-mono text-[10px] font-black uppercase tracking-tighter text-slate-800">GC-{o.id.slice(-8)}</td>
-                    <td className="py-8 text-xs font-black uppercase text-slate-900">{o.items[0]?.product.merchantName || 'Network Entity'}</td>
+                    <td className="py-8 text-xs font-black uppercase text-slate-900">
+                      {privacyMode === 'private' ? `NODE-${o.items[0]?.product.merchantId?.slice(-4).toUpperCase() || 'XXXX'}` : (o.items[0]?.product.merchantName || 'Network Entity')}
+                    </td>
                     <td className="py-8 text-xl font-black text-[#7851A9] tracking-tighter">${o.accounting.donationAmount.toFixed(2)}</td>
                     <td className="py-8 text-right">
                        <button 
                          onClick={() => handleExportProof(o)}
-                         className="bg-black text-white px-6 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all hover:bg-[#7851A9]"
+                         className="bg-black text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all hover:bg-[#7851A9]"
                        >
                          Download Proof
                        </button>
@@ -145,7 +158,7 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
             <p className="text-[10px] font-black uppercase tracking-[0.4em] font-accent">Audit Finality Protocol v10.01 - Privacy Shield Enabled</p>
          </div>
-         <p className="text-[8px] font-medium text-center max-w-sm uppercase tracking-widest leading-relaxed">
+         <p className="text-[10px] font-medium text-center max-w-sm uppercase tracking-widest leading-relaxed">
            This ledger is immutable. Every entry represents a verified community contribution that has been settled against the Merchant Impact Reserve.
          </p>
       </div>

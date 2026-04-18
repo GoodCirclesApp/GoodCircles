@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { MerchantConsortium, User } from '../types';
 import { BrandSubmark } from './BrandAssets';
+import { showToast } from '../hooks/toast';
 
 export const ConsortiumManager: React.FC = () => {
   const [consortiums, setConsortiums] = useState<MerchantConsortium[]>([
@@ -16,7 +17,7 @@ export const ConsortiumManager: React.FC = () => {
     setTimeout(() => {
       setConsortiums(prev => prev.map(c => c.id === id ? { ...c, memberCount: c.memberCount + 1 } : c));
       setIsJoining(null);
-      alert("Application for Volume Pooling submitted. Verifying historical node integrity...");
+      showToast('Application for Volume Pooling submitted. Verifying historical node integrity...', 'info');
     }, 1500);
   };
 
@@ -40,11 +41,11 @@ export const ConsortiumManager: React.FC = () => {
              <div className="relative z-10 space-y-8">
                 <div className="flex justify-between items-start">
                    <div>
-                      <span className="text-[9px] font-black uppercase text-[#7851A9] tracking-widest bg-[#7851A9]/5 px-3 py-1 rounded-lg">{con.category}</span>
+                      <span className="text-[10px] font-black uppercase text-[#7851A9] tracking-widest bg-[#7851A9]/5 px-3 py-1 rounded-lg">{con.category}</span>
                       <h4 className="text-2xl font-black italic uppercase tracking-tighter mt-4">{con.name}</h4>
                    </div>
                    <div className="text-right">
-                      <p className="text-[8px] font-black text-slate-400 uppercase mb-1">Target Reduction</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Target Reduction</p>
                       <p className="text-3xl font-black text-emerald-500 italic">{(con.targetCOGS_Reduction * 100).toFixed(0)}%</p>
                    </div>
                 </div>
@@ -53,11 +54,11 @@ export const ConsortiumManager: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-6 bg-white p-6 rounded-3xl border border-slate-100">
                    <div>
-                      <p className="text-[8px] font-black text-slate-400 uppercase">Active Nodes</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase">Active Nodes</p>
                       <p className="text-xl font-black italic">{con.memberCount}</p>
                    </div>
                    <div>
-                      <p className="text-[8px] font-black text-slate-400 uppercase">Combined Volume</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase">Combined Volume</p>
                       <p className="text-xl font-black italic">${(con.combinedVolume / 1000).toFixed(0)}k+</p>
                    </div>
                 </div>

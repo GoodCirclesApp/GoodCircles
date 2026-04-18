@@ -232,6 +232,6 @@ const StatBox = ({ label, value, icon: Icon, color }: { label: string; value: nu
   <div className="text-center p-4 bg-slate-50 rounded-xl">
     <Icon size={20} className="mx-auto mb-2" style={{ color }} />
     <div className="text-2xl font-black" style={{ color }}>{value}</div>
-    <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">{label}</div>
+    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{label}</div>
   </div>
 );

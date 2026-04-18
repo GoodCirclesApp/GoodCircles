@@ -57,7 +57,7 @@ export const AffiliateProductCard: React.FC<Props> = ({ listing, currencySymbol 
     <div className="group bg-white rounded-2xl sm:rounded-[3rem] border border-amber-100 overflow-hidden hover:shadow-2xl transition-all relative flex flex-col">
       {/* Affiliate badge */}
       <div className="absolute top-3 left-3 z-10">
-        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[8px] font-black uppercase tracking-widest ${colorClass}`}>
+        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[10px] font-black uppercase tracking-widest ${colorClass}`}>
           <ExternalLink size={9} />
           {listing.program.name}
         </span>
@@ -79,7 +79,7 @@ export const AffiliateProductCard: React.FC<Props> = ({ listing, currencySymbol 
 
       {/* Content */}
       <div className="p-3 sm:p-6 flex flex-col flex-1">
-        <p className="text-[8px] sm:text-[10px] font-black text-amber-600 uppercase tracking-widest">{listing.category}</p>
+        <p className="text-[10px] sm:text-[10px] font-black text-amber-600 uppercase tracking-widest">{listing.category}</p>
         <h4
           className="text-sm sm:text-base font-black text-black mb-2 leading-tight mt-1"
           style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
@@ -91,7 +91,7 @@ export const AffiliateProductCard: React.FC<Props> = ({ listing, currencySymbol 
           <span className="text-lg sm:text-2xl font-black italic text-black">
             {currencySymbol}{price.toFixed(2)}
           </span>
-          <span className="text-[9px] font-bold text-slate-400 uppercase">est. retail</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase">est. retail</span>
         </div>
 
         <button

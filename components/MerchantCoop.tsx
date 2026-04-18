@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { merchantService } from '../services/merchantService';
 import { ShoppingBag, Users, TrendingDown, ArrowRight, Check, AlertCircle, Plus, Search } from 'lucide-react';
+import { showToast } from '../hooks/toast';
 
 export const MerchantCoop: React.FC = () => {
   const [deals, setDeals] = useState<any[]>([]);
@@ -28,7 +29,7 @@ export const MerchantCoop: React.FC = () => {
     if (!quantity || isNaN(Number(quantity))) return;
     try {
       await merchantService.commitToCoopDeal(dealId, Number(quantity));
-      alert('Commitment secured. You will be notified when the deal activates.');
+      showToast('Commitment secured. You will be notified when the deal activates.', 'success');
       fetchDeals();
     } catch (err) {
       console.error('Failed to commit to deal', err);
@@ -73,7 +74,7 @@ export const MerchantCoop: React.FC = () => {
                 <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-[#7851A9]" style={{ width: `${(deal.currentCommitted / deal.minQuantity) * 100}%` }} />
                 </div>
-                <div className="flex justify-between text-[9px] font-bold text-slate-400">
+                <div className="flex justify-between text-[10px] font-bold text-slate-400">
                   <span>{deal.currentCommitted} committed</span>
                   <span>Goal: {deal.minQuantity}</span>
                 </div>
@@ -144,7 +145,7 @@ export const MerchantCoop: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-black italic text-emerald-500">-${s.savings.toFixed(2)}</p>
-                    <p className="text-[9px] font-black text-slate-400 uppercase">COGS Reduction</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase">COGS Reduction</p>
                   </div>
                 </div>
               ))}

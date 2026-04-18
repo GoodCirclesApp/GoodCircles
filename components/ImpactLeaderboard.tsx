@@ -104,7 +104,7 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`whitespace-nowrap px-4 sm:px-8 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
+              className={`whitespace-nowrap px-4 sm:px-8 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
                 activeTab === tab ? 'bg-black text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
@@ -184,10 +184,10 @@ const RankRow = ({ rank, name, metricLabel, metricValue, subMetric, progress }: 
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-3 sm:mb-4 gap-1 sm:gap-4">
           <div className="min-w-0 flex-1">
             <h4 className="text-base sm:text-2xl font-black text-black tracking-tighter uppercase truncate">{name}</h4>
-            {subMetric && <p className="text-[9px] sm:text-[10px] font-black text-[#7851A9] uppercase tracking-widest mt-1 font-accent">{subMetric}</p>}
+            {subMetric && <p className="text-[10px] sm:text-[10px] font-black text-[#7851A9] uppercase tracking-widest mt-1 font-accent">{subMetric}</p>}
           </div>
           <div className="sm:text-right shrink-0">
-            <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent mb-0.5 sm:mb-1">{metricLabel}</p>
+            <p className="text-[10px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent mb-0.5 sm:mb-1">{metricLabel}</p>
             <p className="text-base sm:text-2xl font-black text-black tracking-tighter">{metricValue}</p>
           </div>
         </div>

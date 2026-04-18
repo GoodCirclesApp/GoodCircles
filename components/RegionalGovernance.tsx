@@ -135,14 +135,14 @@ export const RegionalGovernance: React.FC<Props> = ({ communities, onUpdatePolic
                      <div className="w-1/3">
                         <h5 className="text-xs font-black uppercase text-slate-800">{cat}</h5>
                         {community.fiscalPolicy.categoryOverrides?.[cat] ? (
-                          <span className="text-[8px] font-black text-[#C2A76F] uppercase">Custom Policy Active</span>
+                          <span className="text-[10px] font-black text-[#C2A76F] uppercase">Custom Policy Active</span>
                         ) : (
-                          <span className="text-[8px] font-black text-slate-300 uppercase">Inheriting Region Policy</span>
+                          <span className="text-[10px] font-black text-slate-300 uppercase">Inheriting Region Policy</span>
                         )}
                      </div>
                      <div className="flex gap-10 items-center">
                         <div className="flex flex-col items-center gap-2">
-                           <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Discount</span>
+                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Discount</span>
                            <input 
                              type="number" step="1" 
                              value={Math.round(rates.discountRate * 100)} 
@@ -151,7 +151,7 @@ export const RegionalGovernance: React.FC<Props> = ({ communities, onUpdatePolic
                            />
                         </div>
                         <div className="flex flex-col items-center gap-2">
-                           <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Impact</span>
+                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Impact</span>
                            <input 
                              type="number" step="1" 
                              value={Math.round(rates.donationRate * 100)} 
@@ -181,7 +181,7 @@ export const RegionalGovernance: React.FC<Props> = ({ communities, onUpdatePolic
         <section className="animate-in fade-in duration-300">
            <div className="flex justify-between items-center mb-10">
               <h4 className="text-2xl font-black italic uppercase tracking-tighter">Active Proposals</h4>
-              <button className="bg-black text-white px-8 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all">Submit New Proposal</button>
+              <button className="bg-black text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all">Submit New Proposal</button>
            </div>
            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {activeProposals.map(prop => {
@@ -190,13 +190,13 @@ export const RegionalGovernance: React.FC<Props> = ({ communities, onUpdatePolic
                 return (
                   <div key={prop.id} className="p-8 bg-slate-50 border border-slate-100 rounded-[3rem] group hover:bg-white hover:shadow-xl transition-all">
                      <div className="flex justify-between items-start mb-6">
-                        <span className="px-3 py-1 bg-emerald-100 text-emerald-600 text-[8px] font-black uppercase rounded-lg">Status: {prop.status}</span>
+                        <span className="px-3 py-1 bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase rounded-lg">Status: {prop.status}</span>
                         <p className="text-[10px] font-black text-slate-300 uppercase font-accent">ID: {prop.id}</p>
                      </div>
                      <h5 className="text-xl font-black uppercase italic tracking-tighter mb-2">{prop.title}</h5>
                      <p className="text-sm text-slate-500 font-medium italic mb-8">"{prop.description}"</p>
                      <div className="space-y-3">
-                        <div className="flex justify-between text-[9px] font-black uppercase">
+                        <div className="flex justify-between text-[10px] font-black uppercase">
                            <span className="text-emerald-500">For ({prop.votesFor})</span>
                            <span className="text-slate-300">Against ({prop.votesAgainst})</span>
                         </div>
@@ -205,8 +205,8 @@ export const RegionalGovernance: React.FC<Props> = ({ communities, onUpdatePolic
                         </div>
                      </div>
                      <div className="grid grid-cols-2 gap-4 mt-8">
-                        <button className="bg-black text-white py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-lg hover:bg-emerald-600 transition-all">Vote For</button>
-                        <button className="bg-white border border-slate-200 text-slate-400 py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:border-red-500 hover:text-red-500 transition-all">Vote Against</button>
+                        <button className="bg-black text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:bg-emerald-600 transition-all">Vote For</button>
+                        <button className="bg-white border border-slate-200 text-slate-400 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-red-500 hover:text-red-500 transition-all">Vote Against</button>
                      </div>
                   </div>
                 );
@@ -238,6 +238,6 @@ const PolicyControl = ({ label, value, onChange, unit, helper }: any) => (
       onChange={(e) => onChange(parseFloat(e.target.value))}
       className="w-full h-1.5 bg-white rounded-lg appearance-none cursor-pointer accent-black" 
     />
-    <p className="text-[9px] text-slate-400 font-medium italic leading-tight px-2">"{helper}"</p>
+    <p className="text-[10px] text-slate-400 font-medium italic leading-tight px-2">"{helper}"</p>
   </div>
 );

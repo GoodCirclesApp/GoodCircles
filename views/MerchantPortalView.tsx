@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { LayoutDashboard, Package, Calendar, BarChart3, ShoppingBag, Truck, Heart, Settings, Menu, X, ChevronRight, QrCode, Smartphone } from 'lucide-react';
 import { MerchantDashboard } from '../components/MerchantDashboard';
@@ -14,6 +14,7 @@ import { HandshakeScanner } from '../components/HandshakeScanner';
 import { MerchantQRDisplay } from '../components/QRPaymentSystem';
 import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
 import { MerchantAdvisor } from '../components/MerchantAdvisor';
+import { merchantService } from '../services/merchantService';
 
 type MerchantSubView = 'DASHBOARD' | 'LISTINGS' | 'ORDERS' | 'BOOKINGS' | 'FINANCIALS' | 'COOP' | 'SUPPLY_CHAIN' | 'BENEFITS' | 'SETTLEMENT' | 'QR_PAY' | 'SETTINGS';
 
@@ -23,19 +24,44 @@ export const MerchantPortalView: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const [isAdvisorOpen, setIsAdvisorOpen] = useState(false);
+  const [merchantListings, setMerchantListings] = useState<{ id: string; name: string; price: number }[]>([]);
   const { currentUser, orders, updateOrders, products } = useGoodCirclesStore();
 
   // Accessing the merchant relation safely via a cast
   const merchantData = (currentUser as any)?.merchant;
 
-  const handleVerifyHandshake = async (token: string) => {
+  useEffect(() => {
+    merchantService.getListings().then(listings => {
+      setMerchantListings(
+        listings
+          .filter(l => l.isActive)
+          .map(l => ({ id: l.id, name: l.name, price: l.price }))
+      );
+    }).catch(() => {});
+  }, []);
+
+  const handleVerifyHandshake = async (token: string, productServiceId?: string) => {
+    if (productServiceId) {
+      try {
+        const result = await merchantService.processQrCheckout(token, productServiceId);
+        const nonprofitShare = result?.transaction?.nonprofitShare ?? result?.nonprofitShare;
+        return {
+          success: true,
+          message: 'Payment settled. 10/10/1 split complete.',
+          amount: nonprofitShare ? Number(nonprofitShare) : undefined,
+        };
+      } catch (err: any) {
+        return { success: false, message: err.message || 'Settlement failed.' };
+      }
+    }
+    // Fallback: local demo handshake via impact token
     const order = orders.find(o => o.impactToken === token);
     if (order) {
       const updated = orders.map(o => o.id === order.id ? { ...o, handshakeStatus: 'COMPLETED' as const } : o);
       updateOrders(updated);
-      return { success: true, message: "Contribution secured.", amount: order.accounting.donationAmount };
+      return { success: true, message: 'Contribution secured.', amount: order.accounting.donationAmount };
     }
-    return { success: false, message: "Invalid token." };
+    return { success: false, message: 'Invalid token.' };
   };
 
   const navItems = [
@@ -66,7 +92,7 @@ export const MerchantPortalView: React.FC = () => {
           products={[]}
         />
       );
-      case 'SETTLEMENT': return <HandshakeScanner onVerify={handleVerifyHandshake} onCancel={() => setActiveSubView('DASHBOARD')} />;
+      case 'SETTLEMENT': return <HandshakeScanner onVerify={handleVerifyHandshake} onCancel={() => setActiveSubView('DASHBOARD')} products={merchantListings} />;
       case 'COOP': return <MerchantCoop />;
       case 'SUPPLY_CHAIN': return <MerchantSupplyChain />;
       case 'BENEFITS': return <MerchantBenefits />;
@@ -101,7 +127,7 @@ export const MerchantPortalView: React.FC = () => {
               <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white font-black italic text-xl">GC</div>
               <div className="min-w-0">
                 <h1 className="text-sm font-black uppercase tracking-tighter truncate">Merchant Portal</h1>
-                <p className="text-[8px] font-black text-[#7851A9] uppercase tracking-widest">Node: {currentUser?.id?.slice(0, 8) ?? ''}</p>
+                <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">Node: {currentUser?.id?.slice(0, 8) ?? ''}</p>
               </div>
             </div>
           ) : (
@@ -155,7 +181,7 @@ export const MerchantPortalView: React.FC = () => {
             </div>
             <div>
               <h2 className="text-2xl font-black italic uppercase tracking-tighter">
-                Welcome back, {currentUser?.firstName}.
+                Welcome back, {(currentUser as any)?.merchant?.businessName || currentUser?.firstName || 'Merchant'}.
               </h2>
               <p className="text-slate-400 text-xs font-medium">
                 Your merchant node is healthy and synced with the global ledger.
@@ -165,7 +191,7 @@ export const MerchantPortalView: React.FC = () => {
           <div className="flex gap-4">
             <div className="bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
               <div className="text-right">
-                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Node Status</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Node Status</p>
                 <p className="text-[10px] font-black uppercase text-emerald-500">Active & Verified</p>
               </div>
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
@@ -191,7 +217,7 @@ export const MerchantPortalView: React.FC = () => {
         className="fixed bottom-6 right-6 z-50 bg-[#7851A9] hover:bg-[#6a3f9a] text-white font-bold px-4 py-3 rounded-full shadow-lg flex items-center gap-2 transition-colors"
         title="Open AI Advisor"
       >
-        <span className="text-lg">Ã°ÂÂ¤Â</span>
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2h-2" /></svg>
         <span className="hidden sm:inline text-sm">AI Advisor</span>
       </button>
       {currentUser && (

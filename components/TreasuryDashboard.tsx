@@ -5,6 +5,7 @@ import { TreasuryStats, TreasuryRecommendation } from '../types';
 import { generateTreasuryInsights } from '../services/aiReportingService';
 import { generateTreasuryRecommendations } from '../services/aiTreasuryService';
 import { BrandSubmark } from './BrandAssets';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   stats: TreasuryStats;
@@ -33,7 +34,7 @@ export const TreasuryDashboard: React.FC<Props> = ({ stats }) => {
 
   const handleApply = (id: string) => {
     setRecommendations(prev => prev.map(r => r.id === id ? { ...r, isApplied: true } : r));
-    alert("Recommendation queued for Governance Node verification.");
+    showToast('Recommendation queued for Governance Node verification.', 'info');
   };
 
   const flowData = [
@@ -76,8 +77,8 @@ export const TreasuryDashboard: React.FC<Props> = ({ stats }) => {
                {recommendations.map(rec => (
                  <div key={rec.id} className={`p-8 rounded-[3rem] border transition-all ${rec.isApplied ? 'bg-emerald-500/20 border-emerald-500/40' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
                     <div className="flex justify-between items-start mb-6">
-                       <span className="text-[8px] font-black uppercase text-[#C2A76F] tracking-widest">{rec.type.replace('_', ' ')}</span>
-                       <span className="text-[8px] font-bold text-white/40">{Math.round(rec.confidence * 100)}% Conf</span>
+                       <span className="text-[10px] font-black uppercase text-[#C2A76F] tracking-widest">{rec.type.replace('_', ' ')}</span>
+                       <span className="text-[10px] font-bold text-white/40">{Math.round(rec.confidence * 100)}% Conf</span>
                     </div>
                     <h4 className="text-xl font-black italic uppercase tracking-tighter mb-4">{rec.title}</h4>
                     <p className="text-sm text-white/60 mb-8 leading-relaxed italic">"{rec.description}"</p>
@@ -86,7 +87,7 @@ export const TreasuryDashboard: React.FC<Props> = ({ stats }) => {
                        <button 
                          onClick={() => handleApply(rec.id)}
                          disabled={rec.isApplied}
-                         className={`px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${rec.isApplied ? 'text-emerald-400 bg-emerald-400/10' : 'bg-[#C2A76F] text-black hover:bg-white'}`}
+                         className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${rec.isApplied ? 'text-emerald-400 bg-emerald-400/10' : 'bg-[#C2A76F] text-black hover:bg-white'}`}
                        >
                          {rec.isApplied ? 'Implemented' : 'Execute'}
                        </button>

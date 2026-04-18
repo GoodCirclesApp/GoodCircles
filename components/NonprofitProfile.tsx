@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Save, Globe, Mail, Phone, MapPin, Camera, ExternalLink } from 'lucide-react';
 import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
+import { showToast } from '../hooks/toast';
 
 export const NonprofitProfile: React.FC = () => {
   const { currentUser, updateUser } = useGoodCirclesStore();
@@ -17,7 +18,7 @@ export const NonprofitProfile: React.FC = () => {
   const handleSave = async () => {
     try {
       await updateUser({ firstName: formData.orgName });
-      alert('Profile updated successfully!');
+      showToast('Profile updated successfully!', 'success');
     } catch (error) {
       console.error('Update failed:', error);
     }

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Wallet, WalletTransaction } from '../types';
 import { format } from 'date-fns';
 import { BrandSubmark } from '../components/BrandAssets';
+import { ConsumerQRDisplay } from '../components/QRPaymentSystem';
 
 interface Props {
   balance: number;
@@ -11,18 +12,21 @@ interface Props {
   onTopUp: (amount: number) => Promise<void>;
   onWithdraw: (amount: number) => Promise<void>;
   isLoading: boolean;
+  onToast?: (message: string, type?: 'success' | 'error') => void;
 }
 
-export const WalletView: React.FC<Props> = ({ 
-  balance, 
-  creditBalance, 
-  transactions, 
-  onTopUp, 
+export const WalletView: React.FC<Props> = ({
+  balance,
+  creditBalance,
+  transactions,
+  onTopUp,
   onWithdraw,
-  isLoading 
+  isLoading,
+  onToast,
 }) => {
   const [amount, setAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [activeTab, setActiveTab] = useState<'WALLET' | 'PAY_IN_PERSON'>('WALLET');
 
   const handleAction = async (action: 'topup' | 'withdraw') => {
     const val = parseFloat(amount);
@@ -37,7 +41,7 @@ export const WalletView: React.FC<Props> = ({
       }
       setAmount('');
     } catch (err) {
-      alert('Transaction failed. Please try again.');
+      onToast?.('Transaction failed. Please try again.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -50,6 +54,30 @@ export const WalletView: React.FC<Props> = ({
         <p className="text-slate-500 text-2xl font-medium mt-6">Manage your capital and track your platform rewards.</p>
       </header>
 
+      {/* Tab switcher */}
+      <div className="flex gap-3">
+        {[
+          { id: 'WALLET', label: 'Circle Account' },
+          { id: 'PAY_IN_PERSON', label: 'Pay in Person' },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-[#7851A9] text-white shadow-md' : 'bg-white border border-slate-100 text-slate-400 hover:bg-slate-50'}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'PAY_IN_PERSON' && (
+        <div className="bg-white border border-[#CA9CE1]/20 rounded-[3rem] p-8 shadow-xl">
+          <h3 className="text-2xl font-black italic uppercase tracking-tighter mb-8">In-Person Payment QR</h3>
+          <ConsumerQRDisplay />
+        </div>
+      )}
+
+      {activeTab === 'WALLET' && <div className="space-y-12">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Balance Cards */}
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -139,7 +167,7 @@ export const WalletView: React.FC<Props> = ({
                     <td className="px-10 py-8 text-sm font-bold text-slate-500">{format(new Date(tx.date), 'MMM dd, yyyy')}</td>
                     <td className="px-10 py-8 text-sm font-black italic uppercase tracking-tight">{tx.description}</td>
                     <td className="px-10 py-8">
-                      <span className={`px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${tx.type === 'CREDIT' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                      <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${tx.type === 'CREDIT' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
                         {tx.type}
                       </span>
                     </td>
@@ -153,6 +181,7 @@ export const WalletView: React.FC<Props> = ({
           </table>
         </div>
       </div>
+      </div>}
     </div>
   );
 };

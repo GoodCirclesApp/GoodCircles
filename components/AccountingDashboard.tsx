@@ -54,7 +54,7 @@ export const AccountingDashboard: React.FC<Props> = ({ orders, role, onUpdateOrd
       {/* Sync Status Badge */}
       <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-full w-fit mx-auto">
         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-        <span className="text-[8px] font-black uppercase text-emerald-600 tracking-widest">Global Ledger Synced: ${globalStats?.totalInternalVolume.toLocaleString()} Total Volume</span>
+        <span className="text-[10px] font-black uppercase text-emerald-600 tracking-widest">Global Ledger Synced: ${globalStats?.totalInternalVolume.toLocaleString()} Total Volume</span>
       </div>
 
       {role === 'MERCHANT' && (
@@ -66,15 +66,15 @@ export const AccountingDashboard: React.FC<Props> = ({ orders, role, onUpdateOrd
             </div>
             <div className="flex flex-wrap gap-8 z-10 justify-center">
                <div className="text-center">
-                  <p className="text-[8px] font-black uppercase text-slate-500 mb-1">Total COGS</p>
+                  <p className="text-[10px] font-black uppercase text-slate-500 mb-1">Total COGS</p>
                   <p className="text-2xl font-black italic text-slate-300">${stats.totalCogs.toFixed(2)}</p>
                </div>
                <div className="text-center border-l border-white/10 pl-8">
-                  <p className="text-[8px] font-black uppercase text-slate-500 mb-1">Net Profit</p>
+                  <p className="text-[10px] font-black uppercase text-slate-500 mb-1">Net Profit</p>
                   <p className="text-2xl font-black italic text-[#7851A9]">${stats.totalNetProfit.toFixed(2)}</p>
                </div>
                <div className="text-center border-l border-white/10 pl-8">
-                  <p className="text-[8px] font-black uppercase text-slate-500 mb-1">Impact (10%)</p>
+                  <p className="text-[10px] font-black uppercase text-slate-500 mb-1">Impact (10%)</p>
                   <p className="text-2xl font-black italic text-[#C2A76F]">${stats.totalDonated.toFixed(2)}</p>
                </div>
             </div>
@@ -128,7 +128,7 @@ export const AccountingDashboard: React.FC<Props> = ({ orders, role, onUpdateOrd
             </div>
             <div className="mt-8 pt-8 border-t border-slate-50 flex justify-between">
                <div className="text-center">
-                  <p className="text-[8px] font-black text-slate-400 uppercase mb-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase mb-1">
                     {role === 'MERCHANT' ? 'Platform Fee (1%)' : 'Revenue Generated'}
                   </p>
                   <p className="text-lg font-black text-black">
@@ -136,7 +136,7 @@ export const AccountingDashboard: React.FC<Props> = ({ orders, role, onUpdateOrd
                   </p>
                </div>
                <div className="text-center">
-                  <p className="text-[8px] font-black text-slate-400 uppercase mb-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase mb-1">
                     {role === 'MERCHANT' ? 'Merchant Settlement' : 'Total Support Volume'}
                   </p>
                   <p className="text-lg font-black text-emerald-500">

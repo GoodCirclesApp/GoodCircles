@@ -164,7 +164,7 @@ export const FAQSection: React.FC<Props> = ({ role }) => {
                     className="w-full p-12 flex items-center justify-between text-left group"
                   >
                     <div className="flex-1 min-w-0 pr-10">
-                      <span className="text-[8px] font-black text-[#7851A9] uppercase tracking-[0.4em] mb-4 block opacity-60">
+                      <span className="text-[10px] font-black text-[#7851A9] uppercase tracking-[0.4em] mb-4 block opacity-60">
                         Knowledge Pillar: {faq.category}
                       </span>
                       <h3 className="text-3xl font-black text-black tracking-tighter leading-tight italic uppercase group-hover:text-[#7851A9] transition-colors">

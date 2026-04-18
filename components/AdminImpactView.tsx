@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ImpactDashboard } from './ImpactDashboard';
 import { Shield, Activity, Lock } from 'lucide-react';
+import { showToast } from '../hooks/toast';
 
 export const AdminImpactView: React.FC = () => {
   const [regions, setRegions] = useState<any[]>([]);
@@ -46,13 +47,13 @@ export const AdminImpactView: React.FC = () => {
       });
       if (res.ok) {
         const result = await res.json();
-        alert(`Partnership activated! Token: ${result.token}`);
+        showToast(`Partnership activated! Token: ${result.token}`, 'success');
         setShowActivateModal(null);
         setActivationForm({ name: '', email: '' });
         fetchRegions();
       }
     } catch (err) {
-      alert('Failed to activate. Check console for details.');
+      showToast('Failed to activate. Check console for details.', 'error');
     }
   };
 
@@ -102,11 +103,11 @@ export const AdminImpactView: React.FC = () => {
                   {/* Safety-wrapped metrics */}
                   <div className="flex justify-between pt-4 border-t mt-4">
                     <div className="text-center flex-1">
-                      <p className="text-[8px] uppercase text-slate-400">Merchants</p>
+                      <p className="text-[10px] uppercase text-slate-400">Merchants</p>
                       <p className="font-black">{region?.metrics?.[0]?.merchantsActive || 0}</p>
                     </div>
                     <div className="text-center flex-1">
-                      <p className="text-[8px] uppercase text-slate-400">GTV</p>
+                      <p className="text-[10px] uppercase text-slate-400">GTV</p>
                       <p className="font-black">${Math.round((region?.metrics?.[0]?.totalGtv || 0) / 1000)}k</p>
                     </div>
                   </div>

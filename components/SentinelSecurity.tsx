@@ -107,11 +107,11 @@ export const SentinelSecurity: React.FC = () => {
                   <h4 className="text-xl font-black uppercase italic tracking-tighter">Real-time Threat Interception</h4>
                   <div className="flex gap-4">
                     <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-                      <p className="text-[8px] font-black text-emerald-500 uppercase">Blocked Requests</p>
+                      <p className="text-[10px] font-black text-emerald-500 uppercase">Blocked Requests</p>
                       <p className="text-xl font-black tracking-tighter italic">12,842</p>
                     </div>
                     <div className="px-4 py-2 bg-[#7851A9]/10 border border-[#7851A9]/20 rounded-xl">
-                      <p className="text-[8px] font-black text-[#7851A9] uppercase">Active Mitigation</p>
+                      <p className="text-[10px] font-black text-[#7851A9] uppercase">Active Mitigation</p>
                       <p className="text-xl font-black tracking-tighter italic">24/7</p>
                     </div>
                   </div>
@@ -208,7 +208,7 @@ export const SentinelSecurity: React.FC = () => {
                    <h4 className="text-2xl font-black italic tracking-tighter uppercase">Encryption Vault</h4>
                    <p className="text-sm text-slate-500 leading-relaxed font-medium">All financial and personal data is wrapped in AES-256-GCM. Merchant Payout details are vaulted using asynchronous RSA keys rotating every 72 hours.</p>
                    <div className="p-6 bg-white rounded-3xl border border-slate-200">
-                      <p className="text-[8px] font-black text-slate-400 uppercase mb-2">Active Encryption Key ID</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase mb-2">Active Encryption Key ID</p>
                       <code className="text-xs font-mono text-[#7851A9] break-all">GC_SEC_K_9921_X009_L44_A1_FF823</code>
                    </div>
                 </div>
@@ -249,24 +249,24 @@ export const SentinelSecurity: React.FC = () => {
                 logs.map(log => (
                   <div key={log.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-[#7851A9]/20 transition-all">
                     <div className="flex justify-between items-start mb-2">
-                      <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase ${
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase ${
                         log.severity === 'HIGH' ? 'bg-red-100 text-red-500' : 'bg-slate-200 text-slate-500'
                       }`}>
                         {log.severity} Threat
                       </span>
-                      <span className="text-[8px] font-black text-slate-300">{log.timestamp}</span>
+                      <span className="text-[10px] font-black text-slate-300">{log.timestamp}</span>
                     </div>
                     <p className="text-xs font-black text-slate-800 uppercase tracking-tight">{log.type.replace('_', ' ')}</p>
                     <div className="flex justify-between items-center mt-3">
-                      <span className="text-[9px] font-mono text-slate-400">ORIGIN: {log.origin}</span>
-                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{log.status}</span>
+                      <span className="text-[10px] font-mono text-slate-400">ORIGIN: {log.origin}</span>
+                      <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{log.status}</span>
                     </div>
                   </div>
                 ))
               )}
             </div>
             <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
-               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Global Node Latency</span>
+               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global Node Latency</span>
                <span className="text-xs font-black italic">14ms</span>
             </div>
           </div>
@@ -277,7 +277,7 @@ export const SentinelSecurity: React.FC = () => {
                 <h5 className="text-xl font-black italic tracking-tighter uppercase">Ransomware Killswitch</h5>
              </div>
              <p className="text-xs opacity-80 font-medium leading-relaxed">In the event of a broad heuristic anomaly, the Platform Governance module can instantly isolate the Settlement Ledger from external APIs to prevent data encryption loops.</p>
-             <button className="w-full bg-white text-[#A20021] py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all">Enable Auto-Killswitch</button>
+             <button className="w-full bg-white text-[#A20021] py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all">Enable Auto-Killswitch</button>
           </div>
         </div>
       </div>
@@ -287,7 +287,7 @@ export const SentinelSecurity: React.FC = () => {
 
 const SecurityStatusItem = ({ label, value }: { label: string, value: string }) => (
   <div className="text-center">
-    <p className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">{label}</p>
+    <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">{label}</p>
     <p className="text-sm font-black italic text-emerald-500">{value}</p>
   </div>
 );

@@ -115,7 +115,7 @@ export const MerchantScheduleView: React.FC<Props> = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${
+                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${
                       booking.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-700' :
                       booking.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
                       booking.status === 'PAYMENT_PENDING' ? 'bg-purple-100 text-purple-700' :

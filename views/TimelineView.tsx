@@ -4,6 +4,7 @@ import { Order, Nonprofit, User, Booking } from '../types';
 import { ReferralCenter } from '../components/ReferralCenter';
 import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
 import { format, parseISO } from 'date-fns';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   orders: Order[];
@@ -37,9 +38,11 @@ export const TimelineView: React.FC<Props> = ({
   };
 
   const handleRefundToCircle = async (order: Order) => {
-    if (confirm("Redirect this refund to your Circle Account? Doing so keeps capital in the community and avoids banking delays.")) {
-      await refundToWallet(order.totalPaid, `Refund Recapture: GC-${order.id.slice(-6)}`);
-      alert("Capital recaptured. Funds available instantly in your Circle Wallet.");
+    const refundAmount = order.accounting.merchantNet + order.accounting.platformFee;
+    const donationAmount = order.accounting.donationAmount;
+    if (confirm(`Refund $${refundAmount.toFixed(2)} to your Circle Account?\n\nNote: The $${donationAmount.toFixed(2)} donation already disbursed to your elected nonprofit is non-refundable. This is by design — community impact is permanent.`)) {
+      await refundToWallet(refundAmount, `Refund Recapture: GC-${order.id.slice(-6)}`);
+      showToast(`$${refundAmount.toFixed(2)} recaptured to your Circle Wallet. Donation of $${donationAmount.toFixed(2)} retained by nonprofit.`, 'success');
     }
   };
 
@@ -65,7 +68,7 @@ export const TimelineView: React.FC<Props> = ({
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest ${
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${
                         booking.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-700' :
                         booking.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
                         booking.status === 'PAYMENT_PENDING' ? 'bg-purple-100 text-purple-700' :
@@ -95,7 +98,7 @@ export const TimelineView: React.FC<Props> = ({
                 </div>
                 {booking.status === 'COMPLETED' && booking.transactionId && (
                   <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
-                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Service Completed</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Service Completed</p>
                     <span className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">Transaction: {booking.transactionId.slice(-8)}</span>
                   </div>
                 )}
@@ -121,13 +124,13 @@ export const TimelineView: React.FC<Props> = ({
                       <h4 className="text-2xl font-black italic tracking-tighter uppercase">Order Settlement</h4>
                       <div className="flex gap-2 flex-wrap mt-2">
                         {order.paymentMethod === 'CASH' && order.handshakeStatus === 'PENDING' && (
-                          <span className="px-3 py-1 bg-amber-50 text-amber-500 rounded-lg text-[8px] font-black uppercase tracking-widest">Handshake Pending</span>
+                          <span className="px-3 py-1 bg-amber-50 text-amber-500 rounded-lg text-[10px] font-black uppercase tracking-widest">Handshake Pending</span>
                         )}
                         {order.paymentMethod === 'BALANCE' && (
-                          <span className="px-3 py-1 bg-[#C2A76F]/10 text-[#C2A76F] rounded-lg text-[8px] font-black uppercase tracking-widest">Circle Account Payment</span>
+                          <span className="px-3 py-1 bg-[#C2A76F]/10 text-[#C2A76F] rounded-lg text-[10px] font-black uppercase tracking-widest">Circle Account Payment</span>
                         )}
                         {order.accounting.feesSaved > 0 && (
-                          <span className="px-3 py-1 bg-emerald-50 text-emerald-500 rounded-lg text-[8px] font-black uppercase tracking-widest">Wealth Saved: +${order.accounting.feesSaved.toFixed(2)}</span>
+                          <span className="px-3 py-1 bg-emerald-50 text-emerald-500 rounded-lg text-[10px] font-black uppercase tracking-widest">Wealth Saved: +${order.accounting.feesSaved.toFixed(2)}</span>
                         )}
                       </div>
                     </div>
@@ -136,7 +139,7 @@ export const TimelineView: React.FC<Props> = ({
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3" /></svg>
                        </button>
                        {order.handshakeStatus !== 'PENDING' && (
-                         <button onClick={() => onInvoiceClick(order)} className="bg-black text-white px-8 py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all shadow-lg">Digital Invoice</button>
+                         <button onClick={() => onInvoiceClick(order)} className="bg-black text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all shadow-lg">Digital Invoice</button>
                        )}
                     </div>
                  </div>
@@ -147,11 +150,11 @@ export const TimelineView: React.FC<Props> = ({
                  </div>
                  <div className="flex items-center justify-between pt-6 border-t border-slate-50 relative z-10">
                     <div>
-                      <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Community Impact</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Community Impact</p>
                       <p className={`text-2xl font-black ${order.handshakeStatus === 'PENDING' ? 'text-slate-300' : 'text-[#7851A9]'} italic tracking-tighter`}>+${order.accounting.donationAmount.toFixed(2)}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Settled Amount</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Settled Amount</p>
                       <p className="text-2xl font-black text-black italic tracking-tighter">${order.totalPaid.toFixed(2)}</p>
                     </div>
                  </div>

@@ -318,7 +318,7 @@ export const UniversalSearch: React.FC<Props> = ({
                         </div>
                         <div className="text-right shrink-0">
                           <p className="text-sm font-black text-slate-800">${p.price.toFixed(2)}</p>
-                          <p className="text-[9px] text-emerald-600 font-bold">Save ${(p.price * 0.10).toFixed(2)}</p>
+                          <p className="text-[10px] text-emerald-600 font-bold">Save ${(p.price * 0.10).toFixed(2)}</p>
                         </div>
                         <ChevronRight size={14} className="text-slate-300 group-hover:text-[#7851A9] transition-colors shrink-0" />
                       </button>
@@ -341,7 +341,7 @@ export const UniversalSearch: React.FC<Props> = ({
                       External Partners — {results.totals.affiliate} result{results.totals.affiliate !== 1 ? 's' : ''}
                     </span>
                     <div className="flex-1 h-px bg-amber-100 ml-1" />
-                    <span className="text-[9px] text-amber-500 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full font-bold">
+                    <span className="text-[10px] text-amber-500 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full font-bold">
                       Commission supports nonprofits
                     </span>
                   </div>
@@ -369,7 +369,7 @@ export const UniversalSearch: React.FC<Props> = ({
                         </div>
                         <div className="text-right shrink-0">
                           <p className="text-sm font-black text-slate-800">${a.price.toFixed(2)}</p>
-                          <p className="text-[9px] text-amber-600 font-bold flex items-center gap-0.5 justify-end">
+                          <p className="text-[10px] text-amber-600 font-bold flex items-center gap-0.5 justify-end">
                             <ExternalLink size={8} /> Shop externally
                           </p>
                         </div>

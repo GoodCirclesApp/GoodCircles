@@ -192,7 +192,7 @@ export const MunicipalDemoSimulator: React.FC = () => {
               className={`p-3 rounded-xl text-left transition-all border ${cityName === preset.name ? 'border-[#7851A9] bg-[#7851A9]/5 shadow-md' : 'border-slate-100 hover:border-[#CA9CE1]/30 hover:bg-slate-50'}`}>
               <div className="text-[10px] font-black uppercase tracking-wider" style={{ color: CATEGORY_COLORS[preset.category] }}>{preset.category}</div>
               <div className="text-xs font-bold text-slate-700 mt-1">{preset.name}</div>
-              <div className="text-[9px] text-slate-400 mt-0.5">{preset.description}</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">{preset.description}</div>
             </button>
           ))}
         </div>
@@ -209,17 +209,17 @@ export const MunicipalDemoSimulator: React.FC = () => {
           <div>
             <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Market Size: {formatNumber(population)}</label>
             <input type="range" min={popToSlider(1000)} max={popToSlider(5e9)} step={1} value={popToSlider(population)} onChange={e => setPopulation(sliderToPop(Number(e.target.value)))} className="w-full h-2 rounded-full appearance-none cursor-pointer" style={{ accentColor: BRAND.purple }} />
-            <div className="flex justify-between text-[9px] text-slate-300 mt-1"><span>1K</span><span>1M</span><span>1B</span><span>5B</span></div>
+            <div className="flex justify-between text-[10px] text-slate-300 mt-1"><span>1K</span><span>1M</span><span>1B</span><span>5B</span></div>
           </div>
           <div>
             <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Adoption: {adoptionRate}%</label>
             <input type="range" min={0.5} max={50} step={0.5} value={adoptionRate} onChange={e => setAdoptionRate(Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer" style={{ accentColor: BRAND.gold }} />
-            <div className="flex justify-between text-[9px] text-slate-300 mt-1"><span>0.5%</span><span>50%</span></div>
+            <div className="flex justify-between text-[10px] text-slate-300 mt-1"><span>0.5%</span><span>50%</span></div>
           </div>
           <div>
             <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Avg Transaction: ${avgTransactionSize}</label>
             <input type="range" min={5} max={300} step={5} value={avgTransactionSize} onChange={e => setAvgTransactionSize(Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer" style={{ accentColor: BRAND.crimson }} />
-            <div className="flex justify-between text-[9px] text-slate-300 mt-1"><span>$5</span><span>$300</span></div>
+            <div className="flex justify-between text-[10px] text-slate-300 mt-1"><span>$5</span><span>$300</span></div>
           </div>
         </div>
         <button onClick={() => setShowAdvanced(!showAdvanced)} className="flex items-center gap-1 mt-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-[#7851A9] transition-colors">
@@ -264,7 +264,7 @@ export const MunicipalDemoSimulator: React.FC = () => {
         ].map(m => (
           <div key={m.label} className="bg-white rounded-xl p-4 border border-[#CA9CE1]/10 text-center">
             <div className="text-2xl font-black" style={{color:m.color}}>{m.value}</div>
-            <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">{m.label}</div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{m.label}</div>
           </div>
         ))}
       </div>
@@ -366,7 +366,7 @@ export const MunicipalDemoSimulator: React.FC = () => {
             <th className="py-3 px-3 text-[10px] font-black text-[#7851A9] uppercase tracking-widest">Metric</th>
             {['Small Town','Mid-Size City','US Growth (5%)','Amazon Scale'].map(name => {
               const pr = SCALE_PRESETS.find(p=>p.name===name)!;
-              return <th key={name} className={`py-3 px-3 text-[10px] font-black uppercase tracking-widest text-center ${cityName===name?'text-[#7851A9] bg-[#7851A9]/5':'text-slate-400'}`}><div>{name}</div><div className="text-[8px] font-normal text-slate-300">{pr.description}</div></th>;
+              return <th key={name} className={`py-3 px-3 text-[10px] font-black uppercase tracking-widest text-center ${cityName===name?'text-[#7851A9] bg-[#7851A9]/5':'text-slate-400'}`}><div>{name}</div><div className="text-[10px] font-normal text-slate-300">{pr.description}</div></th>;
             })}
           </tr></thead><tbody>
             {(() => {
@@ -389,7 +389,7 @@ export const MunicipalDemoSimulator: React.FC = () => {
 
       <div className="text-center py-6">
         <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Good Circles Impact Simulator — Economic projections</p>
-        <p className="text-[9px] text-slate-300 mt-1">Amazon data from public 2025 reports. Results vary by market conditions.</p>
+        <p className="text-[10px] text-slate-300 mt-1">Amazon data from public 2025 reports. Results vary by market conditions.</p>
       </div>
     </div>
   );

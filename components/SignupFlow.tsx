@@ -163,7 +163,7 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
               setShowNonprofitSelector(false);
               setSelectedNonprofit('');
             }}
-            className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
+            className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
               role === r ? 'bg-white text-[#7851A9] shadow-sm' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
@@ -258,7 +258,7 @@ const SignupInput = ({
       placeholder={placeholder}
     />
     {helper && (
-      <p className="text-[8px] font-bold text-[#7851A9] uppercase tracking-widest ml-2 opacity-70">
+      <p className="text-[10px] font-bold text-[#7851A9] uppercase tracking-widest ml-2 opacity-70">
         {helper}
       </p>
     )}

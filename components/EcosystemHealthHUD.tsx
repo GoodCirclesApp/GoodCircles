@@ -30,7 +30,7 @@ export const EcosystemHealthHUD: React.FC<Props> = ({ totalFeesSaved, activeNode
            </p>
            <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[9px] font-black uppercase text-emerald-500 tracking-widest">Resilience: Optimal</span>
+              <span className="text-[10px] font-black uppercase text-emerald-500 tracking-widest">Resilience: Optimal</span>
            </div>
         </div>
         <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:scale-110 transition-transform duration-1000">
@@ -66,7 +66,7 @@ export const EcosystemHealthHUD: React.FC<Props> = ({ totalFeesSaved, activeNode
               Real-time MSRP/COGS variance across all regional ledgers. 0.00% critical drift detected.
             </p>
          </div>
-         <button className="w-full mt-8 py-4 bg-white border border-slate-200 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all">View Audit Logs</button>
+         <button className="w-full mt-8 py-4 bg-white border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all">View Audit Logs</button>
       </div>
     </div>
   );
@@ -74,7 +74,7 @@ export const EcosystemHealthHUD: React.FC<Props> = ({ totalFeesSaved, activeNode
 
 const HealthBar = ({ label, percent, color }: any) => (
   <div className="space-y-1">
-    <div className="flex justify-between text-[8px] font-black uppercase text-slate-400">
+    <div className="flex justify-between text-[10px] font-black uppercase text-slate-400">
       <span>{label}</span>
       <span>{percent}%</span>
     </div>

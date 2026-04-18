@@ -90,7 +90,7 @@ export const CommunityFeedCompact: React.FC<{ maxItems?: number }> = ({ maxItems
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[11px] text-slate-600 leading-tight truncate">{item.message}</p>
-                <p className="text-[9px] text-slate-300 mt-0.5">{timeAgo(item.timestamp)}</p>
+                <p className="text-[10px] text-slate-300 mt-0.5">{timeAgo(item.timestamp)}</p>
               </div>
               {item.amount && (
                 <span className="text-[10px] font-black text-[#7851A9] shrink-0">${item.amount.toFixed(2)}</span>
@@ -148,7 +148,7 @@ export const CommunityActivityFeed: React.FC<{ expanded?: boolean }> = ({ expand
             </div>
             <h3 className="text-sm font-black text-[#7851A9] uppercase tracking-widest">Community Activity</h3>
           </div>
-          <div className="flex items-center gap-4 text-[9px] text-slate-400 font-bold uppercase tracking-widest">
+          <div className="flex items-center gap-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
             <span>{totalPurchases} purchases</span>
             <span>${totalDonations.toFixed(0)} donated</span>
           </div>
@@ -166,7 +166,7 @@ export const CommunityActivityFeed: React.FC<{ expanded?: boolean }> = ({ expand
             <button
               key={f.id}
               onClick={() => setFilter(f.id)}
-              className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${
                 filter === f.id
                   ? 'bg-[#7851A9] text-white shadow-sm'
                   : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
@@ -211,7 +211,7 @@ export const CommunityActivityFeed: React.FC<{ expanded?: boolean }> = ({ expand
                     {item.detail && (
                       <p className="text-[10px] text-slate-400 mt-1">{item.detail}</p>
                     )}
-                    <p className="text-[9px] text-slate-300 mt-1">{timeAgo(item.timestamp)}</p>
+                    <p className="text-[10px] text-slate-300 mt-1">{timeAgo(item.timestamp)}</p>
                   </div>
                   {item.amount && item.amount > 0 && (
                     <div className="text-right shrink-0">
@@ -301,7 +301,7 @@ export const ActivityTicker: React.FC = () => {
             </div>
             <div className="flex-1">
               <p className="text-xs font-medium text-slate-700">{currentItem.message}</p>
-              <p className="text-[9px] text-slate-400 mt-0.5">{timeAgo(currentItem.timestamp)}</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">{timeAgo(currentItem.timestamp)}</p>
             </div>
             {currentItem.amount && currentItem.amount > 0 && (
               <span className="text-sm font-black" style={{ color: config.color }}>

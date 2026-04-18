@@ -62,7 +62,7 @@ export const MerchantSupplyChain: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-black italic text-black">{s.spend}</p>
-                    <p className="text-[9px] font-black text-slate-400 uppercase">Monthly Volume</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase">Monthly Volume</p>
                   </div>
                 </div>
               ))}
@@ -72,7 +72,7 @@ export const MerchantSupplyChain: React.FC = () => {
           <div className="bg-white p-10 rounded-[4rem] border border-slate-100 shadow-sm">
             <div className="flex justify-between items-center mb-10">
               <h3 className="text-xl font-black italic uppercase tracking-tighter">Suggested On-Platform Matches</h3>
-              <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[8px] font-black uppercase tracking-widest">
+              <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest">
                 <Zap size={10} className="animate-pulse" /> Sentinel AI Active
               </div>
             </div>
@@ -90,11 +90,11 @@ export const MerchantSupplyChain: React.FC = () => {
                     </div>
                     <div className="flex gap-8 text-center">
                       <div>
-                        <p className="text-[8px] font-black text-slate-400 uppercase mb-1">Potential Savings</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Potential Savings</p>
                         <p className="text-2xl font-black italic text-emerald-500">{m.potentialSavings}</p>
                       </div>
                       <div>
-                        <p className="text-[8px] font-black text-slate-400 uppercase mb-1">Impact Score</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Impact Score</p>
                         <p className="text-2xl font-black italic text-[#7851A9]">{m.impactScore}%</p>
                       </div>
                     </div>
@@ -144,7 +144,7 @@ export const MerchantSupplyChain: React.FC = () => {
               <div className="h-full bg-[#7851A9] w-[32%]" />
               <div className="h-full bg-[#7851A9]/30 w-[53%]" />
             </div>
-            <div className="flex justify-between mt-2 text-[8px] font-black uppercase tracking-widest">
+            <div className="flex justify-between mt-2 text-[10px] font-black uppercase tracking-widest">
               <span className="text-[#7851A9]">32% Current</span>
               <span className="text-slate-400">85% Potential</span>
             </div>

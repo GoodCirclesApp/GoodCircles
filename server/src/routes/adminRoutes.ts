@@ -20,6 +20,8 @@ router.get('/community-fund', adminController.getCommunityFundOversight);
 router.get('/municipal-partners', adminController.getMunicipalPartners);
 router.get('/data-coop', adminController.getDataCoopStatus);
 router.get('/system-health', adminController.getSystemHealth);
+router.get('/sentinel-flags', adminController.getSentinelFlags);
+router.post('/sentinel-flags/:flagId/resolve', adminController.resolveSentinelFlag);
 
 // Mock data management
 router.get('/mock-data/status', mockDataController.getMockDataStatus);

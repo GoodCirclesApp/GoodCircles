@@ -70,7 +70,7 @@ export const NonprofitInitiatives: React.FC = () => {
                   <Users size={16} />
                 </div>
                 <div>
-                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Supporters</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Supporters</p>
                   <p className="text-sm font-black">{initiative.supporters}</p>
                 </div>
               </div>
@@ -79,7 +79,7 @@ export const NonprofitInitiatives: React.FC = () => {
                   <Calendar size={16} />
                 </div>
                 <div>
-                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Deadline</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Deadline</p>
                   <p className="text-sm font-black">{new Date(initiative.deadline).toLocaleDateString()}</p>
                 </div>
               </div>

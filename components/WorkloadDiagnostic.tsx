@@ -137,14 +137,14 @@ export const WorkloadDiagnostic: React.FC = () => {
             <button 
               onClick={() => setOptimizationsEnabled(false)}
               disabled={isRunning}
-              className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${!optimizationsEnabled ? 'bg-white text-[#A20021] shadow-sm' : 'text-slate-400 opacity-50'}`}
+              className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!optimizationsEnabled ? 'bg-white text-[#A20021] shadow-sm' : 'text-slate-400 opacity-50'}`}
             >
               Legacy Sync
             </button>
             <button 
               onClick={() => setOptimizationsEnabled(true)}
               disabled={isRunning}
-              className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${optimizationsEnabled ? 'bg-[#7851A9] text-white shadow-sm' : 'text-slate-400'}`}
+              className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${optimizationsEnabled ? 'bg-[#7851A9] text-white shadow-sm' : 'text-slate-400'}`}
             >
               Async Batching
             </button>
@@ -179,11 +179,11 @@ export const WorkloadDiagnostic: React.FC = () => {
             {isRunning && (
                <div className="flex gap-4">
                   <div className="text-right">
-                    <p className="text-[8px] font-black text-slate-400 uppercase">Load</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase">Load</p>
                     <p className="text-xl font-black italic">{currentLoad} ops/s</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[8px] font-black text-slate-400 uppercase">CPU</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase">CPU</p>
                     <p className="text-xl font-black italic text-[#A20021]">{Math.round(data[data.length-1]?.cpuOverhead || 0)}%</p>
                   </div>
                </div>
@@ -216,11 +216,11 @@ export const WorkloadDiagnostic: React.FC = () => {
           <div className="mt-8 flex justify-center gap-10">
              <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-[#7851A9]"></div>
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Transaction Volume</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Transaction Volume</span>
              </div>
              <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-[#A20021]"></div>
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Processing Latency</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Processing Latency</span>
              </div>
           </div>
         </div>
@@ -306,7 +306,7 @@ export const WorkloadDiagnostic: React.FC = () => {
 
 const ReportMetric = ({ label, value, unit = "", isText = false }: { label: string, value: string | number, unit?: string, isText?: boolean }) => (
   <div className="space-y-2">
-    <p className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">{label}</p>
+    <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{label}</p>
     <p className={`${isText ? 'text-sm' : 'text-3xl'} font-black italic text-white leading-tight`}>
       {value} <span className="text-xs opacity-40 font-normal">{unit}</span>
     </p>

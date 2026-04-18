@@ -25,9 +25,10 @@ interface Props {
   regionName: string;
   policy: FiscalPolicy;
   pagination?: PaginationInfo;
+  isLoading?: boolean;
 }
 
-export const MarketplaceView: React.FC<Props> = ({ products, cart, effectiveRole, selectedNonprofitName, onProductClick, onShopperClick, regionName, policy, pagination }) => {
+export const MarketplaceView: React.FC<Props> = ({ products, cart, effectiveRole, selectedNonprofitName, onProductClick, onShopperClick, regionName, policy, pagination, isLoading }) => {
   const [affiliateListings, setAffiliateListings] = useState<AffiliateListingData[]>([]);
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export const MarketplaceView: React.FC<Props> = ({ products, cart, effectiveRole
              <ConstitutionBadge label="Platform Fee" value={`${(policy.platformFeeRate * 100).toFixed(1)}%`} />
              {pagination && pagination.totalProducts > 0 && (
                <div className="px-4 py-2 bg-[#7851A9]/10 border border-[#7851A9]/20 rounded-xl">
-                 <span className="text-[8px] font-black text-[#7851A9] uppercase tracking-widest">{pagination.totalProducts} Listings</span>
+                 <span className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">{pagination.totalProducts} Listings</span>
                </div>
              )}
           </div>
@@ -70,11 +71,25 @@ export const MarketplaceView: React.FC<Props> = ({ products, cart, effectiveRole
         </div>
         <div className="flex flex-col gap-4">
            <button onClick={onShopperClick} className="bg-black text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-3xl font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-2xl hover:bg-[#7851A9] transition-all">✨ AI Personal Shopper</button>
-           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Node Location: {regionName}</p>
+           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Node Location: {regionName}</p>
         </div>
       </div>
       
-      {products.length === 0 ? (
+      {isLoading && products.length === 0 ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
+          {Array(8).fill(0).map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl sm:rounded-[3rem] border border-[#CA9CE1]/20 overflow-hidden animate-pulse">
+              <div className="aspect-square bg-slate-100" />
+              <div className="p-3 sm:p-8 space-y-3">
+                <div className="h-2 bg-slate-100 rounded-full w-1/3" />
+                <div className="h-4 bg-slate-100 rounded-full w-3/4" />
+                <div className="h-4 bg-slate-100 rounded-full w-1/2" />
+                <div className="h-6 bg-slate-100 rounded-full w-2/5 mt-4" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : products.length === 0 ? (
         <div className="py-24 text-center border-2 border-dashed border-slate-100 rounded-[4rem]">
            <p className="text-slate-400 font-bold italic uppercase tracking-widest">No listings found in the {regionName} node.</p>
            <p className="text-slate-300 text-xs mt-2">Try bridging to another Metropolitan Statistical Area.</p>
@@ -91,17 +106,17 @@ export const MarketplaceView: React.FC<Props> = ({ products, cart, effectiveRole
                     <img src={p.imageUrl} className="w-full aspect-square object-cover" alt={p.name} onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop'; }} />
                     <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
                       <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-slate-100 shadow-sm">
-                         <p className="text-[8px] font-black text-[#7851A9] uppercase">{rates.discountRate * 100}% Reward</p>
+                         <p className="text-[10px] font-black text-[#7851A9] uppercase">{rates.discountRate * 100}% Reward</p>
                       </div>
                       {cartItem && (
                         <div className="bg-[#7851A9] text-white px-3 py-1.5 rounded-xl shadow-lg animate-in zoom-in">
-                          <p className="text-[8px] font-black uppercase tracking-widest">{cartItem.quantity} In Basket</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest">{cartItem.quantity} In Basket</p>
                         </div>
                       )}
                     </div>
                   </div>
                   <div className="p-3 sm:p-8">
-                    <p className="text-[8px] sm:text-[10px] font-black text-[#7851A9] uppercase">{p.category}</p>
+                    <p className="text-[10px] sm:text-[10px] font-black text-[#7851A9] uppercase">{p.category}</p>
                     <h4 className="text-sm sm:text-lg font-black text-black mb-2 sm:mb-4 leading-tight" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</h4>
                     <div className="flex items-baseline gap-2">
                       <span className="text-lg sm:text-3xl font-black italic">{policy.symbol}{(p.price * (1 - rates.discountRate)).toFixed(2)}</span>
@@ -244,7 +259,7 @@ const Pagination: React.FC<PaginationInfo> = ({ currentPage, totalPages, totalPr
 
 const ConstitutionBadge = ({ label, value }: { label: string, value: string }) => (
   <div className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl flex gap-2">
-    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{label}:</span>
-    <span className="text-[8px] font-black text-black uppercase tracking-widest">{value}</span>
+    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}:</span>
+    <span className="text-[10px] font-black text-black uppercase tracking-widest">{value}</span>
   </div>
 );

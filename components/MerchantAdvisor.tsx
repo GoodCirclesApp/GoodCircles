@@ -117,7 +117,7 @@ export const MerchantAdvisor: React.FC<Props> = ({
             <button 
               key={s} 
               onClick={() => { setInput(s); }}
-              className="whitespace-nowrap px-5 py-2.5 bg-white border border-[#CA9CE1]/20 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-600 hover:border-[#C2A76F] transition-all"
+              className="whitespace-nowrap px-5 py-2.5 bg-white border border-[#CA9CE1]/20 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-[#C2A76F] transition-all"
             >
               {s}
             </button>

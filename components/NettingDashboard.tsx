@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { NettingStatus, NettingBatch, ComplianceData } from '../types';
 import { motion } from 'motion/react';
 import { Activity, Shield, TrendingUp, FileText, Download, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { showToast } from '../hooks/toast';
 
 export const NettingDashboard: React.FC<{ merchantId: string }> = ({ merchantId }) => {
   const [status, setStatus] = useState<NettingStatus | null>(null);
@@ -50,7 +51,7 @@ export const NettingDashboard: React.FC<{ merchantId: string }> = ({ merchantId 
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (err: any) {
-      alert(err.message);
+      showToast((err as Error).message || 'Action failed.', 'error');
     }
   };
 
@@ -183,7 +184,7 @@ export const NettingDashboard: React.FC<{ merchantId: string }> = ({ merchantId 
                 <tr key={batch.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors group cursor-pointer">
                   <td className="p-6 font-mono text-xs font-bold">{new Date(batch.batchDate).toLocaleDateString()}</td>
                   <td className="p-6">
-                    <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${batch.status === 'EXECUTED' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${batch.status === 'EXECUTED' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
                       {batch.status}
                     </span>
                   </td>

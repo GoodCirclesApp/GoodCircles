@@ -316,7 +316,7 @@ export const IntegrityTestSuite: React.FC = () => {
             }`}>
               <div className="flex justify-between items-start mb-6">
                 <div className="flex-1">
-                  <span className={`text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-widest font-accent ${
+                  <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest font-accent ${
                     test.category === 'FINANCIAL_CORE' ? 'bg-blue-100 text-blue-600' :
                     test.category === 'COMMUNITY_SAFEGUARD' ? 'bg-[#7851A9]/10 text-[#7851A9]' :
                     'bg-amber-100 text-amber-600'
@@ -339,11 +339,11 @@ export const IntegrityTestSuite: React.FC = () => {
               {isFail && (
                 <div className="mb-8 p-6 bg-white rounded-[2rem] border border-red-100 shadow-inner">
                   <div className="mb-4">
-                    <p className="text-[9px] font-black text-red-500 uppercase tracking-widest mb-1 font-accent">Audit Failure</p>
+                    <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-1 font-accent">Audit Failure</p>
                     <p className="text-xs font-bold text-slate-900 leading-tight">{result.error}</p>
                   </div>
                   <div>
-                    <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1 font-accent">Remediation</p>
+                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1 font-accent">Remediation</p>
                     <p className="text-xs text-slate-600 italic leading-relaxed">{result.solution}</p>
                   </div>
                 </div>
@@ -352,7 +352,7 @@ export const IntegrityTestSuite: React.FC = () => {
               <button 
                 onClick={() => runTest(test.id)}
                 disabled={isRunning}
-                className={`w-full py-5 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all shadow-sm ${
+                className={`w-full py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${
                   isPass ? 'bg-white text-emerald-600 border border-emerald-100' :
                   isFail ? 'bg-[#A20021] text-white hover:bg-black' :
                   'bg-white border border-slate-200 text-slate-400 hover:border-black hover:text-black'

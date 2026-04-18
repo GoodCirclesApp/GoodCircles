@@ -282,6 +282,83 @@ export const setupStripe = async (req: AuthRequest, res: Response) => {
   }
 };
 
+export const getAvailability = async (req: AuthRequest, res: Response) => {
+  if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const merchant = await prisma.merchant.findUnique({ where: { userId: req.user.id } });
+    if (!merchant) return res.status(404).json({ error: 'Merchant profile not found' });
+    const windows = await prisma.merchantAvailability.findMany({
+      where: { merchantId: merchant.id },
+      orderBy: { dayOfWeek: 'asc' }
+    });
+    res.json(windows);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getCalendarFeed = async (req: AuthRequest, res: Response) => {
+  if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const merchant = await prisma.merchant.findUnique({
+      where: { userId: req.user.id },
+      include: { user: { select: { firstName: true, lastName: true } } }
+    });
+    if (!merchant) return res.status(404).json({ error: 'Merchant profile not found' });
+
+    const bookings = await prisma.booking.findMany({
+      where: { merchantId: merchant.id, status: { in: ['PENDING', 'CONFIRMED', 'COMPLETED'] } },
+      include: {
+        listing: { select: { name: true } },
+        consumer: { select: { firstName: true, lastName: true } }
+      },
+      orderBy: { scheduledDate: 'asc' }
+    });
+
+    const toIcalDate = (dateStr: Date, timeStr: string) => {
+      const d = new Date(dateStr);
+      const [h, m] = timeStr.split(':').map(Number);
+      d.setHours(h, m, 0, 0);
+      return d.toISOString().replace(/[-:]/g, '').replace('.000', '');
+    };
+
+    const events = bookings.map(b => {
+      const dtStart = toIcalDate(b.scheduledDate, b.scheduledTime);
+      const endDate = new Date(b.scheduledDate);
+      const [h, m] = b.scheduledTime.split(':').map(Number);
+      endDate.setHours(h, m + b.durationMinutes, 0, 0);
+      const dtEnd = endDate.toISOString().replace(/[-:]/g, '').replace('.000', '');
+      return [
+        'BEGIN:VEVENT',
+        `UID:${b.id}@goodcircles.com`,
+        `DTSTART:${dtStart}`,
+        `DTEND:${dtEnd}`,
+        `SUMMARY:${b.listing.name}`,
+        `DESCRIPTION:Customer: ${b.consumer.firstName} ${b.consumer.lastName} | Status: ${b.status}`,
+        `STATUS:${b.status === 'CONFIRMED' ? 'CONFIRMED' : b.status === 'COMPLETED' ? 'COMPLETED' : 'TENTATIVE'}`,
+        'END:VEVENT'
+      ].join('\r\n');
+    }).join('\r\n');
+
+    const ical = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Good Circles//Merchant Calendar//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      `X-WR-CALNAME:Good Circles - ${merchant.businessName}`,
+      events,
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="goodcircles-schedule.ics"');
+    res.send(ical);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export const updateAvailability = async (req: AuthRequest, res: Response) => {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
 
@@ -353,7 +430,11 @@ export const getDashboardMetrics = async (req: AuthRequest, res: Response) => {
     const netRevenue = transactions.reduce((sum, t) => sum + Number(t.merchantNet), 0);
     const nonprofitContributions = transactions.reduce((sum, t) => sum + Number(t.nonprofitShare), 0);
     const platformFees = transactions.reduce((sum, t) => sum + Number(t.platformFee), 0);
-    
+    // Only count discounts actually given to customers (excludes waived/redirected discounts)
+    const discountsGiven = transactions
+      .filter(t => !t.discountWaived)
+      .reduce((sum, t) => sum + Number(t.discountAmount), 0);
+
     // Mock processing fees saved (assuming 3% saved via platform)
     const processingFeesSaved = totalSales * 0.03;
 
@@ -362,6 +443,7 @@ export const getDashboardMetrics = async (req: AuthRequest, res: Response) => {
       netRevenue,
       nonprofitContributions,
       platformFees,
+      discountsGiven,
       processingFeesSaved,
       transactionCount: transactions.length
     });
@@ -576,7 +658,7 @@ export const placeB2BOrder = async (req: AuthRequest, res: Response) => {
 const qrCheckoutSchema = z.object({
   qrToken: z.string(),
   productServiceId: z.string().uuid(),
-  nonprofitId: z.string().uuid(),
+  nonprofitId: z.string().uuid().optional(),
 });
 
 export const processQrCheckout = async (req: AuthRequest, res: Response) => {
@@ -588,6 +670,19 @@ export const processQrCheckout = async (req: AuthRequest, res: Response) => {
 
     // Validate the consumer's QR token and retrieve their userId
     const neighborId = await QrCheckoutService.consumeToken(qrToken);
+
+    // Resolve nonprofitId from consumer's elected nonprofit if not explicitly provided
+    let resolvedNonprofitId = nonprofitId;
+    if (!resolvedNonprofitId) {
+      const consumer = await prisma.user.findUnique({
+        where: { id: neighborId },
+        select: { electedNonprofitId: true },
+      });
+      if (!consumer?.electedNonprofitId) {
+        return res.status(400).json({ error: 'Consumer has not elected a nonprofit. Ask them to set one in the app.' });
+      }
+      resolvedNonprofitId = consumer.electedNonprofitId;
+    }
 
     const product = await prisma.productService.findUnique({
       where: { id: productServiceId },
@@ -604,7 +699,7 @@ export const processQrCheckout = async (req: AuthRequest, res: Response) => {
       neighborId,
       merchantId: product.merchantId,
       productServiceId,
-      nonprofitId,
+      nonprofitId: resolvedNonprofitId,
       paymentMethod: 'INTERNAL',
       discountWaived: false,
     });

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import { BrandSubmark } from './BrandAssets';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   user: User;
@@ -43,7 +44,7 @@ export const ImpactBadgeGenerator: React.FC<Props> = ({ user, impactScore }) => 
                 <button 
                   key={v} 
                   onClick={() => setVariant(v)}
-                  className={`px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${variant === v ? 'bg-white text-black shadow-sm' : 'text-slate-400'}`}
+                  className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${variant === v ? 'bg-white text-black shadow-sm' : 'text-slate-400'}`}
                 >
                   {v}
                 </button>
@@ -65,12 +66,12 @@ export const ImpactBadgeGenerator: React.FC<Props> = ({ user, impactScore }) => 
               />
            </div>
            <button 
-             onClick={() => { navigator.clipboard.writeText(embedCode); alert("Embed code copied to clipboard."); }}
+             onClick={() => { navigator.clipboard.writeText(embedCode); showToast('Embed code copied to clipboard.', 'info'); }}
              className="w-full bg-black text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all"
            >
              Copy HTML Code
            </button>
-           <p className="text-[9px] text-slate-400 font-medium italic leading-relaxed px-4 text-center">
+           <p className="text-[10px] text-slate-400 font-medium italic leading-relaxed px-4 text-center">
              "Embed this badge on your footer or checkout page to signal your commitment to 10/10/1 community impact."
            </p>
         </div>

@@ -132,7 +132,7 @@ export const PersonalShopper: React.FC<Props> = ({
             <button 
               key={s} 
               onClick={() => { setInput(s); }}
-              className="whitespace-nowrap px-6 py-3 bg-white hover:bg-[#CA9CE1]/10 text-[#7851A9] hover:text-[#000000] rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-[#CA9CE1]/20 transition-all font-accent shadow-sm"
+              className="whitespace-nowrap px-6 py-3 bg-white hover:bg-[#CA9CE1]/10 text-[#7851A9] hover:text-[#000000] rounded-full text-[10px] font-black uppercase tracking-[0.2em] border border-[#CA9CE1]/20 transition-all font-accent shadow-sm"
             >
               {s}
             </button>
@@ -160,7 +160,7 @@ export const PersonalShopper: React.FC<Props> = ({
             </button>
           </form>
           <div className="mt-6 flex items-center justify-center gap-2">
-            <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] font-accent italic">Sophisticated Intelligence by Good Circles</span>
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] font-accent italic">Sophisticated Intelligence by Good Circles</span>
             <div className="w-1.5 h-1.5 rounded-full bg-[#C2A76F]"></div>
           </div>
         </div>

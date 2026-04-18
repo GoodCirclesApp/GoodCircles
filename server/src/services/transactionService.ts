@@ -219,16 +219,6 @@ export class TransactionService {
         await ReferralService.checkReferralBonuses(merchantId, tx);
       }
 
-      // 4c. Issue credits for PLATFORM_CREDITS mode regardless of payment method.
-      // Credits are earned at purchase time; they can only be redeemed once the
-      // neighbor funds their GCLA wallet, creating the bridge from Stripe → internal.
-      if (!discountWaived && discountMode === 'PLATFORM_CREDITS') {
-        const isEligible = await CreditService.isSystemActivated(tx);
-        if (isEligible) {
-          await CreditService.issueCredits(neighborId, neighborDiscount.toNumber(), 'DISCOUNT', transaction.id, 0, tx);
-        }
-      }
-
       // 4e. Handle Merchant-to-Merchant (M2M) Obligation Tracking
       const consumer = await tx.user.findUnique({ where: { id: neighborId } });
       if (consumer?.role === 'MERCHANT') {
