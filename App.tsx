@@ -179,7 +179,6 @@ const App: React.FC = () => {
     MERCHANT_PORTAL: 'Merchant Portal',
     ADMIN_PORTAL: 'Admin Portal',
     PROFILE: 'My Profile',
-    WALLET: 'Wallet',
     TAX_CENTER: 'Tax Center',
     SCHEDULE: 'Schedule',
     CATALOG_UPLOAD: 'Catalog Upload',
