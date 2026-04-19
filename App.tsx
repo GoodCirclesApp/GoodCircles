@@ -12,6 +12,7 @@ import { WishlistDrawer } from './components/WishlistDrawer';
 import { AuthSystem } from './components/AuthSystem';
 import { marketplaceService } from './services/marketplaceService';
 import { authService } from './services/authService';
+import { neighborService } from './services/neighborService';
 import ErrorBoundary from './components/ErrorBoundary';
 import { registerToastHandler } from './hooks/toast';
 
@@ -58,6 +59,7 @@ const CatalogUploadView = React.lazy(() => import('./views/CatalogUploadView').t
 const App: React.FC = () => {
   const store = useGoodCirclesStore();
   const [nonprofits, setNonprofits] = useState<Nonprofit[]>(MOCK_NONPROFITS);
+  const [realNonprofits, setRealNonprofits] = useState<any[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
@@ -74,6 +76,9 @@ const App: React.FC = () => {
     nonprofitName: string;
     nonprofitMission: string;
   } | null>(null);
+  // Prefer the user's elected real nonprofit; fall back to first real, then mock
+  const electedReal = realNonprofits.find(n => n.id === store.currentUser?.electedNonprofitId);
+  const selectedRealNonprofit = electedReal ?? realNonprofits[0] ?? null;
   const selectedNonprofit = nonprofits[0];
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
@@ -83,6 +88,10 @@ const App: React.FC = () => {
   };
 
   useEffect(() => { registerToastHandler(showToast); }, []);
+
+  useEffect(() => {
+    neighborService.listNonprofits().then(setRealNonprofits).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!localStorage.getItem('gc_mock_users')) {
@@ -123,7 +132,7 @@ const App: React.FC = () => {
         items: store.cart.map(item => ({
           merchantId: item.product.merchantId,
           productServiceId: item.product.id,
-          nonprofitId: selectedNonprofit.id,
+          nonprofitId: selectedRealNonprofit?.id ?? store.currentUser?.electedNonprofitId ?? undefined,
         })),
         paymentMethod: store.paymentMethod,
         discountWaived: order.isDiscountWaived,
@@ -146,8 +155,8 @@ const App: React.FC = () => {
         merchantNet:       Number(completedOrder.accounting.merchantNet),
         discountAmount:    Number(completedOrder.totalDiscount ?? completedOrder.accounting.grossProfit ?? 0),
         nonprofitDonation: Number(completedOrder.accounting.donationAmount),
-        nonprofitName:     selectedNonprofit.name,
-        nonprofitMission:  selectedNonprofit.description,
+        nonprofitName:     selectedRealNonprofit?.orgName ?? selectedNonprofit.name,
+        nonprofitMission:  selectedRealNonprofit?.missionStatement ?? selectedNonprofit.description,
       });
     } catch (error) {
       console.error('Checkout failed:', error);

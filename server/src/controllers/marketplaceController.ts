@@ -319,6 +319,18 @@ export const checkout = async (req: AuthRequest, res: Response) => {
     const discountMode = user?.discountMode as 'PRICE_REDUCTION' | 'PLATFORM_CREDITS' || 'PRICE_REDUCTION';
     let remainingCredits = creditsToApply;
 
+    // Resolve a valid nonprofit ID: item-level → user elected → first verified in DB
+    const resolveNonprofitId = async (itemNonprofitId?: string): Promise<string> => {
+      const candidates = [itemNonprofitId, defaultNonprofitId].filter(Boolean) as string[];
+      for (const id of candidates) {
+        const exists = await prisma.nonprofit.findUnique({ where: { id }, select: { id: true } });
+        if (exists) return id;
+      }
+      const fallback = await prisma.nonprofit.findFirst({ where: { isVerified: true }, select: { id: true } });
+      if (!fallback) throw new Error('No verified nonprofits exist in the platform yet.');
+      return fallback.id;
+    };
+
     for (const item of items) {
       const creditsForItem = remainingCredits;
       remainingCredits = 0;
@@ -328,7 +340,7 @@ export const checkout = async (req: AuthRequest, res: Response) => {
         merchantId: item.merchantId,
         productServiceId: item.productServiceId,
         paymentMethod,
-        nonprofitId: item.nonprofitId || defaultNonprofitId,
+        nonprofitId: await resolveNonprofitId(item.nonprofitId),
         discountWaived: discountWaived || false,
         waivedToInitiativeId,
         discountMode,
