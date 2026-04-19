@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './NonprofitSelector.module.css';
+import { neighborService } from '../services/neighborService';
 
 interface Nonprofit {
   id: string;
@@ -29,10 +30,13 @@ export const NonprofitSelector: React.FC<NonprofitSelectorProps> = ({
 
   const fetchNonprofits = async () => {
     try {
-      const response = await fetch('/api/nonprofits');
-      if (!response.ok) throw new Error('Failed to fetch nonprofits');
-      const data = await response.json();
-      setNonprofits(data);
+      const data = await neighborService.listNonprofits();
+      setNonprofits(data.map((n: any) => ({
+        id: n.id,
+        name: n.orgName,
+        description: n.missionStatement ?? '',
+        impact: n.totalFunding ? `$${Number(n.totalFunding).toFixed(0)} raised` : 'Community impact',
+      })));
     } catch (err) {
       setError('Could not load nonprofits. Please try again.');
       console.error(err);
