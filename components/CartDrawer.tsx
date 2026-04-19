@@ -66,7 +66,8 @@ export const CartDrawer: React.FC<Props> = ({
 
   if (!isOpen) return null;
 
-    const isInsufficientBalance = paymentMethod === 'BALANCE' && (currentUser?.wallet?.balance || 0) < totals.totalPaid;
+    const walletBalance = Number(currentUser?.wallet?.balance ?? 0);
+    const isInsufficientBalance = paymentMethod === 'BALANCE' && walletBalance < totals.totalPaid;
 
     return (
       <div className="fixed inset-0 z-[110] flex justify-end">
@@ -204,7 +205,7 @@ export const CartDrawer: React.FC<Props> = ({
                         <BrandSubmark size={20} variant="WHITE" showCrown={false} />
                         <h4 className="text-sm font-black uppercase tracking-tight">Redeem Credits</h4>
                       </div>
-                      <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">${(currentUser.platformCredits || 0).toFixed(2)} Available</span>
+                      <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">${Number(currentUser.platformCredits ?? 0).toFixed(2)} Available</span>
                     </div>
                     
                     <div className="space-y-2">
@@ -244,7 +245,7 @@ export const CartDrawer: React.FC<Props> = ({
                       active={paymentMethod === 'BALANCE'} 
                       onClick={() => setPaymentMethod('BALANCE')}
                       label="Circle Account Balance" 
-                      desc={`Use your internal wallet ($${(currentUser?.wallet?.balance || 0).toFixed(2)} available).`}
+                      desc={`Use your internal wallet ($${walletBalance.toFixed(2)} available).`}
                       tag="0.5% Surcharge"
                       tagColor={isInsufficientBalance ? "bg-red-500" : "bg-[#C2A76F]"}
                     />
