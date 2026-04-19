@@ -56,6 +56,7 @@ export const authService = {
 
   logout() {
     localStorage.removeItem('gc_auth_token');
+    localStorage.removeItem('gc_refresh_token');
     localStorage.removeItem('gc_session_user');
   },
 };

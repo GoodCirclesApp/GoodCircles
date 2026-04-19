@@ -31,9 +31,10 @@ export function useIdentityStore() {
 
   const login = async (email: string, password?: string) => {
     try {
-      const { user, token } = await authService.login(email, password);
+      const { user, token, refreshToken } = await authService.login(email, password);
       setCurrentUser(user);
       localStorage.setItem('gc_auth_token', token);
+      if (refreshToken) localStorage.setItem('gc_refresh_token', refreshToken);
       localStorage.setItem('gc_session_user', JSON.stringify(user));
       
       // FIXED: Use startSequence instead of checkPendingEmails
