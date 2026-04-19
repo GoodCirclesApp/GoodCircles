@@ -101,7 +101,7 @@ export const MarketplaceView: React.FC<Props> = ({ products, cart, effectiveRole
               const rates = getEffectiveRates(p.category, policy);
               const cartItem = cart.find(item => item.product.id === p.id);
               return (
-                <div key={p.id} onClick={() => onProductClick(p)} className="group bg-white rounded-2xl sm:rounded-[3rem] border border-[#CA9CE1]/20 overflow-hidden hover:shadow-2xl transition-all cursor-pointer relative">
+                <div key={p.id} onClick={() => onProductClick(p)} className="group bg-white rounded-2xl sm:rounded-[3rem] border border-[#CA9CE1]/20 overflow-hidden hover:shadow-2xl hover:scale-[1.02] transition-all duration-200 cursor-pointer relative">
                   <div className="relative">
                     <img src={p.imageUrl} className="w-full aspect-square object-cover" alt={p.name} onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop'; }} />
                     <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
@@ -125,6 +125,20 @@ export const MarketplaceView: React.FC<Props> = ({ products, cart, effectiveRole
                     {p.merchantName && (
                       <p className="text-[10px] text-slate-400 font-medium mt-3">by {p.merchantName}</p>
                     )}
+                    {/* Glass-Box Pricing — reveals on hover */}
+                    <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="flex h-1.5 rounded-full overflow-hidden w-full">
+                        <div className="bg-slate-800 transition-all duration-500" style={{ width: `${((1 - rates.discountRate) * (1 - rates.donationRate - rates.platformFeeRate)) * 100}%` }} />
+                        <div className="bg-[#C2A76F]" style={{ width: `${(1 - rates.discountRate) * rates.donationRate * 100}%` }} />
+                        <div className="bg-[#7851A9]" style={{ width: `${rates.discountRate * 100}%` }} />
+                        <div className="bg-slate-200 flex-1" />
+                      </div>
+                      <div className="flex gap-3 mt-1.5 flex-wrap">
+                        <span className="text-[8px] font-black uppercase tracking-wide text-slate-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-slate-800 inline-block" />Merchant</span>
+                        <span className="text-[8px] font-black uppercase tracking-wide text-[#C2A76F] flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#C2A76F] inline-block" />Nonprofit</span>
+                        <span className="text-[8px] font-black uppercase tracking-wide text-[#7851A9] flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#7851A9] inline-block" />Your Savings</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               );

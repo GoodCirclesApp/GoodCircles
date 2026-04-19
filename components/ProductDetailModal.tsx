@@ -87,6 +87,10 @@ export const ProductDetailModal: React.FC<Props> = ({
   if (!product) return null;
 
   const discountedPrice = product.price * (1 - GC_DISCOUNT_RATE);
+  const discountAmt = product.price * GC_DISCOUNT_RATE;
+  const nonprofitAmt = discountedPrice * 0.10;
+  const platformAmt = discountedPrice * 0.01;
+  const merchantAmt = discountedPrice - nonprofitAmt - platformAmt;
 
   return (
     <div className="fixed inset-0 z-[105] flex items-center justify-center p-0 sm:p-6">
@@ -121,6 +125,47 @@ export const ProductDetailModal: React.FC<Props> = ({
               </div>
               <p className="text-slate-500 text-lg leading-relaxed font-medium">{product.description}</p>
             </header>
+
+            {/* Glass-Box Pricing Breakdown */}
+            <div className="p-5 sm:p-8 bg-slate-50 rounded-[2rem] border border-slate-100 space-y-4">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Where Every Dollar Goes</p>
+              <div className="flex h-3 rounded-full overflow-hidden w-full">
+                <div className="bg-slate-800 transition-all duration-700" style={{ width: `${(merchantAmt / product.price) * 100}%` }} title="Merchant" />
+                <div className="bg-[#C2A76F]" style={{ width: `${(nonprofitAmt / product.price) * 100}%` }} title="Nonprofit" />
+                <div className="bg-[#7851A9]" style={{ width: `${(discountAmt / product.price) * 100}%` }} title="Your Savings" />
+                <div className="bg-slate-200 flex-1" title="Platform" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-slate-800 shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Merchant Net</p>
+                    <p className="text-sm font-black text-black">${merchantAmt.toFixed(2)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-[#C2A76F] shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[#C2A76F]">Nonprofit Donation</p>
+                    <p className="text-sm font-black text-black">${nonprofitAmt.toFixed(2)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-[#7851A9] shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[#7851A9]">Your Savings</p>
+                    <p className="text-sm font-black text-black">${discountAmt.toFixed(2)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-slate-200 shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Platform Fee</p>
+                    <p className="text-sm font-black text-black">${platformAmt.toFixed(2)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {product.type === 'PRODUCT' ? (
               <div className="flex items-center gap-4 sm:gap-6 p-4 sm:p-6 bg-slate-50 rounded-3xl border border-slate-100">
