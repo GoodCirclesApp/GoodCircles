@@ -45,18 +45,14 @@ export const NonprofitSelector: React.FC<NonprofitSelectorProps> = ({
 
   const handleSelect = async (nonprofitId: string) => {
     try {
-      const response = await fetch('/api/user/nonprofit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nonprofitId }),
-      });
-      if (!response.ok) throw new Error('Failed to select nonprofit');
+      await neighborService.setElectedNonprofit(nonprofitId);
       onSelect(nonprofitId);
     } catch (err) {
       setError('Could not select nonprofit. Please try again.');
       console.error(err);
     }
   };
+
 
   const styles = {
     container: 'max-w-4xl mx-auto px-4 py-8',
