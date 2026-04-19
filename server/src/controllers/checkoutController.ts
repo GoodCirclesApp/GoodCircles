@@ -11,13 +11,14 @@ export const previewCheckout = async (req: Request, res: Response) => {
       productServiceId: z.string(),
       quantity: z.number().int().positive()
     })),
-    paymentMethod: z.enum(['CARD', 'INTERNAL']),
+    paymentMethod: z.enum(['CARD', 'INTERNAL', 'BALANCE']),
     discountWaived: z.boolean(),
     creditsToApply: z.number().optional()
   });
 
   try {
-    const { items, paymentMethod, discountWaived, creditsToApply = 0 } = schema.parse(req.body);
+    const { items, paymentMethod: rawMethod, discountWaived, creditsToApply = 0 } = schema.parse(req.body);
+    const paymentMethod = rawMethod === 'BALANCE' ? 'INTERNAL' : rawMethod as 'CARD' | 'INTERNAL';
 
     // Fetch user settings for discount mode
     const user = await prisma.user.findUnique({

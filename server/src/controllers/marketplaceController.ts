@@ -307,7 +307,10 @@ export const getAvailability = async (req: Request, res: Response) => {
 
 export const checkout = async (req: AuthRequest, res: Response) => {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
-  const { items, paymentMethod, discountWaived, waivedToInitiativeId, creditsToApply = 0 } = req.body;
+  const { items, paymentMethod: rawPaymentMethod, discountWaived, waivedToInitiativeId, creditsToApply = 0 } = req.body;
+
+  // Frontend uses 'BALANCE'; backend TransactionService expects 'INTERNAL'
+  const paymentMethod = rawPaymentMethod === 'BALANCE' ? 'INTERNAL' : rawPaymentMethod;
 
   try {
     const results = [];
