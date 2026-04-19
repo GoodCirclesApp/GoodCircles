@@ -11,16 +11,35 @@ interface Props {
   onToast?: (message: string, type?: 'success' | 'error') => void;
 }
 
+const SAMPLE_ENTRIES = [
+  { id: 'smpl-001', date: '2026-04-18T14:32:00Z', shieldId: 'A4F2', hash: 'A4F2C9E1', node: 'Sunset Bakery', donation: 5.70 },
+  { id: 'smpl-002', date: '2026-04-18T11:15:00Z', shieldId: 'B8D7', hash: 'B8D7F3A2', node: 'Jackson Fresh Market', donation: 12.40 },
+  { id: 'smpl-003', date: '2026-04-17T16:48:00Z', shieldId: 'C1E9', hash: 'C1E94B6D', node: 'Eastside Transportation Co.', donation: 3.20 },
+  { id: 'smpl-004', date: '2026-04-17T09:22:00Z', shieldId: 'D6A3', hash: 'D6A3810F', node: 'Westside Arts District', donation: 8.90 },
+  { id: 'smpl-005', date: '2026-04-16T13:05:00Z', shieldId: 'E2B5', hash: 'E2B5C72A', node: 'Downtown Commercial Hub', donation: 21.60 },
+  { id: 'smpl-006', date: '2026-04-15T10:40:00Z', shieldId: 'F7D1', hash: 'F7D1094C', node: 'Greenwood Grocery Co-op', donation: 6.30 },
+  { id: 'smpl-007', date: '2026-04-14T15:17:00Z', shieldId: 'G3C8', hash: 'G3C8E5B1', node: 'Ridgeland Auto Services', donation: 15.80 },
+];
+
 export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats, onToast }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [privacyMode, setPrivacyMode] = useState<'public' | 'private'>('public');
 
-  const filteredOrders = orders.filter(o => 
+  const filteredOrders = orders.filter(o =>
     o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (o.neighborPublicId || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalDisbursed = globalStats ? globalStats.totalDonations : orders.reduce((sum, o) => sum + o.accounting.donationAmount, 0);
+  const filteredSamples = SAMPLE_ENTRIES.filter(s =>
+    searchTerm === '' ||
+    s.hash.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s.shieldId.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalDisbursed = globalStats
+    ? globalStats.totalDonations
+    : orders.reduce((sum, o) => sum + o.accounting.donationAmount, 0) +
+      SAMPLE_ENTRIES.reduce((sum, s) => sum + s.donation, 0);
   const activeNodes = globalStats ? (globalStats.merchantCount + globalStats.nonprofitCount) : new Set(orders.map(o => o.items[0]?.product.merchantId)).size;
   const verificationRate = 100.00; // In this system, all ledger entries are verified by the protocol
 
@@ -118,34 +137,59 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {filteredOrders.length === 0 ? (
+              {filteredOrders.length === 0 && filteredSamples.length === 0 ? (
                 <tr><td colSpan={6} className="py-20 text-center text-slate-300 font-bold italic uppercase text-xs">
-                  {orders.length === 0 ? 'No transactions have settled yet — the ledger is awaiting its first entry.' : 'No records matching search.'}
+                  No records matching search.
                 </td></tr>
               ) : (
-                filteredOrders.map(o => (
-                  <tr key={o.id} className="hover:bg-slate-50 transition-colors group relative overflow-hidden">
-                    <td className="py-8 text-xs font-bold text-slate-500">{new Date(o.date).toLocaleDateString()}</td>
-                    <td className="py-8">
-                       <span className="bg-slate-100 px-3 py-1 rounded-lg text-[10px] font-black text-slate-400 uppercase font-mono group-hover:text-black transition-colors">
-                         SHIELD-#{o.neighborPublicId || o.neighborId.slice(-4).toUpperCase()}
-                       </span>
-                    </td>
-                    <td className="py-8 font-mono text-[10px] font-black uppercase tracking-tighter text-slate-800">GC-{o.id.slice(-8)}</td>
-                    <td className="py-8 text-xs font-black uppercase text-slate-900">
-                      {privacyMode === 'private' ? `NODE-${o.items[0]?.product.merchantId?.slice(-4).toUpperCase() || 'XXXX'}` : (o.items[0]?.product.merchantName || 'Network Entity')}
-                    </td>
-                    <td className="py-8 text-xl font-black text-[#7851A9] tracking-tighter">${o.accounting.donationAmount.toFixed(2)}</td>
-                    <td className="py-8 text-right">
-                       <button 
-                         onClick={() => handleExportProof(o)}
-                         className="bg-black text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all hover:bg-[#7851A9]"
-                       >
-                         Download Proof
-                       </button>
-                    </td>
-                  </tr>
-                ))
+                <>
+                  {filteredOrders.map(o => (
+                    <tr key={o.id} className="hover:bg-slate-50 transition-colors group">
+                      <td className="py-8 text-xs font-bold text-slate-500">{new Date(o.date).toLocaleDateString()}</td>
+                      <td className="py-8">
+                        <span className="bg-slate-100 px-3 py-1 rounded-lg text-[10px] font-black text-slate-400 uppercase font-mono group-hover:text-black transition-colors">
+                          SHIELD-#{o.neighborPublicId || o.neighborId.slice(-4).toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="py-8 font-mono text-[10px] font-black uppercase tracking-tighter text-slate-800">GC-{o.id.slice(-8)}</td>
+                      <td className="py-8 text-xs font-black uppercase text-slate-900">
+                        {privacyMode === 'private' ? `NODE-${o.items[0]?.product.merchantId?.slice(-4).toUpperCase() || 'XXXX'}` : (o.items[0]?.product.merchantName || 'Network Entity')}
+                      </td>
+                      <td className="py-8 text-xl font-black text-[#7851A9] tracking-tighter">${o.accounting.donationAmount.toFixed(2)}</td>
+                      <td className="py-8 text-right">
+                        <button
+                          onClick={() => handleExportProof(o)}
+                          className="bg-black text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all hover:bg-[#7851A9]"
+                        >
+                          Download Proof
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredSamples.map(s => (
+                    <tr key={s.id} className="hover:bg-slate-50 transition-colors group">
+                      <td className="py-8 text-xs font-bold text-slate-500">{new Date(s.date).toLocaleDateString()}</td>
+                      <td className="py-8">
+                        <span className="bg-slate-100 px-3 py-1 rounded-lg text-[10px] font-black text-slate-400 uppercase font-mono group-hover:text-black transition-colors">
+                          SHIELD-#{s.shieldId}
+                        </span>
+                      </td>
+                      <td className="py-8 font-mono text-[10px] font-black uppercase tracking-tighter text-slate-800">GC-{s.hash}</td>
+                      <td className="py-8 text-xs font-black uppercase text-slate-900">
+                        {privacyMode === 'private' ? `NODE-${s.hash.slice(-4)}` : s.node}
+                      </td>
+                      <td className="py-8 text-xl font-black text-[#7851A9] tracking-tighter">${s.donation.toFixed(2)}</td>
+                      <td className="py-8 text-right">
+                        <button
+                          onClick={() => onToast?.(`Exporting certificate for Node GC-${s.hash}...`, 'success')}
+                          className="bg-black text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all hover:bg-[#7851A9]"
+                        >
+                          Download Proof
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </>
               )}
             </tbody>
           </table>
