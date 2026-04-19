@@ -169,15 +169,31 @@ const UserManagement = () => {
   );
 };
 
+const DEMO_TRANSACTIONS = [
+  { id: 'demo-tx-001', merchant: { businessName: 'Jackson Fresh Market' }, grossAmount: 84.50, createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
+  { id: 'demo-tx-002', merchant: { businessName: 'Eastside Bakery' }, grossAmount: 32.00, createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString() },
+  { id: 'demo-tx-003', merchant: { businessName: 'Sunset Community Goods' }, grossAmount: 127.75, createdAt: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString() },
+  { id: 'demo-tx-004', merchant: { businessName: 'Greenway Farmers Co-op' }, grossAmount: 56.20, createdAt: new Date(Date.now() - 14 * 60 * 60 * 1000).toISOString() },
+  { id: 'demo-tx-005', merchant: { businessName: 'Northside Hardware' }, grossAmount: 209.00, createdAt: new Date(Date.now() - 22 * 60 * 60 * 1000).toISOString() },
+];
+
 const TransactionMonitoring = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   useEffect(() => { adminService.getTransactions().then(setTransactions); }, []);
+  const isDemo = transactions.length === 0;
+  const activeTxs = isDemo ? DEMO_TRANSACTIONS : transactions;
   return (
     <div className="space-y-6">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="w-2 h-2 bg-amber-400 rounded-full" />
+          <span className="text-xs font-black uppercase tracking-widest text-amber-700">Demo Data — No live transactions yet</span>
+        </div>
+      )}
       <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-slate-50"><tr><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Transaction</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Amount</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Date</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th></tr></thead>
-          <tbody className="divide-y divide-slate-100">{transactions.map(tx => (<tr key={tx.id} className="hover:bg-slate-50"><td className="px-6 py-4"><div className="text-sm font-bold">{tx.merchant?.businessName || 'Merchant'}</div><div className="text-xs text-slate-400">ID: {tx.id.slice(0, 8)}...</div></td><td className="px-6 py-4 font-bold text-sm">${Number(tx.grossAmount).toFixed(2)}</td><td className="px-6 py-4"><span className="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">COMPLETED</span></td><td className="px-6 py-4 text-sm text-slate-500">{new Date(tx.createdAt).toLocaleString()}</td><td className="px-6 py-4 text-right"><button className="text-xs font-bold text-rose-600">REFUND</button></td></tr>))}</tbody>
+          <tbody className="divide-y divide-slate-100">{activeTxs.map(tx => (<tr key={tx.id} className="hover:bg-slate-50"><td className="px-6 py-4"><div className="text-sm font-bold">{tx.merchant?.businessName || 'Merchant'}</div><div className="text-xs text-slate-400">ID: {tx.id.slice(0, 8)}...</div></td><td className="px-6 py-4 font-bold text-sm">${Number(tx.grossAmount).toFixed(2)}</td><td className="px-6 py-4"><span className="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">COMPLETED</span></td><td className="px-6 py-4 text-sm text-slate-500">{new Date(tx.createdAt).toLocaleString()}</td><td className="px-6 py-4 text-right">{!isDemo && <button className="text-xs font-bold text-rose-600">REFUND</button>}</td></tr>))}</tbody>
         </table>
       </div>
     </div>
@@ -219,17 +235,49 @@ const FinancialOverview = () => {
   );
 };
 
+const DEMO_COOPS = [
+  { id: 'demo-coop-1', name: 'Eastside Worker Collective', members: 34, dividendStatus: 'DISTRIBUTED' },
+  { id: 'demo-coop-2', name: 'Northside Food Co-op', members: 127, dividendStatus: 'PENDING' },
+  { id: 'demo-coop-3', name: 'Greenway Merchant Guild', members: 19, dividendStatus: 'DISTRIBUTED' },
+];
+
 const CooperativeManagement = () => {
   const [coops, setCoops] = useState<any[]>([]);
   useEffect(() => { adminService.getCooperatives().then(setCoops); }, []);
-  return (<div className="grid grid-cols-1 md:grid-cols-2 gap-6">{coops.map(coop => (<div key={coop.id} className="bg-white p-6 rounded-2xl border border-slate-100"><div className="flex justify-between items-start mb-4"><div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><Building2 className="w-6 h-6" /></div><span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${coop.dividendStatus === 'DISTRIBUTED' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{coop.dividendStatus}</span></div><h4 className="font-bold text-lg">{coop.name}</h4><div className="mt-4 flex items-center gap-4 text-sm text-slate-500"><div className="flex items-center gap-1"><Users className="w-4 h-4" /> {coop.members} Members</div></div></div>))}</div>);
+  const isDemo = coops.length === 0;
+  const activeCoops = isDemo ? DEMO_COOPS : coops;
+  return (
+    <div className="space-y-6">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="w-2 h-2 bg-amber-400 rounded-full" />
+          <span className="text-xs font-black uppercase tracking-widest text-amber-700">Demo Data — No cooperatives registered yet</span>
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{activeCoops.map(coop => (<div key={coop.id} className="bg-white p-6 rounded-2xl border border-slate-100"><div className="flex justify-between items-start mb-4"><div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><Building2 className="w-6 h-6" /></div><span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${coop.dividendStatus === 'DISTRIBUTED' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{coop.dividendStatus}</span></div><h4 className="font-bold text-lg">{coop.name}</h4><div className="mt-4 flex items-center gap-4 text-sm text-slate-500"><div className="flex items-center gap-1"><Users className="w-4 h-4" /> {coop.members} Members</div></div></div>))}</div>
+    </div>
+  );
 };
+
+const DEMO_FUND = { fundBalance: 320000, deployedCapital: 187500, loanPerformance: 0.97, returnDistributions: 14200 };
 
 const CommunityFundOversight = () => {
   const [fund, setFund] = useState<any>(null);
   useEffect(() => { adminService.getCommunityFund().then(setFund); }, []);
   if (!fund) return <div className="p-8">Loading...</div>;
-  return (<div className="space-y-8"><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"><StatCard title="Fund Balance" value={`$${fund.fundBalance.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} /><StatCard title="Deployed Capital" value={`$${fund.deployedCapital.toLocaleString()}`} icon={<ArrowUpRight className="w-5 h-5" />} /><StatCard title="Loan Performance" value={`${(fund.loanPerformance * 100).toFixed(1)}%`} icon={<CheckCircle2 className="w-5 h-5" />} /><StatCard title="Return Distributions" value={`$${fund.returnDistributions.toLocaleString()}`} icon={<RefreshCw className="w-5 h-5" />} /></div></div>);
+  const isDemo = fund.fundBalance === 0;
+  const activeFund = isDemo ? DEMO_FUND : fund;
+  return (
+    <div className="space-y-8">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="w-2 h-2 bg-amber-400 rounded-full" />
+          <span className="text-xs font-black uppercase tracking-widest text-amber-700">Demo Data — No fund activity yet</span>
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"><StatCard title="Fund Balance" value={`$${activeFund.fundBalance.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} /><StatCard title="Deployed Capital" value={`$${activeFund.deployedCapital.toLocaleString()}`} icon={<ArrowUpRight className="w-5 h-5" />} /><StatCard title="Loan Performance" value={`${(activeFund.loanPerformance * 100).toFixed(1)}%`} icon={<CheckCircle2 className="w-5 h-5" />} /><StatCard title="Return Distributions" value={`$${activeFund.returnDistributions.toLocaleString()}`} icon={<RefreshCw className="w-5 h-5" />} /></div>
+    </div>
+  );
 };
 
 const MunicipalPartnerships = () => {
@@ -238,18 +286,55 @@ const MunicipalPartnerships = () => {
   return (<div className="grid grid-cols-1 md:grid-cols-2 gap-6">{partners.map(p => (<div key={p.id} className="bg-white p-6 rounded-2xl border border-slate-100"><div className="flex justify-between items-center mb-4"><h4 className="font-bold text-lg">{p.name}</h4><div className="text-emerald-600 font-black">{p.impactScore} Impact</div></div><div className="text-sm text-slate-500">{p.activeUsers.toLocaleString()} Active Users</div><div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden"><div style={{ width: `${p.impactScore}%` }} className="bg-emerald-500 h-full" /></div></div>))}</div>);
 };
 
+const DEMO_DATA_COOP = { aggregationStatus: 'ACTIVE', lastInsightLog: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), premiumRevenue: 8400 };
+
 const DataCooperative = () => {
   const [dataCoop, setDataCoop] = useState<any>(null);
   useEffect(() => { adminService.getDataCoop().then(setDataCoop); }, []);
   if (!dataCoop) return <div className="p-8">Loading...</div>;
-  return (<div className="space-y-8"><div className="grid grid-cols-1 md:grid-cols-3 gap-6"><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Aggregation Status</h4><div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" /><span className="text-2xl font-black">{dataCoop.aggregationStatus}</span></div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Last Insight Log</h4><div className="text-2xl font-black">{new Date(dataCoop.lastInsightLog).toLocaleDateString()}</div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Premium Revenue</h4><div className="text-2xl font-black">${dataCoop.premiumRevenue.toLocaleString()}</div></div></div></div>);
+  const isDemo = dataCoop.premiumRevenue === 0;
+  const activeData = isDemo ? DEMO_DATA_COOP : dataCoop;
+  return (
+    <div className="space-y-8">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="w-2 h-2 bg-amber-400 rounded-full" />
+          <span className="text-xs font-black uppercase tracking-widest text-amber-700">Demo Data — No cooperative data yet</span>
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6"><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Aggregation Status</h4><div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" /><span className="text-2xl font-black">{activeData.aggregationStatus}</span></div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Last Insight Log</h4><div className="text-2xl font-black">{new Date(activeData.lastInsightLog).toLocaleDateString()}</div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Premium Revenue</h4><div className="text-2xl font-black">${activeData.premiumRevenue.toLocaleString()}</div></div></div>
+    </div>
+  );
+};
+
+const DEMO_HEALTH = {
+  apiResponseTime: 142,
+  errorRate: 0.0012,
+  jobs: [
+    { name: 'Settlement Processor', status: 'SUCCESS', lastRun: new Date(Date.now() - 15 * 60 * 1000).toISOString() },
+    { name: 'Nonprofit Distribution', status: 'SUCCESS', lastRun: new Date(Date.now() - 60 * 60 * 1000).toISOString() },
+    { name: 'Wallet Reconciliation', status: 'SUCCESS', lastRun: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString() },
+    { name: 'Price Sentinel Scan', status: 'SUCCESS', lastRun: new Date(Date.now() - 30 * 60 * 1000).toISOString() },
+  ],
 };
 
 const SystemHealth = () => {
   const [health, setHealth] = useState<any>(null);
   useEffect(() => { adminService.getSystemHealth().then(setHealth); }, []);
   if (!health) return <div className="p-8">Loading...</div>;
-  return (<div className="space-y-8"><div className="grid grid-cols-1 md:grid-cols-2 gap-6"><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">API Performance</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{health.apiResponseTime}ms</span><span className="text-emerald-500 text-sm font-bold mb-1">Healthy</span></div><p className="text-slate-400 text-sm mt-2">Average response time across all endpoints</p></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Error Rate</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{(health.errorRate * 100).toFixed(2)}%</span><span className="text-emerald-500 text-sm font-bold mb-1">Normal</span></div><p className="text-slate-400 text-sm mt-2">Percentage of failed requests in last 24h</p></div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Scheduled Jobs</h4><div className="space-y-4">{health.jobs.map((job: any) => (<div key={job.name} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl"><div className="flex items-center gap-3"><div className={`w-2 h-2 rounded-full ${job.status === 'SUCCESS' ? 'bg-emerald-500' : 'bg-rose-500'}`} /><span className="font-bold">{job.name}</span></div><div className="text-xs text-slate-400">Last run: {new Date(job.lastRun).toLocaleString()}</div></div>))}</div></div></div>);
+  const isDemo = health.apiResponseTime === 0;
+  const activeHealth = isDemo ? DEMO_HEALTH : health;
+  return (
+    <div className="space-y-8">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="w-2 h-2 bg-amber-400 rounded-full" />
+          <span className="text-xs font-black uppercase tracking-widest text-amber-700">Demo Data — Live metrics will appear after deployment</span>
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6"><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">API Performance</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{activeHealth.apiResponseTime}ms</span><span className="text-emerald-500 text-sm font-bold mb-1">Healthy</span></div><p className="text-slate-400 text-sm mt-2">Average response time across all endpoints</p></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Error Rate</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{(activeHealth.errorRate * 100).toFixed(2)}%</span><span className="text-emerald-500 text-sm font-bold mb-1">Normal</span></div><p className="text-slate-400 text-sm mt-2">Percentage of failed requests in last 24h</p></div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Scheduled Jobs</h4><div className="space-y-4">{activeHealth.jobs.map((job: any) => (<div key={job.name} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl"><div className="flex items-center gap-3"><div className={`w-2 h-2 rounded-full ${job.status === 'SUCCESS' ? 'bg-emerald-500' : 'bg-rose-500'}`} /><span className="font-bold">{job.name}</span></div><div className="text-xs text-slate-400">Last run: {new Date(job.lastRun).toLocaleString()}</div></div>))}</div></div>
+    </div>
+  );
 };
 
 const PriceSentinelReview = () => {
