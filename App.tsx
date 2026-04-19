@@ -142,10 +142,10 @@ const App: React.FC = () => {
       store.setCart([]);
       const completedOrder = response.orders[0];
       setImpactData({
-        grossAmount:       completedOrder.grossAmount,
-        merchantNet:       completedOrder.accounting.merchantNet,
-        discountAmount:    completedOrder.totalDiscount ?? completedOrder.accounting.grossProfit,
-        nonprofitDonation: completedOrder.accounting.donationAmount,
+        grossAmount:       Number(completedOrder.grossAmount),
+        merchantNet:       Number(completedOrder.accounting.merchantNet),
+        discountAmount:    Number(completedOrder.totalDiscount ?? completedOrder.accounting.grossProfit ?? 0),
+        nonprofitDonation: Number(completedOrder.accounting.donationAmount),
         nonprofitName:     selectedNonprofit.name,
         nonprofitMission:  selectedNonprofit.description,
       });
