@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
+import { PurchaseImpactAnimation } from './components/PurchaseImpactAnimation';
 import { MarketplaceView } from './views/MarketplaceView';
 import { CartDrawer } from './components/CartDrawer';
 import { ProductDetailModal } from './components/ProductDetailModal';
@@ -65,6 +66,14 @@ const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [impactData, setImpactData] = useState<{
+    grossAmount: number;
+    merchantNet: number;
+    discountAmount: number;
+    nonprofitDonation: number;
+    nonprofitName: string;
+    nonprofitMission: string;
+  } | null>(null);
   const selectedNonprofit = nonprofits[0];
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
@@ -131,7 +140,15 @@ const App: React.FC = () => {
       }
       store.setIsCartOpen(false);
       store.setCart([]);
-      showToast('Checkout successful! Your impact has been recorded.', 'success');
+      const completedOrder = response.orders[0];
+      setImpactData({
+        grossAmount:       completedOrder.grossAmount,
+        merchantNet:       completedOrder.accounting.merchantNet,
+        discountAmount:    completedOrder.totalDiscount ?? completedOrder.accounting.grossProfit,
+        nonprofitDonation: completedOrder.accounting.donationAmount,
+        nonprofitName:     selectedNonprofit.name,
+        nonprofitMission:  selectedNonprofit.description,
+      });
     } catch (error) {
       console.error('Checkout failed:', error);
       showToast('Checkout failed. Please try again.', 'error');
@@ -504,6 +521,18 @@ const App: React.FC = () => {
           <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 rounded-2xl shadow-2xl text-white text-sm font-black uppercase tracking-widest transition-all animate-in slide-in-from-bottom-4 duration-300 ${toast.type === 'error' ? 'bg-[#A20021]' : toast.type === 'info' ? 'bg-slate-700' : 'bg-emerald-600'}`}>
             {toast.message}
           </div>
+        )}
+        {impactData && (
+          <PurchaseImpactAnimation
+            isVisible={!!impactData}
+            onClose={() => setImpactData(null)}
+            grossAmount={impactData.grossAmount}
+            merchantNet={impactData.merchantNet}
+            discountAmount={impactData.discountAmount}
+            nonprofitDonation={impactData.nonprofitDonation}
+            nonprofitName={impactData.nonprofitName}
+            nonprofitMission={impactData.nonprofitMission}
+          />
         )}
       </div>
     </ErrorBoundary>
