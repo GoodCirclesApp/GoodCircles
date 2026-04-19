@@ -153,6 +153,9 @@ const UserManagement = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
+            {filteredUsers.length === 0 && (
+              <tr><td colSpan={5} className="px-6 py-16 text-center text-slate-400 italic font-medium">No users found{searchTerm ? ' matching your search' : ''}.</td></tr>
+            )}
             {filteredUsers.map(user => (
               <tr key={user.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-6 py-4"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs">{user.firstName?.[0] || user.email[0].toUpperCase()}</div><div><div className="font-bold text-sm">{user.firstName ? `${user.firstName} ${user.lastName || ''}` : 'No Name'}</div><div className="text-xs text-slate-400">{user.email}</div></div></div></td>
@@ -280,10 +283,28 @@ const CommunityFundOversight = () => {
   );
 };
 
+const DEMO_MUNICIPAL = [
+  { id: 'demo-muni-1', name: 'City of Newark, NJ', impactScore: 74, activeUsers: 1840 },
+  { id: 'demo-muni-2', name: 'Camden County, NJ', impactScore: 61, activeUsers: 920 },
+  { id: 'demo-muni-3', name: 'Trenton Economic Dev.', impactScore: 48, activeUsers: 530 },
+];
+
 const MunicipalPartnerships = () => {
   const [partners, setPartners] = useState<any[]>([]);
   useEffect(() => { adminService.getMunicipalPartners().then(setPartners); }, []);
-  return (<div className="grid grid-cols-1 md:grid-cols-2 gap-6">{partners.map(p => (<div key={p.id} className="bg-white p-6 rounded-2xl border border-slate-100"><div className="flex justify-between items-center mb-4"><h4 className="font-bold text-lg">{p.name}</h4><div className="text-emerald-600 font-black">{p.impactScore} Impact</div></div><div className="text-sm text-slate-500">{p.activeUsers.toLocaleString()} Active Users</div><div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden"><div style={{ width: `${p.impactScore}%` }} className="bg-emerald-500 h-full" /></div></div>))}</div>);
+  const isDemo = partners.length === 0;
+  const activePartners = isDemo ? DEMO_MUNICIPAL : partners;
+  return (
+    <div className="space-y-6">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="w-2 h-2 bg-amber-400 rounded-full" />
+          <span className="text-xs font-black uppercase tracking-widest text-amber-700">Demo Data — No municipal partners onboarded yet</span>
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{activePartners.map(p => (<div key={p.id} className="bg-white p-6 rounded-2xl border border-slate-100"><div className="flex justify-between items-center mb-4"><h4 className="font-bold text-lg">{p.name}</h4><div className="text-emerald-600 font-black">{p.impactScore} Impact</div></div><div className="text-sm text-slate-500">{p.activeUsers.toLocaleString()} Active Users</div><div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden"><div style={{ width: `${p.impactScore}%` }} className="bg-emerald-500 h-full" /></div></div>))}</div>
+    </div>
+  );
 };
 
 const DEMO_DATA_COOP = { aggregationStatus: 'ACTIVE', lastInsightLog: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), premiumRevenue: 8400 };
