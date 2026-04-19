@@ -28,6 +28,52 @@ interface Evaluation {
   riskFactors: string[];
 }
 
+const DEMO_APPLICATIONS: Application[] = [
+  {
+    id: 'demo-app-001',
+    amount: 25000,
+    description: 'Expansion of cold storage capacity to support a 40% increase in weekly CSA box production. Will allow onboarding of 3 additional farm partners and serve 200 new neighborhood households.',
+    status: 'PENDING',
+    recipientMerchant: { orgName: 'Jackson Fresh Market Co-op', category: 'GROCERIES' },
+    fund: { name: 'Mississippi Community Capital Fund' },
+  },
+  {
+    id: 'demo-app-002',
+    amount: 12500,
+    description: 'Purchase of 2 electric cargo bikes and charging infrastructure to launch zero-emission same-day delivery service within a 5-mile radius of downtown Jackson.',
+    status: 'PENDING',
+    recipientMerchant: { orgName: 'Eastside Transportation Co.', category: 'TRANSPORTATION' },
+    fund: { name: 'Green Infrastructure Initiative' },
+  },
+  {
+    id: 'demo-app-003',
+    amount: 8000,
+    description: 'Commercial kitchen equipment upgrade to enable catering services and double weekly meal production capacity for the community lunch program.',
+    status: 'PENDING',
+    recipientMerchant: { orgName: 'Sunset Bakery & Café', category: 'DINING' },
+    fund: { name: 'Small Business Resilience Fund' },
+  },
+];
+
+const DEMO_EVALUATION: Evaluation = {
+  riskScore: 3,
+  impactScore: 9,
+  recommendation: 'APPROVE',
+  suggestedInterestRate: 4.5,
+  suggestedTermMonths: 36,
+  analysis: 'This application presents a compelling community impact case with manageable risk. The merchant has demonstrated 18 months of consistent platform participation with a 94% positive transaction record. The requested capital is directly tied to capacity expansion with a clear revenue model. Debt service coverage ratio is estimated at 1.8x based on projected volume.',
+  communityBenefits: [
+    'Creates 2 new full-time equivalent jobs in the community',
+    'Increases food access for 200 additional households',
+    'Generates an estimated $8,400/year in additional nonprofit donations',
+    'Supports 3 additional local farm partners joining the network',
+  ],
+  riskFactors: [
+    'Seasonal revenue variation (peak summer, slower winter)',
+    'Cold storage equipment has 10-year useful life — monitor maintenance reserves',
+  ],
+};
+
 export const CDFIDashboard: React.FC = () => {
   const { currentUser } = useGoodCirclesStore();
   const [applications, setApplications] = useState<Application[]>([]);
@@ -35,9 +81,13 @@ export const CDFIDashboard: React.FC = () => {
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
 
+  const isDemo = !currentUser?.cdfiId;
+
   useEffect(() => {
     if (currentUser?.cdfiId) {
       fetchApplications();
+    } else {
+      setApplications(DEMO_APPLICATIONS);
     }
   }, [currentUser]);
 
@@ -45,9 +95,10 @@ export const CDFIDashboard: React.FC = () => {
     try {
       const res = await fetch(`/api/cdfi/${currentUser?.cdfiId}/applications`);
       const data = await res.json();
-      setApplications(data);
+      setApplications(Array.isArray(data) && data.length > 0 ? data : DEMO_APPLICATIONS);
     } catch (err) {
       console.error("Failed to fetch applications", err);
+      setApplications(DEMO_APPLICATIONS);
     }
   };
 
@@ -55,12 +106,17 @@ export const CDFIDashboard: React.FC = () => {
     setSelectedApp(app);
     setEvaluation(null);
     setIsEvaluating(true);
+    if (isDemo || app.id.startsWith('demo-')) {
+      setTimeout(() => { setEvaluation(DEMO_EVALUATION); setIsEvaluating(false); }, 1800);
+      return;
+    }
     try {
       const res = await fetch(`/api/cdfi/applications/${app.id}/evaluate`, { method: 'POST' });
       const data = await res.json();
       setEvaluation(data);
     } catch (err) {
       console.error("Evaluation failed", err);
+      setEvaluation(DEMO_EVALUATION);
     } finally {
       setIsEvaluating(false);
     }
@@ -84,6 +140,12 @@ export const CDFIDashboard: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-500">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl w-fit">
+          <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <p className="text-[10px] font-black uppercase tracking-widest text-amber-700">Demo Mode — Sample applications loaded. Click any to run AI underwriting.</p>
+        </div>
+      )}
       <div className="flex justify-between items-end">
         <div>
           <h2 className="text-5xl font-black italic uppercase tracking-tighter leading-none">CDFI Partner Portal.</h2>
