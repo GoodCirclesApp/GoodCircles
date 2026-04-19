@@ -18,4 +18,5 @@ export const adminService = {
   getSentinelFlags: () => apiClient.get<any[]>('/admin/sentinel-flags'),
   resolveSentinelFlag: (flagId: string, approve: boolean) =>
     apiClient.post<any>(`/admin/sentinel-flags/${flagId}/resolve`, { approve }),
+  seedNonprofits: () => apiClient.post<any>('/admin/seed-nonprofits', {}),
 };

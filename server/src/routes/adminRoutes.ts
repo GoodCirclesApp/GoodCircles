@@ -22,6 +22,7 @@ router.get('/data-coop', adminController.getDataCoopStatus);
 router.get('/system-health', adminController.getSystemHealth);
 router.get('/sentinel-flags', adminController.getSentinelFlags);
 router.post('/sentinel-flags/:flagId/resolve', adminController.resolveSentinelFlag);
+router.post('/seed-nonprofits', adminController.seedNonprofits);
 
 // Mock data management
 router.get('/mock-data/status', mockDataController.getMockDataStatus);

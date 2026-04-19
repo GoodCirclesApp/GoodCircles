@@ -40,7 +40,22 @@ import { AdminAffiliateDashboard } from '../components/AdminAffiliateDashboard';
 
 const SystemDashboard = () => {
   const [stats, setStats] = useState<any>(null);
+  const [seedResult, setSeedResult] = useState<any>(null);
+  const [seeding, setSeeding] = useState(false);
   useEffect(() => { adminService.getStats().then(setStats); }, []);
+
+  const handleSeedNonprofits = async () => {
+    setSeeding(true);
+    try {
+      const result = await adminService.seedNonprofits();
+      setSeedResult(result);
+    } catch (e: any) {
+      setSeedResult({ message: 'Error: ' + e.message });
+    } finally {
+      setSeeding(false);
+    }
+  };
+
   if (!stats) return <div className="p-8">Loading...</div>;
   return (
     <div className="space-y-8">
@@ -50,6 +65,23 @@ const SystemDashboard = () => {
         <StatCard title="Nonprofit Funding" value={`$${stats.totalNonprofitFunding.toLocaleString()}`} icon={<Heart className="w-5 h-5" />} trend="+15%" />
         <StatCard title="Active Users" value={Object.values(stats.activeUsersByRole).reduce((a: any, b: any) => a + b, 0).toString()} icon={<Users className="w-5 h-5" />} trend="+5%" />
       </div>
+      <div className="bg-white p-6 rounded-2xl border border-amber-100 flex items-center justify-between gap-6">
+        <div>
+          <p className="text-sm font-black uppercase tracking-tight">Seed Nonprofits</p>
+          <p className="text-xs text-slate-400 font-medium mt-0.5">Populate the database with 5 verified nonprofits for testing.</p>
+          {seedResult && (
+            <div className="mt-2 text-xs text-emerald-700 font-bold">{seedResult.message} — {seedResult.results?.map((r: any) => `${r.orgName}: ${r.status}`).join(' · ')}</div>
+          )}
+        </div>
+        <button
+          onClick={handleSeedNonprofits}
+          disabled={seeding}
+          className="shrink-0 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-colors disabled:opacity-50"
+        >
+          {seeding ? 'Seeding...' : 'Run Seed'}
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white p-6 rounded-2xl border border-slate-100">
           <h4 className="text-lg font-bold mb-6">Users by Role</h4>
