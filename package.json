@@ -10,6 +10,7 @@
     "seed:admin": "tsx seed-admin.ts",
     "build:deploy": "npm run prisma:generate && npm run build",
     "seed:beta": "tsx seed-beta.ts",
+    "seed:nonprofits": "tsx seed-nonprofits.ts",
     "lint": "tsc --noEmit",
     "preview": "vite preview",
     "prisma:generate": "prisma generate",
