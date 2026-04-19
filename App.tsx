@@ -9,6 +9,7 @@ import { useGoodCirclesStore } from './hooks/useGoodCirclesStore';
 import { MOCK_NONPROFITS, MOCK_USERS } from './constants';
 import { Nonprofit, Order, Review } from './types';
 import { WishlistDrawer } from './components/WishlistDrawer';
+import { PersonalShopper } from './components/PersonalShopper';
 import { AuthSystem } from './components/AuthSystem';
 import { marketplaceService } from './services/marketplaceService';
 import { authService } from './services/authService';
@@ -526,6 +527,14 @@ const App: React.FC = () => {
           products={store.products}
           onAddToCart={store.addToCart}
           onRemoveFromWishlist={handleRemoveFromWishlist}
+        />
+        <PersonalShopper
+          isOpen={store.isShopperOpen}
+          onClose={() => store.setIsShopperOpen(false)}
+          orders={store.orders}
+          availableProducts={store.products}
+          currentNonprofit={selectedNonprofit}
+          onAddToCart={store.addToCart}
         />
         <ActivityTicker />
         {toast && (
