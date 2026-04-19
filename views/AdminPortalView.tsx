@@ -38,6 +38,14 @@ import { AdminAffiliateDashboard } from '../components/AdminAffiliateDashboard';
 
 // Sub-components
 
+const DEMO_STATS = {
+  totalRevenue: 48720,
+  totalTransactionVolume: 487200,
+  totalNonprofitFunding: 24360,
+  activeUsersByRole: { CONSUMER: 312, MERCHANT: 47, NONPROFIT: 8, CDFI: 3, ADMIN: 2 },
+  internalBankingAdoption: 0.68,
+};
+
 const SystemDashboard = () => {
   const [stats, setStats] = useState<any>(null);
   const [seedResult, setSeedResult] = useState<any>(null);
@@ -57,13 +65,21 @@ const SystemDashboard = () => {
   };
 
   if (!stats) return <div className="p-8">Loading...</div>;
+  const isDemo = stats.totalRevenue === 0;
+  const activeStats = isDemo ? DEMO_STATS : stats;
   return (
     <div className="space-y-8">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="w-2 h-2 bg-amber-400 rounded-full" />
+          <span className="text-xs font-black uppercase tracking-widest text-amber-700">Demo Data — No live transactions yet</span>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Platform Revenue" value={`$${stats.totalRevenue.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} trend="+12%" />
-        <StatCard title="Transaction Volume" value={`$${stats.totalTransactionVolume.toLocaleString()}`} icon={<History className="w-5 h-5" />} trend="+8%" />
-        <StatCard title="Nonprofit Funding" value={`$${stats.totalNonprofitFunding.toLocaleString()}`} icon={<Heart className="w-5 h-5" />} trend="+15%" />
-        <StatCard title="Active Users" value={Object.values(stats.activeUsersByRole).reduce((a: any, b: any) => a + b, 0).toString()} icon={<Users className="w-5 h-5" />} trend="+5%" />
+        <StatCard title="Platform Revenue" value={`$${activeStats.totalRevenue.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} trend="+12%" />
+        <StatCard title="Transaction Volume" value={`$${activeStats.totalTransactionVolume.toLocaleString()}`} icon={<History className="w-5 h-5" />} trend="+8%" />
+        <StatCard title="Nonprofit Funding" value={`$${activeStats.totalNonprofitFunding.toLocaleString()}`} icon={<Heart className="w-5 h-5" />} trend="+15%" />
+        <StatCard title="Active Users" value={Object.values(activeStats.activeUsersByRole).reduce((a: any, b: any) => a + b, 0).toString()} icon={<Users className="w-5 h-5" />} trend="+5%" />
       </div>
       <div className="bg-white p-6 rounded-2xl border border-amber-100 flex items-center justify-between gap-6">
         <div>
@@ -86,7 +102,7 @@ const SystemDashboard = () => {
         <div className="bg-white p-6 rounded-2xl border border-slate-100">
           <h4 className="text-lg font-bold mb-6">Users by Role</h4>
           <div className="space-y-4">
-            {Object.entries(stats.activeUsersByRole).map(([role, count]: [string, any]) => (
+            {Object.entries(activeStats.activeUsersByRole).map(([role, count]: [string, any]) => (
               <div key={role} className="flex items-center justify-between">
                 <span className="text-slate-500 font-medium">{role}</span>
                 <span className="font-bold">{count}</span>
@@ -98,7 +114,7 @@ const SystemDashboard = () => {
           <h4 className="text-lg font-bold mb-6">Banking Adoption</h4>
           <div className="flex items-center justify-center h-40">
             <div className="text-center">
-              <div className="text-4xl font-black">{(stats.internalBankingAdoption * 100).toFixed(0)}%</div>
+              <div className="text-4xl font-black">{(activeStats.internalBankingAdoption * 100).toFixed(0)}%</div>
               <div className="text-slate-400 text-sm">Internal Banking Adoption Rate</div>
             </div>
           </div>
@@ -168,20 +184,36 @@ const TransactionMonitoring = () => {
   );
 };
 
+const DEMO_FINANCIALS = {
+  platformFeeRevenue: 4872,
+  processingFeePassThrough: 1461,
+  nettingSavings: 8340,
+  paymentSplit: { internal: 68, card: 32 },
+  aggregateWalletBalance: 128500,
+};
+
 const FinancialOverview = () => {
   const [financials, setFinancials] = useState<any>(null);
   useEffect(() => { adminService.getFinancials().then(setFinancials); }, []);
   if (!financials) return <div className="p-8">Loading...</div>;
+  const isDemo = financials.platformFeeRevenue === 0;
+  const activeFinancials = isDemo ? DEMO_FINANCIALS : financials;
   return (
     <div className="space-y-8">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="w-2 h-2 bg-amber-400 rounded-full" />
+          <span className="text-xs font-black uppercase tracking-widest text-amber-700">Demo Data — No live transactions yet</span>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard title="Platform Fees" value={`$${financials.platformFeeRevenue.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} />
-        <StatCard title="Processing Fees" value={`$${financials.processingFeePassThrough.toLocaleString()}`} icon={<RefreshCw className="w-5 h-5" />} />
-        <StatCard title="Netting Savings" value={`$${financials.nettingSavings.toLocaleString()}`} icon={<ArrowDownRight className="w-5 h-5" />} />
+        <StatCard title="Platform Fees" value={`$${activeFinancials.platformFeeRevenue.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} />
+        <StatCard title="Processing Fees" value={`$${activeFinancials.processingFeePassThrough.toLocaleString()}`} icon={<RefreshCw className="w-5 h-5" />} />
+        <StatCard title="Netting Savings" value={`$${activeFinancials.nettingSavings.toLocaleString()}`} icon={<ArrowDownRight className="w-5 h-5" />} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Payment Split</h4><div className="flex items-center gap-4"><div className="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden flex"><div style={{ width: `${financials.paymentSplit.internal}%` }} className="bg-emerald-500 h-full" /><div style={{ width: `${financials.paymentSplit.card}%` }} className="bg-blue-500 h-full" /></div></div><div className="mt-4 flex justify-between text-xs font-bold"><div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded-full" /> Internal ({financials.paymentSplit.internal}%)</div><div className="flex items-center gap-2"><div className="w-3 h-3 bg-blue-500 rounded-full" /> Card ({financials.paymentSplit.card}%)</div></div></div>
-        <div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Aggregate Wallet Balance</h4><div className="text-3xl font-black">${financials.aggregateWalletBalance.toLocaleString()}</div><p className="text-slate-400 text-sm mt-2">Total capital held in platform wallets</p></div>
+        <div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Payment Split</h4><div className="flex items-center gap-4"><div className="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden flex"><div style={{ width: `${activeFinancials.paymentSplit.internal}%` }} className="bg-emerald-500 h-full" /><div style={{ width: `${activeFinancials.paymentSplit.card}%` }} className="bg-blue-500 h-full" /></div></div><div className="mt-4 flex justify-between text-xs font-bold"><div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded-full" /> Internal ({activeFinancials.paymentSplit.internal}%)</div><div className="flex items-center gap-2"><div className="w-3 h-3 bg-blue-500 rounded-full" /> Card ({activeFinancials.paymentSplit.card}%)</div></div></div>
+        <div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Aggregate Wallet Balance</h4><div className="text-3xl font-black">${activeFinancials.aggregateWalletBalance.toLocaleString()}</div><p className="text-slate-400 text-sm mt-2">Total capital held in platform wallets</p></div>
       </div>
     </div>
   );
