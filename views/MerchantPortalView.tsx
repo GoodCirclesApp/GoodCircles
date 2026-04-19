@@ -181,7 +181,7 @@ export const MerchantPortalView: React.FC = () => {
             </div>
             <div>
               <h2 className="text-2xl font-black italic uppercase tracking-tighter">
-                Welcome back, {(currentUser as any)?.merchant?.businessName || currentUser?.firstName || 'Merchant'}.
+                Welcome back, {(currentUser as any)?.merchant?.businessName || currentUser?.firstName || currentUser?.name?.split(' ')[0] || 'Merchant'}.
               </h2>
               <p className="text-slate-400 text-xs font-medium">
                 Your merchant node is healthy and synced with the global ledger.

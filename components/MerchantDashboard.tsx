@@ -2,8 +2,29 @@
 import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { merchantService } from '../services/merchantService';
-import { DollarSign, TrendingUp, Heart, Shield, Percent, ArrowUpRight, ArrowDownRight, Clock } from 'lucide-react';
-import { format } from 'date-fns';
+import { DollarSign, TrendingUp, Heart, Shield, Percent, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { format, subDays } from 'date-fns';
+
+const DEMO_METRICS = {
+  totalSales: 12480.00,
+  netRevenue: 9984.00,
+  discountsGiven: 1248.00,
+  nonprofitContributions: 998.40,
+  processingFeesSaved: 311.40,
+};
+
+const DEMO_CHART = Array.from({ length: 30 }, (_, i) => ({
+  date: subDays(new Date(), 29 - i).toISOString(),
+  revenue: Math.round(200 + Math.random() * 600 + (i > 20 ? i * 15 : 0)),
+}));
+
+const DEMO_TRANSACTIONS = [
+  { grossAmount: 57.00, merchantNet: 45.60, createdAt: subDays(new Date(), 0).toISOString(), productService: { name: 'Artisan Bread Loaf' } },
+  { grossAmount: 34.50, merchantNet: 27.60, createdAt: subDays(new Date(), 1).toISOString(), productService: { name: 'Local Honey Jar' } },
+  { grossAmount: 128.00, merchantNet: 102.40, createdAt: subDays(new Date(), 1).toISOString(), productService: { name: 'Weekly CSA Box' } },
+  { grossAmount: 22.00, merchantNet: 17.60, createdAt: subDays(new Date(), 2).toISOString(), productService: { name: 'Farm Fresh Eggs' } },
+  { grossAmount: 89.00, merchantNet: 71.20, createdAt: subDays(new Date(), 3).toISOString(), productService: { name: 'Herb Garden Kit' } },
+];
 
 export const MerchantDashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<any>(null);
@@ -39,16 +60,27 @@ export const MerchantDashboard: React.FC = () => {
     );
   }
 
+  const isDemo = !metrics || metrics.totalSales === 0;
+  const activeMetrics = isDemo ? DEMO_METRICS : metrics;
+  const activeChart = isDemo ? DEMO_CHART : chartData;
+  const activeTransactions = isDemo ? DEMO_TRANSACTIONS : transactions;
+
   const metricCards = [
-    { label: 'Total Sales', value: metrics?.totalSales, icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-50', note: undefined },
-    { label: 'Net Revenue', value: metrics?.netRevenue, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', note: undefined },
-    { label: 'Discounts Given', value: metrics?.discountsGiven, icon: Percent, color: 'text-amber-600', bg: 'bg-amber-50', note: 'Tax deductible' },
-    { label: 'Nonprofit Donations', value: metrics?.nonprofitContributions, icon: Heart, color: 'text-rose-600', bg: 'bg-rose-50', note: 'Tax deductible' },
-    { label: 'Processing Saved', value: metrics?.processingFeesSaved, icon: Shield, color: 'text-indigo-600', bg: 'bg-indigo-50', note: undefined },
+    { label: 'Total Sales', value: activeMetrics?.totalSales, icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-50', note: undefined },
+    { label: 'Net Revenue', value: activeMetrics?.netRevenue, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', note: undefined },
+    { label: 'Discounts Given', value: activeMetrics?.discountsGiven, icon: Percent, color: 'text-amber-600', bg: 'bg-amber-50', note: 'Tax deductible' },
+    { label: 'Nonprofit Donations', value: activeMetrics?.nonprofitContributions, icon: Heart, color: 'text-rose-600', bg: 'bg-rose-50', note: 'Tax deductible' },
+    { label: 'Processing Saved', value: activeMetrics?.processingFeesSaved, icon: Shield, color: 'text-indigo-600', bg: 'bg-indigo-50', note: undefined },
   ];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      {isDemo && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border border-amber-200 rounded-2xl w-fit">
+          <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <p className="text-[10px] font-black uppercase tracking-widest text-amber-700">Demo Data — Your live metrics will appear once transactions begin</p>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {metricCards.map((card, idx) => (
           <div key={idx} className="bg-white p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
@@ -66,24 +98,16 @@ export const MerchantDashboard: React.FC = () => {
         <div className="lg:col-span-2 bg-white p-4 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-xl font-black italic uppercase tracking-tighter">Revenue Velocity (30D)</h3>
-            {chartData.length > 0 && (
-              <div className="flex gap-2">
-                <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase">Live Data</span>
-              </div>
-            )}
+            <div className="flex gap-2">
+              <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${isDemo ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                {isDemo ? 'Demo' : 'Live Data'}
+              </span>
+            </div>
           </div>
           <div className="h-48 sm:h-80">
-            {chartData.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center gap-4 text-center border-2 border-dashed border-slate-100 rounded-[2rem]">
-                <svg className="w-10 h-10 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
-                <div>
-                  <p className="text-sm font-black italic uppercase tracking-tighter text-slate-300">No revenue data yet</p>
-                  <p className="text-xs text-slate-300 font-medium mt-1">Your first sales will appear here</p>
-                </div>
-              </div>
-            ) : (
+            {activeChart.length > 0 && (
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
+              <AreaChart data={activeChart}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#7851A9" stopOpacity={0.1}/>
@@ -108,15 +132,16 @@ export const MerchantDashboard: React.FC = () => {
             </ResponsiveContainer>
             )}
           </div>
+
         </div>
 
         <div className="bg-white p-4 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm">
           <h3 className="text-xl font-black italic uppercase tracking-tighter mb-8">Recent Activity</h3>
           <div className="space-y-6">
-            {transactions.length === 0 ? (
+            {activeTransactions.length === 0 ? (
               <p className="text-slate-400 text-sm italic py-12 text-center">No recent transactions.</p>
             ) : (
-              transactions.map((t, idx) => (
+              activeTransactions.map((t, idx) => (
                 <div key={idx} className="flex items-center gap-4 group">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${t.grossAmount > 0 ? 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white' : 'bg-slate-50 text-slate-400'}`}>
                     {t.grossAmount > 0 ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
