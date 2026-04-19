@@ -25,7 +25,7 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
       return {
         ...c,
         totalFunding,
-        perMemberImpact: totalFunding / c.memberCount
+        perMemberImpact: c.memberCount > 0 ? totalFunding / c.memberCount : 0
       };
     }).sort((a, b) => b.perMemberImpact - a.perMemberImpact);
   }, [orders]);
@@ -122,7 +122,7 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
               rank={i + 1} 
               name={c.name} 
               metricLabel="Impact / Member" 
-              metricValue={`$${c.perMemberImpact.toFixed(4)}`} 
+              metricValue={`$${c.perMemberImpact.toFixed(2)}`}
               subMetric={`$${c.totalFunding.toFixed(2)} Total Funding`}
               progress={(c.perMemberImpact / (communityRankings[0]?.perMemberImpact || 1)) * 100}
             />
