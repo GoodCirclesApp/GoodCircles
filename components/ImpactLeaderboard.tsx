@@ -17,7 +17,7 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
     const fundingMap = new Map<string, number>();
     orders.forEach(o => {
       const current = fundingMap.get(o.communityId) || 0;
-      fundingMap.set(o.communityId, current + o.accounting.donationAmount);
+      fundingMap.set(o.communityId, current + (o.accounting?.donationAmount ?? 0));
     });
 
     return MOCK_COMMUNITIES.map(c => {
@@ -39,7 +39,7 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
         // Here we use the proportion of this order's total donation based on this item's subtotal share.
         const itemSubtotal = item.product.price * (1 - 0.10) * item.quantity;
         const proportion = o.subtotal > 0 ? itemSubtotal / o.subtotal : 0;
-        m.total += o.accounting.donationAmount * proportion;
+        m.total += (o.accounting?.donationAmount ?? 0) * proportion;
         merchantMap.set(item.product.merchantId, m);
       });
     });
@@ -53,7 +53,7 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
     const neighborMap = new Map<string, { name: string, total: number }>();
     orders.forEach(o => {
       const c = neighborMap.get(o.neighborId) || { name: o.neighborName || 'Anonymous', total: 0 };
-      c.total += o.accounting.donationAmount;
+      c.total += (o.accounting?.donationAmount ?? 0);
       neighborMap.set(o.neighborId, c);
     });
 
@@ -73,10 +73,10 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
     orders.forEach(o => {
       const np = nonprofitMap.get(o.selectedNonprofitId);
       if (np) {
-        np.total += o.accounting.donationAmount;
+        np.total += (o.accounting?.donationAmount ?? 0);
       } else {
         // Fallback for dynamically added nonprofits if any
-        nonprofitMap.set(o.selectedNonprofitId, { name: `Nonprofit ${o.selectedNonprofitId}`, total: o.accounting.donationAmount });
+        nonprofitMap.set(o.selectedNonprofitId, { name: `Nonprofit ${o.selectedNonprofitId}`, total: (o.accounting?.donationAmount ?? 0) });
       }
     });
 

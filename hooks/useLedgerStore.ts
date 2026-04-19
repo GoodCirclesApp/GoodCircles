@@ -45,10 +45,10 @@ export function useLedgerStore() {
   };
 
   const treasuryStats: TreasuryStats = useMemo(() => {
-    const totalInternalVolume = orders.reduce((s, o) => s + o.subtotal, 0);
-    const totalDonations = orders.reduce((s, o) => s + o.accounting.donationAmount, 0);
-    const totalPlatformFees = orders.reduce((s, o) => s + o.accounting.platformFee, 0);
-    const totalFeesSaved = orders.reduce((s, o) => s + o.accounting.feesSaved, 0);
+    const totalInternalVolume = orders.reduce((s, o) => s + (o.subtotal ?? 0), 0);
+    const totalDonations = orders.reduce((s, o) => s + (o.accounting?.donationAmount ?? 0), 0);
+    const totalPlatformFees = orders.reduce((s, o) => s + (o.accounting?.platformFee ?? 0), 0);
+    const totalFeesSaved = orders.reduce((s, o) => s + (o.accounting?.feesSaved ?? 0), 0);
     const totalOrders = orders.length;
     const uniqueNeighbors = new Set(orders.map(o => o.neighborId)).size;
 

@@ -346,7 +346,37 @@ export const checkout = async (req: AuthRequest, res: Response) => {
         discountMode,
         creditsToApply: creditsForItem
       });
-      results.push(result);
+      const { transaction: tx, breakdown: bd } = result;
+      results.push({
+        id:                 tx.id,
+        date:               tx.createdAt,
+        createdAt:          tx.createdAt,
+        items:              [],
+        totalMsrp:          Number(tx.grossAmount),
+        totalDiscount:      Number(tx.discountAmount ?? 0),
+        subtotal:           Number(tx.grossAmount),
+        tax:                0,
+        cardFee:            0,
+        internalFee:        0,
+        totalPaid:          Number(bd.neighborPays ?? tx.grossAmount),
+        grossAmount:        Number(tx.grossAmount),
+        status:             'COMPLETED',
+        paymentMethod:      rawPaymentMethod,
+        selectedNonprofitId: tx.nonprofitId,
+        nonprofitShare:     Number(tx.nonprofitShare),
+        platformFee:        Number(tx.platformFee),
+        neighborId:         tx.neighborId,
+        neighborName:       '',
+        communityId:        tx.neighborId,
+        accounting: {
+          grossProfit:    Number(tx.discountAmount ?? 0),
+          donationAmount: Number(tx.nonprofitShare),
+          platformFee:    Number(tx.platformFee),
+          merchantNet:    Number(tx.merchantNet),
+          totalCogs:      0,
+          feesSaved:      0,
+        },
+      });
     }
 
     res.status(201).json({

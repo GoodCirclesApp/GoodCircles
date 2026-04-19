@@ -150,14 +150,16 @@ const App: React.FC = () => {
       store.setIsCartOpen(false);
       store.setCart([]);
       const completedOrder = response.orders[0];
-      setImpactData({
-        grossAmount:       Number(completedOrder.grossAmount),
-        merchantNet:       Number(completedOrder.accounting.merchantNet),
-        discountAmount:    Number(completedOrder.totalDiscount ?? completedOrder.accounting.grossProfit ?? 0),
-        nonprofitDonation: Number(completedOrder.accounting.donationAmount),
-        nonprofitName:     selectedRealNonprofit?.orgName ?? selectedNonprofit.name,
-        nonprofitMission:  selectedRealNonprofit?.missionStatement ?? selectedNonprofit.description,
-      });
+      if (completedOrder?.accounting) {
+        setImpactData({
+          grossAmount:       Number(completedOrder.grossAmount),
+          merchantNet:       Number(completedOrder.accounting.merchantNet),
+          discountAmount:    Number(completedOrder.totalDiscount ?? completedOrder.accounting.grossProfit ?? 0),
+          nonprofitDonation: Number(completedOrder.accounting.donationAmount),
+          nonprofitName:     selectedRealNonprofit?.orgName ?? selectedNonprofit.name,
+          nonprofitMission:  selectedRealNonprofit?.missionStatement ?? selectedNonprofit.description,
+        });
+      }
     } catch (error) {
       console.error('Checkout failed:', error);
       showToast('Checkout failed. Please try again.', 'error');

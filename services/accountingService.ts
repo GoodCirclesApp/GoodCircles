@@ -11,11 +11,11 @@ export const AccountingService = {
    */
   summarizeOrders(orders: Order[]) {
     return orders.reduce((acc, order) => ({
-      revenue: acc.revenue + order.subtotal,
-      donations: acc.donations + order.accounting.donationAmount,
-      platformFees: acc.platformFees + order.accounting.platformFee,
-      cogs: acc.cogs + order.accounting.totalCogs,
-      net: acc.net + order.accounting.merchantNet
+      revenue: acc.revenue + (order.subtotal ?? 0),
+      donations: acc.donations + (order.accounting?.donationAmount ?? 0),
+      platformFees: acc.platformFees + (order.accounting?.platformFee ?? 0),
+      cogs: acc.cogs + (order.accounting?.totalCogs ?? 0),
+      net: acc.net + (order.accounting?.merchantNet ?? 0)
     }), { revenue: 0, donations: 0, platformFees: 0, cogs: 0, net: 0 });
   },
 
