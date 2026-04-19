@@ -36,6 +36,8 @@ export const NonprofitSelectionView: React.FC<Props> = ({ currentNonprofitId, on
     try {
       await neighborService.setElectedNonprofit(id);
       onSelect(id);
+      const selected = nonprofits.find((n: any) => n.id === id);
+      showToast(`✦ ${selected?.orgName ?? 'Cause'} is now your elected nonprofit`, 'success');
     } catch (err) {
       console.error('Failed to select nonprofit:', err);
       showToast('Failed to update selection. Please try again.', 'error');

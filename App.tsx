@@ -115,12 +115,14 @@ const App: React.FC = () => {
     const updated = [...wishlistIds, productId];
     setWishlistIds(updated);
     localStorage.setItem('gc_wishlist', JSON.stringify(updated));
+    showToast('Saved to wishlist', 'success');
   };
 
   const handleRemoveFromWishlist = (productId: string) => {
     const updated = wishlistIds.filter(id => id !== productId);
     setWishlistIds(updated);
     localStorage.setItem('gc_wishlist', JSON.stringify(updated));
+    showToast('Removed from wishlist', 'info');
   };
 
   const handleUpdateNonprofit = (updated: Nonprofit) => {

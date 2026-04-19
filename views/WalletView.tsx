@@ -36,8 +36,10 @@ export const WalletView: React.FC<Props> = ({
     try {
       if (action === 'topup') {
         await onTopUp(val);
+        onToast?.(`$${val.toFixed(2)} added to your Circle Account`, 'success');
       } else {
         await onWithdraw(val);
+        onToast?.(`$${val.toFixed(2)} withdrawal initiated`, 'success');
       }
       setAmount('');
     } catch (err) {

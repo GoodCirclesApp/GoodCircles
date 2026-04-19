@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Product, CartItem } from '../types';
+import { showToast } from './toast';
 
 export function useCartStore() {
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -12,17 +13,23 @@ export function useCartStore() {
     setCart(prev => {
       const existing = prev.find(i => i.product.id === product.id);
       if (existing) {
-        return prev.map(i => i.product.id === product.id 
-          ? { ...i, quantity: i.quantity + quantity } 
+        showToast(`${product.name} quantity updated`, 'success');
+        return prev.map(i => i.product.id === product.id
+          ? { ...i, quantity: i.quantity + quantity }
           : i
         );
       }
+      showToast(`${product.name} added to basket`, 'success');
       return [...prev, { product, quantity }];
     });
   };
 
   const removeFromCart = (productId: string) => {
-    setCart(prev => prev.filter(i => i.product.id !== productId));
+    setCart(prev => {
+      const item = prev.find(i => i.product.id === productId);
+      if (item) showToast(`${item.product.name} removed from basket`, 'info');
+      return prev.filter(i => i.product.id !== productId);
+    });
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
