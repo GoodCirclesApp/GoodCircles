@@ -243,11 +243,17 @@ const App: React.FC = () => {
                 <BrandLogo variant="GOLD" className="transform scale-[0.6] sm:scale-75 origin-left cursor-pointer" onClick={() => { store.setActiveView('MAIN'); setIsMenuOpen(false); }} />
               </div>
             </div>
-            {currentViewLabel && (
-              <span className="hidden sm:block text-xs font-bold text-slate-400 truncate max-w-[160px]">
-                {currentViewLabel}
-              </span>
-            )}
+            <div className="hidden md:flex items-center gap-3">
+              {currentViewLabel && (
+                <span className="text-xs font-bold text-slate-400 truncate max-w-[120px]">{currentViewLabel}</span>
+              )}
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-xl">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="text-[9px] font-black uppercase tracking-widest text-emerald-700 whitespace-nowrap">
+                  {store.globalStats.merchantCount + store.globalStats.nonprofitCount} nodes · ${(store.globalStats.totalInternalVolume / 1000).toFixed(1)}k flowing
+                </span>
+              </div>
+            </div>
             <div className="flex items-center gap-1 shrink-0">
               <button onClick={() => setIsWishlistOpen(true)} className="p-1.5 sm:p-2.5 bg-white rounded-xl sm:rounded-2xl border border-[#CA9CE1]/30 relative">
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
