@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { merchantService } from '../services/merchantService';
-import { DollarSign, TrendingUp, Heart, Shield, Percent, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { DollarSign, TrendingUp, Heart, Shield, Percent, ArrowUpRight, ArrowDownRight, Zap, Users, Target, Lightbulb } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 
 const DEMO_METRICS = {
@@ -26,7 +26,50 @@ const DEMO_TRANSACTIONS = [
   { grossAmount: 89.00, merchantNet: 71.20, createdAt: subDays(new Date(), 3).toISOString(), productService: { name: 'Herb Garden Kit' } },
 ];
 
-export const MerchantDashboard: React.FC = () => {
+const COPILOT_INSIGHTS = [
+  {
+    icon: TrendingUp,
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-50',
+    label: 'Sales Pattern Detected',
+    headline: 'Weekday items sell 40% faster than weekend listings',
+    detail: 'Your lunch-hour and midweek items show significantly higher sell-through. A Tuesday promotion could capture peak demand.',
+    query: 'My weekday items outperform weekend items by 40%. What promotions or pricing strategies would help me capitalize on this pattern?',
+  },
+  {
+    icon: Users,
+    color: 'text-[#7851A9]',
+    bg: 'bg-[#7851A9]/10',
+    label: 'Repeat Customer Opportunity',
+    headline: '3 customers have purchased from you 3+ times',
+    detail: 'You have loyal regulars building. A loyalty recognition or bundle offer could convert them into monthly anchors.',
+    query: 'I have repeat customers buying 3+ times. How should I reward loyalty within the GoodCircles model without undercutting my margin?',
+  },
+  {
+    icon: Target,
+    color: 'text-[#C2A76F]',
+    bg: 'bg-amber-50',
+    label: 'Nonprofit Milestone Approaching',
+    headline: 'On pace to generate $1,000 for Community Food Bank',
+    detail: 'At current velocity, you\'ll hit a $1,000 nonprofit contribution milestone next month. This is a story worth sharing.',
+    query: 'I\'m approaching $1,000 in nonprofit contributions through my sales. How can I use this milestone to attract new customers?',
+  },
+  {
+    icon: Lightbulb,
+    color: 'text-rose-600',
+    bg: 'bg-rose-50',
+    label: 'Niche Gap Identified',
+    headline: 'No merchant in your node offers gift bundles',
+    detail: 'Across 70 marketplace listings, zero merchants offer curated gift sets. This high-margin category is wide open.',
+    query: 'There are no gift bundle offerings in the marketplace. How should I structure a gift set offering and what price point works best with the 10/10/1 model?',
+  },
+];
+
+interface Props {
+  onOpenAdvisor?: (query: string) => void;
+}
+
+export const MerchantDashboard: React.FC<Props> = ({ onOpenAdvisor }) => {
   const [metrics, setMetrics] = useState<any>(null);
   const [chartData, setChartData] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -81,6 +124,34 @@ export const MerchantDashboard: React.FC = () => {
           <p className="text-[10px] font-black uppercase tracking-widest text-amber-700">Demo Data — Your live metrics will appear once transactions begin</p>
         </div>
       )}
+
+      {/* AI Co-Pilot Insights */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <Zap size={15} className="text-[#7851A9]" />
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-black">AI Co-Pilot Insights</p>
+          <span className="px-2.5 py-0.5 bg-[#7851A9]/10 rounded-lg text-[9px] font-black uppercase tracking-widest text-[#7851A9]">Live Analysis</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+          {COPILOT_INSIGHTS.map((insight, i) => (
+            <div key={i} className="bg-white border border-slate-100 rounded-[1.5rem] p-5 hover:shadow-lg hover:border-[#CA9CE1]/40 transition-all group">
+              <div className={`w-9 h-9 ${insight.bg} ${insight.color} rounded-xl flex items-center justify-center mb-4`}>
+                <insight.icon size={17} />
+              </div>
+              <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1.5">{insight.label}</p>
+              <p className="text-sm font-black text-black leading-snug mb-2">{insight.headline}</p>
+              <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-4">{insight.detail}</p>
+              <button
+                onClick={() => onOpenAdvisor?.(insight.query)}
+                className="w-full py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-100 text-slate-400 group-hover:border-[#7851A9]/30 group-hover:text-[#7851A9] group-hover:bg-[#7851A9]/5 transition-all"
+              >
+                Explore with AI →
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {metricCards.map((card, idx) => (
           <div key={idx} className="bg-white p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">

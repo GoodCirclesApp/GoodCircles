@@ -24,6 +24,7 @@ export const MerchantPortalView: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const [isAdvisorOpen, setIsAdvisorOpen] = useState(false);
+  const [advisorInitialQuery, setAdvisorInitialQuery] = useState<string | undefined>(undefined);
   const [merchantListings, setMerchantListings] = useState<{ id: string; name: string; price: number }[]>([]);
   const { currentUser, orders, updateOrders, products } = useGoodCirclesStore();
 
@@ -80,7 +81,7 @@ export const MerchantPortalView: React.FC = () => {
 
   const renderSubView = () => {
     switch (activeSubView) {
-      case 'DASHBOARD': return <MerchantDashboard />;
+      case 'DASHBOARD': return <MerchantDashboard onOpenAdvisor={(query) => { setAdvisorInitialQuery(query); setIsAdvisorOpen(true); }} />;
       case 'LISTINGS': return <MerchantListings />;
       case 'ORDERS': return <MerchantOrders />;
       case 'BOOKINGS': return <MerchantBookings />;
@@ -97,7 +98,7 @@ export const MerchantPortalView: React.FC = () => {
       case 'SUPPLY_CHAIN': return <MerchantSupplyChain />;
       case 'BENEFITS': return <MerchantBenefits />;
       case 'SETTINGS': return <MerchantSettings />;
-      default: return <MerchantDashboard />;
+      default: return <MerchantDashboard onOpenAdvisor={(query) => { setAdvisorInitialQuery(query); setIsAdvisorOpen(true); }} />;
     }
   };
 
@@ -223,11 +224,12 @@ export const MerchantPortalView: React.FC = () => {
       {currentUser && (
         <MerchantAdvisor
           isOpen={isAdvisorOpen}
-          onClose={() => setIsAdvisorOpen(false)}
+          onClose={() => { setIsAdvisorOpen(false); setAdvisorInitialQuery(undefined); }}
           merchantProfile={currentUser}
           currentProducts={products.filter((p: any) => p.merchantId === (currentUser as any)?.merchantId || p.merchantId === currentUser.id)}
           allProducts={products}
           orders={orders}
+          initialQuery={advisorInitialQuery}
         />
       )}
     </div>

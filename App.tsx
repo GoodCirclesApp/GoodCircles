@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { PurchaseImpactAnimation } from './components/PurchaseImpactAnimation';
+import { NonprofitThankYouModal, getNextMilestone } from './components/NonprofitThankYouModal';
 import { MarketplaceView } from './views/MarketplaceView';
 import { CartDrawer } from './components/CartDrawer';
 import { ProductDetailModal } from './components/ProductDetailModal';
@@ -76,6 +77,15 @@ const App: React.FC = () => {
     nonprofitDonation: number;
     nonprofitName: string;
     nonprofitMission: string;
+  } | null>(null);
+  const [lifetimeDonation, setLifetimeDonation] = useState<number>(() => {
+    return parseFloat(localStorage.getItem('gc_lifetime_donation') ?? '0');
+  });
+  const [thankYouData, setThankYouData] = useState<{
+    milestone: number;
+    nonprofitName: string;
+    nonprofitMission: string;
+    lifetimeTotal: number;
   } | null>(null);
   // Prefer the user's elected real nonprofit; fall back to first real, then mock
   const electedReal = realNonprofits.find(n => n.id === store.currentUser?.electedNonprofitId);
@@ -553,13 +563,38 @@ const App: React.FC = () => {
         {impactData && (
           <PurchaseImpactAnimation
             isVisible={!!impactData}
-            onClose={() => setImpactData(null)}
+            onClose={() => {
+              const donation = impactData.nonprofitDonation;
+              const milestone = getNextMilestone(lifetimeDonation, donation);
+              const newTotal = lifetimeDonation + donation;
+              setLifetimeDonation(newTotal);
+              localStorage.setItem('gc_lifetime_donation', String(newTotal));
+              setImpactData(null);
+              if (milestone) {
+                setThankYouData({
+                  milestone,
+                  nonprofitName: impactData.nonprofitName,
+                  nonprofitMission: impactData.nonprofitMission,
+                  lifetimeTotal: newTotal,
+                });
+              }
+            }}
             grossAmount={impactData.grossAmount}
             merchantNet={impactData.merchantNet}
             discountAmount={impactData.discountAmount}
             nonprofitDonation={impactData.nonprofitDonation}
             nonprofitName={impactData.nonprofitName}
             nonprofitMission={impactData.nonprofitMission}
+          />
+        )}
+        {thankYouData && (
+          <NonprofitThankYouModal
+            isVisible={!!thankYouData}
+            onClose={() => setThankYouData(null)}
+            milestone={thankYouData.milestone}
+            nonprofitName={thankYouData.nonprofitName}
+            nonprofitMission={thankYouData.nonprofitMission}
+            lifetimeTotal={thankYouData.lifetimeTotal}
           />
         )}
       </div>

@@ -16,18 +16,19 @@ interface Props {
   currentProducts: Product[];
   allProducts: Product[];
   orders: Order[];
+  initialQuery?: string;
 }
 
-export const MerchantAdvisor: React.FC<Props> = ({ 
-  isOpen, 
-  onClose, 
+export const MerchantAdvisor: React.FC<Props> = ({
+  isOpen,
+  onClose,
   merchantProfile,
   currentProducts,
   allProducts,
-  orders
+  orders,
+  initialQuery,
 }) => {
   const productCount = currentProducts.length;
-  const orderCount = orders.length;
   const greeting = `Welcome back${merchantProfile?.name ? `, ${merchantProfile.name}` : ''}. I'm your Good Circles Merchant Advisor — powered by Claude.\n\nI'm here to help you on three fronts: optimizing your ${productCount > 0 ? productCount + ' current listing' + (productCount !== 1 ? 's' : '') : 'listings'}, identifying product gaps in your niche that the ecosystem doesn't yet serve, and strengthening your community node through referrals, supply chain connections, and operational cost reduction.\n\nWhere would you like to start?`;
 
   const [messages, setMessages] = useState<Message[]>([
@@ -36,12 +37,28 @@ export const MerchantAdvisor: React.FC<Props> = ({
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const sentInitialQuery = useRef(false);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Auto-send initialQuery when drawer opens with a pre-seeded query
+  useEffect(() => {
+    if (isOpen && initialQuery && !sentInitialQuery.current) {
+      sentInitialQuery.current = true;
+      setMessages(prev => [...prev, { role: 'user', content: initialQuery }]);
+      setIsLoading(true);
+      getMerchantAdvisorResponse(initialQuery, merchantProfile, currentProducts, allProducts, orders)
+        .then(response => {
+          setMessages(prev => [...prev, { role: 'assistant', content: response || "I'm analyzing this now. Please try again in a moment." }]);
+          setIsLoading(false);
+        });
+    }
+    if (!isOpen) sentInitialQuery.current = false;
+  }, [isOpen, initialQuery]);
 
   const handleSend = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
