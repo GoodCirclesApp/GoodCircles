@@ -4,6 +4,7 @@ import { getEffectiveRates } from '../utils/financeEngine';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { AffiliateProductCard, AffiliateListingData } from '../components/AffiliateProductCard';
 import { UniversalSearch } from '../components/UniversalSearch';
+import { MerchantStoriesSection } from '../components/MerchantStoriesSection';
 
 interface PaginationInfo {
   currentPage: number;
@@ -75,6 +76,8 @@ export const MarketplaceView: React.FC<Props> = ({ products, cart, effectiveRole
         </div>
       </div>
       
+      <MerchantStoriesSection />
+
       {isLoading && products.length === 0 ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
           {Array(8).fill(0).map((_, i) => (
