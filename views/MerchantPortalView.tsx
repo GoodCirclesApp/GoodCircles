@@ -14,6 +14,7 @@ import { HandshakeScanner } from '../components/HandshakeScanner';
 import { MerchantQRDisplay } from '../components/QRPaymentSystem';
 import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
 import { MerchantAdvisor } from '../components/MerchantAdvisor';
+import { MerchantWelcomeKit } from '../components/MerchantWelcomeKit';
 import { merchantService } from '../services/merchantService';
 
 type MerchantSubView = 'DASHBOARD' | 'LISTINGS' | 'ORDERS' | 'BOOKINGS' | 'FINANCIALS' | 'COOP' | 'SUPPLY_CHAIN' | 'BENEFITS' | 'SETTLEMENT' | 'QR_PAY' | 'SETTINGS';
@@ -25,11 +26,21 @@ export const MerchantPortalView: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
   const [isAdvisorOpen, setIsAdvisorOpen] = useState(false);
   const [advisorInitialQuery, setAdvisorInitialQuery] = useState<string | undefined>(undefined);
+  const [showWelcomeKit, setShowWelcomeKit] = useState(false);
   const [merchantListings, setMerchantListings] = useState<{ id: string; name: string; price: number }[]>([]);
   const { currentUser, orders, updateOrders, products } = useGoodCirclesStore();
 
   // Accessing the merchant relation safely via a cast
   const merchantData = (currentUser as any)?.merchant;
+
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    const key = `gc_merchant_welcomed_${currentUser.id}`;
+    if (!localStorage.getItem(key)) {
+      setShowWelcomeKit(true);
+      localStorage.setItem(key, '1');
+    }
+  }, [currentUser?.id]);
 
   useEffect(() => {
     merchantService.getListings().then(listings => {
@@ -230,6 +241,12 @@ export const MerchantPortalView: React.FC = () => {
           allProducts={products}
           orders={orders}
           initialQuery={advisorInitialQuery}
+        />
+      )}
+      {showWelcomeKit && (
+        <MerchantWelcomeKit
+          merchantName={(currentUser as any)?.name ?? ''}
+          onClose={() => setShowWelcomeKit(false)}
         />
       )}
     </div>

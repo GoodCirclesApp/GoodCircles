@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { GeospatialNode, SupporterCircle, User } from '../types';
 import { BrandSubmark } from '../components/BrandAssets';
 import { NodeCoordination } from '../components/NodeCoordination';
+import { CommunityActionBoard } from '../components/CommunityActionBoard';
 
 interface Props {
   circles: SupporterCircle[];
@@ -80,29 +81,59 @@ export const ImpactMapView: React.FC<Props> = ({ circles, myCircle, currentUser,
               <path d="M20 60 L50 50" />
            </g>
 
-           {/* Impact Nodes */}
+           {/* Impact Nodes — Concentric Rings grow with impactVolume */}
            {nodes.map(node => {
               const isActive = selectedNodeId === node.id;
               const color = node.type === 'MERCHANT' ? '#C2A76F' : node.type === 'NONPROFIT' ? '#7851A9' : '#CA9CE1';
-              const size = 1.5 + (node.impactVolume / 15000);
+              const core = 1.2 + (node.impactVolume / 20000);
+              // Ring radii scale with impact volume — milestone thresholds at $15K, $30K, $45K
+              const ring1 = core + 1.5;
+              const ring2 = core + 3.2;
+              const ring3 = core + 5.5;
+              const atMilestone = node.impactVolume >= 15000;
+              const atHighMilestone = node.impactVolume >= 30000;
 
               return (
-                <g key={node.id} onClick={() => setSelectedNodeId(node.id)} className="cursor-pointer group">
-                   {/* Glow Layer */}
-                   <circle cx={node.lng} cy={node.lat} r={size * 4} fill="url(#nodeGlow)" className={`transition-all duration-700 ${isActive ? 'opacity-100 scale-150' : 'opacity-40 group-hover:opacity-60'}`} />
-                   
-                   {/* Core Node */}
-                   <circle cx={node.lng} cy={node.lat} r={size} fill={color} className="transition-all duration-300 group-hover:scale-125" />
-                   
-                   {/* Data Ring */}
-                   {activeLayer === 'VELOCITY' && (
-                     <circle cx={node.lng} cy={node.lat} r={size + 1} fill="none" stroke={color} strokeWidth="0.1" strokeDasharray="1 1" className="animate-spin" style={{ animationDuration: `${(1 - node.retentionRate) * 10}s` }} />
+                <g key={node.id} onClick={() => setSelectedNodeId(node.id)} className="cursor-pointer">
+                   {/* Outermost pulse ring — only for milestone nodes */}
+                   {atMilestone && (
+                     <circle cx={node.lng} cy={node.lat} r={ring3} fill="none" stroke={color} strokeWidth="0.08" opacity={isActive ? 0.5 : 0.15}
+                       style={{ animation: `milestoneRing ${atHighMilestone ? '2s' : '3s'} ease-out infinite` }} />
                    )}
-                   
+
+                   {/* Ring 2 — medium */}
+                   <circle cx={node.lng} cy={node.lat} r={ring2} fill={color} fillOpacity={isActive ? 0.12 : 0.06} stroke={color} strokeWidth="0.06" opacity={isActive ? 1 : 0.5} />
+
+                   {/* Ring 1 — inner */}
+                   <circle cx={node.lng} cy={node.lat} r={ring1} fill={color} fillOpacity={isActive ? 0.22 : 0.1} stroke={color} strokeWidth="0.1" />
+
+                   {/* Velocity spin ring */}
+                   {activeLayer === 'VELOCITY' && (
+                     <circle cx={node.lng} cy={node.lat} r={ring1 + 0.5} fill="none" stroke={color} strokeWidth="0.12" strokeDasharray="0.8 0.8" opacity={0.6}
+                       style={{ animation: `spin ${(1 - node.retentionRate) * 8 + 2}s linear infinite`, transformOrigin: `${node.lng}px ${node.lat}px` }} />
+                   )}
+
+                   {/* Core node */}
+                   <circle cx={node.lng} cy={node.lat} r={core} fill={color} />
+
+                   {/* Milestone crown dot */}
+                   {atHighMilestone && (
+                     <circle cx={node.lng} cy={node.lat - core - 0.6} r={0.5} fill="#C2A76F" />
+                   )}
+
                    {/* Label */}
-                   <text x={node.lng} y={node.lat - size - 1} fill="white" fontSize="1.2" fontWeight="900" textAnchor="middle" className={`uppercase tracking-widest pointer-events-none transition-opacity ${isActive ? 'opacity-100' : 'opacity-20 group-hover:opacity-60'}`}>
+                   <text x={node.lng} y={node.lat - ring2 - 0.8} fill="white" fontSize="1.1" fontWeight="900" textAnchor="middle"
+                     opacity={isActive ? 1 : 0.25} style={{ pointerEvents: 'none', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       {node.name}
                    </text>
+
+                   {/* Impact volume label — visible on select */}
+                   {isActive && (
+                     <text x={node.lng} y={node.lat + core + 1.8} fill={color} fontSize="1.0" fontWeight="900" textAnchor="middle"
+                       style={{ pointerEvents: 'none' }}>
+                       ${(node.impactVolume / 1000).toFixed(1)}K
+                     </text>
+                   )}
                 </g>
               );
            })}
@@ -142,26 +173,26 @@ export const ImpactMapView: React.FC<Props> = ({ circles, myCircle, currentUser,
         </div>
       </div>
 
-      {/* Sidebar: Node Coordination */}
-      <div className="w-full lg:w-[400px] shrink-0">
+      {/* Sidebar: Node Coordination or Community Action Board */}
+      <div className="w-full lg:w-[400px] shrink-0 relative">
          {myCircle ? (
            <NodeCoordination circle={myCircle} onSendMessage={(msg) => onSendMessage(myCircle.id, msg)} />
          ) : (
-           <div className="h-full bg-white rounded-[4rem] border border-slate-100 flex flex-col items-center justify-center p-12 text-center space-y-8 shadow-sm">
-              <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-200">
-                 <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" /></svg>
-              </div>
-              <div className="space-y-4">
-                 <h4 className="text-2xl font-black italic uppercase tracking-tighter">Coordination Locked</h4>
-                 <p className="text-slate-400 text-sm font-medium leading-relaxed italic">Join a Supporter Circle to participate in real-time community action planning.</p>
-              </div>
-           </div>
+           <CommunityActionBoard />
          )}
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes dash {
           to { stroke-dashoffset: -100; }
+        }
+        @keyframes milestoneRing {
+          0%   { r: var(--r-start, 7); opacity: 0.5; }
+          100% { r: var(--r-end, 12); opacity: 0; }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
         }
       `}} />
     </div>
