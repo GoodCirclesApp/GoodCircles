@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { PurchaseImpactAnimation } from './components/PurchaseImpactAnimation';
 import { NonprofitThankYouModal, getNextMilestone } from './components/NonprofitThankYouModal';
 import { MarketplaceView } from './views/MarketplaceView';
@@ -348,6 +349,14 @@ const App: React.FC = () => {
               <p className="text-xs font-black uppercase tracking-widest text-slate-400">Loading...</p>
             </div>
           </div>}>
+            <AnimatePresence mode="wait">
+            <motion.div
+              key={store.activeView}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+            >
             {store.activeView === 'PROFILE' && store.currentUser && (
               <ProfileView user={store.currentUser} onUpdate={store.updateUser} />
             )}
@@ -383,10 +392,11 @@ const App: React.FC = () => {
                 onInvoiceClick={store.setSelectedInvoiceOrder}
                 onCancelBooking={store.cancelBooking}
                 currentUser={store.currentUser}
+                onNavigate={(v) => store.setActiveView(v as any)}
               />
             )}
             {store.activeView === 'PUBLIC_LEDGER' && <PublicLedgerView orders={store.orders} batches={store.batches} globalStats={store.globalStats} onToast={showToast} />}
-            {store.activeView === 'LEADERBOARD' && <ImpactLeaderboard orders={store.orders} />}
+            {store.activeView === 'LEADERBOARD' && <ImpactLeaderboard orders={store.orders} currentUserId={store.currentUser?.id} />}
             {store.activeView === 'FAQ' && <FAQSection role={store.effectiveRole!} />}
             {store.activeView === 'GOVERNANCE' && <GovernanceView proposals={store.proposals} waivedFundsLog={store.waivedFundsLog} currentUser={store.currentUser} onVote={store.castVote} onCreateProposal={store.createProposal} globalStats={store.globalStats} />}
             {store.activeView === 'ADMIN_NETTING' && <AdminNetting />}
@@ -424,17 +434,20 @@ const App: React.FC = () => {
             {store.activeView === 'CATALOG_UPLOAD' && <CatalogUploadView />}
 
             {store.activeView === 'MAIN' && (
+
               <>
                 <MarketplaceView
                   products={filteredProducts}
                   cart={store.cart}
                   effectiveRole={store.effectiveRole!}
-                  selectedNonprofitName={selectedNonprofit.name}
+                  selectedNonprofitName={selectedRealNonprofit?.orgName ?? selectedNonprofit.name}
                   onProductClick={store.setSelectedProductDetail}
                   onShopperClick={() => store.setIsShopperOpen(true)}
                   regionName={store.selectedRegion.name}
                   policy={store.activePolicy}
                   isLoading={store.isLoading}
+                  wishlistIds={wishlistIds}
+                  onToggleWishlist={(id) => wishlistIds.includes(id) ? handleRemoveFromWishlist(id) : handleAddToWishlist(id)}
                   pagination={{
                     currentPage: store.currentPage,
                     totalPages: store.totalPages,
@@ -510,6 +523,8 @@ const App: React.FC = () => {
                 )}
               </>
             )}
+            </motion.div>
+            </AnimatePresence>
           </Suspense>
         </main>
 
@@ -537,6 +552,7 @@ const App: React.FC = () => {
           onAddReview={handleAddReview}
           orders={store.orders}
           onToast={showToast}
+          selectedNonprofitName={selectedRealNonprofit?.orgName ?? selectedNonprofit.name}
         />
         <WishlistDrawer
           isOpen={isWishlistOpen}

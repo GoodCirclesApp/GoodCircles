@@ -4,6 +4,7 @@ import { Wallet, WalletTransaction } from '../types';
 import { format } from 'date-fns';
 import { BrandSubmark } from '../components/BrandAssets';
 import { ConsumerQRDisplay } from '../components/QRPaymentSystem';
+import { useCountUp } from '../hooks/useCountUp';
 
 interface Props {
   balance: number;
@@ -14,6 +15,8 @@ interface Props {
   isLoading: boolean;
   onToast?: (message: string, type?: 'success' | 'error') => void;
 }
+
+const PRESET_AMOUNTS = [10, 25, 50, 100];
 
 export const WalletView: React.FC<Props> = ({
   balance,
@@ -27,6 +30,9 @@ export const WalletView: React.FC<Props> = ({
   const [amount, setAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState<'WALLET' | 'PAY_IN_PERSON'>('WALLET');
+
+  const animatedBalance = useCountUp(balance, 1400);
+  const animatedCredit = useCountUp(creditBalance, 1600);
 
   const handleAction = async (action: 'topup' | 'withdraw') => {
     const val = parseFloat(amount);
@@ -86,7 +92,7 @@ export const WalletView: React.FC<Props> = ({
           <div className="bg-black text-white p-6 sm:p-12 rounded-[4rem] shadow-2xl relative overflow-hidden group">
             <div className="relative z-10">
               <p className="text-[10px] font-black uppercase tracking-widest mb-2 text-[#C2A76F]">Available Balance</p>
-              <h3 className="text-4xl sm:text-7xl font-black italic tracking-tighter">${balance.toLocaleString()}</h3>
+              <h3 className="text-4xl sm:text-7xl font-black italic tracking-tighter">${animatedBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
               <p className="text-xs mt-6 opacity-40 font-medium">Liquid capital for marketplace transactions.</p>
             </div>
             <div className="absolute -bottom-10 -right-10 opacity-10 group-hover:scale-110 transition-transform duration-1000">
@@ -97,7 +103,7 @@ export const WalletView: React.FC<Props> = ({
           <div className="bg-[#7851A9] text-white p-6 sm:p-12 rounded-[4rem] shadow-2xl relative overflow-hidden group">
             <div className="relative z-10">
               <p className="text-[10px] font-black uppercase tracking-widest mb-2 text-white/60">Platform Credits</p>
-              <h3 className="text-4xl sm:text-7xl font-black italic tracking-tighter">${creditBalance.toLocaleString()}</h3>
+              <h3 className="text-4xl sm:text-7xl font-black italic tracking-tighter">${animatedCredit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
               <p className="text-xs mt-6 opacity-40 font-medium">Earned rewards from your community impact.</p>
             </div>
             <div className="absolute -bottom-10 -right-10 opacity-10 group-hover:scale-110 transition-transform duration-1000">
@@ -109,11 +115,25 @@ export const WalletView: React.FC<Props> = ({
         {/* Action Form */}
         <div className="bg-white border border-[#CA9CE1]/20 p-5 sm:p-12 rounded-[2rem] sm:rounded-[4rem] shadow-xl space-y-6 sm:space-y-8">
           <h4 className="text-xl font-black italic uppercase tracking-tighter">Quick Actions</h4>
+
+          {/* Preset amounts */}
+          <div className="flex gap-2 flex-wrap">
+            {PRESET_AMOUNTS.map(preset => (
+              <button
+                key={preset}
+                onClick={() => setAmount(String(preset))}
+                className={`flex-1 min-w-[3rem] py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all ${amount === String(preset) ? 'bg-[#7851A9] text-white border-[#7851A9] shadow-md' : 'bg-slate-50 text-slate-500 border-slate-100 hover:border-[#7851A9]/30 hover:text-[#7851A9]'}`}
+              >
+                ${preset}
+              </button>
+            ))}
+          </div>
+
           <div className="space-y-4">
             <div className="relative">
               <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-slate-300">$</span>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 placeholder="0.00"
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
@@ -121,14 +141,14 @@ export const WalletView: React.FC<Props> = ({
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <button 
+              <button
                 onClick={() => handleAction('topup')}
                 disabled={isProcessing || !amount}
                 className="bg-black text-white py-6 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all disabled:opacity-50"
               >
                 {isProcessing ? '...' : 'Fund Wallet'}
               </button>
-              <button 
+              <button
                 onClick={() => handleAction('withdraw')}
                 disabled={isProcessing || !amount || parseFloat(amount) > balance}
                 className="border-2 border-black text-black py-6 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all disabled:opacity-50"
@@ -147,7 +167,7 @@ export const WalletView: React.FC<Props> = ({
           <h4 className="text-2xl font-black italic uppercase tracking-tighter">Transaction History</h4>
           <button className="text-[10px] font-black uppercase tracking-widest text-[#7851A9] hover:underline">Download CSV</button>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

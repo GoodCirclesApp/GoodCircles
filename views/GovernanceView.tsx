@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GovernanceProposal, User, WaivedFundLog } from '../types';
 import { BrandSubmark } from '../components/BrandAssets';
 import { GlobalStats } from '../hooks/useGoodCirclesStore';
+import { useCountUp } from '../hooks/useCountUp';
 
 interface Props {
   proposals: GovernanceProposal[];
@@ -13,11 +14,35 @@ interface Props {
   globalStats?: GlobalStats;
 }
 
+function useCountdown(expiryDate: string): string {
+  const [remaining, setRemaining] = useState('');
+
+  useEffect(() => {
+    const update = () => {
+      const diff = new Date(expiryDate).getTime() - Date.now();
+      if (diff <= 0) { setRemaining('Expired'); return; }
+      const days = Math.floor(diff / 86_400_000);
+      const hours = Math.floor((diff % 86_400_000) / 3_600_000);
+      const mins = Math.floor((diff % 3_600_000) / 60_000);
+      setRemaining(days > 0 ? `${days}d ${hours}h` : `${hours}h ${mins}m`);
+    };
+    update();
+    const id = setInterval(update, 60_000);
+    return () => clearInterval(id);
+  }, [expiryDate]);
+
+  return remaining;
+}
+
 export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, currentUser, onVote, onCreateProposal, globalStats }) => {
   const [showLabs, setShowLabs] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [newType, setNewType] = useState<GovernanceProposal['type']>('STREET_INITIATIVE');
+
+  const animatedVotingWeight = useCountUp(currentUser?.impactScore || 0, 1400);
+  const animatedVolume = useCountUp(globalStats?.totalInternalVolume || 0, 1600);
+  const animatedDonations = useCountUp(globalStats?.totalDonations || 0, 1800);
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +50,7 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
       title: newTitle,
       description: newDesc,
       type: newType,
-      stakeAmount: 250 // Standard stake for new initiatives
+      stakeAmount: 250
     });
     setNewTitle('');
     setNewDesc('');
@@ -50,7 +75,7 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
             Direct economic democracy. Stake your impact to propose new rules, prioritize projects, or adjust regional fiscal policy.
           </p>
         </div>
-        <button 
+        <button
           onClick={() => setShowLabs(true)}
           className="bg-black text-white px-10 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest shadow-2xl hover:bg-[#7851A9] transition-all group"
         >
@@ -65,7 +90,7 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
          <div className="bg-black text-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] shadow-2xl relative overflow-hidden group">
             <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-2">My Voting Weight</p>
-            <p className="text-3xl sm:text-5xl font-black italic tracking-tighter text-[#C2A76F]">{currentUser?.impactScore || 0}</p>
+            <p className="text-3xl sm:text-5xl font-black italic tracking-tighter text-[#C2A76F]">{Math.round(animatedVotingWeight)}</p>
             <p className="text-[10px] text-[#CA9CE1] font-medium mt-4 uppercase tracking-widest italic">Weighted by Impact Ledger</p>
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-1000">
                <BrandSubmark size={120} variant="WHITE" showCrown={false} />
@@ -73,11 +98,11 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
          </div>
          <div className="bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-[#CA9CE1]/20 shadow-sm flex flex-col justify-center">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Network Gross Sales</p>
-            <p className="text-2xl sm:text-4xl font-black italic tracking-tighter text-black">${globalStats?.totalInternalVolume.toLocaleString() || '0'}</p>
+            <p className="text-2xl sm:text-4xl font-black italic tracking-tighter text-black">${animatedVolume.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
          </div>
          <div className="bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[3rem] border border-[#CA9CE1]/20 shadow-sm flex flex-col justify-center">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Network Impact</p>
-            <p className="text-2xl sm:text-4xl font-black italic tracking-tighter text-[#C2A76F]">${globalStats?.totalDonations.toLocaleString() || '0'}</p>
+            <p className="text-2xl sm:text-4xl font-black italic tracking-tighter text-[#C2A76F]">${animatedDonations.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
          </div>
       </div>
 
@@ -134,63 +159,19 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
             {proposals.map(prop => {
               const totalVotes = prop.votesFor + prop.votesAgainst;
               const forPercent = totalVotes > 0 ? (prop.votesFor / totalVotes) * 100 : 0;
+              const againstPercent = totalVotes > 0 ? (prop.votesAgainst / totalVotes) * 100 : 0;
               const hasVoted = prop.votes?.some(v => v.userId === currentUser?.id);
 
               return (
-                <div key={prop.id} className={`p-5 sm:p-12 rounded-2xl sm:rounded-[4rem] border transition-all duration-500 relative overflow-hidden group ${hasVoted ? 'bg-slate-50 border-slate-100 opacity-80' : 'bg-white border-[#CA9CE1]/20 shadow-xl hover:border-[#7851A9]/30'}`}>
-                   <div className="flex justify-between items-start mb-8 relative z-10">
-                      <div>
-                         <span className="px-4 py-1.5 bg-black text-white text-[10px] font-black uppercase rounded-lg tracking-widest">{prop.type.replace('_', ' ')}</span>
-                         <h4 className="text-xl sm:text-3xl font-black italic tracking-tighter uppercase mt-4 leading-tight">{prop.title}</h4>
-                      </div>
-                      <div className="text-right">
-                         <p className="text-[10px] font-black text-slate-300 uppercase">Expires</p>
-                         <p className="text-xs font-bold text-slate-400">{new Date(prop.expiryDate).toLocaleDateString()}</p>
-                      </div>
-                   </div>
-
-                   <p className="text-slate-500 font-medium leading-relaxed italic mb-10 text-lg relative z-10">"{prop.description}"</p>
-
-                   <div className="space-y-4 mb-10 relative z-10">
-                      <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                         <span className="text-[#7851A9]">Consensus: {forPercent.toFixed(0)}%</span>
-                         <span className="text-slate-300">Goal: {prop.consensusThreshold * 100}%</span>
-                      </div>
-                      <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-100 shadow-inner">
-                         <div 
-                           className="h-full bg-black group-hover:bg-[#7851A9] transition-all duration-1000 ease-out"
-                           style={{ width: `${forPercent}%` }}
-                         ></div>
-                      </div>
-                   </div>
-
-                   <div className="flex flex-col sm:flex-row gap-4 relative z-10">
-                      {!hasVoted ? (
-                        <>
-                           <button 
-                             onClick={() => onVote(prop.id, 'FOR')}
-                             className="flex-1 bg-emerald-500 text-white py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:bg-black transition-all active:scale-95"
-                           >
-                             Support Proposal
-                           </button>
-                           <button 
-                             onClick={() => onVote(prop.id, 'AGAINST')}
-                             className="flex-1 bg-white border-2 border-slate-100 text-slate-400 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:border-red-500 hover:text-red-500 transition-all active:scale-95"
-                           >
-                             Reject
-                           </button>
-                        </>
-                      ) : (
-                        <div className="w-full py-5 bg-slate-100 border border-slate-200 rounded-3xl text-center">
-                           <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Signature Recorded in Ledger</p>
-                        </div>
-                      )}
-                   </div>
-                   
-                   <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
-                      <BrandSubmark size={180} color="#000" showCrown={false} />
-                   </div>
-                </div>
+                <ProposalCard
+                  key={prop.id}
+                  prop={prop}
+                  forPercent={forPercent}
+                  againstPercent={againstPercent}
+                  hasVoted={hasVoted}
+                  onVote={onVote}
+                  currentUser={currentUser}
+                />
               );
             })}
          </div>
@@ -214,17 +195,17 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Objective</label>
-                       <input 
-                         required 
+                       <input
+                         required
                          value={newTitle}
                          onChange={e => setNewTitle(e.target.value)}
-                         className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:bg-white focus:ring-4 focus:ring-[#C2A76F]/10 transition-all" 
+                         className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:bg-white focus:ring-4 focus:ring-[#C2A76F]/10 transition-all"
                          placeholder="e.g. Expand Greenway"
                        />
                     </div>
                     <div className="space-y-2">
                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Type</label>
-                       <select 
+                       <select
                          value={newType}
                          onChange={e => setNewType(e.target.value as any)}
                          className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:bg-white transition-all"
@@ -237,7 +218,7 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
                  </div>
                  <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Rationale</label>
-                    <textarea 
+                    <textarea
                       required
                       value={newDesc}
                       onChange={e => setNewDesc(e.target.value)}
@@ -246,16 +227,16 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
                       placeholder="Detail the community ROI..."
                     />
                  </div>
-                 
+
                  <div className="pt-6 flex gap-4">
-                    <button 
+                    <button
                       type="submit"
                       disabled={!newTitle || !newDesc}
                       className="flex-1 bg-black text-white py-6 rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-[#C2A76F] transition-all disabled:opacity-30"
                     >
                        Stake 250 Points & Launch
                     </button>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setShowLabs(false)}
                       className="px-10 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-black"
@@ -274,9 +255,80 @@ export const GovernanceView: React.FC<Props> = ({ proposals, waivedFundsLog, cur
   );
 };
 
-const CircleMetric = ({ label, value }: { label: string, value: string | number }) => (
-  <div className="space-y-1">
-    <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{label}</p>
-    <p className="text-3xl font-black italic tracking-tighter text-[#C2A76F]">{value}</p>
-  </div>
-);
+const ProposalCard: React.FC<{
+  prop: GovernanceProposal;
+  forPercent: number;
+  againstPercent: number;
+  hasVoted: boolean | undefined;
+  onVote: (id: string, dir: 'FOR' | 'AGAINST') => void;
+  currentUser: User | null;
+}> = ({ prop, forPercent, againstPercent, hasVoted, onVote, currentUser }) => {
+  const countdown = useCountdown(prop.expiryDate);
+  const totalVotes = prop.votesFor + prop.votesAgainst;
+
+  return (
+    <div className={`p-5 sm:p-12 rounded-2xl sm:rounded-[4rem] border transition-all duration-500 relative overflow-hidden group ${hasVoted ? 'bg-slate-50 border-slate-100 opacity-80' : 'bg-white border-[#CA9CE1]/20 shadow-xl hover:border-[#7851A9]/30'}`}>
+       <div className="flex justify-between items-start mb-8 relative z-10">
+          <div>
+             <span className="px-4 py-1.5 bg-black text-white text-[10px] font-black uppercase rounded-lg tracking-widest">{prop.type.replace('_', ' ')}</span>
+             <h4 className="text-xl sm:text-3xl font-black italic tracking-tighter uppercase mt-4 leading-tight">{prop.title}</h4>
+          </div>
+          <div className="text-right">
+             <p className="text-[10px] font-black text-slate-300 uppercase">Closes In</p>
+             <p className="text-sm font-black text-[#7851A9] tracking-tight">{countdown}</p>
+          </div>
+       </div>
+
+       <p className="text-slate-500 font-medium leading-relaxed italic mb-10 text-lg relative z-10">"{prop.description}"</p>
+
+       {/* Split vote bar */}
+       <div className="space-y-3 mb-10 relative z-10">
+          <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+             <span className="text-emerald-600">For: {forPercent.toFixed(0)}% ({prop.votesFor})</span>
+             <span className="text-[10px] text-slate-300">Goal: {prop.consensusThreshold * 100}%</span>
+             <span className="text-red-400">Against: {againstPercent.toFixed(0)}% ({prop.votesAgainst})</span>
+          </div>
+          <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-100 shadow-inner flex">
+             <div
+               className="h-full bg-emerald-500 transition-all duration-1000 ease-out"
+               style={{ width: `${forPercent}%` }}
+             />
+             <div
+               className="h-full bg-red-400 transition-all duration-1000 ease-out"
+               style={{ width: `${againstPercent}%` }}
+             />
+          </div>
+          {totalVotes > 0 && (
+            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{totalVotes} vote{totalVotes !== 1 ? 's' : ''} cast</p>
+          )}
+       </div>
+
+       <div className="flex flex-col sm:flex-row gap-4 relative z-10">
+          {!hasVoted ? (
+            <>
+               <button
+                 onClick={() => onVote(prop.id, 'FOR')}
+                 className="flex-1 bg-emerald-500 text-white py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:bg-black transition-all active:scale-95"
+               >
+                 Support Proposal
+               </button>
+               <button
+                 onClick={() => onVote(prop.id, 'AGAINST')}
+                 className="flex-1 bg-white border-2 border-slate-100 text-slate-400 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:border-red-500 hover:text-red-500 transition-all active:scale-95"
+               >
+                 Reject
+               </button>
+            </>
+          ) : (
+            <div className="w-full py-5 bg-slate-100 border border-slate-200 rounded-3xl text-center">
+               <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Signature Recorded in Ledger</p>
+            </div>
+          )}
+       </div>
+
+       <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
+          <BrandSubmark size={180} color="#000" showCrown={false} />
+       </div>
+    </div>
+  );
+};

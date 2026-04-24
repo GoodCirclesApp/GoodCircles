@@ -1,16 +1,18 @@
 
 import React, { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Order, Community } from '../types';
 import { MOCK_COMMUNITIES, MOCK_NONPROFITS } from '../constants';
 import { BrandSubmark } from './BrandAssets';
 
 interface Props {
   orders: Order[];
+  currentUserId?: string;
 }
 
 type TabType = 'COMMUNITIES' | 'BUSINESSES' | 'NEIGHBORS' | 'NONPROFITS';
 
-export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
+export const ImpactLeaderboard: React.FC<Props> = ({ orders, currentUserId }) => {
   const [activeTab, setActiveTab] = useState<TabType>('COMMUNITIES');
 
   const communityRankings = useMemo(() => {
@@ -35,8 +37,6 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
     orders.forEach(o => {
       o.items.forEach(item => {
         const m = merchantMap.get(item.product.merchantId) || { name: item.product.merchantName, total: 0 };
-        // In this simplified logic, we attribute the donation portion of the item to the merchant
-        // Here we use the proportion of this order's total donation based on this item's subtotal share.
         const itemSubtotal = item.product.price * (1 - 0.10) * item.quantity;
         const proportion = o.subtotal > 0 ? itemSubtotal / o.subtotal : 0;
         m.total += (o.accounting?.donationAmount ?? 0) * proportion;
@@ -64,8 +64,7 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
 
   const nonprofitRankings = useMemo(() => {
     const nonprofitMap = new Map<string, { name: string, total: number }>();
-    
-    // Initialize with mock nonprofits to ensure they show up even with 0 impact
+
     MOCK_NONPROFITS.forEach(np => {
       nonprofitMap.set(np.id, { name: np.name, total: 0 });
     });
@@ -75,7 +74,6 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
       if (np) {
         np.total += (o.accounting?.donationAmount ?? 0);
       } else {
-        // Fallback for dynamically added nonprofits if any
         nonprofitMap.set(o.selectedNonprofitId, { name: `Nonprofit ${o.selectedNonprofitId}`, total: (o.accounting?.donationAmount ?? 0) });
       }
     });
@@ -91,6 +89,10 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
     if (activeTab === 'NEIGHBORS') return neighborRankings;
     return nonprofitRankings;
   }, [activeTab, communityRankings, businessRankings, neighborRankings, nonprofitRankings]);
+
+  const userRankIndex = activeTab === 'NEIGHBORS'
+    ? neighborRankings.findIndex(r => r.id === currentUserId)
+    : -1;
 
   return (
     <div className="bg-white rounded-2xl sm:rounded-[4rem] border border-[#CA9CE1]/30 shadow-xl overflow-hidden animate-in fade-in duration-700">
@@ -117,47 +119,56 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
       <div className="p-4 sm:p-12 md:p-16">
         <div className="space-y-4">
           {activeTab === 'COMMUNITIES' && communityRankings.map((c, i) => (
-            <RankRow 
-              key={c.id} 
-              rank={i + 1} 
-              name={c.name} 
-              metricLabel="Impact / Member" 
+            <RankRow
+              key={c.id}
+              rank={i + 1}
+              name={c.name}
+              metricLabel="Impact / Member"
               metricValue={`$${c.perMemberImpact.toFixed(2)}`}
               subMetric={`$${c.totalFunding.toFixed(2)} Total Funding`}
               progress={(c.perMemberImpact / (communityRankings[0]?.perMemberImpact || 1)) * 100}
+              index={i}
+              isCurrentUser={false}
             />
           ))}
           {activeTab === 'BUSINESSES' && businessRankings.map((m, i) => (
-            <RankRow 
-              key={m.id} 
-              rank={i + 1} 
-              name={m.name} 
-              metricLabel="Donated" 
-              metricValue={`$${m.total.toFixed(2)}`} 
+            <RankRow
+              key={m.id}
+              rank={i + 1}
+              name={m.name}
+              metricLabel="Donated"
+              metricValue={`$${m.total.toFixed(2)}`}
               progress={(m.total / (businessRankings[0]?.total || 1)) * 100}
+              index={i}
+              isCurrentUser={false}
             />
           ))}
           {activeTab === 'NEIGHBORS' && neighborRankings.map((u, i) => (
-            <RankRow 
-              key={u.id} 
-              rank={i + 1} 
-              name={u.name} 
-              metricLabel="Impact Generated" 
-              metricValue={`$${u.total.toFixed(2)}`} 
+            <RankRow
+              key={u.id}
+              rank={i + 1}
+              name={u.name}
+              metricLabel="Impact Generated"
+              metricValue={`$${u.total.toFixed(2)}`}
               progress={(u.total / (neighborRankings[0]?.total || 1)) * 100}
+              index={i}
+              isCurrentUser={u.id === currentUserId}
+              spotsFromTop={userRankIndex > 0 ? userRankIndex : undefined}
             />
           ))}
           {activeTab === 'NONPROFITS' && nonprofitRankings.map((n, i) => (
-            <RankRow 
-              key={n.id} 
-              rank={i + 1} 
-              name={n.name} 
-              metricLabel="Funds Raised" 
-              metricValue={`$${n.total.toFixed(2)}`} 
+            <RankRow
+              key={n.id}
+              rank={i + 1}
+              name={n.name}
+              metricLabel="Funds Raised"
+              metricValue={`$${n.total.toFixed(2)}`}
               progress={(n.total / (nonprofitRankings[0]?.total || 1)) * 100}
+              index={i}
+              isCurrentUser={false}
             />
           ))}
-          
+
           {currentList.length === 0 && (
             <div className="py-20 text-center opacity-40">
               <BrandSubmark size={80} color="#CA9CE1" className="mx-auto mb-6" showCrown={false} />
@@ -170,34 +181,66 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders }) => {
   );
 };
 
-const RankRow = ({ rank, name, metricLabel, metricValue, subMetric, progress }: { rank: number, name: string, metricLabel: string, metricValue: string, subMetric?: string, progress: number, key?: any }) => {
+const RankRow = ({
+  rank, name, metricLabel, metricValue, subMetric, progress, index, isCurrentUser, spotsFromTop
+}: {
+  rank: number;
+  name: string;
+  metricLabel: string;
+  metricValue: string;
+  subMetric?: string;
+  progress: number;
+  index: number;
+  isCurrentUser: boolean;
+  spotsFromTop?: number;
+}) => {
   const isTop3 = rank <= 3;
   const rankColor = rank === 1 ? 'bg-[#C2A76F]' : rank === 2 ? 'bg-[#C0C0C0]' : rank === 3 ? 'bg-[#CD7F32]' : 'bg-slate-100';
   const textColor = isTop3 ? 'text-white' : 'text-slate-400';
 
   return (
-    <div className="flex items-center gap-3 sm:gap-8 p-4 sm:p-8 bg-white border border-[#CA9CE1]/10 rounded-2xl sm:rounded-[2.5rem] hover:shadow-2xl hover:border-[#7851A9]/30 transition-all group">
-      <div className={`w-10 h-10 sm:w-14 sm:h-14 shrink-0 rounded-xl sm:rounded-2xl flex items-center justify-center font-black text-base sm:text-xl italic ${rankColor} ${textColor} shadow-inner`}>
-        {rank}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-3 sm:mb-4 gap-1 sm:gap-4">
-          <div className="min-w-0 flex-1">
-            <h4 className="text-base sm:text-2xl font-black text-black tracking-tighter uppercase truncate">{name}</h4>
-            {subMetric && <p className="text-[10px] sm:text-[10px] font-black text-[#7851A9] uppercase tracking-widest mt-1 font-accent">{subMetric}</p>}
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.07, ease: 'easeOut' }}
+    >
+      <div className={`flex items-center gap-3 sm:gap-8 p-4 sm:p-8 border rounded-2xl sm:rounded-[2.5rem] hover:shadow-2xl transition-all group relative ${
+        isCurrentUser
+          ? 'bg-[#7851A9]/5 border-[#7851A9]/30 ring-2 ring-[#7851A9]/20'
+          : 'bg-white border-[#CA9CE1]/10 hover:border-[#7851A9]/30'
+      }`}>
+        {isCurrentUser && (
+          <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-[#7851A9] text-white text-[8px] font-black uppercase tracking-widest rounded-full">
+            You
           </div>
-          <div className="sm:text-right shrink-0">
-            <p className="text-[10px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent mb-0.5 sm:mb-1">{metricLabel}</p>
-            <p className="text-base sm:text-2xl font-black text-black tracking-tighter">{metricValue}</p>
+        )}
+        <div className={`w-10 h-10 sm:w-14 sm:h-14 shrink-0 rounded-xl sm:rounded-2xl flex items-center justify-center font-black text-base sm:text-xl italic ${rankColor} ${textColor} shadow-inner`}>
+          {rank}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-3 sm:mb-4 gap-1 sm:gap-4">
+            <div className="min-w-0 flex-1">
+              <h4 className="text-base sm:text-2xl font-black text-black tracking-tighter uppercase truncate">{name}</h4>
+              {subMetric && <p className="text-[10px] sm:text-[10px] font-black text-[#7851A9] uppercase tracking-widest mt-1 font-accent">{subMetric}</p>}
+              {isCurrentUser && spotsFromTop !== undefined && spotsFromTop > 0 && (
+                <p className="text-[10px] font-black text-[#C2A76F] uppercase tracking-widest mt-1">{spotsFromTop} spot{spotsFromTop !== 1 ? 's' : ''} from #1 — keep going!</p>
+              )}
+            </div>
+            <div className="sm:text-right shrink-0">
+              <p className="text-[10px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest font-accent mb-0.5 sm:mb-1">{metricLabel}</p>
+              <p className="text-base sm:text-2xl font-black text-black tracking-tighter">{metricValue}</p>
+            </div>
+          </div>
+          <div className="w-full h-2 sm:h-3 bg-slate-50 rounded-full overflow-hidden border border-slate-100 shadow-inner">
+            <motion.div
+              className={`h-full rounded-full ${isCurrentUser ? 'bg-[#7851A9]' : 'bg-black group-hover:bg-[#7851A9]'} transition-colors duration-500`}
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.8, delay: index * 0.07 + 0.2, ease: 'easeOut' }}
+            />
           </div>
         </div>
-        <div className="w-full h-2 sm:h-3 bg-slate-50 rounded-full overflow-hidden border border-slate-100 shadow-inner">
-          <div
-            className="h-full bg-black group-hover:bg-[#7851A9] transition-all duration-1000 ease-out rounded-full"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

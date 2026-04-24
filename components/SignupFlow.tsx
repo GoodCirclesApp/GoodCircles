@@ -4,11 +4,58 @@ import { verifyEntityIntegrity } from '../services/geminiService';
 import { authService } from '../services/authService';
 import { WelcomeEmailService } from '../services/welcomeEmailService';
 import { NonprofitSelector } from './NonprofitSelector';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   onComplete: (email: string, password?: string) => Promise<any>;
   onMerchantOnboarding: () => void;
 }
+
+const ROLE_CONFIG: Record<'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT', {
+  label: string;
+  icon: React.ReactNode;
+  tagline: string;
+  perks: string[];
+  accent: string;
+  bg: string;
+}> = {
+  NEIGHBOR: {
+    label: 'Neighbor',
+    tagline: 'Shop local, build community.',
+    perks: ['10% off every purchase', 'Fund your chosen nonprofit', 'Earn impact credits'],
+    accent: 'text-[#7851A9]',
+    bg: 'bg-[#7851A9]/5 border-[#7851A9]/30',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    ),
+  },
+  MERCHANT: {
+    label: 'Merchant',
+    tagline: 'Grow with mission-aligned customers.',
+    perks: ['List products & services', 'Build community loyalty', 'Access co-op pricing'],
+    accent: 'text-[#C2A76F]',
+    bg: 'bg-[#C2A76F]/5 border-[#C2A76F]/30',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+      </svg>
+    ),
+  },
+  NONPROFIT: {
+    label: 'Nonprofit',
+    tagline: 'Receive recurring community funding.',
+    perks: ['Auto-directed donations', 'Real-time impact tracking', 'Mission amplification'],
+    accent: 'text-emerald-600',
+    bg: 'bg-emerald-50 border-emerald-200',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+      </svg>
+    ),
+  },
+};
 
 export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }) => {
   const [role, setRole] = useState<'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT'>('NEIGHBOR');
@@ -22,12 +69,6 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
   const [error, setError] = useState<string | null>(null);
   const [showNonprofitSelector, setShowNonprofitSelector] = useState(false);
 
-  const roleDescriptions = {
-    NEIGHBOR: 'Shop local, support community causes, and earn impact credits.',
-    MERCHANT: 'List your business and connect with mission-aligned customers.',
-    NONPROFIT: 'Register your organization to receive community-directed funding.',
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -37,7 +78,6 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
       return;
     }
 
-    // For NEIGHBOR role, show nonprofit selector before completing signup
     if (role === 'NEIGHBOR' && !showNonprofitSelector) {
       if (password !== confirmPassword) {
         setError('Passwords do not match. Please re-enter.');
@@ -51,7 +91,6 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
       return;
     }
 
-    // Validate nonprofit selection for NEIGHBOR
     if (role === 'NEIGHBOR' && !selectedNonprofit) {
       setError('Please select a nonprofit to support.');
       return;
@@ -109,7 +148,6 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
     }
   };
 
-  // Show nonprofit selector modal for NEIGHBOR role
   if (showNonprofitSelector && role === 'NEIGHBOR') {
     return (
       <div className="space-y-6">
@@ -149,32 +187,73 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
     );
   }
 
+  const conf = ROLE_CONFIG[role];
+
   return (
     <div className="space-y-6">
-      {/* Role Selector */}
-      <div className="flex bg-slate-100 p-1 rounded-2xl">
-        {(['NEIGHBOR', 'MERCHANT', 'NONPROFIT'] as const).map(r => (
-          <button
-            key={r}
-            type="button"
-            onClick={() => {
-              setRole(r);
-              setError(null);
-              setShowNonprofitSelector(false);
-              setSelectedNonprofit('');
-            }}
-            className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-              role === r ? 'bg-white text-[#7851A9] shadow-sm' : 'text-slate-400 hover:text-slate-600'
-            }`}
+      {/* Role Carousel */}
+      <div className="space-y-2">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">I am joining as a…</p>
+        <div className="grid grid-cols-3 gap-2">
+          {(Object.keys(ROLE_CONFIG) as Array<'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT'>).map(r => {
+            const c = ROLE_CONFIG[r];
+            const isActive = role === r;
+            return (
+              <button
+                key={r}
+                type="button"
+                onClick={() => {
+                  setRole(r);
+                  setError(null);
+                  setShowNonprofitSelector(false);
+                  setSelectedNonprofit('');
+                }}
+                className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 text-center transition-all ${
+                  isActive
+                    ? `border-current ${c.accent} ${c.bg} shadow-md`
+                    : 'border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200 hover:text-slate-600'
+                }`}
+              >
+                <span className={isActive ? c.accent : 'text-slate-300'}>
+                  {c.icon}
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-widest leading-none">{c.label}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="role-active-indicator"
+                    className="absolute inset-0 rounded-2xl ring-2 ring-current pointer-events-none"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Role value proposition card */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={role}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2 }}
+            className={`rounded-2xl border p-4 ${conf.bg}`}
           >
-            {r === 'NEIGHBOR' ? 'Neighbor' : r === 'MERCHANT' ? 'Merchant' : 'Nonprofit'}
-          </button>
-        ))}
+            <p className={`text-xs font-black italic mb-2 ${conf.accent}`}>{conf.tagline}</p>
+            <ul className="space-y-1">
+              {conf.perks.map(perk => (
+                <li key={perk} className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
+                  <span className={`w-1 h-1 rounded-full ${conf.accent.replace('text-', 'bg-')} shrink-0`} />
+                  {perk}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </AnimatePresence>
       </div>
-      {/* Role description */}
-      <p className="text-xs text-slate-500 font-medium text-center px-4 leading-relaxed">
-        {roleDescriptions[role]}
-      </p>
+
+      {/* Form */}
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <SignupInput
           label={role === 'NONPROFIT' ? 'Legal Organization Name' : 'Full Name'}

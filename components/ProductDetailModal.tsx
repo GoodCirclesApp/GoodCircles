@@ -15,6 +15,7 @@ interface Props {
   onAddReview: (review: Review) => void;
   orders: Order[];
   onToast?: (message: string, type?: 'success' | 'error') => void;
+  selectedNonprofitName?: string;
 }
 
 export const ProductDetailModal: React.FC<Props> = ({
@@ -25,7 +26,8 @@ export const ProductDetailModal: React.FC<Props> = ({
   reviews,
   onAddReview,
   orders,
-  onToast
+  onToast,
+  selectedNonprofitName,
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedDate, setSelectedDate] = useState(format(addDays(new Date(), 1), 'yyyy-MM-dd'));
@@ -146,7 +148,7 @@ export const ProductDetailModal: React.FC<Props> = ({
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full bg-[#C2A76F] shrink-0" />
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#C2A76F]">Nonprofit Donation</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[#C2A76F]">{selectedNonprofitName ?? 'Nonprofit'}</p>
                     <p className="text-sm font-black text-black">${nonprofitAmt.toFixed(2)}</p>
                   </div>
                 </div>
