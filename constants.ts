@@ -297,6 +297,128 @@ const FAQ_GOVERNANCE: FAQItem[] = [
   },
 ];
 
+// ── New features added in the April 2026 sprint ──────────────────────────────
+
+const FAQ_FEATURES_CORE: FAQItem[] = [
+  {
+    id: 'feat-core-1',
+    category: 'CORE',
+    question: 'What is the Community Action Board?',
+    answer: 'The Community Action Board is a live coordination hub inside the Impact Map view. Any neighbor can propose a community action — a group purchase to unlock wholesale pricing, a fundraising drive, a volunteer event, or a community initiative. Other members can click "Support" to back a proposal. Once enough support gathers, the proposal moves from "Forming" to "Active." You can filter by type (Group Purchase, Fundraise, Event, Initiative) or submit your own idea using the Propose button in the top corner.',
+  },
+  {
+    id: 'feat-core-2',
+    category: 'CORE',
+    question: 'What do the rings on the Impact Map mean?',
+    answer: 'Each circle on the Impact Map represents a neighborhood economic node — a cluster of merchants, nonprofits, or community members. The size of the rings scales with that node\'s total impact volume (how much money has flowed through it). A single inner ring means under $15,000 in volume. A second pulsing outer ring appears at $15,000, and a gold crown dot appears at $30,000. You can toggle between three views using the VOLUME / VELOCITY / RESOURCES buttons at the top left. Click any node to see its exact impact volume and retention rate.',
+  },
+  {
+    id: 'feat-core-3',
+    category: 'CORE',
+    question: 'What are Impact Journey milestone badges?',
+    answer: 'As you make purchases, your Impact Journey timeline tracks your progress and awards milestone badges at key thresholds: "First Settlement" on your very first order, "Community Regular" at 5 orders, "Circle Advocate" at 10, and "Impact Leader" at 25. Each badge appears above the corresponding order in your timeline. A progress bar at the top of the timeline shows how many orders you need to reach your next badge.',
+  },
+  {
+    id: 'feat-core-4',
+    category: 'CORE',
+    question: 'What does the donation amount shown on each product card mean?',
+    answer: 'Instead of a generic "10% Reward" badge, every product card now shows the exact dollar amount that will be donated to your elected nonprofit if you buy that item — for example "$4.50 → CFB" (where "CFB" is the abbreviation of Community Food Bank). This amount is calculated automatically: sale price × nonprofit donation rate. The badge updates in real time if you change your elected nonprofit. It gives you a concrete, honest view of your impact before you even click.',
+  },
+  {
+    id: 'feat-core-5',
+    category: 'CORE',
+    question: 'How do I switch roles when I sign up?',
+    answer: 'During signup, you\'ll see an illustrated role card selector. Tap or click one of the three cards — Neighbor, Merchant, or Nonprofit — to choose your role. Each card shows your key benefits at a glance (e.g., "10% off every purchase," "List products & services," "Auto-directed donations"). A brief value proposition panel beneath the cards updates instantly as you switch. Once you pick your role and fill in your details, you\'ll continue to the next step specific to that role.',
+  },
+];
+
+const FAQ_FEATURES_SHOPPING: FAQItem[] = [
+  {
+    id: 'feat-shop-1',
+    category: 'SHOPPING',
+    question: 'How does the wishlist work?',
+    answer: 'Hover over any product card in the marketplace and a heart icon will appear in the top-left corner. Click it to save the item to your wishlist. A filled red heart means the item is already saved. You can view all saved items by clicking the heart icon in the navigation bar at the top of the screen. From your wishlist drawer you can add any saved item directly to your cart or remove it.',
+  },
+  {
+    id: 'feat-shop-2',
+    category: 'SHOPPING',
+    question: 'What is the "Where Every Dollar Goes" breakdown in the product detail view?',
+    answer: 'When you open a product\'s detail page, you\'ll see a glass-box pricing breakdown that shows exactly where each dollar of your purchase goes. A four-segment bar splits the sale price into: Merchant Net (what the seller keeps), your elected nonprofit\'s donation (labeled with your nonprofit\'s name), your 10% savings, and the 1% platform fee. The dollar amounts are shown for each segment. This is Good Circles\' commitment to full financial transparency on every transaction.',
+  },
+  {
+    id: 'feat-shop-3',
+    category: 'SHOPPING',
+    question: 'What are Merchant Stories?',
+    answer: 'Merchant Stories is a scrollable carousel that appears at the top of the marketplace, above the product grid. Each card features a local merchant — their business photo, a personal quote from the owner, and an impact stat (e.g., "Donated $1,240 to community causes"). Click "Read Full Story" to open a modal with the merchant\'s full narrative and mission. Stories are a way for you to know who you\'re buying from, not just what you\'re buying.',
+  },
+];
+
+const FAQ_FEATURES_ECONOMY: FAQItem[] = [
+  {
+    id: 'feat-econ-1',
+    category: 'ECONOMY',
+    question: 'Can I add a preset amount to my wallet without typing?',
+    answer: 'Yes. In the Wallet view, above the dollar input field, there are four quick-select buttons: $10, $25, $50, and $100. Tapping any button fills the amount field automatically. You can still type a custom amount if you prefer. Once the amount is set, use the Fund Wallet or Withdraw buttons to complete the action.',
+  },
+  {
+    id: 'feat-econ-2',
+    category: 'ECONOMY',
+    question: 'What is the Impact Leaderboard and how does it work?',
+    answer: 'The Impact Leaderboard ranks the community\'s biggest contributors across four categories: Cities (communities by impact-per-member), Merchants (by total nonprofit donations generated), Neighbors (by personal impact generated through purchases), and Nonprofits (by total funds received). Rows animate in with a stagger effect and progress bars fill to show relative standing. In the Neighbors tab, your own row is highlighted in purple with a "You" badge and a message showing how many spots you are from the top position.',
+  },
+];
+
+const FAQ_FEATURES_MERCHANT: FAQItem[] = [
+  {
+    id: 'feat-merch-1',
+    category: 'MERCHANT',
+    question: 'What is the AI Merchant Co-Pilot?',
+    answer: 'The AI Merchant Co-Pilot is a set of insight cards shown at the top of your Merchant Dashboard. Each card surfaces a specific observation about your business — for example, a peak sales time, a high repeat-customer rate, a nonprofit funding milestone, or a market gap you could fill. Clicking "Ask Co-Pilot" on any card opens the AI Merchant Advisor panel with that question pre-loaded, so you can instantly get a detailed recommendation. The Co-Pilot is powered by the same AI engine as the full Advisor chat.',
+  },
+  {
+    id: 'feat-merch-2',
+    category: 'MERCHANT',
+    question: 'What is the Merchant Welcome Kit?',
+    answer: 'The first time you log in to your merchant account, a Welcome Kit panel opens automatically. It walks you through four tabs: Welcome (overview of the 10/10/1 model and your role), Digital Presence (your live brand badge and shareable link you can post to social media), In-Store Materials (window decal mockup and QR tent card — print-ready assets coming at launch), and First Steps (a checklist of five actions to take before your first sale). Once you close the kit, it won\'t appear again — but you can revisit these materials from your Settings any time.',
+  },
+  {
+    id: 'feat-merch-3',
+    category: 'MERCHANT',
+    question: 'What is the "In-Person QR Pay" option in the merchant portal?',
+    answer: 'In-Person QR Pay lets customers pay you at a physical location using their Good Circles account — no card reader needed. From your Merchant Portal, navigate to the "In-Person QR Pay" tab to display your merchant QR code on screen or a tablet at your counter. Customers open their Good Circles app, select a product from your listings, and tap pay. The 10/10/1 split executes automatically in real time. You can also use the QR Settlement tab to scan a customer\'s one-time payment token instead.',
+  },
+];
+
+const FAQ_FEATURES_NONPROFIT: FAQItem[] = [
+  {
+    id: 'feat-np-1',
+    category: 'NONPROFIT',
+    question: 'What is the Nonprofit Thank-You notification?',
+    answer: 'When your lifetime impact total crosses a milestone — $10, $25, $50, $100, $250, $500, or $1,000 donated — a personalized thank-you message appears after checkout. The message is written in the voice of the nonprofit\'s leadership (e.g., a director\'s name and a specific note about what your donations make possible). The notification shows your new lifetime total and the milestone you just unlocked. It auto-dismisses after 12 seconds, or you can close it early.',
+  },
+  {
+    id: 'feat-np-2',
+    category: 'NONPROFIT',
+    question: 'Can I preview my impact before selecting a nonprofit?',
+    answer: 'Yes. On the "Choose Your Impact" page, hover over any nonprofit card to see a projected impact preview. The preview calculates what your estimated monthly and annual donations would be based on a $100/month average spend at the 10% donation rate — for example, "$10.00/mo · $120/yr." This gives you a concrete, personalized view of your potential impact before you commit. The projection updates automatically if you hover between cards.',
+  },
+];
+
+const FAQ_FEATURES_GOVERNANCE: FAQItem[] = [
+  {
+    id: 'feat-gov-1',
+    category: 'GOVERNANCE',
+    question: 'How can I see how the votes are split on a proposal?',
+    answer: 'Each proposal card in the Community Council view shows a two-tone vote bar. The green segment on the left represents the proportion of votes in favor (FOR). The red segment on the right represents votes against (AGAINST). The exact vote counts and percentages are displayed above the bar. An empty bar means no votes have been cast yet. The bar updates live as votes come in.',
+  },
+  {
+    id: 'feat-gov-2',
+    category: 'GOVERNANCE',
+    question: 'Is there a deadline to vote on a proposal?',
+    answer: 'Yes. Every proposal has an expiry date set when it is created. A live countdown timer on each proposal card shows exactly how much time remains — displayed as days and hours (e.g., "4d 6h") or hours and minutes as the deadline approaches. Once the timer hits zero, the proposal closes and no more votes are accepted. The final tally determines whether the proposal passes its consensus threshold.',
+  },
+];
+
 export const INITIAL_FAQ: FAQItem[] = [
   ...FAQ_CORE,
   ...FAQ_SHOPPING,
@@ -305,6 +427,12 @@ export const INITIAL_FAQ: FAQItem[] = [
   ...FAQ_NONPROFIT,
   ...FAQ_SECURITY,
   ...FAQ_GOVERNANCE,
+  ...FAQ_FEATURES_CORE,
+  ...FAQ_FEATURES_SHOPPING,
+  ...FAQ_FEATURES_ECONOMY,
+  ...FAQ_FEATURES_MERCHANT,
+  ...FAQ_FEATURES_NONPROFIT,
+  ...FAQ_FEATURES_GOVERNANCE,
 ];
 
 export const PRODUCT_CATEGORIES = [
