@@ -8,6 +8,21 @@ const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('gc_auth_token') || ''}`,
 });
 
+async function safeFetch<T>(url: string, init?: RequestInit): Promise<T | null> {
+  try {
+    const res = await fetch(url, init);
+    const data = await res.json();
+    if (!res.ok) {
+      console.error('[Compliance] API error', res.status, data);
+      return null;
+    }
+    return data as T;
+  } catch (err) {
+    console.error('[Compliance] Fetch failed', url, err);
+    return null;
+  }
+}
+
 const JURISDICTION_COLOR: Record<string, string> = {
   FEDERAL: 'bg-slate-800 text-white',
   WYOMING: 'bg-amber-100 text-amber-800',
@@ -57,17 +72,34 @@ function DeadlineStatusBadge({ dueDate, completedAt }: { dueDate: string; comple
   );
 }
 
+function ErrorBanner({ message }: { message: string }) {
+  return (
+    <div className="py-10 text-center space-y-2">
+      <AlertCircle className="w-8 h-8 text-red-400 mx-auto" />
+      <p className="text-sm font-black text-red-600">Failed to load data</p>
+      <p className="text-[10px] text-slate-400 font-medium">{message}</p>
+    </div>
+  );
+}
+
 // ── Deadline Calendar Tab ─────────────────────────────────────────────────────
 
 function DeadlineCalendar() {
   const [deadlines, setDeadlines] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [markingId, setMarkingId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const res = await fetch(`${BASE}/deadlines`, { headers: authHeaders() });
-    setDeadlines(await res.json());
+    setError(null);
+    const data = await safeFetch<any[]>(`${BASE}/deadlines`, { headers: authHeaders() });
+    if (Array.isArray(data)) {
+      setDeadlines(data);
+    } else {
+      setDeadlines([]);
+      if (data === null) setError('Could not load deadlines. The compliance tables may not be set up yet.');
+    }
     setLoading(false);
   };
 
@@ -75,7 +107,7 @@ function DeadlineCalendar() {
 
   const markComplete = async (id: string) => {
     setMarkingId(id);
-    await fetch(`${BASE}/deadlines/${id}/complete`, {
+    await safeFetch(`${BASE}/deadlines/${id}/complete`, {
       method: 'POST',
       headers: authHeaders(),
       body: JSON.stringify({}),
@@ -85,6 +117,7 @@ function DeadlineCalendar() {
   };
 
   if (loading) return <div className="py-12 text-center text-slate-400 text-xs font-bold">Loading deadlines...</div>;
+  if (error) return <ErrorBanner message={error} />;
 
   const pending = deadlines.filter(d => !d.completedAt);
   const completed = deadlines.filter(d => d.completedAt);
@@ -105,6 +138,10 @@ function DeadlineCalendar() {
           <p className="text-3xl font-black text-emerald-600">{completed.length}</p>
         </div>
       </div>
+
+      {pending.length === 0 && completed.length === 0 && (
+        <div className="py-10 text-center text-slate-400 text-xs font-bold">No compliance deadlines loaded yet.</div>
+      )}
 
       <div className="space-y-3">
         {pending.map(d => (
@@ -168,15 +205,22 @@ function DeadlineCalendar() {
 function MissionReport() {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${BASE}/mission-report`, { headers: authHeaders() })
-      .then(r => r.json())
-      .then(setReport)
+    safeFetch<any>(`${BASE}/mission-report`, { headers: authHeaders() })
+      .then(data => {
+        if (data && data.period) {
+          setReport(data);
+        } else {
+          setError('Could not generate mission report. The compliance tables may not be set up yet.');
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <div className="py-12 text-center text-slate-400 text-xs font-bold">Generating mission report...</div>;
+  if (error || !report) return <ErrorBanner message={error || 'No report data available.'} />;
 
   return (
     <div className="space-y-6">
@@ -194,26 +238,28 @@ function MissionReport() {
       <div className="grid grid-cols-2 gap-4">
         <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Gross Transaction Volume</p>
-          <p className="text-2xl font-black text-black">${Number(report.totalGrossTransactionVolume).toLocaleString()}</p>
+          <p className="text-2xl font-black text-black">${Number(report.totalGrossTransactionVolume || 0).toLocaleString()}</p>
         </div>
         <div className="p-5 bg-[#C2A76F]/10 rounded-2xl border border-[#C2A76F]/20">
           <p className="text-[10px] font-black uppercase tracking-widest text-[#C2A76F] mb-1">Total Nonprofit Donations</p>
-          <p className="text-2xl font-black text-black">${Number(report.totalNonprofitDonations).toLocaleString()}</p>
+          <p className="text-2xl font-black text-black">${Number(report.totalNonprofitDonations || 0).toLocaleString()}</p>
         </div>
         <div className="p-5 bg-[#7851A9]/5 rounded-2xl border border-[#7851A9]/10">
           <p className="text-[10px] font-black uppercase tracking-widest text-[#7851A9] mb-1">Platform Fees Retained</p>
-          <p className="text-2xl font-black text-black">${Number(report.totalPlatformFees).toLocaleString()}</p>
+          <p className="text-2xl font-black text-black">${Number(report.totalPlatformFees || 0).toLocaleString()}</p>
         </div>
         <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Mission Multiplier Ratio</p>
-          <p className="text-2xl font-black text-black">{report.missionMultiplierRatio}:1</p>
+          <p className="text-2xl font-black text-black">{report.missionMultiplierRatio ?? '—'}:1</p>
           <p className="text-[9px] text-slate-400 font-medium">Target: {report.missionMultiplierTarget}</p>
         </div>
       </div>
 
-      <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl">
-        <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest">{report.note}</p>
-      </div>
+      {report.note && (
+        <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+          <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest">{report.note}</p>
+        </div>
+      )}
 
       <div className="flex justify-end">
         <button
@@ -221,7 +267,7 @@ function MissionReport() {
             const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url;
-            a.download = `mission-report-${report.period.replace(' ', '-')}.json`; a.click();
+            a.download = `mission-report-${String(report.period).replace(' ', '-')}.json`; a.click();
           }}
           className="flex items-center gap-2 px-4 py-2 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#7851A9] transition-all"
         >
@@ -232,7 +278,7 @@ function MissionReport() {
   );
 }
 
-// ── 1099-K Tab ────────────────────────────────────────────────────────────────
+// ── Tax Reporting Tab ─────────────────────────────────────────────────────────
 
 function TaxReporting() {
   const [data, setData] = useState<any>(null);
@@ -240,14 +286,20 @@ function TaxReporting() {
   const [year, setYear] = useState(new Date().getFullYear() - 1);
   const [tab, setTab] = useState<'1099k' | 'inform'>('1099k');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
+    setError(null);
     const [r1, r2] = await Promise.all([
-      fetch(`${BASE}/1099k?year=${year}`, { headers: authHeaders() }).then(r => r.json()),
-      fetch(`${BASE}/inform-act?year=${year + 1}`, { headers: authHeaders() }).then(r => r.json()),
+      safeFetch<any>(`${BASE}/1099k?year=${year}`, { headers: authHeaders() }),
+      safeFetch<any>(`${BASE}/inform-act?year=${year + 1}`, { headers: authHeaders() }),
     ]);
-    setData(r1); setInformData(r2);
+    if (r1 === null && r2 === null) {
+      setError('Could not load tax data. The compliance tables may not be set up yet.');
+    }
+    setData(r1);
+    setInformData(r2);
     setLoading(false);
   };
 
@@ -263,7 +315,7 @@ function TaxReporting() {
   };
 
   const markVerified = async (merchantId: string) => {
-    await fetch(`${BASE}/inform-act/${merchantId}/verify?year=${year + 1}`, { method: 'POST', headers: authHeaders() });
+    await safeFetch(`${BASE}/inform-act/${merchantId}/verify?year=${year + 1}`, { method: 'POST', headers: authHeaders() });
     load();
   };
 
@@ -281,28 +333,29 @@ function TaxReporting() {
       </div>
 
       {loading && <div className="py-8 text-center text-slate-400 text-xs font-bold">Loading...</div>}
+      {!loading && error && <ErrorBanner message={error} />}
 
-      {!loading && tab === '1099k' && data && (
+      {!loading && !error && tab === '1099k' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Merchants Requiring 1099-K</p>
-              <p className="text-3xl font-black text-black">{data.count}</p>
-              <p className="text-[10px] text-slate-400 font-medium">for tax year {data.taxYear}</p>
+              <p className="text-3xl font-black text-black">{data?.count ?? 0}</p>
+              <p className="text-[10px] text-slate-400 font-medium">for tax year {data?.taxYear ?? year}</p>
             </div>
-            {data.count > 0 && (
+            {(data?.count ?? 0) > 0 && (
               <button onClick={downloadCsv} className="flex items-center gap-2 px-4 py-2 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#7851A9] transition-all">
                 <Download className="w-3.5 h-3.5" /> Export CSV
               </button>
             )}
           </div>
 
-          {data.merchants?.map((m: any) => (
+          {Array.isArray(data?.merchants) && data.merchants.map((m: any) => (
             <div key={m.merchantId} className="p-4 bg-white border border-slate-100 rounded-2xl">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-black text-black">{m.merchant.businessName}</p>
-                  <p className="text-[10px] text-slate-400 font-medium">{m.merchant.user.email} · EIN: {m.merchant.taxId || 'Not on file'}</p>
+                  <p className="text-sm font-black text-black">{m.merchant?.businessName}</p>
+                  <p className="text-[10px] text-slate-400 font-medium">{m.merchant?.user?.email} · EIN: {m.merchant?.taxId || 'Not on file'}</p>
                   <p className="text-xs font-black text-[#C2A76F] mt-1">Gross Sales: ${Number(m.grossSales).toLocaleString()}</p>
                 </div>
                 <div className="text-right">
@@ -315,22 +368,22 @@ function TaxReporting() {
             </div>
           ))}
 
-          {data.count === 0 && (
-            <div className="py-8 text-center text-slate-400 text-xs font-bold">No merchants crossed the $600 threshold for {data.taxYear}.</div>
+          {(data?.count ?? 0) === 0 && (
+            <div className="py-8 text-center text-slate-400 text-xs font-bold">No merchants crossed the $600 threshold for {data?.taxYear ?? year}.</div>
           )}
         </div>
       )}
 
-      {!loading && tab === 'inform' && informData && (
+      {!loading && !error && tab === 'inform' && (
         <div className="space-y-4">
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">High-Volume Sellers Requiring INFORM Act Verification</p>
-            <p className="text-3xl font-black text-black">{informData.count}</p>
+            <p className="text-3xl font-black text-black">{informData?.count ?? 0}</p>
           </div>
-          {informData.merchants?.map((m: any) => (
+          {Array.isArray(informData?.merchants) && informData.merchants.map((m: any) => (
             <div key={m.merchantId} className="p-4 bg-white border border-slate-100 rounded-2xl flex items-start justify-between">
               <div>
-                <p className="text-sm font-black text-black">{m.merchant.businessName}</p>
+                <p className="text-sm font-black text-black">{m.merchant?.businessName}</p>
                 <p className="text-[10px] text-slate-400 font-medium">{m.transactionCount} transactions · ${Number(m.grossRevenue).toLocaleString()} revenue</p>
               </div>
               <div className="text-right space-y-1">
@@ -345,7 +398,7 @@ function TaxReporting() {
               </div>
             </div>
           ))}
-          {informData.count === 0 && (
+          {(informData?.count ?? 0) === 0 && (
             <div className="py-8 text-center text-slate-400 text-xs font-bold">No high-volume sellers requiring verification for {year + 1}.</div>
           )}
         </div>
@@ -364,23 +417,22 @@ function IrsVerification() {
   const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
-    fetch(`${BASE}/irs/sync-logs`, { headers: authHeaders() })
-      .then(r => r.json()).then(setLogs);
+    safeFetch<any[]>(`${BASE}/irs/sync-logs`, { headers: authHeaders() })
+      .then(data => { if (Array.isArray(data)) setLogs(data); });
   }, []);
 
   const checkEin = async () => {
     if (!ein.trim()) return;
     setLoading(true);
-    const res = await fetch(`${BASE}/irs/check/${encodeURIComponent(ein.trim())}`, { headers: authHeaders() });
-    setResult(await res.json());
+    const data = await safeFetch<any>(`${BASE}/irs/check/${encodeURIComponent(ein.trim())}`, { headers: authHeaders() });
+    setResult(data);
     setLoading(false);
   };
 
   const triggerSync = async () => {
     setSyncing(true);
-    const res = await fetch(`${BASE}/irs/sync`, { method: 'POST', headers: authHeaders() });
-    const data = await res.json();
-    alert(data.message);
+    const data = await safeFetch<any>(`${BASE}/irs/sync`, { method: 'POST', headers: authHeaders() });
+    alert(data?.message || 'Sync triggered.');
     setSyncing(false);
   };
 
@@ -405,7 +457,7 @@ function IrsVerification() {
               {result.verified ? '✓ Verified' : result.isRevoked ? '✗ Revoked' : '✗ Not Found'}
             </p>
             {result.legalName && <p className="text-sm font-black text-black mt-1">{result.legalName}</p>}
-            <p className="text-[10px] text-slate-600 font-medium mt-1">{result.note}</p>
+            {result.note && <p className="text-[10px] text-slate-600 font-medium mt-1">{result.note}</p>}
           </div>
         )}
       </div>
