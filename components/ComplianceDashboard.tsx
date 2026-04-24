@@ -5,7 +5,7 @@ import { CheckCircle2, Clock, AlertCircle, FileText, Globe, Download, Plus, Refr
 const BASE = '/api/compliance';
 const authHeaders = () => ({
   'Content-Type': 'application/json',
-  Authorization: `Bearer ${localStorage.getItem('gc_token') || ''}`,
+  Authorization: `Bearer ${localStorage.getItem('gc_auth_token') || ''}`,
 });
 
 const JURISDICTION_COLOR: Record<string, string> = {
