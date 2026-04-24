@@ -11,7 +11,7 @@ export function useIdentityStore() {
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem('gc_auth_token');
-      
+
       if (token) {
         try {
           const profile = await authService.getProfile();
@@ -19,8 +19,20 @@ export function useIdentityStore() {
           localStorage.setItem('gc_session_user', JSON.stringify(profile));
         } catch (error) {
           console.error('Session verification failed:', error);
-          authService.logout();
-          setCurrentUser(null);
+          // Race-condition guard: if the user logged in while this request was
+          // in flight, a new token has replaced the stale one — don't sign out.
+          const currentToken = localStorage.getItem('gc_auth_token');
+          if (currentToken === token) {
+            // Only sign out for auth errors (token truly invalid/expired).
+            // Server errors (5xx from e.g. DB issues) should not clear a
+            // potentially valid token — the user can still log in fresh.
+            const msg = String((error as any)?.message || '');
+            const isAuthError = /status (401|403)|Session expired|Unauthorized/i.test(msg);
+            if (isAuthError) {
+              authService.logout();
+              setCurrentUser(null);
+            }
+          }
         }
       }
       setIsLoading(false);

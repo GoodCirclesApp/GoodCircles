@@ -60,7 +60,10 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
 
   const response = await fetch(url, { ...init, headers });
 
-  if ((response.status === 401 || response.status === 403) && !endpoint.startsWith('/auth/')) {
+  if ((response.status === 401 || response.status === 403) &&
+      endpoint !== '/auth/refresh' &&
+      endpoint !== '/auth/login' &&
+      endpoint !== '/auth/register') {
     let newToken: string | null = null;
 
     if (isRefreshing) {
