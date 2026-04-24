@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { User } from '../types';
 import { verifyEntityIntegrity } from '../services/geminiService';
 
+const AGREEMENT_VERSION = '1.0';
+
 interface MerchantCompleteData extends Partial<User> {
   password?: string;
   ownerName?: string;
   referralCode?: string;
   businessType?: string;
+  physicalAddress?: string;
+  physicalCity?: string;
+  physicalState?: string;
+  physicalZip?: string;
+  agreementVersion?: string;
 }
 
 interface Props {
@@ -25,7 +32,12 @@ export const MerchantOnboarding: React.FC<Props> = ({ onComplete, onCancel }) =>
     website: '',
     businessType: 'GOODS' as 'GOODS' | 'SERVICES' | 'BOTH',
     referralCode: '',
+    physicalAddress: '',
+    physicalCity: '',
+    physicalState: '',
+    physicalZip: '',
   });
+  const [agreementAccepted, setAgreementAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [kybResult, setKybResult] = useState<{
     verified: boolean;
@@ -59,6 +71,11 @@ export const MerchantOnboarding: React.FC<Props> = ({ onComplete, onCancel }) =>
       businessWebsite: formData.website,
       businessType: formData.businessType,
       referralCode: formData.referralCode,
+      physicalAddress: formData.physicalAddress,
+      physicalCity: formData.physicalCity,
+      physicalState: formData.physicalState,
+      physicalZip: formData.physicalZip,
+      agreementVersion: AGREEMENT_VERSION,
       role: 'MERCHANT',
     });
   };
@@ -70,7 +87,7 @@ export const MerchantOnboarding: React.FC<Props> = ({ onComplete, onCancel }) =>
   ];
 
   const step1Valid = formData.ownerName.trim() && formData.businessName.trim() && formData.email.trim() && formData.password.length >= 8;
-  const step2Valid = formData.taxId.trim();
+  const step2Valid = formData.taxId.trim() && formData.physicalAddress.trim() && formData.physicalCity.trim() && formData.physicalState.trim() && formData.physicalZip.trim() && agreementAccepted;
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500">
@@ -143,6 +160,32 @@ export const MerchantOnboarding: React.FC<Props> = ({ onComplete, onCancel }) =>
               placeholder="XX-XXXXXXX"
             />
             <InputField
+              label="Business Street Address"
+              value={formData.physicalAddress}
+              onChange={v => update('physicalAddress', v)}
+              placeholder="123 Main Street"
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <InputField
+                label="City"
+                value={formData.physicalCity}
+                onChange={v => update('physicalCity', v)}
+                placeholder="Jackson"
+              />
+              <InputField
+                label="State (2-letter)"
+                value={formData.physicalState}
+                onChange={v => update('physicalState', v.toUpperCase().slice(0, 2))}
+                placeholder="MS"
+              />
+            </div>
+            <InputField
+              label="ZIP Code"
+              value={formData.physicalZip}
+              onChange={v => update('physicalZip', v)}
+              placeholder="39201"
+            />
+            <InputField
               label="Business Website (optional)"
               value={formData.website}
               onChange={v => update('website', v)}
@@ -174,6 +217,25 @@ export const MerchantOnboarding: React.FC<Props> = ({ onComplete, onCancel }) =>
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Click-wrap Merchant Services Agreement */}
+            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Merchant Services Agreement</p>
+              <p className="text-[10px] text-slate-500 font-medium leading-relaxed">
+                By checking this box, I confirm that I have read and agree to the Good Circles L3C Merchant Services Agreement, including the consumer-directed nonprofit donation model (10% of net profit per transaction is directed by the consumer to a verified nonprofit), the platform fee structure (1% of net profit), and all applicable Commercial Co-Venture disclosure requirements. I acknowledge this agreement is legally binding and timestamped.
+              </p>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreementAccepted}
+                  onChange={e => setAgreementAccepted(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-[#7851A9] shrink-0"
+                />
+                <span className="text-[10px] font-black text-[#7851A9] uppercase tracking-wider">
+                  I agree to the Merchant Services Agreement (v{AGREEMENT_VERSION})
+                </span>
+              </label>
             </div>
           </div>
         </div>

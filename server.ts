@@ -35,6 +35,7 @@ import governanceRoutes from './server/src/routes/governanceRoutes';
 import refundRoutes from './server/src/routes/refundRoutes';
 import dmsRoutes from './server/src/routes/dmsRoutes';
 import searchRoutes from './server/src/routes/searchRoutes';
+import complianceRoutes from './server/src/routes/complianceRoutes';
 
 import { ReferralService } from './server/src/services/referralService';
 import { GovernanceService } from './server/src/services/governanceService';
@@ -43,6 +44,7 @@ import { DataCoopService } from './server/src/services/dataCoopService';
 import { NettingService } from './server/src/services/nettingService';
 import { CoopService } from './server/src/services/coopService';
 import { RegionalMetricsService } from './server/src/services/regionalMetricsService';
+import { IrsVerificationService } from './server/src/services/irsVerificationService';
 
 dotenv.config();
 
@@ -138,6 +140,7 @@ async function startServer() {
   app.use('/api/transactions', refundRoutes);
   app.use('/api/dms', dmsRoutes);
   app.use('/api/search', searchRoutes);
+  app.use('/api/compliance', complianceRoutes);
 
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Good Circles API is running', version: '1.0.0-beta' });
@@ -192,6 +195,10 @@ async function startServer() {
       console.log('[Server] Referral tiers seeded successfully.');
     }).catch(err => {
       console.error('[Server] Failed to seed referral tiers:', err);
+    });
+
+    IrsVerificationService.seedFromPlatformNonprofits().catch(err => {
+      console.error('[Server] Failed to seed IRS verification records:', err);
     });
 
     // Process booking reminders every 15 minutes

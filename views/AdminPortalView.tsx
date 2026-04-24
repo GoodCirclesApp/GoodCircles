@@ -35,6 +35,8 @@ import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
 import { MunicipalDemoSimulator } from '../components/MunicipalDemoSimulator';
 import { MockDataManager } from '../components/MockDataManager';
 import { AdminAffiliateDashboard } from '../components/AdminAffiliateDashboard';
+import { ComplianceDashboard } from '../components/ComplianceDashboard';
+import { Scale } from 'lucide-react';
 
 // Sub-components
 
@@ -470,7 +472,7 @@ const PriceSentinelReview = () => {
 type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
-  | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL';
+  | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -491,6 +493,7 @@ export const AdminPortalView: React.FC = () => {
     { id: 'MOCK_DATA', label: 'Demo Data Manager', icon: FlaskConical },
     { id: 'AFFILIATE', label: 'Affiliate Marketplace', icon: Link },
     { id: 'SENTINEL', label: 'Price Sentinel', icon: ShieldAlert },
+    { id: 'COMPLIANCE', label: 'L3C Compliance', icon: Scale },
   ];
 
   const renderContent = () => {
@@ -508,6 +511,7 @@ export const AdminPortalView: React.FC = () => {
       case 'MOCK_DATA': return <MockDataManager />;
       case 'AFFILIATE': return <AdminAffiliateDashboard />;
       case 'SENTINEL': return <PriceSentinelReview />;
+      case 'COMPLIANCE': return <ComplianceDashboard />;
       default: return <SystemDashboard />;
     }
   };

@@ -153,17 +153,24 @@ export const CartDrawer: React.FC<Props> = ({
                   ))}
                 </div>
 
-                {/* Nonprofit Display in Checkout */}
+                {/* Nonprofit Disclosure (CCV Statutory Language) */}
                 {selectedNonprofit && (
-                  <div className="flex items-center gap-4 p-5 bg-[#7851A9]/5 rounded-[2rem] border border-[#7851A9]/10">
-                    <div className="w-10 h-10 bg-[#7851A9] rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-4 p-5 bg-[#7851A9]/5 rounded-[2rem] border border-[#7851A9]/10">
+                      <div className="w-10 h-10 bg-[#7851A9] rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">Directed to</p>
+                        <p className="text-sm font-black text-black truncate">{selectedNonprofit.name}</p>
+                        <p className="text-[10px] font-black text-[#C2A76F]">
+                          ${totals.accounting?.donationAmount ? totals.accounting.donationAmount.toFixed(2) : '0.00'} directed from this purchase
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest">Supporting</p>
-                      <p className="text-sm font-black text-black truncate">{selectedNonprofit.name}</p>
-                      <p className="text-[10px] text-slate-500 italic">10% of merchant savings go to this cause</p>
-                    </div>
+                    <p className="text-[9px] text-slate-400 leading-relaxed px-2">
+                      By completing this purchase, you are directing ${totals.accounting?.donationAmount ? totals.accounting.donationAmount.toFixed(2) : '0.00'} to {selectedNonprofit.name} via Good Circles L3C. No portion of the purchase price is tax-deductible for the consumer. Good Circles L3C is a commercial co-venturer and not a charitable organization.
+                    </p>
                   </div>
                 )}
 

@@ -107,6 +107,12 @@ model Merchant {
   businessName String
   businessType String
   taxId String?
+  physicalAddress String?
+  physicalCity String?
+  physicalState String?
+  physicalZip String?
+  agreementAcceptedAt DateTime?
+  agreementVersion String?
   isVerified Boolean @default(false)
   onboardedAt DateTime?
   stripeAccountId String? @unique
@@ -118,6 +124,8 @@ model Merchant {
   maxCreditPercentage Int @default(0)
   // 0-100
   createdAt DateTime @default(now())
+  taxReportingFlags TaxReportingFlag[]
+  informActFlags    InformActFlag[]
   listings ProductService[]
   transactions Transaction[]
   groupMemberships GroupMember[]
@@ -308,6 +316,7 @@ model Nonprofit {
   exportJobs          DmsExportJob[]
   crmWebhook          CrmWebhook?
   donorMilestones     DonorMilestone[]
+  ccvCampaigns        CcvCampaign[]
 }
 
 model ProductService {
@@ -354,6 +363,7 @@ model Transaction {
   discountMode String @default("PRICE_REDUCTION")
   // "PRICE_REDUCTION" | "PLATFORM_CREDITS"
   appliedCredits Decimal @default(0)
+  consumerState String?
   ledgerEntries LedgerEntry[]
   creditLedgerEntries CreditLedger[]
   merchantObligation MerchantObligation?
@@ -364,6 +374,7 @@ model Transaction {
   @@index([neighborId])
   @@index([merchantId])
   @@index([nonprofitId])
+  @@index([consumerState])
 }
 
 model Wallet {
@@ -1310,4 +1321,131 @@ model DonorMilestone {
   @@unique([userId, nonprofitId, milestone])
   @@index([userId])
   @@index([nonprofitId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// IRS Nonprofit Verification (Phase 1 — Compliance Automation)
+// Synced monthly from IRS EO BMF, Publication 78, and Auto-Revocation List
+// ─────────────────────────────────────────────────────────────────────────────
+
+model IrsNonprofitRecord {
+  id               String    @id @default(uuid())
+  ein              String    @unique
+  legalName        String
+  deductibilityCode String?
+  subsectionCode   String?
+  isRevoked        Boolean   @default(false)
+  revokedDate      DateTime?
+  city             String?
+  state            String?
+  lastSyncedAt     DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+
+  @@index([ein])
+  @@index([isRevoked])
+  @@index([state])
+}
+
+model IrsSyncLog {
+  id           String   @id @default(uuid())
+  syncDate     DateTime @default(now())
+  recordsTotal Int      @default(0)
+  revokedCount Int      @default(0)
+  newRecords   Int      @default(0)
+  updatedRecords Int    @default(0)
+  status       String
+  error        String?
+
+  @@index([syncDate])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Compliance Dashboard (Phase 2)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model ComplianceDeadline {
+  id             String    @id @default(uuid())
+  title          String
+  description    String?
+  jurisdiction   String
+  category       String
+  dueDate        DateTime
+  isRecurring    Boolean   @default(false)
+  recurrenceRule String?
+  completedAt    DateTime?
+  completedBy    String?
+  notes          String?
+  agencyUrl      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([dueDate])
+  @@index([jurisdiction])
+  @@index([category])
+}
+
+model CcvCampaign {
+  id                     String    @id @default(uuid())
+  name                   String
+  nonprofitId            String
+  nonprofit              Nonprofit @relation(fields: [nonprofitId], references: [id])
+  states                 String[]
+  startDate              DateTime
+  endDate                DateTime?
+  msNoticeFiledAt        DateTime?
+  alRegistrationFiledAt  DateTime?
+  laConsentObtainedAt    DateTime?
+  flConsentObtainedAt    DateTime?
+  gaAgreementSignedAt    DateTime?
+  msReportDueAt          DateTime?
+  alClosingDueAt         DateTime?
+  msReportFiledAt        DateTime?
+  alClosingFiledAt       DateTime?
+  isActive               Boolean   @default(true)
+  notes                  String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  @@index([nonprofitId])
+  @@index([startDate])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tax Reporting & INFORM Act (Phase 2)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model TaxReportingFlag {
+  id             String   @id @default(uuid())
+  merchantId     String
+  merchant       Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  taxYear        Int
+  grossSales     Decimal  @default(0) @db.Decimal(12, 2)
+  requires1099K  Boolean  @default(false)
+  flaggedAt      DateTime?
+  notifiedAt     DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([merchantId, taxYear])
+  @@index([taxYear])
+  @@index([requires1099K])
+}
+
+model InformActFlag {
+  id                   String    @id @default(uuid())
+  merchantId           String
+  merchant             Merchant  @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  taxYear              Int
+  transactionCount     Int       @default(0)
+  grossRevenue         Decimal   @default(0) @db.Decimal(12, 2)
+  requiresVerification Boolean   @default(false)
+  verifiedAt           DateTime?
+  certifiedAt          DateTime?
+  flaggedAt            DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@unique([merchantId, taxYear])
+  @@index([taxYear])
+  @@index([requiresVerification])
 }

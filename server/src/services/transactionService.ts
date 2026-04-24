@@ -7,8 +7,15 @@ import { createCheckoutSession } from './stripeService';
 import { DonationReceiptService } from './donationReceiptService';
 import { DonorMilestoneService } from './donorMilestoneService';
 import { CrmWebhookService } from './crmWebhookService';
+import { TaxReportingService } from './taxReportingService';
 
 
+
+// Extract 2-letter US state abbreviation from a free-text address string
+function extractStateFromAddress(address: string): string | null {
+  const match = address.match(/\b(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\b/);
+  return match ? match[1] : null;
+}
 
 export const calculateDistribution = (
   grossAmount: number,
@@ -151,7 +158,15 @@ export class TransactionService {
         appliedCredits: distribution.appliedCredits
       };
 
-      // 3. Create Transaction Record
+      // 3. Create Transaction Record (with consumer state for CCV audit log)
+      const neighborUser = await tx.user.findUnique({
+        where: { id: neighborId },
+        select: { address: true },
+      });
+      const consumerState = neighborUser?.address
+        ? extractStateFromAddress(neighborUser.address)
+        : null;
+
       const transaction = await tx.transaction.create({
         data: {
           neighborId,
@@ -168,7 +183,8 @@ export class TransactionService {
           waivedToInitiativeId: discountWaived ? waivedToInitiativeId : null,
           waivedToFundId: discountWaived ? waivedToFundId : null,
           discountMode,
-          appliedCredits
+          appliedCredits,
+          consumerState,
         }
       });
 
@@ -280,9 +296,12 @@ export class TransactionService {
       };
     }) as { transaction: any; stripeUrl: string | undefined; breakdown: any };
 
-    // Issue donation receipt AFTER the Prisma transaction commits so the global
-    // prisma client can read the new transaction row.
+    // Post-commit compliance tracking (non-blocking)
     const { transaction: committedTx, breakdown } = txResult;
+    TaxReportingService.trackTransaction(
+      committedTx.merchantId,
+      Number(committedTx.grossAmount)
+    ).catch(() => {});
     if (committedTx.paymentMethod === 'INTERNAL' || breakdown.neighborPays.equals(0)) {
       DonationReceiptService.createForTransaction(committedTx.id).catch(() => {});
 
