@@ -201,6 +201,17 @@ async function startServer() {
       console.error('[Server] Failed to seed IRS verification records:', err);
     });
 
+    // IRS EO BMF sync: runs immediately if DB is empty or data is stale,
+    // then checks daily and syncs again once the 30-day window elapses.
+    IrsVerificationService.syncIfStale().catch(err =>
+      console.error('[Server] IRS stale-check error:', err)
+    );
+    setInterval(() => {
+      IrsVerificationService.syncIfStale().catch(err =>
+        console.error('[Server] IRS monthly sync error:', err)
+      );
+    }, 24 * 60 * 60 * 1000);
+
     // Process booking reminders every 15 minutes
     setInterval(async () => {
       try {
