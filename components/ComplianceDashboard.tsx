@@ -230,9 +230,12 @@ function MissionReport() {
           <h3 className="text-2xl font-black italic text-black uppercase tracking-tighter">{report.period}</h3>
           <p className="text-xs text-slate-400 font-medium">{report.periodStart} → {report.periodEnd}</p>
         </div>
-        <div className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-widest ${report.missionMultiplierMet ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
-          {report.missionMultiplierMet ? '✓ 10:1 Met' : '✗ 10:1 Not Met'}
-        </div>
+        {report.missionMultiplierMet === null
+          ? <div className="px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-widest bg-slate-100 text-slate-500">No Transactions Yet</div>
+          : <div className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-widest ${report.missionMultiplierMet ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+              {report.missionMultiplierMet ? '✓ 10:1 Met' : '✗ 10:1 Not Met'}
+            </div>
+        }
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -250,7 +253,7 @@ function MissionReport() {
         </div>
         <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Mission Multiplier Ratio</p>
-          <p className="text-2xl font-black text-black">{report.missionMultiplierRatio ?? '—'}:1</p>
+          <p className="text-2xl font-black text-black">{report.missionMultiplierRatio != null ? `${report.missionMultiplierRatio}:1` : '—'}</p>
           <p className="text-[9px] text-slate-400 font-medium">Target: {report.missionMultiplierTarget}</p>
         </div>
       </div>
@@ -412,6 +415,7 @@ function TaxReporting() {
 function IrsVerification() {
   const [ein, setEin] = useState('');
   const [result, setResult] = useState<any>(null);
+  const [searched, setSearched] = useState(false);
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -424,8 +428,10 @@ function IrsVerification() {
   const checkEin = async () => {
     if (!ein.trim()) return;
     setLoading(true);
+    setSearched(false);
     const data = await safeFetch<any>(`${BASE}/irs/check/${encodeURIComponent(ein.trim())}`, { headers: authHeaders() });
     setResult(data);
+    setSearched(true);
     setLoading(false);
   };
 
@@ -451,6 +457,16 @@ function IrsVerification() {
             {loading ? '...' : 'Check'}
           </button>
         </div>
+        {searched && !result && (
+          <div className="p-4 rounded-xl border bg-amber-50 border-amber-200">
+            <p className="text-xs font-black uppercase tracking-widest text-amber-700">
+              ⚠ Lookup unavailable
+            </p>
+            <p className="text-[10px] text-amber-700 font-medium mt-1">
+              The IRS verification table is not set up yet. This will resolve after the next Railway deploy runs <code>prisma db push</code>.
+            </p>
+          </div>
+        )}
         {result && (
           <div className={`p-4 rounded-xl border ${result.verified ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
             <p className={`text-xs font-black uppercase tracking-widest ${result.verified ? 'text-emerald-700' : 'text-red-700'}`}>

@@ -1,8 +1,8 @@
 [build]
 builder = "nixpacks"
-buildCommand = "npx prisma db push --accept-data-loss --skip-generate && npm run build"
+buildCommand = "npm run build"
 
 [deploy]
-startCommand = "npm start"
+startCommand = "npx prisma db push --accept-data-loss --skip-generate && npm start"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3

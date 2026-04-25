@@ -257,7 +257,8 @@ export class ComplianceService {
     const platformFee = Number(agg._sum.platformFee ?? 0);
     const txCount = agg._count.id;
 
-    const missionMultiplier = platformFee > 0 ? (nonprofitShare / platformFee).toFixed(2) : 'N/A';
+    const hasData = txCount > 0 && platformFee > 0;
+    const ratio = hasData ? nonprofitShare / platformFee : null;
 
     return {
       period: `Q${Math.ceil((qStart.getMonth() + 1) / 3)} ${qStart.getFullYear()}`,
@@ -267,11 +268,13 @@ export class ComplianceService {
       totalNonprofitDonations: nonprofitShare.toFixed(2),
       totalPlatformFees: platformFee.toFixed(2),
       totalTransactions: txCount,
-      missionMultiplierRatio: missionMultiplier,
+      missionMultiplierRatio: ratio !== null ? ratio.toFixed(2) : null,
       missionMultiplierTarget: '10:1',
-      missionMultiplierMet: platformFee > 0 && nonprofitShare / platformFee >= 10,
+      missionMultiplierMet: ratio !== null ? ratio >= 10 : null,
       generatedAt: now.toISOString(),
-      note: 'This report is for internal L3C mission compliance documentation. Store in Corporate Minute Book.',
+      note: hasData
+        ? 'This report is for internal L3C mission compliance documentation. Store in Corporate Minute Book.'
+        : 'No transactions recorded for this quarter yet. The 10:1 mission multiplier applies once commerce begins.',
     };
   }
 }
