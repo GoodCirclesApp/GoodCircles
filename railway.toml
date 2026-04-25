@@ -3,6 +3,6 @@ builder = "nixpacks"
 buildCommand = "npm run build"
 
 [deploy]
-startCommand = "npx prisma db push --accept-data-loss --skip-generate; NODE_ENV=production npx tsx server.ts"
+startCommand = "npx prisma db push --accept-data-loss --skip-generate; echo '=== PRISMA DONE, STARTING SERVER ==='; echo 'Node:' $(node --version); echo 'PORT:' $PORT; NODE_ENV=production npx tsx server.ts"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
