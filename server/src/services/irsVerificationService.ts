@@ -1,13 +1,15 @@
 import { prisma } from '../lib/prisma';
 
-// IRS EO BMF — state-specific files for Good Circles' operating states only.
-// Full national files (~1.8M records) exceed Railway Postgres disk allocation.
-// These 6 states cover all current CCV jurisdictions + Wyoming home state.
-// To expand coverage add state codes to this list (e.g. 'ca', 'tx', 'ny').
+// IRS EO BMF — all 4 national regional files, filtered to 501(c)(3) public charities only.
+// Full dataset is ~1.8M records but filtering to subsection 03 + deductibility code 1
+// reduces this to ~300-400k rows — full national coverage within Railway disk limits.
 // Source: https://www.irs.gov/charities-non-profits/exempt-organizations-business-master-file-extract-eo-bmf
-const IRS_BMF_STATES = ['wy', 'ms', 'al', 'fl', 'ga', 'la'];
-const IRS_BMF_BASE = 'https://www.irs.gov/pub/irs-soi/eo_';
-const IRS_BMF_URLS = IRS_BMF_STATES.map(s => `${IRS_BMF_BASE}${s}.csv`);
+const IRS_BMF_URLS = [
+  'https://www.irs.gov/pub/irs-soi/eo1.csv',
+  'https://www.irs.gov/pub/irs-soi/eo2.csv',
+  'https://www.irs.gov/pub/irs-soi/eo3.csv',
+  'https://www.irs.gov/pub/irs-soi/eo4.csv',
+];
 
 // EO BMF fixed column order (IRS spec, 0-indexed)
 const C_EIN = 0, C_NAME = 1, C_CITY = 4, C_STATE = 5;
@@ -198,10 +200,14 @@ export class IrsVerificationService {
         // STATUS 01 = Unconditional Exemption, 02 = Conditional — both active
         const isRevoked = cols[C_STATUS] !== '01' && cols[C_STATUS] !== '02';
 
+        // Only store 501(c)(3) public charities with tax-deductible contributions.
+        // Revocations still processed for any org already in DB (updateMany is a no-op for unknown EINs).
+        const is501c3Deductible = cols[C_SUBSECTION] === '03' && cols[C_DEDUCTIBILITY] === '1';
+
         if (isRevoked) {
           revokedEins.push(ein);
           if (revokedEins.length >= 500) await flushRevocations();
-        } else {
+        } else if (is501c3Deductible) {
           createBatch.push({ ein, legalName, city, state, subsectionCode, deductibilityCode, isRevoked: false });
           if (createBatch.length >= 500) await flushCreates();
         }
