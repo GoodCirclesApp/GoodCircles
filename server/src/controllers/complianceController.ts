@@ -16,13 +16,25 @@ export const checkNonprofitStatus = async (req: AuthRequest, res: Response) => {
 };
 
 export const triggerIrsSync = async (req: AuthRequest, res: Response) => {
-  const result = await IrsVerificationService.syncFromIrs();
-  res.json(result);
+  const already = await IrsVerificationService.isSyncInProgress();
+  if (already) {
+    return res.json({ success: false, message: 'Sync already in progress. Check sync logs for status.' });
+  }
+  // Fire-and-forget — the full IRS BMF download takes 10-30 min
+  IrsVerificationService.syncFromIrs().catch(err =>
+    console.error('[IRS Sync] Triggered sync error:', err)
+  );
+  res.json({ success: true, message: 'IRS EO BMF sync started in background. Check sync logs for progress.' });
 };
 
 export const getIrsSyncLogs = async (req: AuthRequest, res: Response) => {
   const logs = await IrsVerificationService.getRecentSyncLogs();
   res.json(logs);
+};
+
+export const getIrsSyncStatus = async (req: AuthRequest, res: Response) => {
+  const status = await IrsVerificationService.getSyncStatus();
+  res.json(status);
 };
 
 // ── Compliance Dashboard ──────────────────────────────────────────────────────

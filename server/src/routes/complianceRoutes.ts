@@ -9,6 +9,7 @@ router.use(authenticateToken);
 router.get('/irs/check/:ein', complianceController.checkNonprofitStatus);
 router.post('/irs/sync', complianceController.triggerIrsSync);
 router.get('/irs/sync-logs', complianceController.getIrsSyncLogs);
+router.get('/irs/sync-status', complianceController.getIrsSyncStatus);
 
 // Compliance deadline calendar
 router.get('/deadlines', complianceController.getDeadlines);

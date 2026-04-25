@@ -253,6 +253,31 @@ export class IrsVerificationService {
     }
   }
 
+  static async isSyncInProgress(): Promise<boolean> {
+    const running = await prisma.irsSyncLog.findFirst({
+      where: { status: 'IN_PROGRESS' },
+    });
+    return !!running;
+  }
+
+  static async getSyncStatus(): Promise<{
+    inProgress: boolean;
+    recordCount: number;
+    lastSync: string | null;
+    lastStatus: string | null;
+  }> {
+    const [recordCount, lastLog] = await Promise.all([
+      prisma.irsNonprofitRecord.count(),
+      prisma.irsSyncLog.findFirst({ orderBy: { syncDate: 'desc' } }),
+    ]);
+    return {
+      inProgress: lastLog?.status === 'IN_PROGRESS',
+      recordCount,
+      lastSync: lastLog?.syncDate.toISOString() ?? null,
+      lastStatus: lastLog?.status ?? null,
+    };
+  }
+
   static async getRecentSyncLogs(limit = 10) {
     return prisma.irsSyncLog.findMany({
       orderBy: { syncDate: 'desc' },

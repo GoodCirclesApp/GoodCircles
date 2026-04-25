@@ -420,13 +420,29 @@ function IrsVerification() {
   const [result, setResult] = useState<any>(null);
   const [searched, setSearched] = useState(false);
   const [logs, setLogs] = useState<any[]>([]);
+  const [syncStatus, setSyncStatus] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
 
+  const loadLogsAndStatus = async () => {
+    const [logsData, statusData] = await Promise.all([
+      safeFetch<any[]>(`${BASE}/irs/sync-logs`, { headers: authHeaders() }),
+      safeFetch<any>(`${BASE}/irs/sync-status`, { headers: authHeaders() }),
+    ]);
+    if (Array.isArray(logsData)) setLogs(logsData);
+    if (statusData) setSyncStatus(statusData);
+  };
+
   useEffect(() => {
-    safeFetch<any[]>(`${BASE}/irs/sync-logs`, { headers: authHeaders() })
-      .then(data => { if (Array.isArray(data)) setLogs(data); });
+    loadLogsAndStatus();
   }, []);
+
+  // Poll every 15 s while a sync is in progress so the UI reflects progress
+  useEffect(() => {
+    if (!syncStatus?.inProgress) return;
+    const interval = setInterval(loadLogsAndStatus, 15000);
+    return () => clearInterval(interval);
+  }, [syncStatus?.inProgress]);
 
   const checkEin = async () => {
     if (!ein.trim()) return;
@@ -441,61 +457,102 @@ function IrsVerification() {
   const triggerSync = async () => {
     setSyncing(true);
     const data = await safeFetch<any>(`${BASE}/irs/sync`, { method: 'POST', headers: authHeaders() });
-    alert(data?.message || 'Sync triggered.');
     setSyncing(false);
+    await loadLogsAndStatus();
+    if (data?.message) alert(data.message);
   };
+
+  const statusColor = (s: string) =>
+    s === 'SUCCESS' ? 'bg-emerald-500' : s === 'IN_PROGRESS' ? 'bg-amber-400 animate-pulse' : s === 'FAILED' ? 'bg-red-500' : 'bg-slate-300';
 
   return (
     <div className="space-y-6">
+
+      {/* Sync status banner */}
+      {syncStatus && (
+        <div className={`p-4 rounded-2xl border flex items-center gap-4 ${syncStatus.inProgress ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-100'}`}>
+          <span className={`w-3 h-3 rounded-full shrink-0 ${syncStatus.inProgress ? 'bg-amber-400 animate-pulse' : 'bg-emerald-500'}`} />
+          <div className="flex-1">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+              {syncStatus.inProgress ? 'IRS Sync In Progress…' : 'IRS Database'}
+            </p>
+            <p className="text-sm font-black text-black">
+              {syncStatus.recordCount.toLocaleString()} organizations on file
+              {syncStatus.lastSync && ` · Last sync ${format(new Date(syncStatus.lastSync), 'MMM d, yyyy')}`}
+            </p>
+            {syncStatus.inProgress && (
+              <p className="text-[10px] text-amber-700 font-medium mt-0.5">
+                Download in progress — EIN lookups will be partial until complete. Refreshes automatically.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* EIN lookup */}
       <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Check Nonprofit EIN</p>
         <div className="flex gap-3">
           <input
             value={ein}
             onChange={e => setEin(e.target.value)}
-            placeholder="XX-XXXXXXX"
+            onKeyDown={e => e.key === 'Enter' && checkEin()}
+            placeholder="XX-XXXXXXX or XXXXXXXXX"
             className="flex-1 px-4 py-3 rounded-xl border border-slate-200 font-bold text-sm outline-none focus:ring-2 focus:ring-[#7851A9]/20"
           />
           <button onClick={checkEin} disabled={loading} className="px-5 py-3 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#7851A9] disabled:opacity-50 transition-all">
             {loading ? '...' : 'Check'}
           </button>
         </div>
-        {searched && !result && (
-          <div className="p-4 rounded-xl border bg-amber-50 border-amber-200">
-            <p className="text-xs font-black uppercase tracking-widest text-amber-700">
-              ⚠ Lookup unavailable
-            </p>
-            <p className="text-[10px] text-amber-700 font-medium mt-1">
-              The IRS verification table is not set up yet. This will resolve after the next Railway deploy runs <code>prisma db push</code>.
-            </p>
-          </div>
-        )}
-        {result && (
-          <div className={`p-4 rounded-xl border ${result.verified ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
-            <p className={`text-xs font-black uppercase tracking-widest ${result.verified ? 'text-emerald-700' : 'text-red-700'}`}>
-              {result.verified ? '✓ Verified' : result.isRevoked ? '✗ Revoked' : '✗ Not Found'}
+        {searched && result && (
+          <div className={`p-4 rounded-xl border ${result.verified ? 'bg-emerald-50 border-emerald-200' : result.isRevoked ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-200'}`}>
+            <p className={`text-xs font-black uppercase tracking-widest ${result.verified ? 'text-emerald-700' : result.isRevoked ? 'text-red-700' : 'text-slate-500'}`}>
+              {result.verified ? '✓ Verified & In Good Standing' : result.isRevoked ? '✗ Tax-Exempt Status Revoked' : '— Not Found in IRS Records'}
             </p>
             {result.legalName && <p className="text-sm font-black text-black mt-1">{result.legalName}</p>}
+            {result.deductibilityCode && (
+              <p className="text-[10px] font-bold text-slate-500 mt-0.5">
+                Deductibility: {result.deductibilityCode === 'PC' ? 'Tax-deductible (501c3)' : result.deductibilityCode === 'TREATY' ? 'Treaty deductible' : 'Not deductible'}
+              </p>
+            )}
             {result.note && <p className="text-[10px] text-slate-600 font-medium mt-1">{result.note}</p>}
+          </div>
+        )}
+        {searched && !result && (
+          <div className="p-4 rounded-xl border bg-red-50 border-red-200">
+            <p className="text-xs font-black uppercase tracking-widest text-red-700">⚠ Lookup Failed</p>
+            <p className="text-[10px] text-red-700 font-medium mt-1">Could not reach the verification service.</p>
           </div>
         )}
       </div>
 
+      {/* Sync logs */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Sync Logs</p>
-          <button onClick={triggerSync} disabled={syncing} className="flex items-center gap-1.5 px-3 py-2 bg-black text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-[#7851A9] disabled:opacity-50 transition-all">
-            <RefreshCw className="w-3 h-3" /> {syncing ? 'Syncing...' : 'Trigger Sync'}
+          <button
+            onClick={triggerSync}
+            disabled={syncing || syncStatus?.inProgress}
+            className="flex items-center gap-1.5 px-3 py-2 bg-black text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-[#7851A9] disabled:opacity-50 transition-all"
+          >
+            <RefreshCw className={`w-3 h-3 ${syncStatus?.inProgress ? 'animate-spin' : ''}`} />
+            {syncStatus?.inProgress ? 'Sync Running…' : syncing ? 'Starting…' : 'Trigger Sync'}
           </button>
         </div>
         {logs.length === 0
-          ? <p className="text-[10px] text-slate-400 font-medium">No sync logs yet.</p>
+          ? <p className="text-[10px] text-slate-400 font-medium">No sync logs yet. Trigger a sync to populate the IRS database.</p>
           : logs.map(log => (
             <div key={log.id} className="p-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3">
-              <span className={`w-2 h-2 rounded-full shrink-0 ${log.status === 'SUCCESS' ? 'bg-emerald-500' : 'bg-amber-400'}`} />
+              <span className={`w-2 h-2 rounded-full shrink-0 ${statusColor(log.status)}`} />
               <div className="flex-1">
-                <p className="text-[10px] font-black text-black">{log.status} — {log.recordsTotal} records</p>
+                <p className="text-[10px] font-black text-black">
+                  {log.status}
+                  {log.recordsTotal > 0 && ` — ${Number(log.recordsTotal).toLocaleString()} records`}
+                  {log.newRecords > 0 && ` (+${Number(log.newRecords).toLocaleString()} new)`}
+                  {log.revokedCount > 0 && ` · ${log.revokedCount} revoked`}
+                </p>
                 <p className="text-[9px] text-slate-400">{format(new Date(log.syncDate), 'MMM d, yyyy h:mm a')}</p>
+                {log.error && <p className="text-[9px] text-red-500 mt-0.5">{log.error}</p>}
               </div>
             </div>
           ))
