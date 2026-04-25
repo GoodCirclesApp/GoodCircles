@@ -248,8 +248,11 @@ function MissionReport() {
           <p className="text-2xl font-black text-black">${Number(report.totalNonprofitDonations || 0).toLocaleString()}</p>
         </div>
         <div className="p-5 bg-[#7851A9]/5 rounded-2xl border border-[#7851A9]/10">
-          <p className="text-[10px] font-black uppercase tracking-widest text-[#7851A9] mb-1">Platform Fees Retained</p>
-          <p className="text-2xl font-black text-black">${Number(report.totalPlatformFees || 0).toLocaleString()}</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-[#7851A9] mb-1">Platform Profit Share (1%)</p>
+          <p className="text-2xl font-black text-black">${Number(report.totalPlatformProfitShare || 0).toLocaleString()}</p>
+          {Number(report.totalProcessingFees || 0) > 0 && (
+            <p className="text-[9px] text-slate-400 font-medium mt-1">+ ${Number(report.totalProcessingFees).toLocaleString()} processing fees</p>
+          )}
         </div>
         <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Mission Multiplier Ratio</p>
