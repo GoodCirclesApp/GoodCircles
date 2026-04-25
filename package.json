@@ -39,6 +39,7 @@
     "recharts": "^3.7.0",
     "resend": "^3.5.0",
     "stripe": "^20.4.1",
+    "tsx": "^4.21.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -54,7 +55,6 @@
     "concurrently": "^9.2.1",
     "prisma": "^5.22.0",
     "tailwindcss": "^4.2.2",
-    "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
     "vitest": "^4.1.0"
