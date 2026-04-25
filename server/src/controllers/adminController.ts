@@ -220,6 +220,46 @@ const SEED_NONPROFITS = [
   { email: 'info@housingforward.org', firstName: 'Housing', lastName: 'Forward', orgName: 'Housing Forward', ein: '56-7890123', missionStatement: 'We work to end homelessness and housing insecurity through emergency shelter, transitional housing, and long-term support services.' },
 ];
 
+export const getPendingNonprofits = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const pending = await prisma.nonprofit.findMany({
+    where: { isVerified: false },
+    include: { user: { select: { email: true, createdAt: true } } },
+    orderBy: { user: { createdAt: 'desc' } },
+  });
+  res.json(pending);
+};
+
+export const verifyNonprofitOverride = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const { nonprofitId } = req.params;
+  const nonprofit = await prisma.nonprofit.findUnique({ where: { id: nonprofitId } });
+  if (!nonprofit) return res.status(404).json({ error: 'Nonprofit not found' });
+
+  const updated = await prisma.nonprofit.update({
+    where: { id: nonprofitId },
+    data: { isVerified: true, verifiedAt: new Date() },
+  });
+  console.log(`[Admin] Manual IRS override: ${updated.orgName} (EIN ${updated.ein}) verified by admin ${req.user.id}`);
+  res.json({ success: true, nonprofit: updated });
+};
+
+export const revokeNonprofitVerification = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const { nonprofitId } = req.params;
+  const updated = await prisma.nonprofit.update({
+    where: { id: nonprofitId },
+    data: { isVerified: false, verifiedAt: null },
+  });
+  res.json({ success: true, nonprofit: updated });
+};
+
 export const seedNonprofits = async (req: AuthRequest, res: Response) => {
   if (!req.user || req.user.role !== 'PLATFORM') {
     return res.status(403).json({ error: 'Unauthorized' });

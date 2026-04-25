@@ -4,6 +4,7 @@ import { prisma } from '../lib/prisma';
 import { z } from 'zod';
 import { generateTokens, verifyRefreshToken } from '../utils/tokenUtils';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { IrsVerificationService } from '../services/irsVerificationService';
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -30,6 +31,20 @@ export const register = async (req: Request, res: Response) => {
   try {
     const data = registerSchema.parse(req.body);
     const passwordHash = await bcrypt.hash(data.password, 12);
+
+    // IRS verification gate for nonprofit registrations
+    let irsVerified = false;
+    let irsNote: string | undefined;
+    if (data.role === 'NONPROFIT' && data.ein) {
+      const irsResult = await IrsVerificationService.checkNonprofit(data.ein);
+      if (irsResult.isRevoked) {
+        return res.status(400).json({
+          error: 'Registration rejected: This organization\'s IRS tax-exempt status has been revoked. Contact admin@goodcircles.org if you believe this is an error.',
+        });
+      }
+      irsVerified = irsResult.verified;
+      irsNote = irsResult.note;
+    }
 
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
@@ -80,6 +95,8 @@ export const register = async (req: Request, res: Response) => {
             orgName: data.orgName,
             ein: data.ein,
             missionStatement: data.missionStatement,
+            isVerified: irsVerified,
+            verifiedAt: irsVerified ? new Date() : null,
           },
         });
       } else if (data.role === 'CDFI') {
@@ -100,13 +117,19 @@ export const register = async (req: Request, res: Response) => {
       return user;
     });
 
-    // FIXED: Changed 'user' to 'result' in the lines below
     const tokens = generateTokens(result);
-    res.json({ 
-      user: { id: result.id, email: result.email, role: result.role }, 
-      token: tokens.accessToken, 
-      refreshToken: tokens.refreshToken 
-    });
+    const response: Record<string, any> = {
+      user: { id: result.id, email: result.email, role: result.role },
+      token: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
+    if (data.role === 'NONPROFIT') {
+      response.irsVerified = irsVerified;
+      response.irsNote = irsVerified
+        ? irsNote
+        : 'Your EIN could not be automatically verified against IRS records. Your account is pending admin review before your organization appears in the platform. Contact admin@goodcircles.org to expedite.';
+    }
+    res.json(response);
   } catch (err: any) {
     if (err instanceof z.ZodError) {
       return res.status(400).json({ error: err.issues });

@@ -24,6 +24,11 @@ router.get('/sentinel-flags', adminController.getSentinelFlags);
 router.post('/sentinel-flags/:flagId/resolve', adminController.resolveSentinelFlag);
 router.post('/seed-nonprofits', adminController.seedNonprofits);
 
+// Nonprofit IRS verification management
+router.get('/nonprofits/pending', adminController.getPendingNonprofits);
+router.post('/nonprofits/:nonprofitId/verify', adminController.verifyNonprofitOverride);
+router.post('/nonprofits/:nonprofitId/revoke-verification', adminController.revokeNonprofitVerification);
+
 // Mock data management
 router.get('/mock-data/status', mockDataController.getMockDataStatus);
 router.post('/mock-data/load', mockDataController.loadMockData);
