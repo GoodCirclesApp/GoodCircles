@@ -14,4 +14,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD ["node_modules/.bin/tsx", "server.ts"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss --skip-generate; NODE_ENV=production node_modules/.bin/tsx server.ts"]

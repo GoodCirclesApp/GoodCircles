@@ -1,8 +1,6 @@
 [build]
-builder = "nixpacks"
-buildCommand = "npm run build"
+builder = "dockerfile"
 
 [deploy]
-startCommand = "npx prisma db push --accept-data-loss --skip-generate; NODE_ENV=production node_modules/.bin/tsx server.ts"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
