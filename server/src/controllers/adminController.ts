@@ -227,7 +227,7 @@ export const getPendingNonprofits = async (req: AuthRequest, res: Response) => {
   const pending = await prisma.nonprofit.findMany({
     where: { isVerified: false },
     include: { user: { select: { email: true, createdAt: true } } },
-    orderBy: { user: { createdAt: 'desc' } },
+    orderBy: { createdAt: 'desc' },
   });
   res.json(pending);
 };
@@ -236,7 +236,7 @@ export const verifyNonprofitOverride = async (req: AuthRequest, res: Response) =
   if (!req.user || req.user.role !== 'PLATFORM') {
     return res.status(403).json({ error: 'Unauthorized' });
   }
-  const { nonprofitId } = req.params;
+  const nonprofitId = req.params.nonprofitId as string;
   const nonprofit = await prisma.nonprofit.findUnique({ where: { id: nonprofitId } });
   if (!nonprofit) return res.status(404).json({ error: 'Nonprofit not found' });
 
@@ -252,7 +252,7 @@ export const revokeNonprofitVerification = async (req: AuthRequest, res: Respons
   if (!req.user || req.user.role !== 'PLATFORM') {
     return res.status(403).json({ error: 'Unauthorized' });
   }
-  const { nonprofitId } = req.params;
+  const nonprofitId = req.params.nonprofitId as string;
   const updated = await prisma.nonprofit.update({
     where: { id: nonprofitId },
     data: { isVerified: false, verifiedAt: null },
