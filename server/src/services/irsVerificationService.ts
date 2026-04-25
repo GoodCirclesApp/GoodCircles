@@ -116,6 +116,13 @@ export class IrsVerificationService {
       }
 
       const totalRecords = totalNew + totalUpdated;
+
+      // Cross-reference revoked IRS records against enrolled platform nonprofits
+      const platformRevoked = await IrsVerificationService.syncRevokedPlatformNonprofits();
+      if (platformRevoked > 0) {
+        console.warn(`[IRS Sync] ${platformRevoked} enrolled nonprofit(s) had IRS status revoked — isVerified set to false.`);
+      }
+
       await prisma.irsSyncLog.update({
         where: { id: logEntry.id },
         data: { status: 'SUCCESS', recordsTotal: totalRecords, newRecords: totalNew, updatedRecords: totalUpdated, revokedCount: totalRevoked },
@@ -217,6 +224,40 @@ export class IrsVerificationService {
     await flushCreates();
     await flushRevocations();
     return { newRecords, updatedRecords, revokedCount };
+  }
+
+  // After each sync, find enrolled nonprofits whose IRS status is now revoked
+  // and strip their isVerified flag so they stop receiving donations.
+  private static async syncRevokedPlatformNonprofits(): Promise<number> {
+    // Fetch all currently-verified enrolled nonprofits
+    const enrolled = await prisma.nonprofit.findMany({
+      where: { isVerified: true },
+      select: { id: true, ein: true, orgName: true },
+    });
+    if (!enrolled.length) return 0;
+
+    // Build set of revoked EINs from IRS records (always normalized 9-digit)
+    const revokedIrsEins = new Set(
+      (await prisma.irsNonprofitRecord.findMany({
+        where: { isRevoked: true },
+        select: { ein: true },
+      })).map(r => r.ein)
+    );
+
+    // Match by normalizing the enrolled EIN to the same format
+    const toRevoke = enrolled.filter(np => revokedIrsEins.has(normalizeEin(np.ein)));
+    if (!toRevoke.length) return 0;
+
+    await prisma.nonprofit.updateMany({
+      where: { id: { in: toRevoke.map(np => np.id) } },
+      data: { isVerified: false, verifiedAt: null },
+    });
+
+    for (const np of toRevoke) {
+      console.warn(`[IRS Sync] REVOKED: ${np.orgName} (EIN ${np.ein}) — removed from platform donation picker.`);
+    }
+
+    return toRevoke.length;
   }
 
   // Seeds platform-registered nonprofits as an immediate fallback so EIN
