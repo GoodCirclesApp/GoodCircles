@@ -1,13 +1,13 @@
 import { prisma } from '../lib/prisma';
 
-// IRS EO BMF (Exempt Organizations Business Master File) — four regional CSV files.
-// Published monthly: https://www.irs.gov/charities-non-profits/exempt-organizations-business-master-file-extract-eo-bmf
-const IRS_BMF_URLS = [
-  'https://www.irs.gov/pub/irs-soi/eo1.csv',
-  'https://www.irs.gov/pub/irs-soi/eo2.csv',
-  'https://www.irs.gov/pub/irs-soi/eo3.csv',
-  'https://www.irs.gov/pub/irs-soi/eo4.csv',
-];
+// IRS EO BMF — state-specific files for Good Circles' operating states only.
+// Full national files (~1.8M records) exceed Railway Postgres disk allocation.
+// These 6 states cover all current CCV jurisdictions + Wyoming home state.
+// To expand coverage add state codes to this list (e.g. 'ca', 'tx', 'ny').
+// Source: https://www.irs.gov/charities-non-profits/exempt-organizations-business-master-file-extract-eo-bmf
+const IRS_BMF_STATES = ['wy', 'ms', 'al', 'fl', 'ga', 'la'];
+const IRS_BMF_BASE = 'https://www.irs.gov/pub/irs-soi/eo_';
+const IRS_BMF_URLS = IRS_BMF_STATES.map(s => `${IRS_BMF_BASE}${s}.csv`);
 
 // EO BMF fixed column order (IRS spec, 0-indexed)
 const C_EIN = 0, C_NAME = 1, C_CITY = 4, C_STATE = 5;
