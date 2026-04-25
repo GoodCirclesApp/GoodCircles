@@ -1,4 +1,5 @@
 import { prisma } from '../lib/prisma';
+import { CcvContractService } from './ccvContractService';
 
 // Pre-loaded filing deadlines for Good Circles L3C. Seeded on first admin access.
 // Recurrence: YEARLY:MM-DD (e.g. YEARLY:04-15 = April 15 each year)
@@ -201,6 +202,25 @@ export class ComplianceService {
     });
   }
 
+  // Generates the legally required consumer-facing disclosure text for a campaign.
+  static generateDisclosureText(
+    nonprofitName: string,
+    ein: string,
+    mechanism: string,
+    donationAmount: number | null,
+    donationPercentage: number | null,
+  ): string {
+    if (mechanism === 'PER_UNIT') {
+      return `For every item purchased, $${donationAmount?.toFixed(2)} will be donated to ${nonprofitName} (EIN ${ein}), a registered 501(c)(3) nonprofit.`;
+    }
+    if (mechanism === 'FLAT') {
+      return `A donation of $${donationAmount?.toFixed(2)} from this transaction will be made to ${nonprofitName} (EIN ${ein}), a registered 501(c)(3) nonprofit.`;
+    }
+    // PERCENTAGE (default)
+    const pct = ((donationPercentage ?? 0.1) * 100).toFixed(0);
+    return `${pct}% of the proceeds from this purchase will be donated to ${nonprofitName} (EIN ${ein}), a registered 501(c)(3) nonprofit.`;
+  }
+
   static async createCcvCampaign(data: {
     name: string;
     nonprofitId: string;
@@ -208,24 +228,40 @@ export class ComplianceService {
     startDate: Date;
     endDate?: Date;
     notes?: string;
+    donationMechanism?: string;
+    donationAmount?: number;
+    donationPercentage?: number;
+    transferDeadlineDays?: number;
   }) {
     const { startDate, endDate, states } = data;
+    const mechanism = data.donationMechanism ?? 'PERCENTAGE';
+    const transferDays = data.transferDeadlineDays ?? 90;
 
-    // Auto-calculate state-specific deadlines
-    const msNoticeFiledAt: Date | null = states.includes('MS')
-      ? new Date(startDate.getTime() - 7 * 24 * 60 * 60 * 1000) // 7 days before
-      : null;
-    const alRegistrationFiledAt: Date | null = states.includes('AL')
-      ? new Date(startDate.getTime() - 15 * 24 * 60 * 60 * 1000) // 15 days before
-      : null;
-    const msReportDueAt: Date | null = endDate && states.includes('MS')
-      ? new Date(endDate.getTime() + 30 * 24 * 60 * 60 * 1000) // 30 days after
-      : null;
-    const alClosingDueAt: Date | null = endDate && states.includes('AL')
-      ? new Date(endDate.getTime() + 90 * 24 * 60 * 60 * 1000) // 90 days after
-      : null;
+    // Auto-calculate state-specific filing deadlines
+    const msNoticeFiledAt = states.includes('MS')
+      ? new Date(startDate.getTime() - 7 * 86400000) : null;
+    const alRegistrationFiledAt = states.includes('AL')
+      ? new Date(startDate.getTime() - 15 * 86400000) : null;
+    const msReportDueAt = endDate && states.includes('MS')
+      ? new Date(endDate.getTime() + 30 * 86400000) : null;
+    const alClosingDueAt = endDate && states.includes('AL')
+      ? new Date(endDate.getTime() + 90 * 86400000) : null;
+    const transferDueAt = endDate
+      ? new Date(endDate.getTime() + transferDays * 86400000) : null;
 
-    return prisma.ccvCampaign.create({
+    // Fetch nonprofit for disclosure text
+    const nonprofit = await prisma.nonprofit.findUnique({
+      where: { id: data.nonprofitId },
+      select: { orgName: true, ein: true },
+    });
+    if (!nonprofit) throw new Error('Nonprofit not found');
+
+    const disclosureText = ComplianceService.generateDisclosureText(
+      nonprofit.orgName, nonprofit.ein, mechanism,
+      data.donationAmount ?? null, data.donationPercentage ?? null,
+    );
+
+    const campaign = await prisma.ccvCampaign.create({
       data: {
         name: data.name,
         nonprofitId: data.nonprofitId,
@@ -233,12 +269,135 @@ export class ComplianceService {
         startDate,
         endDate: endDate ?? null,
         notes: data.notes ?? null,
+        donationMechanism: mechanism,
+        donationAmount: data.donationAmount ?? null,
+        donationPercentage: data.donationPercentage ?? null,
+        disclosureText,
+        transferDeadlineDays: transferDays,
+        transferDueAt,
         msNoticeFiledAt,
         alRegistrationFiledAt,
         msReportDueAt,
         alClosingDueAt,
       },
     });
+
+    // Auto-generate and store the co-venturer contract
+    await CcvContractService.generateAndStore(campaign.id);
+
+    return campaign;
+  }
+
+  // Campaign ledger: gross sales, accrued donation liability, and transfer status
+  // for a given campaign (queried by nonprofit + date range since transactions
+  // don't carry a campaignId — campaigns operate at the nonprofit level).
+  static async getCampaignLedger(campaignId: string) {
+    const campaign = await prisma.ccvCampaign.findUnique({
+      where: { id: campaignId },
+      include: { nonprofit: { select: { orgName: true, ein: true } }, contract: true },
+    });
+    if (!campaign) throw new Error('Campaign not found');
+
+    const endDate = campaign.endDate ?? new Date();
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        nonprofitId: campaign.nonprofitId,
+        createdAt: { gte: campaign.startDate, lte: endDate },
+        ...(campaign.states.length > 0 && {
+          consumerState: { in: campaign.states },
+        }),
+      },
+      select: {
+        id: true, grossAmount: true, nonprofitShare: true,
+        platformFee: true, createdAt: true, consumerState: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    const totals = transactions.reduce(
+      (acc, t) => ({
+        grossSales: acc.grossSales + Number(t.grossAmount),
+        accruedDonation: acc.accruedDonation + Number(t.nonprofitShare),
+        txCount: acc.txCount + 1,
+      }),
+      { grossSales: 0, accruedDonation: 0, txCount: 0 },
+    );
+
+    return {
+      campaign: {
+        id: campaign.id,
+        name: campaign.name,
+        nonprofit: campaign.nonprofit,
+        states: campaign.states,
+        startDate: campaign.startDate,
+        endDate: campaign.endDate,
+        donationMechanism: campaign.donationMechanism,
+        disclosureText: campaign.disclosureText,
+        transferDueAt: campaign.transferDueAt,
+        campaignStatus: campaign.campaignStatus,
+        contractHash: campaign.contract?.contentHash ?? null,
+      },
+      ledger: {
+        ...totals,
+        grossSales: totals.grossSales.toFixed(2),
+        accruedDonation: totals.accruedDonation.toFixed(2),
+        transferDueAt: campaign.transferDueAt?.toISOString() ?? null,
+        transferStatus: campaign.campaignStatus === 'CLOSED' ? 'TRANSFERRED' : 'PENDING',
+      },
+      transactions,
+    };
+  }
+
+  // CT-6CF style report — mirrors California's Commercial Co-Venturer annual form.
+  // Admin prints this and files with CA AG within 90 days of campaign end.
+  static async getCt6cfReport(campaignId: string) {
+    const ledger = await ComplianceService.getCampaignLedger(campaignId);
+    const { campaign, ledger: l, transactions } = ledger;
+
+    const byState: Record<string, { grossSales: number; donated: number; txCount: number }> = {};
+    for (const t of transactions) {
+      const s = t.consumerState ?? 'UNKNOWN';
+      if (!byState[s]) byState[s] = { grossSales: 0, donated: 0, txCount: 0 };
+      byState[s].grossSales += Number(t.grossAmount);
+      byState[s].donated += Number(t.nonprofitShare);
+      byState[s].txCount += 1;
+    }
+
+    return {
+      formType: 'CT-6CF (Filing-Ready Export)',
+      generatedAt: new Date().toISOString(),
+      retentionNote: 'Retain this record for a minimum of 7 years per California law.',
+
+      section1_coVenturer: {
+        name: 'Good Circles L3C',
+        state: 'Wyoming',
+        type: 'Limited Liability Company (L3C)',
+      },
+      section2_charity: {
+        name: campaign.nonprofit.orgName,
+        ein: campaign.nonprofit.ein,
+      },
+      section3_campaign: {
+        name: campaign.name,
+        campaignId: campaign.id,
+        startDate: campaign.startDate?.toISOString().split('T')[0],
+        endDate: campaign.endDate?.toISOString().split('T')[0] ?? 'Ongoing',
+        donationMechanism: campaign.donationMechanism,
+        disclosureText: campaign.disclosureText,
+        geographicScope: campaign.states.join(', '),
+      },
+      section4_financials: {
+        totalGrossSales: l.grossSales,
+        totalDonatedToCharity: l.accruedDonation,
+        totalTransactions: l.txCount,
+        byState,
+      },
+      section5_transfer: {
+        transferDueDate: l.transferDueAt,
+        transferStatus: l.transferStatus,
+        contractHash: campaign.contractHash,
+      },
+    };
   }
 
   static async generateQuarterlyMissionReport() {

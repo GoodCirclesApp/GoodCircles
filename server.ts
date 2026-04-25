@@ -45,6 +45,7 @@ import { NettingService } from './server/src/services/nettingService';
 import { CoopService } from './server/src/services/coopService';
 import { RegionalMetricsService } from './server/src/services/regionalMetricsService';
 import { IrsVerificationService } from './server/src/services/irsVerificationService';
+import { StateStandingService } from './server/src/services/stateStandingService';
 
 dotenv.config();
 
@@ -209,6 +210,16 @@ async function startServer() {
     setInterval(() => {
       IrsVerificationService.syncIfStale().catch(err =>
         console.error('[Server] IRS monthly sync error:', err)
+      );
+    }, 24 * 60 * 60 * 1000);
+
+    // State AG standing: syncs CA registry monthly if CA_AG_REGISTRY_URL is configured
+    StateStandingService.syncIfStale().catch(err =>
+      console.error('[Server] State standing stale-check error:', err)
+    );
+    setInterval(() => {
+      StateStandingService.syncIfStale().catch(err =>
+        console.error('[Server] State standing monthly sync error:', err)
       );
     }, 24 * 60 * 60 * 1000);
 

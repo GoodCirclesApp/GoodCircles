@@ -1392,6 +1392,24 @@ model CcvCampaign {
   states                 String[]
   startDate              DateTime
   endDate                DateTime?
+
+  // Donation mechanism — mandatory CCV disclosure fields
+  donationMechanism      String    @default("PERCENTAGE")  // PER_UNIT | PERCENTAGE | FLAT
+  donationAmount         Decimal?  @db.Decimal(10, 2)      // dollar amount for PER_UNIT or FLAT
+  donationPercentage     Decimal?  @db.Decimal(5, 4)       // e.g. 0.10 for 10% — for PERCENTAGE
+  disclosureText         String?   // auto-generated at creation, stored for audit
+
+  // Transfer deadline tracking
+  transferDeadlineDays   Int       @default(90)
+  transferDueAt          DateTime?
+
+  // Campaign lifecycle
+  campaignStatus         String    @default("ACTIVE")  // DRAFT | ACTIVE | ENDED | CLOSED | PAUSED
+
+  // Contract linkage
+  contract               CcvContract?
+
+  // State filing deadlines
   msNoticeFiledAt        DateTime?
   alRegistrationFiledAt  DateTime?
   laConsentObtainedAt    DateTime?
@@ -1401,6 +1419,7 @@ model CcvCampaign {
   alClosingDueAt         DateTime?
   msReportFiledAt        DateTime?
   alClosingFiledAt       DateTime?
+
   isActive               Boolean   @default(true)
   notes                  String?
   createdAt              DateTime  @default(now())
@@ -1408,6 +1427,52 @@ model CcvCampaign {
 
   @@index([nonprofitId])
   @@index([startDate])
+  @@index([campaignStatus])
+}
+
+model CcvContract {
+  id                  String      @id @default(uuid())
+  campaignId          String      @unique
+  campaign            CcvCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contractText        String      // full legal text — hash below ensures immutability
+  contentHash         String      // SHA-256 of contractText
+  platformSignedAt    DateTime?
+  nonprofitSignedAt   DateTime?
+  platformSignature   String?     // token/identifier of platform signatory
+  nonprofitSignature  String?     // token/identifier of nonprofit signatory
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  @@index([campaignId])
+}
+
+model StateStandingRecord {
+  id                 String   @id @default(uuid())
+  ein                String
+  registrationState  String   // "CA" | "NY" etc.
+  legalName          String?
+  registrationNumber String?
+  status             String   // ACTIVE | DELINQUENT | SUSPENDED | REVOKED | EXEMPT
+  lastSyncedAt       DateTime @default(now())
+  createdAt          DateTime @default(now())
+
+  @@unique([ein, registrationState])
+  @@index([ein])
+  @@index([registrationState])
+  @@index([status])
+}
+
+model StateStandingSyncLog {
+  id           String   @id @default(uuid())
+  state        String
+  syncDate     DateTime @default(now())
+  status       String   // IN_PROGRESS | SUCCESS | FAILED
+  recordsTotal Int      @default(0)
+  flaggedCount Int      @default(0)
+  error        String?
+
+  @@index([syncDate])
+  @@index([state])
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

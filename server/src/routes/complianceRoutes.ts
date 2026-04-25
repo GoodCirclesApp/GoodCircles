@@ -18,6 +18,15 @@ router.post('/deadlines/:id/complete', complianceController.markDeadlineComplete
 // CCV campaign tracker
 router.get('/ccv-campaigns', complianceController.getCcvCampaigns);
 router.post('/ccv-campaigns', complianceController.createCcvCampaign);
+router.get('/ccv-campaigns/:campaignId/ledger', complianceController.getCampaignLedger);
+router.get('/ccv-campaigns/:campaignId/ct6cf', complianceController.getCt6cfReport);
+router.get('/ccv-campaigns/:campaignId/contract', complianceController.getCampaignContract);
+router.post('/ccv-campaigns/:campaignId/contract/sign', complianceController.signCampaignContract);
+
+// State AG standing
+router.get('/state-standing/status', complianceController.getStateStandingStatus);
+router.post('/state-standing/sync', complianceController.triggerStateStandingSync);
+router.get('/state-standing/:ein', complianceController.checkNonprofitStateStanding);
 
 // Mission report
 router.get('/mission-report', complianceController.getMissionReport);

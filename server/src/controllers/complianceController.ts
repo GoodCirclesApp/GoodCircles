@@ -3,6 +3,8 @@ import { AuthRequest } from '../middleware/authMiddleware';
 import { ComplianceService } from '../services/complianceService';
 import { TaxReportingService } from '../services/taxReportingService';
 import { IrsVerificationService } from '../services/irsVerificationService';
+import { CcvContractService } from '../services/ccvContractService';
+import { StateStandingService } from '../services/stateStandingService';
 import { z } from 'zod';
 
 // ── IRS Verification ──────────────────────────────────────────────────────────
@@ -65,10 +67,14 @@ export const createCcvCampaign = async (req: AuthRequest, res: Response) => {
   const schema = z.object({
     name: z.string().min(2),
     nonprofitId: z.string().uuid(),
-    states: z.array(z.enum(['MS', 'AL', 'LA', 'FL', 'GA'])).min(1),
+    states: z.array(z.enum(['MS', 'AL', 'LA', 'FL', 'GA', 'CA', 'NY', 'TX', 'WY'])).min(1),
     startDate: z.string().datetime(),
     endDate: z.string().datetime().optional(),
     notes: z.string().optional(),
+    donationMechanism: z.enum(['PER_UNIT', 'PERCENTAGE', 'FLAT']).optional(),
+    donationAmount: z.number().positive().optional(),
+    donationPercentage: z.number().min(0).max(1).optional(),
+    transferDeadlineDays: z.number().int().min(1).max(365).optional(),
   });
 
   try {
@@ -81,6 +87,83 @@ export const createCcvCampaign = async (req: AuthRequest, res: Response) => {
     res.status(201).json(campaign);
   } catch (err: any) {
     if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getCampaignLedger = async (req: AuthRequest, res: Response) => {
+  try {
+    const campaignId = req.params.campaignId as string;
+    const ledger = await ComplianceService.getCampaignLedger(campaignId);
+    res.json(ledger);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getCt6cfReport = async (req: AuthRequest, res: Response) => {
+  try {
+    const campaignId = req.params.campaignId as string;
+    const report = await ComplianceService.getCt6cfReport(campaignId);
+    res.json(report);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getCampaignContract = async (req: AuthRequest, res: Response) => {
+  try {
+    const campaignId = req.params.campaignId as string;
+    const contract = await CcvContractService.getContract(campaignId);
+    if (!contract) return res.status(404).json({ error: 'Contract not found' });
+    res.json(contract);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const signCampaignContract = async (req: AuthRequest, res: Response) => {
+  const schema = z.object({
+    party: z.enum(['platform', 'nonprofit']),
+    signatureToken: z.string().min(1),
+  });
+  try {
+    const campaignId = req.params.campaignId as string;
+    const { party, signatureToken } = schema.parse(req.body);
+    const contract = await CcvContractService.recordSignature(campaignId, party, signatureToken);
+    res.json(contract);
+  } catch (err: any) {
+    if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getStateStandingStatus = async (req: AuthRequest, res: Response) => {
+  try {
+    const status = await StateStandingService.getSyncStatus();
+    res.json(status);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const triggerStateStandingSync = async (req: AuthRequest, res: Response) => {
+  const state = (req.query.state as string ?? 'CA').toUpperCase();
+  if (state !== 'CA') {
+    return res.status(400).json({ error: 'Only CA state standing sync is currently supported.' });
+  }
+  StateStandingService.syncCalifornia().catch(err =>
+    console.error('[StateStanding] Triggered sync error:', err)
+  );
+  res.json({ success: true, message: `${state} AG registry sync started in background.` });
+};
+
+export const checkNonprofitStateStanding = async (req: AuthRequest, res: Response) => {
+  try {
+    const ein = req.params.ein as string;
+    const standing = await StateStandingService.checkStanding(ein);
+    res.json({ ein, standing });
+  } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 };
