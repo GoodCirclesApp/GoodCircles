@@ -325,7 +325,7 @@ export const clearIrsData = async (req: AuthRequest, res: Response) => {
   }
   await prisma.$executeRaw`TRUNCATE TABLE "IrsNonprofitRecord"`;
   await prisma.irsSyncLog.deleteMany({});
-  await prisma.$executeRaw`VACUUM "IrsNonprofitRecord"`;
+  await prisma.$executeRaw`CHECKPOINT`; // flush WAL to disk so Railway volume meter updates
   console.log(`[Admin] IRS data cleared by ${req.user.id}`);
   res.json({ success: true, message: 'IRS records cleared. Trigger a new sync from the Compliance dashboard.' });
 };
