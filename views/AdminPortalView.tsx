@@ -341,6 +341,96 @@ const DEMO_HEALTH = {
   ],
 };
 
+const DatabaseMaintenance = () => {
+  const [diskData, setDiskData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [clearing, setClearing] = useState(false);
+  const [clearResult, setClearResult] = useState<string | null>(null);
+
+  const loadDisk = async () => {
+    setLoading(true);
+    try {
+      const data = await adminService.getDiskUsage();
+      setDiskData(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearIrs = async () => {
+    if (!window.confirm('This will delete all IRS records and sync logs. You will need to trigger a fresh sync. Continue?')) return;
+    setClearing(true);
+    setClearResult(null);
+    try {
+      const result = await adminService.clearIrsData();
+      setClearResult(result.message);
+      await loadDisk();
+    } catch (e: any) {
+      setClearResult('Error: ' + e.message);
+    } finally {
+      setClearing(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h4 className="text-lg font-bold">Database Maintenance</h4>
+          <p className="text-sm text-slate-400 mt-0.5">Monitor disk usage and clear data when Railway storage is full.</p>
+        </div>
+        <button onClick={loadDisk} disabled={loading} className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-sm font-bold transition-colors disabled:opacity-50">
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          Check Disk
+        </button>
+      </div>
+
+      {diskData && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-xl">
+            <Database className="w-4 h-4 text-slate-400" />
+            <span className="text-sm font-bold text-slate-700">Total DB size: {diskData.totalDatabaseSize}</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="pb-2 font-bold text-slate-500 text-xs uppercase tracking-wider">Table</th>
+                  <th className="pb-2 font-bold text-slate-500 text-xs uppercase tracking-wider text-right">Size</th>
+                  <th className="pb-2 font-bold text-slate-500 text-xs uppercase tracking-wider text-right">Rows</th>
+                </tr>
+              </thead>
+              <tbody>
+                {diskData.tables.map((t: any) => (
+                  <tr key={t.table} className="border-b border-slate-50">
+                    <td className="py-2 font-mono text-xs text-slate-600">{t.table}</td>
+                    <td className="py-2 text-right font-bold text-slate-700">{t.total_size}</td>
+                    <td className="py-2 text-right text-slate-400">{t.live_rows.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {clearResult && (
+        <div className="px-4 py-3 bg-emerald-50 border border-emerald-100 rounded-xl text-sm font-medium text-emerald-700">
+          {clearResult}
+        </div>
+      )}
+
+      <div className="pt-2 border-t border-slate-100">
+        <button onClick={clearIrs} disabled={clearing} className="flex items-center gap-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-sm font-bold transition-colors disabled:opacity-50">
+          {clearing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <AlertCircle className="w-4 h-4" />}
+          {clearing ? 'Clearing…' : 'Clear IRS Data (Free Disk Space)'}
+        </button>
+        <p className="text-xs text-slate-400 mt-2">Removes all IRS records and sync logs. Trigger a fresh sync from the Compliance tab afterward.</p>
+      </div>
+    </div>
+  );
+};
+
 const SystemHealth = () => {
   const [health, setHealth] = useState<any>(null);
   useEffect(() => { adminService.getSystemHealth().then(setHealth); }, []);
@@ -355,6 +445,7 @@ const SystemHealth = () => {
           <span className="text-xs font-black uppercase tracking-widest text-amber-700">Demo Data — Live metrics will appear after deployment</span>
         </div>
       )}
+      <DatabaseMaintenance />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6"><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">API Performance</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{activeHealth.apiResponseTime}ms</span><span className="text-emerald-500 text-sm font-bold mb-1">Healthy</span></div><p className="text-slate-400 text-sm mt-2">Average response time across all endpoints</p></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Error Rate</h4><div className="flex items-end gap-2"><span className="text-4xl font-black">{(activeHealth.errorRate * 100).toFixed(2)}%</span><span className="text-emerald-500 text-sm font-bold mb-1">Normal</span></div><p className="text-slate-400 text-sm mt-2">Percentage of failed requests in last 24h</p></div></div><div className="bg-white p-6 rounded-2xl border border-slate-100"><h4 className="text-lg font-bold mb-6">Scheduled Jobs</h4><div className="space-y-4">{activeHealth.jobs.map((job: any) => (<div key={job.name} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl"><div className="flex items-center gap-3"><div className={`w-2 h-2 rounded-full ${job.status === 'SUCCESS' ? 'bg-emerald-500' : 'bg-rose-500'}`} /><span className="font-bold">{job.name}</span></div><div className="text-xs text-slate-400">Last run: {new Date(job.lastRun).toLocaleString()}</div></div>))}</div></div>
     </div>
   );
