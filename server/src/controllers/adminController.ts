@@ -296,3 +296,36 @@ export const seedNonprofits = async (req: AuthRequest, res: Response) => {
 
   res.json({ message: 'Nonprofit seed complete', results });
 };
+
+export const getDiskUsage = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const tables = await prisma.$queryRaw<{ table: string; total_size: string; live_rows: bigint }[]>`
+    SELECT
+      relname AS table,
+      pg_size_pretty(pg_total_relation_size(relid)) AS total_size,
+      n_live_tup AS live_rows
+    FROM pg_stat_user_tables
+    ORDER BY pg_total_relation_size(relid) DESC
+    LIMIT 15
+  `;
+  const dbSize = await prisma.$queryRaw<{ total_db_size: string }[]>`
+    SELECT pg_size_pretty(pg_database_size(current_database())) AS total_db_size
+  `;
+  res.json({
+    totalDatabaseSize: dbSize[0]?.total_db_size,
+    tables: tables.map(t => ({ ...t, live_rows: Number(t.live_rows) })),
+  });
+};
+
+export const clearIrsData = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  await prisma.$executeRaw`TRUNCATE TABLE "IrsNonprofitRecord"`;
+  await prisma.irsSyncLog.deleteMany({});
+  await prisma.$executeRaw`VACUUM "IrsNonprofitRecord"`;
+  console.log(`[Admin] IRS data cleared by ${req.user.id}`);
+  res.json({ success: true, message: 'IRS records cleared. Trigger a new sync from the Compliance dashboard.' });
+};

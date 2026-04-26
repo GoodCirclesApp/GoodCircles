@@ -29,6 +29,10 @@ router.get('/nonprofits/pending', adminController.getPendingNonprofits);
 router.post('/nonprofits/:nonprofitId/verify', adminController.verifyNonprofitOverride);
 router.post('/nonprofits/:nonprofitId/revoke-verification', adminController.revokeNonprofitVerification);
 
+// Database disk usage & maintenance
+router.get('/disk-usage', adminController.getDiskUsage);
+router.post('/irs/clear', adminController.clearIrsData);
+
 // Mock data management
 router.get('/mock-data/status', mockDataController.getMockDataStatus);
 router.post('/mock-data/load', mockDataController.loadMockData);
