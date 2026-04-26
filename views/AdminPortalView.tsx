@@ -27,7 +27,8 @@ import {
   Link,
   ShieldAlert,
   ThumbsUp,
-  ThumbsDown
+  ThumbsDown,
+  Landmark
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { adminService } from '../services/adminService';
@@ -558,12 +559,145 @@ const PriceSentinelReview = () => {
   );
 };
 
+// ── CDFI Partner Management ──────────────────────────────────────────────────
+
+const STATUS_STYLES: Record<string, string> = {
+  applied:   'bg-amber-50 text-amber-700',
+  active:    'bg-emerald-50 text-emerald-700',
+  suspended: 'bg-red-50 text-red-500',
+  inactive:  'bg-slate-100 text-slate-500',
+};
+
+const CdfiManagement = () => {
+  const [cdfis, setCdfis] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [working, setWorking] = useState<string | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    try { setCdfis(await adminService.getCdfiApplicants()); }
+    catch { setCdfis([]); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const activate = async (id: string) => {
+    setWorking(id);
+    try { await adminService.activateCdfi(id); await load(); }
+    catch (err: any) { alert(err.message); }
+    finally { setWorking(null); }
+  };
+
+  const deactivate = async (id: string) => {
+    if (!window.confirm('Suspend this CDFI partner? They will lose access to the portal.')) return;
+    setWorking(id);
+    try { await adminService.deactivateCdfi(id); await load(); }
+    catch (err: any) { alert(err.message); }
+    finally { setWorking(null); }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-xl font-black italic uppercase tracking-tighter">CDFI Partner Management</h3>
+          <p className="text-xs text-slate-400 font-medium mt-1">Review applicants and activate CDFI accounts to enable the partner portal and first-loss fund.</p>
+        </div>
+        <button onClick={load} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
+          <RefreshCw className="w-4 h-4 text-slate-400" />
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-16">
+          <div className="w-8 h-8 border-4 border-emerald-600/20 border-t-emerald-600 rounded-full animate-spin" />
+        </div>
+      ) : cdfis.length === 0 ? (
+        <div className="p-12 text-center border-2 border-dashed border-slate-100 rounded-[2rem]">
+          <Landmark className="w-10 h-10 text-slate-200 mx-auto mb-3" />
+          <p className="text-slate-400 font-bold">No CDFI applicants yet.</p>
+          <p className="text-xs text-slate-300 font-medium mt-1">CDFIs register through the signup flow and appear here for review.</p>
+        </div>
+      ) : (
+        <div className="bg-white border border-slate-100 rounded-[2rem] overflow-hidden">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-slate-50">
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Organization</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Certification #</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Regions</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Applied</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cdfis.map((cdfi: any) => (
+                <tr key={cdfi.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4">
+                    <p className="font-black text-sm">{cdfi.orgName}</p>
+                    <p className="text-xs text-slate-400 font-medium">{cdfi.user?.email}</p>
+                  </td>
+                  <td className="px-6 py-4 font-mono text-xs text-slate-600">{cdfi.cdfiCertificationNumber}</td>
+                  <td className="px-6 py-4 text-xs text-slate-500 font-medium">
+                    {(() => {
+                      try {
+                        const r = JSON.parse(cdfi.lendingRegions || '[]');
+                        return Array.isArray(r) && r.length > 0 ? r.join(', ') : '—';
+                      } catch { return cdfi.lendingRegions || '—'; }
+                    })()}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${STATUS_STYLES[cdfi.partnershipStatus] ?? 'bg-slate-100 text-slate-500'}`}>
+                      {cdfi.partnershipStatus}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-xs text-slate-400 font-medium">
+                    {new Date(cdfi.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex gap-2">
+                      {cdfi.partnershipStatus !== 'active' && (
+                        <button
+                          onClick={() => activate(cdfi.id)}
+                          disabled={working === cdfi.id}
+                          className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all disabled:opacity-40"
+                        >
+                          {working === cdfi.id ? '…' : 'Activate'}
+                        </button>
+                      )}
+                      {cdfi.partnershipStatus === 'active' && (
+                        <button
+                          onClick={() => deactivate(cdfi.id)}
+                          disabled={working === cdfi.id}
+                          className="px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-40"
+                        >
+                          {working === cdfi.id ? '…' : 'Suspend'}
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div className="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-xs text-blue-700 font-medium">
+        <strong>Activation</strong> creates the CDFI's first-loss reserve fund, sets status to <em>active</em>, and unlocks the CDFI Partner Portal. The CDFI must log in after activation for the portal to show live data.
+      </div>
+    </div>
+  );
+};
+
 // Main View
 
 type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
-  | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE';
+  | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -585,6 +719,7 @@ export const AdminPortalView: React.FC = () => {
     { id: 'AFFILIATE', label: 'Affiliate Marketplace', icon: Link },
     { id: 'SENTINEL', label: 'Price Sentinel', icon: ShieldAlert },
     { id: 'COMPLIANCE', label: 'L3C Compliance', icon: Scale },
+    { id: 'CDFI_MGMT', label: 'CDFI Partners', icon: Landmark },
   ];
 
   const renderContent = () => {
@@ -603,6 +738,7 @@ export const AdminPortalView: React.FC = () => {
       case 'AFFILIATE': return <AdminAffiliateDashboard />;
       case 'SENTINEL': return <PriceSentinelReview />;
       case 'COMPLIANCE': return <ComplianceDashboard />;
+      case 'CDFI_MGMT': return <CdfiManagement />;
       default: return <SystemDashboard />;
     }
   };

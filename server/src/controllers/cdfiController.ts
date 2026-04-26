@@ -3,6 +3,7 @@ import { CDFIService } from '../services/cdfiService';
 import { AIUnderwritingService } from '../services/aiUnderwritingService';
 import { CdfiPackagingService } from '../services/cdfiPackagingService';
 import { FfiecGeocodingService } from '../services/ffiecGeocodingService';
+import { prisma } from '../lib/prisma';
 
 export const getDashboard = async (req: Request, res: Response) => {
   const cdfiId = req.params.id as string; // In a real app, this would come from the authenticated user's CDFI record
@@ -114,6 +115,66 @@ export const geocodeMerchant = async (req: Request, res: Response) => {
   try {
     const result = await FfiecGeocodingService.geocodeMerchant(merchantId);
     res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Update CDFI profile settings (target tracts, threshold, TLR column mapping)
+export const updateCdfiSettings = async (req: Request, res: Response) => {
+  const cdfiId = req.params.id as string;
+  const { targetCensusTracts, milestoneThreshold, reportingFrequency, tlrColumnMapping } = req.body;
+  try {
+    const updated = await prisma.cDFIPartner.update({
+      where: { id: cdfiId },
+      data: {
+        ...(targetCensusTracts !== undefined && { targetCensusTracts }),
+        ...(milestoneThreshold !== undefined && { milestoneThreshold: Number(milestoneThreshold) }),
+        ...(reportingFrequency !== undefined && { reportingFrequency }),
+        ...(tlrColumnMapping !== undefined && { tlrColumnMapping }),
+      },
+    });
+    res.json(updated);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Activate a CDFI and auto-create their first-loss pool fund
+export const activateCdfi = async (req: Request, res: Response) => {
+  const cdfiId = req.params.id as string;
+  try {
+    const cdfi = await prisma.cDFIPartner.findUnique({ where: { id: cdfiId } });
+    if (!cdfi) return res.status(404).json({ error: 'CDFI not found' });
+
+    // Auto-create first-loss pool fund if not already linked
+    let firstLossPoolId = cdfi.firstLossPoolId;
+    if (!firstLossPoolId) {
+      const fund = await prisma.communityFund.create({
+        data: {
+          name: `${cdfi.orgName} — First-Loss Reserve`,
+          type: 'cdfi_first_loss',
+          cdfiPartnerId: cdfiId,
+          totalCapital: 0,
+          deployedCapital: 0,
+          isActive: true,
+          activatedAt: new Date(),
+        },
+      });
+      firstLossPoolId = fund.id;
+    }
+
+    const updated = await prisma.cDFIPartner.update({
+      where: { id: cdfiId },
+      data: {
+        partnershipStatus: 'active',
+        activatedAt: new Date(),
+        firstLossPoolId,
+      },
+    });
+
+    console.log(`[CDFI] Activated ${cdfi.orgName} — first-loss pool: ${firstLossPoolId}`);
+    res.json({ success: true, cdfi: updated, firstLossPoolId });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

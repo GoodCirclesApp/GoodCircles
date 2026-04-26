@@ -190,6 +190,7 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
         merchant: true,
         nonprofit: true,
         electedNonprofit: true,
+        cdfiPartner: true,
       }
     });
     if (!user) return res.status(404).json({ error: 'User not found' });

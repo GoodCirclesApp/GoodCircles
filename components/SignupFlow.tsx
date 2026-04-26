@@ -11,7 +11,9 @@ interface Props {
   onMerchantOnboarding: () => void;
 }
 
-const ROLE_CONFIG: Record<'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT', {
+type SignupRole = 'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT' | 'CDFI';
+
+const ROLE_CONFIG: Record<SignupRole, {
   label: string;
   icon: React.ReactNode;
   tagline: string;
@@ -55,19 +57,36 @@ const ROLE_CONFIG: Record<'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT', {
       </svg>
     ),
   },
+  CDFI: {
+    label: 'CDFI',
+    tagline: 'Deploy capital in underserved communities.',
+    perks: ['Auto-matched merchant pipeline', 'AI loan underwriting', 'TLR reporting & first-loss pool'],
+    accent: 'text-blue-600',
+    bg: 'bg-blue-50 border-blue-200',
+    icon: (
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+      </svg>
+    ),
+  },
 };
 
 export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }) => {
-  const [role, setRole] = useState<'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT'>('NEIGHBOR');
+  const [role, setRole] = useState<SignupRole>('NEIGHBOR');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [taxId, setTaxId] = useState('');
+  // CDFI-specific
+  const [cdfiCertNumber, setCdfiCertNumber] = useState('');
+  const [lendingRegions, setLendingRegions] = useState('');
+
   const [selectedNonprofit, setSelectedNonprofit] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showNonprofitSelector, setShowNonprofitSelector] = useState(false);
+  const [cdfiSuccess, setCdfiSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,14 +98,8 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
     }
 
     if (role === 'NEIGHBOR' && !showNonprofitSelector) {
-      if (password !== confirmPassword) {
-        setError('Passwords do not match. Please re-enter.');
-        return;
-      }
-      if (password.length < 8) {
-        setError('Password must be at least 8 characters.');
-        return;
-      }
+      if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
+      if (password.length < 8) { setError('Password must be at least 8 characters.'); return; }
       setShowNonprofitSelector(true);
       return;
     }
@@ -96,15 +109,8 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match. Please re-enter.');
-      return;
-    }
-
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      return;
-    }
+    if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
+    if (password.length < 8) { setError('Password must be at least 8 characters.'); return; }
 
     setIsLoading(true);
 
@@ -122,23 +128,47 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
       }
     }
 
+    if (role === 'CDFI') {
+      if (!name.trim()) { setError('Organization name is required.'); setIsLoading(false); return; }
+      if (!cdfiCertNumber.trim()) { setError('CDFI certification number is required.'); setIsLoading(false); return; }
+    }
+
     try {
+      const regions = lendingRegions
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
       const finalUser = await authService.register({
         email,
         name,
-        role,
+        role: role as UserRole,
         password,
         ...(role === 'NEIGHBOR' && { electedNonprofitId: selectedNonprofit }),
         ...(role === 'NONPROFIT' && { orgName: name, ein: taxId }),
+        ...(role === 'CDFI' && {
+          cdfiOrgName: name,
+          cdfiCertificationNumber: cdfiCertNumber,
+          lendingRegions: regions.length > 0 ? regions : undefined,
+        }),
       });
+
       if (finalUser && finalUser.user) {
         WelcomeEmailService.startSequence({
           id: finalUser.user.id,
           email: finalUser.user.email,
           firstName: name.split(' ')[0],
-          role,
+          role: role as UserRole,
         });
       }
+
+      if (role === 'CDFI') {
+        // CDFI accounts require admin activation — show confirmation, don't auto-login
+        setCdfiSuccess(true);
+        setIsLoading(false);
+        return;
+      }
+
       await onComplete(email, password);
     } catch (err: any) {
       console.error('Signup Error:', err);
@@ -148,28 +178,43 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
     }
   };
 
+  // CDFI success screen
+  if (cdfiSuccess) {
+    return (
+      <div className="text-center space-y-6 py-4">
+        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto">
+          <svg className="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p className="text-xl font-black italic uppercase tracking-tighter text-blue-700">Application Received</p>
+          <p className="text-sm text-slate-500 font-medium mt-3 leading-relaxed">
+            Your CDFI partner application has been submitted. A GoodCircles admin will review your certification and activate your account within 1–2 business days.
+          </p>
+          <p className="text-xs text-slate-400 font-bold mt-4 uppercase tracking-widest">
+            You'll receive an email at {email} once your account is activated.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Nonprofit selector step
   if (showNonprofitSelector && role === 'NEIGHBOR') {
     return (
       <div className="space-y-6">
         <div>
-          <h3 className="text-sm font-black text-[#7851A9] uppercase tracking-wider mb-2">
-            Choose Your Cause
-          </h3>
+          <h3 className="text-sm font-black text-[#7851A9] uppercase tracking-wider mb-2">Choose Your Cause</h3>
           <p className="text-xs text-slate-600 font-medium mb-6">
             Select a nonprofit to receive 10% of your purchases. You can change this anytime in your profile.
           </p>
         </div>
-        <NonprofitSelector
-          onSelect={setSelectedNonprofit}
-          currentNonprofitId={selectedNonprofit}
-        />
+        <NonprofitSelector onSelect={setSelectedNonprofit} currentNonprofitId={selectedNonprofit} />
         <div className="flex gap-3 pt-4">
           <button
             type="button"
-            onClick={() => {
-              setShowNonprofitSelector(false);
-              setSelectedNonprofit('');
-            }}
+            onClick={() => { setShowNonprofitSelector(false); setSelectedNonprofit(''); }}
             className="flex-1 py-4 rounded-2xl bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all"
           >
             ← Back
@@ -191,11 +236,11 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
 
   return (
     <div className="space-y-6">
-      {/* Role Carousel */}
+      {/* Role selector — 2×2 grid */}
       <div className="space-y-2">
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">I am joining as a…</p>
-        <div className="grid grid-cols-3 gap-2">
-          {(Object.keys(ROLE_CONFIG) as Array<'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT'>).map(r => {
+        <div className="grid grid-cols-2 gap-2">
+          {(Object.keys(ROLE_CONFIG) as SignupRole[]).map(r => {
             const c = ROLE_CONFIG[r];
             const isActive = role === r;
             return (
@@ -214,9 +259,7 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
                     : 'border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200 hover:text-slate-600'
                 }`}
               >
-                <span className={isActive ? c.accent : 'text-slate-300'}>
-                  {c.icon}
-                </span>
+                <span className={isActive ? c.accent : 'text-slate-300'}>{c.icon}</span>
                 <span className="text-[10px] font-black uppercase tracking-widest leading-none">{c.label}</span>
                 {isActive && (
                   <motion.div
@@ -230,7 +273,7 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
           })}
         </div>
 
-        {/* Role value proposition card */}
+        {/* Role value proposition */}
         <AnimatePresence mode="wait">
           <motion.div
             key={role}
@@ -249,6 +292,11 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
                 </li>
               ))}
             </ul>
+            {role === 'CDFI' && (
+              <p className="text-[10px] font-bold text-blue-500 mt-3 uppercase tracking-widest">
+                ✦ Requires admin activation after signup
+              </p>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -256,11 +304,16 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
       {/* Form */}
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <SignupInput
-          label={role === 'NONPROFIT' ? 'Legal Organization Name' : 'Full Name'}
+          label={role === 'NONPROFIT' ? 'Legal Organization Name' : role === 'CDFI' ? 'CDFI Organization Name' : 'Full Name'}
           value={name}
           onChange={setName}
-          placeholder={role === 'NONPROFIT' ? 'Community Food Bank, Inc.' : 'Jane Smith'}
+          placeholder={
+            role === 'NONPROFIT' ? 'Community Food Bank, Inc.'
+            : role === 'CDFI' ? 'Tri-County Community Development Fund'
+            : 'Jane Smith'
+          }
         />
+
         {role === 'NONPROFIT' && (
           <SignupInput
             label="EIN / Tax-ID Number"
@@ -270,12 +323,36 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
             helper="✦ Sentinel AI verification active"
           />
         )}
+
+        {role === 'CDFI' && (
+          <>
+            <SignupInput
+              label="CDFI Certification Number"
+              value={cdfiCertNumber}
+              onChange={setCdfiCertNumber}
+              placeholder="e.g. CDFI-2024-00123"
+              helper="✦ Issued by the CDFI Fund (U.S. Treasury)"
+            />
+            <SignupInput
+              label="Lending Regions (optional)"
+              value={lendingRegions}
+              onChange={setLendingRegions}
+              placeholder="e.g. MS, AL, TN"
+              helper="Comma-separated state abbreviations"
+            />
+          </>
+        )}
+
         <SignupInput
           label="Email Address"
           type="email"
           value={email}
           onChange={setEmail}
-          placeholder={role === 'NONPROFIT' ? 'contact@yourorg.org' : 'you@email.com'}
+          placeholder={
+            role === 'NONPROFIT' ? 'contact@yourorg.org'
+            : role === 'CDFI' ? 'contact@yourcdfi.org'
+            : 'you@email.com'
+          }
         />
         <SignupInput
           label="Password"
@@ -293,11 +370,13 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
             placeholder="Re-enter your password"
           />
         )}
+
         {error && (
           <div className="p-4 bg-red-50 text-red-500 text-xs font-bold rounded-2xl border border-red-100">
             {error}
           </div>
         )}
+
         <button
           type="submit"
           disabled={isLoading}
@@ -307,6 +386,8 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
             ? 'Creating your account...'
             : role === 'MERCHANT'
             ? 'Begin Merchant Onboarding →'
+            : role === 'CDFI'
+            ? 'Submit CDFI Application →'
             : 'Continue to Select Cause →'}
         </button>
       </form>
@@ -325,9 +406,7 @@ const SignupInput = ({
   helper?: string;
 }) => (
   <div className="space-y-2">
-    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">
-      {label}
-    </label>
+    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{label}</label>
     <input
       type={type}
       required
@@ -337,9 +416,7 @@ const SignupInput = ({
       placeholder={placeholder}
     />
     {helper && (
-      <p className="text-[10px] font-bold text-[#7851A9] uppercase tracking-widest ml-2 opacity-70">
-        {helper}
-      </p>
+      <p className="text-[10px] font-bold text-[#7851A9] uppercase tracking-widest ml-2 opacity-70">{helper}</p>
     )}
   </div>
 );

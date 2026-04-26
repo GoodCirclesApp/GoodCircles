@@ -1,5 +1,6 @@
 import { prisma } from '../lib/prisma';
 import { Decimal } from '@prisma/client/runtime/library';
+import { CdfiPackagingService } from './cdfiPackagingService';
 
 const DAF_SPLIT = new Decimal('0.50');
 
@@ -126,7 +127,7 @@ export class AffiliateService {
     const dafShare = commTotal.mul(DAF_SPLIT);
     const platformShare = commTotal.sub(dafShare);
 
-    return prisma.affiliateConversion.create({
+    const conversion = await prisma.affiliateConversion.create({
       data: {
         listingId: data.listingId,
         clickId: data.clickId ?? null,
@@ -140,6 +141,14 @@ export class AffiliateService {
         confirmedAt: new Date(),
       },
     });
+
+    // Allocate 5% of commTotal to CDFI first-loss pool (fire-and-forget)
+    CdfiPackagingService.allocateFirstLossContribution(
+      conversion.id,
+      Number(commTotal),
+    ).catch(err => console.error('[Affiliate] First-loss allocation error:', err));
+
+    return conversion;
   }
 
   static getConversions() {

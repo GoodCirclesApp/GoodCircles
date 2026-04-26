@@ -26,6 +26,10 @@ export const authService = {
     businessName?: string;
     businessType?: 'GOODS' | 'SERVICES' | 'BOTH';
     referralCode?: string;
+    // CDFI fields
+    cdfiOrgName?: string;
+    cdfiCertificationNumber?: string;
+    lendingRegions?: string[];
   }): Promise<AuthResponse> {
     const nameParts = (userData.name || '').trim().split(/\s+/);
     const firstName = nameParts[0] || 'Beta';
@@ -43,11 +47,20 @@ export const authService = {
       orgName: userData.orgName,
       ein: userData.ein,
       missionStatement: userData.missionStatement,
+      cdfiOrgName: userData.cdfiOrgName,
+      cdfiCertificationNumber: userData.cdfiCertificationNumber,
+      lendingRegions: userData.lendingRegions,
     });
   },
 
   async getProfile(): Promise<User> {
-    return apiClient.get<User>('/auth/profile');
+    const data = await apiClient.get<any>('/auth/profile');
+    return {
+      ...data,
+      cdfiId: data.cdfiPartner?.id ?? data.cdfiId,
+      merchantId: data.merchant?.id ?? data.merchantId,
+      nonprofitId: data.nonprofit?.id ?? data.nonprofitId,
+    };
   },
 
   async updateProfile(userData: Partial<User>): Promise<User> {

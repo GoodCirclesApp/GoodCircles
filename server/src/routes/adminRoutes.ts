@@ -33,6 +33,11 @@ router.post('/nonprofits/:nonprofitId/revoke-verification', adminController.revo
 router.get('/disk-usage', adminController.getDiskUsage);
 router.post('/irs/clear', adminController.clearIrsData);
 
+// CDFI partner management
+router.get('/cdfi', adminController.getCdfiApplicants);
+router.post('/cdfi/:cdfiId/activate', adminController.activateCdfiPartner);
+router.post('/cdfi/:cdfiId/deactivate', adminController.deactivateCdfiPartner);
+
 // Mock data management
 router.get('/mock-data/status', mockDataController.getMockDataStatus);
 router.post('/mock-data/load', mockDataController.loadMockData);

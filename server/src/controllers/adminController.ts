@@ -329,3 +329,75 @@ export const clearIrsData = async (req: AuthRequest, res: Response) => {
   console.log(`[Admin] IRS data cleared by ${req.user.id}`);
   res.json({ success: true, message: 'IRS records cleared. Trigger a new sync from the Compliance dashboard.' });
 };
+
+// ── CDFI Partner Management ─────────────────────────────────────────────────
+
+export const getCdfiApplicants = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const cdfis = await prisma.cDFIPartner.findMany({
+    include: { user: { select: { email: true, createdAt: true } } },
+    orderBy: { createdAt: 'desc' },
+  });
+  res.json(cdfis);
+};
+
+export const activateCdfiPartner = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const cdfiId = req.params.cdfiId as string;
+  try {
+    const cdfi = await prisma.cDFIPartner.findUnique({ where: { id: cdfiId } });
+    if (!cdfi) return res.status(404).json({ error: 'CDFI not found' });
+
+    // Auto-create first-loss pool fund if not already linked
+    let firstLossPoolId = (cdfi as any).firstLossPoolId as string | undefined;
+    if (!firstLossPoolId) {
+      const fund = await prisma.communityFund.create({
+        data: {
+          name: `${cdfi.orgName} — First-Loss Reserve`,
+          type: 'cdfi_first_loss',
+          cdfiPartnerId: cdfiId,
+          totalCapital: 0,
+          deployedCapital: 0,
+          isActive: true,
+          activatedAt: new Date(),
+        },
+      });
+      firstLossPoolId = fund.id;
+    }
+
+    const updated = await prisma.cDFIPartner.update({
+      where: { id: cdfiId },
+      data: {
+        partnershipStatus: 'active',
+        activatedAt: new Date(),
+        ...(firstLossPoolId && { firstLossPoolId } as any),
+      },
+    });
+
+    console.log(`[Admin] Activated CDFI ${cdfi.orgName} — first-loss pool: ${firstLossPoolId} by admin ${req.user.id}`);
+    res.json({ success: true, cdfi: updated, firstLossPoolId });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const deactivateCdfiPartner = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const cdfiId = req.params.cdfiId as string;
+  try {
+    const updated = await prisma.cDFIPartner.update({
+      where: { id: cdfiId },
+      data: { partnershipStatus: 'suspended' },
+    });
+    console.log(`[Admin] Suspended CDFI ${cdfiId} by admin ${req.user.id}`);
+    res.json({ success: true, cdfi: updated });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};

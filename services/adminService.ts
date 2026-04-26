@@ -21,4 +21,7 @@ export const adminService = {
   seedNonprofits: () => apiClient.post<any>('/admin/seed-nonprofits', {}),
   getDiskUsage: () => apiClient.get<any>('/admin/disk-usage'),
   clearIrsData: () => apiClient.post<any>('/admin/irs/clear', {}),
+  getCdfiApplicants: () => apiClient.get<any[]>('/admin/cdfi'),
+  activateCdfi: (cdfiId: string) => apiClient.post<any>(`/admin/cdfi/${cdfiId}/activate`, {}),
+  deactivateCdfi: (cdfiId: string) => apiClient.post<any>(`/admin/cdfi/${cdfiId}/deactivate`, {}),
 };

@@ -22,4 +22,8 @@ router.get('/:id/tlr-export', cdfiController.exportTlrCsv);
 // Manual census tract geocode trigger for a merchant
 router.post('/merchants/:merchantId/geocode', cdfiController.geocodeMerchant);
 
+// CDFI profile settings & activation
+router.put('/:id/settings', cdfiController.updateCdfiSettings);
+router.post('/:id/activate', cdfiController.activateCdfi);
+
 export default router;
