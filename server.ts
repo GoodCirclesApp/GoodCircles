@@ -46,6 +46,7 @@ import { CoopService } from './server/src/services/coopService';
 import { RegionalMetricsService } from './server/src/services/regionalMetricsService';
 import { IrsVerificationService } from './server/src/services/irsVerificationService';
 import { StateStandingService } from './server/src/services/stateStandingService';
+import { FfiecGeocodingService } from './server/src/services/ffiecGeocodingService';
 
 dotenv.config();
 
@@ -220,6 +221,13 @@ async function startServer() {
     setInterval(() => {
       StateStandingService.syncIfStale().catch(err =>
         console.error('[Server] State standing monthly sync error:', err)
+      );
+    }, 24 * 60 * 60 * 1000);
+
+    // FFIEC geocoding: nightly batch for merchants missing census tract data (1 req/sec, capped at 100)
+    setInterval(() => {
+      FfiecGeocodingService.geocodeMissingMerchants().catch(err =>
+        console.error('[Server] FFIEC geocoding error:', err)
       );
     }, 24 * 60 * 60 * 1000);
 

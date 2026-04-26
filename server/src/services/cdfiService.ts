@@ -162,11 +162,7 @@ export class CDFIService {
   static async denyApplication(cdfiId: string, deploymentId: string, reason: string) {
     return prisma.fundDeployment.update({
       where: { id: deploymentId },
-      data: {
-        status: 'denied',
-        // Note: I'll use status "denied" which I should have added to the schema.
-        // For now, let's assume it's a valid status.
-      }
+      data: { status: 'defaulted' },
     });
   }
 

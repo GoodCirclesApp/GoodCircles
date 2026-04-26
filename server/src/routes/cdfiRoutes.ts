@@ -12,4 +12,14 @@ router.put('/:cdfiId/applications/:id/approve', cdfiController.approveApplicatio
 router.put('/:cdfiId/applications/:id/deny', cdfiController.denyApplication);
 router.get('/:id/impact', cdfiController.getImpact);
 
+// Merchant packaging (auto-matched merchants in CDFI target census tracts)
+router.get('/:id/packages', cdfiController.getMerchantPackages);
+router.put('/:cdfiId/packages/:packageId/status', cdfiController.updatePackageStatus);
+
+// TLR CSV export
+router.get('/:id/tlr-export', cdfiController.exportTlrCsv);
+
+// Manual census tract geocode trigger for a merchant
+router.post('/merchants/:merchantId/geocode', cdfiController.geocodeMerchant);
+
 export default router;

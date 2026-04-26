@@ -8,6 +8,7 @@ import { DonationReceiptService } from './donationReceiptService';
 import { DonorMilestoneService } from './donorMilestoneService';
 import { CrmWebhookService } from './crmWebhookService';
 import { TaxReportingService } from './taxReportingService';
+import { CdfiPackagingService } from './cdfiPackagingService';
 
 
 
@@ -302,6 +303,7 @@ export class TransactionService {
       committedTx.merchantId,
       Number(committedTx.grossAmount)
     ).catch(() => {});
+    CdfiPackagingService.evaluateMerchantForPackaging(committedTx.merchantId).catch(() => {});
     if (committedTx.paymentMethod === 'INTERNAL' || breakdown.neighborPays.equals(0)) {
       DonationReceiptService.createForTransaction(committedTx.id).catch(() => {});
 
