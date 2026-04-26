@@ -13,7 +13,7 @@ import { FeatureFlagService } from '../services/featureFlagService';
 const betaRegisterSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-  role: z.enum(['NEIGHBOR', 'MERCHANT', 'NONPROFIT']),
+  role: z.enum(['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'CDFI']),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   // Merchant fields
@@ -23,6 +23,10 @@ const betaRegisterSchema = z.object({
   orgName: z.string().optional(),
   ein: z.string().optional(),
   missionStatement: z.string().optional(),
+  // CDFI fields
+  cdfiOrgName: z.string().optional(),
+  cdfiCertificationNumber: z.string().optional(),
+  lendingRegions: z.array(z.string()).optional(),
 });
 
 export const betaRegister = async (req: Request, res: Response) => {
@@ -69,6 +73,19 @@ export const betaRegister = async (req: Request, res: Response) => {
             isVerified: true, // Auto-verified for beta
             verifiedAt: new Date(),
             referralCode: `BETA-${data.orgName.replace(/\s/g, '').slice(0, 6).toUpperCase()}-${Date.now().toString(36).slice(-4)}`,
+          },
+        });
+      } else if (data.role === 'CDFI') {
+        if (!data.cdfiOrgName || !data.cdfiCertificationNumber) {
+          throw new Error('Organization name and certification number required for CDFI registration');
+        }
+        await tx.cDFIPartner.create({
+          data: {
+            userId: user.id,
+            orgName: data.cdfiOrgName,
+            cdfiCertificationNumber: data.cdfiCertificationNumber,
+            lendingRegions: JSON.stringify(data.lendingRegions || []),
+            partnershipStatus: 'applied', // requires admin activation
           },
         });
       }
