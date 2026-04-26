@@ -23,6 +23,7 @@ import bookingRoutes from './server/src/routes/bookingRoutes';
 import dataCoopRoutes from './server/src/routes/dataCoopRoutes';
 import coopRoutes from './server/src/routes/coopRoutes';
 import cdfiRoutes from './server/src/routes/cdfiRoutes';
+import impactRoutes from './server/src/routes/impactRoutes';
 import communityFundRoutes from './server/src/routes/communityFundRoutes';
 import benefitRoutes from './server/src/routes/benefitRoutes';
 import supplyChainRoutes from './server/src/routes/supplyChainRoutes';
@@ -130,6 +131,7 @@ async function startServer() {
   app.use('/api/bookings', bookingRoutes);
   app.use('/api/data-coop', dataCoopRoutes);
   app.use('/api/cdfi', cdfiRoutes);
+  app.use('/api/impact', impactRoutes);
   app.use('/api/community-fund', communityFundRoutes);
   app.use('/api/benefits', benefitRoutes);
   app.use('/api/supply-chain', supplyChainRoutes);
