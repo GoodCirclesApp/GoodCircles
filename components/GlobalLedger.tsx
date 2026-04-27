@@ -90,8 +90,8 @@ export const GlobalLedger: React.FC<Props> = ({ orders, batches = [] }) => {
                     <tr key={o.id} className="hover:bg-slate-50 transition-all group">
                       <td className="py-10 text-xs font-bold text-slate-500">{new Date(o.date).toLocaleDateString()}</td>
                       <td className="py-10 text-xs font-black text-slate-900 font-mono">GC-{o.id?.slice(-6).toUpperCase() || 'N/A'}</td>
-                      <td className="py-10 text-xl font-black text-slate-900 tracking-tighter">${o.subtotal.toFixed(2)}</td>
-                      <td className="py-10 text-xl font-black text-[#7851A9] tracking-tighter">+${o.accounting.donationAmount.toFixed(2)}</td>
+                      <td className="py-10 text-xl font-black text-slate-900 tracking-tighter">${(o.subtotal ?? 0).toFixed(2)}</td>
+                      <td className="py-10 text-xl font-black text-[#7851A9] tracking-tighter">+${(o.accounting?.donationAmount ?? 0).toFixed(2)}</td>
                       <td className="py-10 text-right">
                         <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase ${o.handshakeStatus === 'PENDING' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'}`}>
                           {o.handshakeStatus === 'PENDING' ? 'Escrow' : 'Settled'}
@@ -121,8 +121,8 @@ export const GlobalLedger: React.FC<Props> = ({ orders, batches = [] }) => {
                     <tr key={b.id} className="hover:bg-slate-50 transition-all group">
                       <td className="py-10 text-xs font-black text-slate-900 font-mono">{b.id}</td>
                       <td className="py-10 text-xs font-bold text-slate-500">{new Date(b.startDate).toLocaleDateString()} - {new Date(b.endDate).toLocaleDateString()}</td>
-                      <td className="py-10 text-2xl font-black text-[#7851A9] tracking-tighter">${b.totalImpact.toFixed(2)}</td>
-                      <td className="py-10 text-2xl font-black italic tracking-tighter">${b.netSettlement.toFixed(2)}</td>
+                      <td className="py-10 text-2xl font-black text-[#7851A9] tracking-tighter">${(b.totalImpact ?? 0).toFixed(2)}</td>
+                      <td className="py-10 text-2xl font-black italic tracking-tighter">${(b.netSettlement ?? 0).toFixed(2)}</td>
                       <td className="py-10 text-right">
                          <button 
                            onClick={() => setSelectedBatch(b)}

@@ -24,6 +24,8 @@ import dataCoopRoutes from './server/src/routes/dataCoopRoutes';
 import coopRoutes from './server/src/routes/coopRoutes';
 import cdfiRoutes from './server/src/routes/cdfiRoutes';
 import impactRoutes from './server/src/routes/impactRoutes';
+import leaderboardRoutes from './server/src/routes/leaderboardRoutes';
+import feedRoutes from './server/src/routes/feedRoutes';
 import communityFundRoutes from './server/src/routes/communityFundRoutes';
 import benefitRoutes from './server/src/routes/benefitRoutes';
 import supplyChainRoutes from './server/src/routes/supplyChainRoutes';
@@ -48,6 +50,9 @@ import { RegionalMetricsService } from './server/src/services/regionalMetricsSer
 import { IrsVerificationService } from './server/src/services/irsVerificationService';
 import { StateStandingService } from './server/src/services/stateStandingService';
 import { FfiecGeocodingService } from './server/src/services/ffiecGeocodingService';
+import { FeatureFlagService } from './server/src/services/featureFlagService';
+import { sendNonprofitDailyDigest } from './server/src/services/emailService';
+import { prisma } from './server/src/lib/prisma';
 
 dotenv.config();
 
@@ -132,6 +137,8 @@ async function startServer() {
   app.use('/api/data-coop', dataCoopRoutes);
   app.use('/api/cdfi', cdfiRoutes);
   app.use('/api/impact', impactRoutes);
+  app.use('/api/leaderboard', leaderboardRoutes);
+  app.use('/api/feed', feedRoutes);
   app.use('/api/community-fund', communityFundRoutes);
   app.use('/api/benefits', benefitRoutes);
   app.use('/api/supply-chain', supplyChainRoutes);
@@ -191,6 +198,11 @@ async function startServer() {
     console.log(` │ Server running at http://0.0.0.0:${String(PORT).padEnd(10)}│`);
     console.log(` │ Environment: ${(process.env.NODE_ENV || 'development').padEnd(29)}│`);
     console.log(` └─────────────────────────────────────────────┘\n`);
+
+    // Load feature flags and demo mode from DB
+    FeatureFlagService.loadFromDb()
+      .then(() => console.log('[Server] Feature flags loaded from DB.'))
+      .catch(err => console.error('[Server] Feature flag load error:', err));
 
     // Run background tasks after server starts
     console.log('[Server] Starting background tasks...');
@@ -322,6 +334,75 @@ async function startServer() {
         console.error('[Server] Error expiring governance proposals:', err);
       }
     }, 24 * 60 * 60 * 1000);
+
+    // Nonprofit daily digest: runs once per day, sends digest to nonprofits with donations in last 24h
+    const runNonprofitDigest = async () => {
+      try {
+        const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const groups = await prisma.transaction.groupBy({
+          by: ['nonprofitId'],
+          where: { createdAt: { gte: since } },
+          _sum: { nonprofitShare: true },
+          _count: { id: true },
+        });
+
+        for (const g of groups) {
+          const nonprofit = await prisma.nonprofit.findUnique({
+            where: { id: g.nonprofitId },
+            include: { user: { select: { email: true } } },
+          });
+          if (!nonprofit || !nonprofit.user.email) continue;
+
+          const topMerchants = await prisma.transaction.groupBy({
+            by: ['merchantId'],
+            where: { nonprofitId: g.nonprofitId, createdAt: { gte: since } },
+            _sum: { nonprofitShare: true },
+            orderBy: { _sum: { nonprofitShare: 'desc' } },
+            take: 5,
+          });
+          const merchantIds = topMerchants.map(r => r.merchantId);
+          const merchants = await prisma.merchant.findMany({ where: { id: { in: merchantIds } }, select: { id: true, businessName: true } });
+          const mMap: Record<string, string> = {};
+          merchants.forEach(m => { mMap[m.id] = m.businessName; });
+
+          const now = new Date();
+          const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+          const yearStart = new Date(now.getFullYear(), 0, 1);
+
+          const [monthAgg, yearAgg] = await Promise.all([
+            prisma.transaction.aggregate({ where: { nonprofitId: g.nonprofitId, createdAt: { gte: monthStart } }, _sum: { nonprofitShare: true } }),
+            prisma.transaction.aggregate({ where: { nonprofitId: g.nonprofitId, createdAt: { gte: yearStart } }, _sum: { nonprofitShare: true } }),
+          ]);
+
+          await sendNonprofitDailyDigest({
+            nonprofitEmail: nonprofit.user.email,
+            nonprofitName: nonprofit.orgName,
+            donationCount: g._count.id,
+            totalAmount: Number(g._sum.nonprofitShare ?? 0),
+            topMerchants: topMerchants.map(r => ({ businessName: mMap[r.merchantId] ?? 'Merchant', amount: Number(r._sum.nonprofitShare ?? 0) })),
+            monthTotal: Number(monthAgg._sum.nonprofitShare ?? 0),
+            yearTotal: Number(yearAgg._sum.nonprofitShare ?? 0),
+          });
+
+          await prisma.nonprofitDigestLog.create({
+            data: {
+              nonprofitId: g.nonprofitId,
+              donationCount: g._count.id,
+              totalAmount: Number(g._sum.nonprofitShare ?? 0),
+            },
+          });
+        }
+        if (groups.length > 0) console.log(`[Server] Sent nonprofit digest to ${groups.length} organization(s).`);
+      } catch (err) {
+        console.error('[Server] Nonprofit digest error:', err);
+      }
+    };
+
+    // Run digest daily at ~8am — first run after 10 seconds, then every 24h
+    setTimeout(() => {
+      runNonprofitDigest();
+      setInterval(runNonprofitDigest, 24 * 60 * 60 * 1000);
+    }, 10_000);
 
     // Regional Metrics: Monthly Aggregation
     setInterval(async () => {

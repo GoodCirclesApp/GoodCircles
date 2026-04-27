@@ -226,7 +226,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
         electedNonprofit: true,
       }
     });
-    
+
     const { passwordHash, ...safeUser } = user;
     res.json(safeUser);
   } catch (err: any) {

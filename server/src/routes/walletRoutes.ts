@@ -9,7 +9,8 @@ router.use(authenticateToken);
 router.get('/balance', walletController.getBalance);
 router.get('/credits/balance', walletController.getCreditBalance);
 router.get('/history', walletController.getHistory);
-router.post('/fund', walletController.fundWallet);
+router.post('/fund/intent', walletController.createFundIntent);   // Stripe Elements: create PaymentIntent
 router.post('/withdraw', walletController.withdraw);
+router.post('/qr-token', walletController.generateQrToken);       // HMAC-signed QR token
 
 export default router;

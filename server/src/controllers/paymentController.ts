@@ -5,6 +5,8 @@ import { getStripe, createCheckoutSession } from '../services/stripeService';
 import { calculateDistribution } from '../services/transactionService';
 import { CreditService } from '../services/creditService';
 import { ReferralService } from '../services/referralService';
+import { sendMerchantOrderEmail, sendCustomerReceiptEmail } from '../services/emailService';
+import { completeFundFromWebhook } from './walletController';
 
 
 
@@ -117,6 +119,14 @@ export const handleWebhook = async (req: Request, res: Response) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  // Wallet top-up: card charged, credit wallet now
+  if (event.type === 'payment_intent.succeeded') {
+    const pi = event.data.object as any;
+    if (pi.metadata?.purpose === 'wallet_topup') {
+      await completeFundFromWebhook(pi.id);
+    }
+  }
+
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as any;
     const transactionId = session.metadata.transactionId;
@@ -156,6 +166,54 @@ export const handleWebhook = async (req: Request, res: Response) => {
 
       // 3. Handle Referral Bonuses
       await ReferralService.checkReferralBonuses(transaction.merchantId);
+
+      // 4. Send email notifications
+      try {
+        const fullTx = await prisma.transaction.findUnique({
+          where: { id: transaction.id },
+          include: {
+            neighbor: { select: { email: true, firstName: true } },
+            merchant: { select: { businessName: true, user: { select: { email: true, firstName: true } } } },
+            nonprofit: { select: { orgName: true } },
+            productService: { select: { name: true } },
+          },
+        });
+        if (fullTx) {
+          const fulfillment = fullTx.paymentMethod === 'QR' ? 'In-Store QR Pay' : 'Online Payment';
+          // Merchant notification
+          await sendMerchantOrderEmail({
+            merchantEmail: fullTx.merchant.user.email,
+            merchantName: fullTx.merchant.user.firstName ?? fullTx.merchant.businessName,
+            businessName: fullTx.merchant.businessName,
+            customerFirstName: fullTx.neighbor.firstName ?? 'A customer',
+            productName: fullTx.productService.name,
+            quantity: 1,
+            grossAmount: Number(fullTx.grossAmount),
+            merchantNet: Number(fullTx.merchantNet),
+            nonprofitShare: Number(fullTx.nonprofitShare),
+            nonprofitName: fullTx.nonprofit.orgName,
+            fulfillmentMethod: fulfillment,
+            transactionId: fullTx.id,
+          });
+          // Customer receipt
+          await sendCustomerReceiptEmail({
+            customerEmail: fullTx.neighbor.email,
+            customerFirstName: fullTx.neighbor.firstName ?? 'there',
+            merchantName: fullTx.merchant.businessName,
+            productName: fullTx.productService.name,
+            quantity: 1,
+            grossAmount: Number(fullTx.grossAmount),
+            discountAmount: Number(fullTx.discountAmount),
+            customerPaid: Number(fullTx.grossAmount) - Number(fullTx.discountAmount),
+            nonprofitShare: Number(fullTx.nonprofitShare),
+            nonprofitName: fullTx.nonprofit.orgName,
+            platformFee: Number(fullTx.platformFee),
+            transactionId: fullTx.id,
+          });
+        }
+      } catch (emailErr) {
+        console.error('[Payment] Email notification error:', emailErr);
+      }
     }
   }
 

@@ -40,6 +40,7 @@ model User {
   qrTokens            QrCheckoutToken[]
   donorProfile        DonorProfile?
   donorMilestones     DonorMilestone[]
+  walletTopUps        WalletTopUp[]
 }
 
 model MerchantReferral {
@@ -1527,6 +1528,65 @@ model TaxReportingFlag {
   @@unique([merchantId, taxYear])
   @@index([taxYear])
   @@index([requires1099K])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Platform Settings (key-value, singleton rows for feature flags + demo mode)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model SystemSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin Audit Log
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AdminAuditLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  action    String
+  targetId  String?
+  detail    String?
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Wallet Top-Up (Stripe PaymentIntent tracking)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model WalletTopUp {
+  id                    String    @id @default(uuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount                Decimal   @db.Decimal(10, 2)
+  stripePaymentIntentId String    @unique
+  status                String    @default("PENDING")
+  createdAt             DateTime  @default(now())
+  completedAt           DateTime?
+
+  @@index([userId])
+  @@index([stripePaymentIntentId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Nonprofit Daily Digest Log (tracks last digest sent per nonprofit)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model NonprofitDigestLog {
+  id            String   @id @default(uuid())
+  nonprofitId   String
+  sentAt        DateTime @default(now())
+  donationCount Int
+  totalAmount   Decimal  @db.Decimal(10, 2)
+
+  @@index([nonprofitId])
+  @@index([sentAt])
 }
 
 model InformActFlag {

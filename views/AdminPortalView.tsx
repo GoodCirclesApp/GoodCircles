@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   LayoutDashboard,
   Users,
   History,
@@ -28,7 +28,17 @@ import {
   ShieldAlert,
   ThumbsUp,
   ThumbsDown,
-  Landmark
+  Landmark,
+  Settings,
+  ClipboardList,
+  Eye,
+  Edit3,
+  CreditCard,
+  Wallet,
+  KeyRound,
+  ToggleLeft,
+  ToggleRight,
+  Trash2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { adminService } from '../services/adminService';
@@ -692,12 +702,391 @@ const CdfiManagement = () => {
   );
 };
 
+// ── User Detail Modal ────────────────────────────────────────────────────────
+
+const UserDetailModal = ({ user, onClose, onRefresh }: { user: any; onClose: () => void; onRefresh: () => void }) => {
+  const [tab, setTab] = useState<'info' | 'credits' | 'balance' | 'password'>('info');
+  const [editData, setEditData] = useState({ firstName: user.firstName || '', lastName: user.lastName || '', role: user.role });
+  const [creditAmount, setCreditAmount] = useState('');
+  const [creditReason, setCreditReason] = useState('');
+  const [balanceAmount, setBalanceAmount] = useState('');
+  const [balanceType, setBalanceType] = useState<'CREDIT' | 'DEBIT'>('CREDIT');
+  const [balanceReason, setBalanceReason] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const flash = (ok: boolean, text: string) => { setMsg({ ok, text }); setTimeout(() => setMsg(null), 4000); };
+
+  const saveEdit = async () => {
+    setSaving(true);
+    try { await adminService.editUser(user.id, editData); flash(true, 'User updated.'); onRefresh(); }
+    catch (e: any) { flash(false, e.message); }
+    finally { setSaving(false); }
+  };
+
+  const saveCredits = async () => {
+    if (!creditAmount || !creditReason) return;
+    setSaving(true);
+    try { await adminService.issueCredits(user.id, parseFloat(creditAmount), creditReason); flash(true, 'Credits issued.'); setCreditAmount(''); setCreditReason(''); }
+    catch (e: any) { flash(false, e.message); }
+    finally { setSaving(false); }
+  };
+
+  const saveBalance = async () => {
+    if (!balanceAmount || !balanceReason) return;
+    setSaving(true);
+    try { await adminService.adjustWalletBalance(user.id, parseFloat(balanceAmount), balanceType, balanceReason); flash(true, 'Balance adjusted.'); setBalanceAmount(''); setBalanceReason(''); }
+    catch (e: any) { flash(false, e.message); }
+    finally { setSaving(false); }
+  };
+
+  const savePwd = async () => {
+    if (!newPassword || newPassword.length < 8) { flash(false, 'Password must be at least 8 characters.'); return; }
+    setSaving(true);
+    try { await adminService.resetUserPassword(user.id, newPassword); flash(true, 'Password reset.'); setNewPassword(''); }
+    catch (e: any) { flash(false, e.message); }
+    finally { setSaving(false); }
+  };
+
+  const inputCls = 'w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20';
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <div>
+            <p className="font-black text-lg">{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.email}</p>
+            <p className="text-xs text-slate-400">{user.email} · {user.role}</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-xl"><X className="w-4 h-4" /></button>
+        </div>
+        <div className="flex border-b border-slate-100">
+          {([['info', 'Edit'], ['credits', 'Credits'], ['balance', 'Balance'], ['password', 'Password']] as const).map(([id, label]) => (
+            <button key={id} onClick={() => setTab(id)} className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition-colors ${tab === id ? 'border-b-2 border-emerald-600 text-emerald-700' : 'text-slate-400 hover:text-slate-600'}`}>{label}</button>
+          ))}
+        </div>
+        <div className="p-6 space-y-4">
+          {msg && <div className={`px-4 py-2 rounded-xl text-xs font-bold ${msg.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>{msg.text}</div>}
+          {tab === 'info' && (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">First Name</label><input className={inputCls + ' mt-1'} value={editData.firstName} onChange={e => setEditData(p => ({ ...p, firstName: e.target.value }))} /></div>
+                <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Last Name</label><input className={inputCls + ' mt-1'} value={editData.lastName} onChange={e => setEditData(p => ({ ...p, lastName: e.target.value }))} /></div>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Role</label>
+                <select className={inputCls + ' mt-1'} value={editData.role} onChange={e => setEditData(p => ({ ...p, role: e.target.value }))}>
+                  {['CONSUMER', 'MERCHANT', 'NONPROFIT', 'CDFI', 'ADMIN'].map(r => <option key={r}>{r}</option>)}
+                </select>
+              </div>
+              <button onClick={saveEdit} disabled={saving} className="w-full py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50">{saving ? 'Saving…' : 'Save Changes'}</button>
+            </>
+          )}
+          {tab === 'credits' && (
+            <>
+              <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Amount ($)</label><input type="number" min="0" step="0.01" className={inputCls + ' mt-1'} value={creditAmount} onChange={e => setCreditAmount(e.target.value)} placeholder="10.00" /></div>
+              <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Reason</label><input className={inputCls + ' mt-1'} value={creditReason} onChange={e => setCreditReason(e.target.value)} placeholder="Promotional credit, support adjustment…" /></div>
+              <button onClick={saveCredits} disabled={saving || !creditAmount || !creditReason} className="w-full py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50">{saving ? 'Issuing…' : 'Issue Credits'}</button>
+            </>
+          )}
+          {tab === 'balance' && (
+            <>
+              <div className="flex gap-3">
+                {(['CREDIT', 'DEBIT'] as const).map(t => (
+                  <button key={t} onClick={() => setBalanceType(t)} className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${balanceType === t ? (t === 'CREDIT' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-slate-100 text-slate-500'}`}>{t}</button>
+                ))}
+              </div>
+              <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Amount ($)</label><input type="number" min="0" step="0.01" className={inputCls + ' mt-1'} value={balanceAmount} onChange={e => setBalanceAmount(e.target.value)} placeholder="25.00" /></div>
+              <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Reason</label><input className={inputCls + ' mt-1'} value={balanceReason} onChange={e => setBalanceReason(e.target.value)} placeholder="Admin correction, refund…" /></div>
+              <button onClick={saveBalance} disabled={saving || !balanceAmount || !balanceReason} className="w-full py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50">{saving ? 'Adjusting…' : 'Apply Adjustment'}</button>
+            </>
+          )}
+          {tab === 'password' && (
+            <>
+              <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">New Password</label><input type="password" className={inputCls + ' mt-1'} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min 8 characters" /></div>
+              <p className="text-xs text-slate-400">This immediately overrides the user's current password. The user will need to use the new password on their next login.</p>
+              <button onClick={savePwd} disabled={saving || newPassword.length < 8} className="w-full py-2.5 bg-rose-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-rose-700 transition-colors disabled:opacity-50">{saving ? 'Resetting…' : 'Reset Password'}</button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── Enhanced UserManagement with detail modal ─────────────────────────────────
+
+const UserManagementEnhanced = () => {
+  const [users, setUsers] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+
+  const load = () => adminService.getUsers().then(setUsers);
+  useEffect(() => { load(); }, []);
+
+  const filteredUsers = users.filter(u =>
+    u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (u.firstName + ' ' + u.lastName).toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const toggleStatus = async (userId: string, current: boolean) => {
+    try { await adminService.updateUserStatus(userId, !current); load(); }
+    catch (err) { console.error(err); }
+  };
+
+  return (
+    <div className="space-y-6">
+      {selectedUser && <UserDetailModal user={selectedUser} onClose={() => setSelectedUser(null)} onRefresh={load} />}
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input type="text" placeholder="Search by name or email…" className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+        </div>
+        <button onClick={load} className="p-2 hover:bg-slate-100 rounded-xl transition-colors"><RefreshCw className="w-4 h-4 text-slate-400" /></button>
+      </div>
+      <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <table className="w-full text-left">
+          <thead className="bg-slate-50 border-b border-slate-100">
+            <tr>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">User</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Role</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Joined</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {filteredUsers.length === 0 && (
+              <tr><td colSpan={5} className="px-6 py-16 text-center text-slate-400 italic font-medium">No users found{searchTerm ? ' matching your search' : ''}.</td></tr>
+            )}
+            {filteredUsers.map(user => (
+              <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs">{user.firstName?.[0] || user.email[0].toUpperCase()}</div>
+                    <div><div className="font-bold text-sm">{user.firstName ? `${user.firstName} ${user.lastName || ''}` : 'No Name'}</div><div className="text-xs text-slate-400">{user.email}</div></div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-sm font-medium text-slate-600">{user.role}</td>
+                <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${user.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{user.isActive ? 'ACTIVE' : 'INACTIVE'}</span></td>
+                <td className="px-6 py-4 text-sm text-slate-500">{new Date(user.createdAt).toLocaleDateString()}</td>
+                <td className="px-6 py-4 text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <button onClick={() => setSelectedUser(user)} className="px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors flex items-center gap-1"><Eye className="w-3 h-3" /> Manage</button>
+                    <button onClick={() => toggleStatus(user.id, user.isActive)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${user.isActive ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'}`}>{user.isActive ? 'Deactivate' : 'Activate'}</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// ── Audit Log ────────────────────────────────────────────────────────────────
+
+const AuditLogPanel = () => {
+  const [entries, setEntries] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    try { setEntries(await adminService.getAuditLog()); }
+    catch { setEntries([]); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-slate-500 font-medium">All admin actions are logged here for compliance and accountability.</p>
+        <button onClick={load} className="p-2 hover:bg-slate-100 rounded-xl transition-colors"><RefreshCw className={`w-4 h-4 text-slate-400 ${loading ? 'animate-spin' : ''}`} /></button>
+      </div>
+      {loading ? (
+        <div className="p-16 text-center text-slate-400 font-medium">Loading…</div>
+      ) : entries.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-slate-100 p-16 text-center text-slate-400 font-medium italic">No audit entries yet.</div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+          <table className="w-full text-left">
+            <thead className="bg-slate-50 border-b border-slate-100">
+              <tr>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">When</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Action</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Target</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Detail</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {entries.map((e: any) => (
+                <tr key={e.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 text-xs text-slate-400 whitespace-nowrap">{new Date(e.createdAt).toLocaleString()}</td>
+                  <td className="px-6 py-4"><span className="px-2 py-1 bg-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-600">{e.action}</span></td>
+                  <td className="px-6 py-4 text-xs font-mono text-slate-500">{e.targetId ? e.targetId.slice(0, 12) + '…' : '—'}</td>
+                  <td className="px-6 py-4 text-xs text-slate-500">{e.detail || '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Admin Settings (password, demo mode, flags, demo reset) ──────────────────
+
+const AdminSettings = () => {
+  const [currentPwd, setCurrentPwd] = useState('');
+  const [newPwd, setNewPwd] = useState('');
+  const [confirmPwd, setConfirmPwd] = useState('');
+  const [pwdMsg, setPwdMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [savingPwd, setSavingPwd] = useState(false);
+
+  const [demoMode, setDemoMode] = useState<boolean | null>(null);
+  const [togglingDemo, setTogglingDemo] = useState(false);
+
+  const [flags, setFlags] = useState<Record<string, boolean>>({});
+  const [togglingFlag, setTogglingFlag] = useState<string | null>(null);
+
+  const [resetting, setResetting] = useState(false);
+  const [resetMsg, setResetMsg] = useState<string | null>(null);
+
+  const inputCls = 'w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20';
+
+  useEffect(() => {
+    adminService.getDemoMode().then(d => setDemoMode(d.enabled));
+    adminService.getFeatureFlags().then(setFlags);
+  }, []);
+
+  const changePwd = async () => {
+    if (newPwd !== confirmPwd) { setPwdMsg({ ok: false, text: 'Passwords do not match.' }); return; }
+    if (newPwd.length < 8) { setPwdMsg({ ok: false, text: 'Password must be at least 8 characters.' }); return; }
+    setSavingPwd(true);
+    try {
+      await adminService.changeAdminPassword(currentPwd, newPwd);
+      setPwdMsg({ ok: true, text: 'Password changed successfully.' });
+      setCurrentPwd(''); setNewPwd(''); setConfirmPwd('');
+    } catch (e: any) {
+      setPwdMsg({ ok: false, text: e.message || 'Failed to change password.' });
+    } finally {
+      setSavingPwd(false);
+    }
+  };
+
+  const toggleDemo = async () => {
+    if (demoMode === null) return;
+    setTogglingDemo(true);
+    try { await adminService.setDemoMode(!demoMode); setDemoMode(!demoMode); }
+    catch (e: any) { alert(e.message); }
+    finally { setTogglingDemo(false); }
+  };
+
+  const toggleFlag = async (key: string) => {
+    setTogglingFlag(key);
+    try {
+      await adminService.updateFeatureFlag(key, !flags[key]);
+      setFlags(prev => ({ ...prev, [key]: !prev[key] }));
+    } catch (e: any) { alert(e.message); }
+    finally { setTogglingFlag(null); }
+  };
+
+  const resetDemo = async () => {
+    if (!window.confirm('This will wipe all beta/demo transactions and reset all balances to $0. This cannot be undone. Continue?')) return;
+    setResetting(true);
+    try {
+      const result = await adminService.resetDemo();
+      setResetMsg(result.message || 'Demo data reset successfully.');
+    } catch (e: any) {
+      setResetMsg('Error: ' + e.message);
+    } finally {
+      setResetting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-8 max-w-2xl">
+      {/* Password Change */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-100 space-y-4">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-slate-100 rounded-xl"><KeyRound className="w-4 h-4 text-slate-600" /></div>
+          <div><h4 className="font-black text-base">Change Admin Password</h4><p className="text-xs text-slate-400">Update your admin portal credentials.</p></div>
+        </div>
+        {pwdMsg && <div className={`px-4 py-2 rounded-xl text-xs font-bold ${pwdMsg.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>{pwdMsg.text}</div>}
+        <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Current Password</label><input type="password" className={inputCls + ' mt-1'} value={currentPwd} onChange={e => setCurrentPwd(e.target.value)} /></div>
+        <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">New Password</label><input type="password" className={inputCls + ' mt-1'} value={newPwd} onChange={e => setNewPwd(e.target.value)} /></div>
+        <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Confirm New Password</label><input type="password" className={inputCls + ' mt-1'} value={confirmPwd} onChange={e => setConfirmPwd(e.target.value)} /></div>
+        <button onClick={changePwd} disabled={savingPwd || !currentPwd || !newPwd || !confirmPwd} className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50">{savingPwd ? 'Saving…' : 'Update Password'}</button>
+      </div>
+
+      {/* Demo Mode Toggle */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-50 rounded-xl"><Presentation className="w-4 h-4 text-amber-600" /></div>
+            <div>
+              <h4 className="font-black text-base">Demo Mode</h4>
+              <p className="text-xs text-slate-400">When enabled, the admin portal shows simulated demo data. Live users always see real data.</p>
+            </div>
+          </div>
+          <button onClick={toggleDemo} disabled={togglingDemo || demoMode === null} className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors disabled:opacity-50 border border-slate-200 hover:bg-slate-50">
+            {demoMode ? <ToggleRight className="w-5 h-5 text-emerald-600" /> : <ToggleLeft className="w-5 h-5 text-slate-400" />}
+            {demoMode === null ? 'Loading…' : demoMode ? 'ON' : 'OFF'}
+          </button>
+        </div>
+      </div>
+
+      {/* Feature Flags */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-100 space-y-4">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-indigo-50 rounded-xl"><Settings className="w-4 h-4 text-indigo-600" /></div>
+          <div><h4 className="font-black text-base">Feature Flags</h4><p className="text-xs text-slate-400">Enable or disable platform features without redeployment.</p></div>
+        </div>
+        {Object.keys(flags).length === 0 ? (
+          <p className="text-sm text-slate-400 italic">Loading flags…</p>
+        ) : (
+          <div className="space-y-3">
+            {Object.entries(flags).map(([key, val]) => (
+              <div key={key} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                <span className="text-sm font-bold text-slate-700">{key}</span>
+                <button onClick={() => toggleFlag(key)} disabled={togglingFlag === key} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-colors disabled:opacity-50 ${val ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-200 text-slate-500 hover:bg-slate-300'}`}>
+                  {val ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
+                  {val ? 'Enabled' : 'Disabled'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Demo Reset */}
+      <div className="bg-white p-6 rounded-2xl border border-rose-100 space-y-4">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-rose-50 rounded-xl"><Trash2 className="w-4 h-4 text-rose-600" /></div>
+          <div><h4 className="font-black text-base">Reset Demo Data</h4><p className="text-xs text-slate-400">Wipe all beta/demo transactions and reset all account balances to $0. Use before a live demonstration.</p></div>
+        </div>
+        {resetMsg && <div className="px-4 py-2 bg-amber-50 border border-amber-100 rounded-xl text-xs font-bold text-amber-700">{resetMsg}</div>}
+        <button onClick={resetDemo} disabled={resetting} className="flex items-center gap-2 px-5 py-2.5 bg-rose-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-rose-700 transition-colors disabled:opacity-50">
+          {resetting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+          {resetting ? 'Resetting…' : 'Reset All Demo Data'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // Main View
 
 type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
-  | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT';
+  | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT'
+  | 'AUDIT_LOG' | 'SETTINGS';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -720,12 +1109,14 @@ export const AdminPortalView: React.FC = () => {
     { id: 'SENTINEL', label: 'Price Sentinel', icon: ShieldAlert },
     { id: 'COMPLIANCE', label: 'L3C Compliance', icon: Scale },
     { id: 'CDFI_MGMT', label: 'CDFI Partners', icon: Landmark },
+    { id: 'AUDIT_LOG', label: 'Audit Log', icon: ClipboardList },
+    { id: 'SETTINGS', label: 'Admin Settings', icon: Settings },
   ];
 
   const renderContent = () => {
     switch (activeSubView) {
       case 'DASHBOARD': return <SystemDashboard />;
-      case 'USERS': return <UserManagement />;
+      case 'USERS': return <UserManagementEnhanced />;
       case 'TRANSACTIONS': return <TransactionMonitoring />;
       case 'FINANCIALS': return <FinancialOverview />;
       case 'COOPS': return <CooperativeManagement />;
@@ -739,6 +1130,8 @@ export const AdminPortalView: React.FC = () => {
       case 'SENTINEL': return <PriceSentinelReview />;
       case 'COMPLIANCE': return <ComplianceDashboard />;
       case 'CDFI_MGMT': return <CdfiManagement />;
+      case 'AUDIT_LOG': return <AuditLogPanel />;
+      case 'SETTINGS': return <AdminSettings />;
       default: return <SystemDashboard />;
     }
   };

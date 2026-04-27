@@ -49,10 +49,9 @@ export const CommunityFeedCompact: React.FC<{ maxItems?: number }> = ({ maxItems
 
   const fetchFeed = async () => {
     try {
-      const data = await apiClient.get<FeedItem[]>('/marketplace/feed', { limit: maxItems });
+      const data = await apiClient.get<FeedItem[]>('/feed', { limit: maxItems });
       setItems(data);
     } catch (err) {
-      // If endpoint doesn't exist yet, show demo data
       setItems(generateDemoFeed(maxItems));
     } finally {
       setIsLoading(false);
@@ -119,7 +118,7 @@ export const CommunityActivityFeed: React.FC<{ expanded?: boolean }> = ({ expand
 
   const fetchFeed = async () => {
     try {
-      const data = await apiClient.get<FeedItem[]>('/marketplace/feed', { limit: 30 });
+      const data = await apiClient.get<FeedItem[]>('/feed', { limit: 30 });
       setItems(data);
     } catch (err) {
       setItems(generateDemoFeed(20));
@@ -253,7 +252,7 @@ export const ActivityTicker: React.FC = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const data = await apiClient.get<FeedItem[]>('/marketplace/feed', { limit: 10 });
+        const data = await apiClient.get<FeedItem[]>('/feed', { limit: 10 });
         setItems(data);
       } catch {
         setItems(generateDemoFeed(10));

@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Copy, Check, ExternalLink, TrendingUp, Users, DollarSign, Trophy } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { apiClient } from '../services/apiClient';
 
 const BONUS_TIERS = [
   { name: 'Activation', threshold: '$7,500', bonus: '$500' },
@@ -10,17 +10,35 @@ const BONUS_TIERS = [
   { name: 'Anchor Merchant', threshold: '$150,000', bonus: '$5,000' },
 ];
 
-const MOCK_REFERRED_MERCHANTS = [
-  { id: 'm1', name: 'Artisan Bakery', status: 'ACTIVE', currentTier: 'Activation', bonusEarned: 500, fundingGenerated: 8200 },
-  { id: 'm2', name: 'Yoga Studio', status: 'PENDING', currentTier: 'None', bonusEarned: 0, fundingGenerated: 0 },
-  { id: 'm3', name: 'Tech Repair', status: 'ACTIVE', currentTier: 'Established', bonusEarned: 1500, fundingGenerated: 32000 },
-];
+interface ReferralInfo {
+  referralLink: string;
+  totalReferrals: number;
+  totalEarnings: number;
+  referredMerchants: {
+    id: string;
+    name: string;
+    status: string;
+    earnings: number;
+    currentTier: string;
+  }[];
+}
 
 export const NonprofitReferrals: React.FC = () => {
   const [copied, setCopied] = useState(false);
-  const referralLink = "https://goodcircles.org/join?ref=nonprofit-123";
+  const [info, setInfo] = useState<ReferralInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    apiClient.get<ReferralInfo>('/nonprofit/referral-info')
+      .then(setInfo)
+      .catch(() => setInfo(null))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const referralLink = info?.referralLink ?? '';
 
   const handleCopy = () => {
+    if (!referralLink) return;
     navigator.clipboard.writeText(referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -28,6 +46,7 @@ export const NonprofitReferrals: React.FC = () => {
 
   return (
     <div className="space-y-6 sm:space-y-10">
+      {/* Hero banner */}
       <div className="bg-black text-white p-6 sm:p-12 rounded-2xl sm:rounded-[4rem] relative overflow-hidden shadow-2xl">
         <div className="absolute top-0 right-0 p-16 opacity-10 hidden sm:block">
           <Users size={200} />
@@ -46,7 +65,8 @@ export const NonprofitReferrals: React.FC = () => {
             />
             <button
               onClick={handleCopy}
-              className="bg-white text-black px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] hover:text-white transition-all flex items-center justify-center gap-2 shrink-0"
+              disabled={!referralLink}
+              className="bg-white text-black px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] hover:text-white transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50"
             >
               {copied ? <Check size={14} /> : <Copy size={14} />}
               {copied ? 'Copied' : 'Copy Link'}
@@ -75,7 +95,8 @@ export const NonprofitReferrals: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8">
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
         <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-[2.5rem] border border-slate-100 shadow-sm">
           <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="p-2 sm:p-3 bg-indigo-50 text-indigo-600 rounded-xl sm:rounded-2xl">
@@ -83,16 +104,9 @@ export const NonprofitReferrals: React.FC = () => {
             </div>
             <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Referrals</h4>
           </div>
-          <p className="text-2xl sm:text-3xl font-black tracking-tight">3 Merchants</p>
-        </div>
-        <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-[2.5rem] border border-slate-100 shadow-sm">
-          <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="p-2 sm:p-3 bg-emerald-50 text-emerald-600 rounded-xl sm:rounded-2xl">
-              <TrendingUp size={20} />
-            </div>
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Funding Generated</h4>
-          </div>
-          <p className="text-2xl sm:text-3xl font-black tracking-tight">$40,200</p>
+          <p className="text-2xl sm:text-3xl font-black tracking-tight">
+            {loading ? '—' : `${info?.totalReferrals ?? 0} Merchant${(info?.totalReferrals ?? 0) !== 1 ? 's' : ''}`}
+          </p>
         </div>
         <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-[2.5rem] border border-slate-100 shadow-sm">
           <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -101,48 +115,51 @@ export const NonprofitReferrals: React.FC = () => {
             </div>
             <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Bonuses Earned</h4>
           </div>
-          <p className="text-2xl sm:text-3xl font-black tracking-tight">$2,000</p>
+          <p className="text-2xl sm:text-3xl font-black tracking-tight">
+            {loading ? '—' : `$${(info?.totalEarnings ?? 0).toLocaleString()}`}
+          </p>
         </div>
       </div>
 
+      {/* Referred Merchants Table */}
       <div className="bg-white rounded-2xl sm:rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-5 sm:p-10 border-b border-slate-50">
           <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight">Referred Merchants</h3>
           <p className="text-slate-400 text-xs font-medium">Tracking your network growth and milestone bonuses</p>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[550px]">
-            <thead>
-              <tr className="bg-slate-50/50">
-                <th className="px-5 sm:px-10 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Merchant</th>
-                <th className="px-5 sm:px-10 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                <th className="px-5 sm:px-10 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Tier</th>
-                <th className="px-5 sm:px-10 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Bonus Earned</th>
-                <th className="px-5 sm:px-10 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {MOCK_REFERRED_MERCHANTS.map((m) => (
-                <tr key={m.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-5 sm:px-10 py-5 sm:py-8 font-bold text-slate-900 text-sm sm:text-base">{m.name}</td>
-                  <td className="px-5 sm:px-10 py-5 sm:py-8">
-                    <span className={`px-3 sm:px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                      m.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
-                    }`}>
-                      {m.status}
-                    </span>
-                  </td>
-                  <td className="px-5 sm:px-10 py-5 sm:py-8 font-black text-[#7851A9] text-sm sm:text-base">{m.currentTier}</td>
-                  <td className="px-5 sm:px-10 py-5 sm:py-8 font-black text-sm sm:text-base">${m.bonusEarned.toLocaleString()}</td>
-                  <td className="px-5 sm:px-10 py-5 sm:py-8">
-                    <button className="p-2 sm:p-3 bg-slate-100 text-slate-400 rounded-xl hover:text-black transition-all">
-                      <ExternalLink size={16} />
-                    </button>
-                  </td>
+          {loading ? (
+            <div className="p-10 text-center text-slate-400 font-medium">Loading…</div>
+          ) : !info || info.referredMerchants.length === 0 ? (
+            <div className="p-10 text-center text-slate-400 italic font-medium">No referred merchants yet. Share your referral link to get started.</div>
+          ) : (
+            <table className="w-full text-left min-w-[550px]">
+              <thead>
+                <tr className="bg-slate-50/50">
+                  <th className="px-5 sm:px-10 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Merchant</th>
+                  <th className="px-5 sm:px-10 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                  <th className="px-5 sm:px-10 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Tier</th>
+                  <th className="px-5 sm:px-10 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Bonus Earned</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {info.referredMerchants.map((m) => (
+                  <tr key={m.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-5 sm:px-10 py-5 sm:py-8 font-bold text-slate-900 text-sm sm:text-base">{m.name}</td>
+                    <td className="px-5 sm:px-10 py-5 sm:py-8">
+                      <span className={`px-3 sm:px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                        m.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                      }`}>
+                        {m.status}
+                      </span>
+                    </td>
+                    <td className="px-5 sm:px-10 py-5 sm:py-8 font-black text-[#7851A9] text-sm sm:text-base">{m.currentTier}</td>
+                    <td className="px-5 sm:px-10 py-5 sm:py-8 font-black text-sm sm:text-base">${m.earnings.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

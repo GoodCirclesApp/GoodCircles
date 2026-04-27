@@ -96,15 +96,20 @@ export const getStats = async (req: AuthRequest, res: Response) => {
     const uniqueSupporters = new Set(transactions.map(tx => tx.neighborId)).size;
     const uniqueMerchants = new Set(transactions.map(tx => tx.merchantId)).size;
 
-    // Mock trend data for now
-    const trend = [
-      { month: 'Oct', amount: 1200 },
-      { month: 'Nov', amount: 1900 },
-      { month: 'Dec', amount: 1500 },
-      { month: 'Jan', amount: 2100 },
-      { month: 'Feb', amount: 2400 },
-      { month: 'Mar', amount: 3200 },
-    ];
+    // Real 6-month trend from transaction data
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const now = new Date();
+    const trend: { month: string; amount: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const start = new Date(d.getFullYear(), d.getMonth(), 1);
+      const end = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+      const agg = await prisma.transaction.aggregate({
+        where: { nonprofitId: nonprofit.id, createdAt: { gte: start, lt: end } },
+        _sum: { nonprofitShare: true },
+      });
+      trend.push({ month: monthNames[d.getMonth()], amount: Number(agg._sum.nonprofitShare ?? 0) });
+    }
 
     res.json({
       totalFunding,
@@ -181,13 +186,16 @@ export const getAnalytics = async (req: AuthRequest, res: Response) => {
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
 
+    const geographicCoverage = new Set(
+      transactions.map(tx => tx.consumerState).filter(Boolean)
+    ).size;
+
+    const totalShare = transactions.reduce((sum, tx) => sum + Number(tx.nonprofitShare), 0);
+
     res.json({
       topCategories,
-      geographicCoverage: 12, // Mock
-      growthRate: 24.5, // Mock
-      avgContribution: transactions.length > 0 
-        ? transactions.reduce((sum, tx) => sum + Number(tx.nonprofitShare), 0) / transactions.length 
-        : 0
+      geographicCoverage,
+      avgContribution: transactions.length > 0 ? totalShare / transactions.length : 0,
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -204,25 +212,32 @@ export const getReferralInfo = async (req: AuthRequest, res: Response) => {
       where: { userId: req.user.id },
       include: {
         referrals: {
-          include: { merchant: true }
-        }
-      }
+          include: {
+            merchant: true,
+            payouts: { include: { tier: true } },
+          },
+        },
+      },
     });
 
     if (!nonprofit) return res.status(404).json({ error: 'Nonprofit not found' });
 
+    const totalEarnings = nonprofit.referrals.reduce(
+      (sum, r) => sum + r.payouts.reduce((s, p) => s + Number(p.amount), 0),
+      0
+    );
+
     res.json({
-      referralLink: `https://goodcircles.org/join?ref=${nonprofit.referralCode || nonprofit.id}`,
+      referralLink: `https://goodcircles.org/join?ref=${(nonprofit as any).referralCode || nonprofit.id}`,
       totalReferrals: nonprofit.referrals.length,
-      avgUplift: 1.2, // Mock
-      totalEarnings: 4850, // Mock
+      totalEarnings,
       referredMerchants: nonprofit.referrals.map(r => ({
         id: r.id,
         name: r.merchant.businessName,
         status: r.is_active ? 'ACTIVE' : 'PENDING',
-        earnings: 450, // Mock
-        uplift: '1.0%' // Mock
-      }))
+        earnings: r.payouts.reduce((s, p) => s + Number(p.amount), 0),
+        currentTier: r.payouts.length > 0 ? r.payouts[r.payouts.length - 1].tier?.tierName ?? 'Active' : 'None',
+      })),
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -245,15 +260,20 @@ export const getInitiatives = async (req: AuthRequest, res: Response) => {
       where: { nonprofitId: nonprofit.id }
     });
 
-    res.json(initiatives.map(i => ({
+    const supporterCounts = await Promise.all(
+      initiatives.map(i =>
+        prisma.transaction.count({ where: { waivedToInitiativeId: i.id } })
+      )
+    );
+
+    res.json(initiatives.map((i, idx) => ({
       id: i.id,
       title: i.title,
       description: i.description,
       goal: Number(i.fundingGoal),
       current: Number(i.currentFunding),
-      supporters: 142, // Mock
-      deadline: '2026-06-30', // Mock
-      status: i.isActive ? 'ACTIVE' : 'COMPLETED'
+      supporters: supporterCounts[idx],
+      status: i.isActive ? 'ACTIVE' : 'COMPLETED',
     })));
   } catch (err: any) {
     res.status(500).json({ error: err.message });

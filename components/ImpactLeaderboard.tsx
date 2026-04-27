@@ -1,98 +1,53 @@
 
-import React, { useMemo, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Order, Community } from '../types';
-import { MOCK_COMMUNITIES, MOCK_NONPROFITS } from '../constants';
+import { apiClient } from '../services/apiClient';
 import { BrandSubmark } from './BrandAssets';
 
 interface Props {
-  orders: Order[];
+  orders?: any[];
   currentUserId?: string;
 }
 
 type TabType = 'COMMUNITIES' | 'BUSINESSES' | 'NEIGHBORS' | 'NONPROFITS';
 
-export const ImpactLeaderboard: React.FC<Props> = ({ orders, currentUserId }) => {
+interface LeaderboardData {
+  cities: { city: string; state: string; totalDonated: number; transactionCount: number }[];
+  merchants: { id: string; businessName: string; totalDonated: number }[];
+  neighbors: { userId: string; displayName: string; totalDonated: number; isCurrentUser: boolean }[];
+  nonprofits: { id: string; orgName: string; totalReceived: number }[];
+}
+
+export const ImpactLeaderboard: React.FC<Props> = ({ currentUserId }) => {
   const [activeTab, setActiveTab] = useState<TabType>('COMMUNITIES');
+  const [data, setData] = useState<LeaderboardData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const communityRankings = useMemo(() => {
-    const fundingMap = new Map<string, number>();
-    orders.forEach(o => {
-      const current = fundingMap.get(o.communityId) || 0;
-      fundingMap.set(o.communityId, current + (o.accounting?.donationAmount ?? 0));
-    });
+  useEffect(() => {
+    apiClient.get<LeaderboardData>('/leaderboard')
+      .then(setData)
+      .catch(() => setData(null))
+      .finally(() => setLoading(false));
+  }, []);
 
-    return MOCK_COMMUNITIES.map(c => {
-      const totalFunding = fundingMap.get(c.id) || 0;
-      return {
-        ...c,
-        totalFunding,
-        perMemberImpact: c.memberCount > 0 ? totalFunding / c.memberCount : 0
-      };
-    }).sort((a, b) => b.perMemberImpact - a.perMemberImpact);
-  }, [orders]);
+  const cities = data?.cities ?? [];
+  const merchants = data?.merchants ?? [];
+  const neighbors = data?.neighbors ?? [];
+  const nonprofits = data?.nonprofits ?? [];
 
-  const businessRankings = useMemo(() => {
-    const merchantMap = new Map<string, { name: string, total: number }>();
-    orders.forEach(o => {
-      o.items.forEach(item => {
-        const m = merchantMap.get(item.product.merchantId) || { name: item.product.merchantName, total: 0 };
-        const itemSubtotal = item.product.price * (1 - 0.10) * item.quantity;
-        const proportion = o.subtotal > 0 ? itemSubtotal / o.subtotal : 0;
-        m.total += (o.accounting?.donationAmount ?? 0) * proportion;
-        merchantMap.set(item.product.merchantId, m);
-      });
-    });
+  const currentList = (() => {
+    if (activeTab === 'COMMUNITIES') return cities;
+    if (activeTab === 'BUSINESSES') return merchants;
+    if (activeTab === 'NEIGHBORS') return neighbors;
+    return nonprofits;
+  })();
 
-    return Array.from(merchantMap.entries())
-      .map(([id, data]) => ({ id, ...data }))
-      .sort((a, b) => b.total - a.total);
-  }, [orders]);
-
-  const neighborRankings = useMemo(() => {
-    const neighborMap = new Map<string, { name: string, total: number }>();
-    orders.forEach(o => {
-      const c = neighborMap.get(o.neighborId) || { name: o.neighborName || 'Anonymous', total: 0 };
-      c.total += (o.accounting?.donationAmount ?? 0);
-      neighborMap.set(o.neighborId, c);
-    });
-
-    return Array.from(neighborMap.entries())
-      .map(([id, data]) => ({ id, ...data }))
-      .sort((a, b) => b.total - a.total);
-  }, [orders]);
-
-  const nonprofitRankings = useMemo(() => {
-    const nonprofitMap = new Map<string, { name: string, total: number }>();
-
-    MOCK_NONPROFITS.forEach(np => {
-      nonprofitMap.set(np.id, { name: np.name, total: 0 });
-    });
-
-    orders.forEach(o => {
-      const np = nonprofitMap.get(o.selectedNonprofitId);
-      if (np) {
-        np.total += (o.accounting?.donationAmount ?? 0);
-      } else {
-        nonprofitMap.set(o.selectedNonprofitId, { name: `Nonprofit ${o.selectedNonprofitId}`, total: (o.accounting?.donationAmount ?? 0) });
-      }
-    });
-
-    return Array.from(nonprofitMap.entries())
-      .map(([id, data]) => ({ id, ...data }))
-      .sort((a, b) => b.total - a.total);
-  }, [orders]);
-
-  const currentList = useMemo(() => {
-    if (activeTab === 'COMMUNITIES') return communityRankings;
-    if (activeTab === 'BUSINESSES') return businessRankings;
-    if (activeTab === 'NEIGHBORS') return neighborRankings;
-    return nonprofitRankings;
-  }, [activeTab, communityRankings, businessRankings, neighborRankings, nonprofitRankings]);
-
-  const userRankIndex = activeTab === 'NEIGHBORS'
-    ? neighborRankings.findIndex(r => r.id === currentUserId)
-    : -1;
+  const topValue = (() => {
+    if (activeTab === 'COMMUNITIES') return cities[0]?.totalDonated ?? 1;
+    if (activeTab === 'BUSINESSES') return merchants[0]?.totalDonated ?? 1;
+    if (activeTab === 'NEIGHBORS') return neighbors[0]?.totalDonated ?? 1;
+    return nonprofits[0]?.totalReceived ?? 1;
+  })();
 
   return (
     <div className="bg-white rounded-2xl sm:rounded-[4rem] border border-[#CA9CE1]/30 shadow-xl overflow-hidden animate-in fade-in duration-700">
@@ -117,65 +72,73 @@ export const ImpactLeaderboard: React.FC<Props> = ({ orders, currentUserId }) =>
       </div>
 
       <div className="p-4 sm:p-12 md:p-16">
-        <div className="space-y-4">
-          {activeTab === 'COMMUNITIES' && communityRankings.map((c, i) => (
-            <RankRow
-              key={c.id}
-              rank={i + 1}
-              name={c.name}
-              metricLabel="Impact / Member"
-              metricValue={`$${c.perMemberImpact.toFixed(2)}`}
-              subMetric={`$${c.totalFunding.toFixed(2)} Total Funding`}
-              progress={(c.perMemberImpact / (communityRankings[0]?.perMemberImpact || 1)) * 100}
-              index={i}
-              isCurrentUser={false}
-            />
-          ))}
-          {activeTab === 'BUSINESSES' && businessRankings.map((m, i) => (
-            <RankRow
-              key={m.id}
-              rank={i + 1}
-              name={m.name}
-              metricLabel="Donated"
-              metricValue={`$${m.total.toFixed(2)}`}
-              progress={(m.total / (businessRankings[0]?.total || 1)) * 100}
-              index={i}
-              isCurrentUser={false}
-            />
-          ))}
-          {activeTab === 'NEIGHBORS' && neighborRankings.map((u, i) => (
-            <RankRow
-              key={u.id}
-              rank={i + 1}
-              name={u.name}
-              metricLabel="Impact Generated"
-              metricValue={`$${u.total.toFixed(2)}`}
-              progress={(u.total / (neighborRankings[0]?.total || 1)) * 100}
-              index={i}
-              isCurrentUser={u.id === currentUserId}
-              spotsFromTop={userRankIndex > 0 ? userRankIndex : undefined}
-            />
-          ))}
-          {activeTab === 'NONPROFITS' && nonprofitRankings.map((n, i) => (
-            <RankRow
-              key={n.id}
-              rank={i + 1}
-              name={n.name}
-              metricLabel="Funds Raised"
-              metricValue={`$${n.total.toFixed(2)}`}
-              progress={(n.total / (nonprofitRankings[0]?.total || 1)) * 100}
-              index={i}
-              isCurrentUser={false}
-            />
-          ))}
+        {loading ? (
+          <div className="space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-24 bg-slate-50 rounded-2xl animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {activeTab === 'COMMUNITIES' && cities.map((c, i) => (
+              <RankRow
+                key={`${c.city}-${c.state}`}
+                rank={i + 1}
+                name={`${c.city}, ${c.state}`}
+                metricLabel="Donated"
+                metricValue={`$${c.totalDonated.toFixed(2)}`}
+                subMetric={`${c.transactionCount} transactions`}
+                progress={(c.totalDonated / topValue) * 100}
+                index={i}
+                isCurrentUser={false}
+              />
+            ))}
+            {activeTab === 'BUSINESSES' && merchants.map((m, i) => (
+              <RankRow
+                key={m.id}
+                rank={i + 1}
+                name={m.businessName}
+                metricLabel="Donated"
+                metricValue={`$${m.totalDonated.toFixed(2)}`}
+                progress={(m.totalDonated / topValue) * 100}
+                index={i}
+                isCurrentUser={false}
+              />
+            ))}
+            {activeTab === 'NEIGHBORS' && neighbors.map((u, i) => (
+              <RankRow
+                key={u.userId}
+                rank={i + 1}
+                name={u.displayName}
+                metricLabel="Impact Generated"
+                metricValue={`$${u.totalDonated.toFixed(2)}`}
+                progress={(u.totalDonated / topValue) * 100}
+                index={i}
+                isCurrentUser={u.isCurrentUser}
+                spotsFromTop={u.isCurrentUser && i > 0 ? i : undefined}
+              />
+            ))}
+            {activeTab === 'NONPROFITS' && nonprofits.map((n, i) => (
+              <RankRow
+                key={n.id}
+                rank={i + 1}
+                name={n.orgName}
+                metricLabel="Funds Raised"
+                metricValue={`$${n.totalReceived.toFixed(2)}`}
+                progress={(n.totalReceived / topValue) * 100}
+                index={i}
+                isCurrentUser={false}
+              />
+            ))}
 
-          {currentList.length === 0 && (
-            <div className="py-20 text-center opacity-40">
-              <BrandSubmark size={80} color="#CA9CE1" className="mx-auto mb-6" showCrown={false} />
-              <p className="font-bold text-slate-400">The first settlement of the year is yet to be recorded.</p>
-            </div>
-          )}
-        </div>
+            {currentList.length === 0 && (
+              <div className="py-20 text-center opacity-40">
+                <BrandSubmark size={80} color="#CA9CE1" className="mx-auto mb-6" showCrown={false} />
+                <p className="font-bold text-slate-400">The first settlement of the year is yet to be recorded.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

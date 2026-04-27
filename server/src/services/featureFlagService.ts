@@ -1,12 +1,6 @@
-/**
- * Feature Flag System for Good Circles
- * 
- * Simple config-based feature flags. In production, these could be moved
- * to a database table or a service like LaunchDarkly.
- */
+import { prisma } from '../lib/prisma';
 
 export interface FeatureFlags {
-  // Phase 1 features (ON for beta)
   enable_marketplace: boolean;
   enable_internal_banking: boolean;
   enable_stripe_payments: boolean;
@@ -14,18 +8,14 @@ export interface FeatureFlags {
   enable_nonprofit_election: boolean;
   enable_discount_waiver: boolean;
   enable_community_initiatives: boolean;
-
-  // Phase 2 features (gated — auto-activate)
-  enable_netting_simulation: boolean;     // Always on — runs in sim mode
-  enable_netting_execution: boolean;      // Auto-activates at dual triggers
-  enable_coop_monitoring: boolean;        // Always on — tracks progress
-  enable_coop_deals: boolean;             // Auto-activates per category
-  enable_platform_credits: boolean;       // Auto-activates at 200 merchants
-  enable_referral_bonuses: boolean;       // ON for beta
-  enable_data_coop_collection: boolean;   // ON — collects anonymized data
-  enable_data_coop_insights: boolean;     // Auto-activates at 10 merchants/category
-
-  // Phase 3 features (OFF for initial beta)
+  enable_netting_simulation: boolean;
+  enable_netting_execution: boolean;
+  enable_coop_monitoring: boolean;
+  enable_coop_deals: boolean;
+  enable_platform_credits: boolean;
+  enable_referral_bonuses: boolean;
+  enable_data_coop_collection: boolean;
+  enable_data_coop_insights: boolean;
   enable_cooperative_ownership: boolean;
   enable_cdfi_fund: boolean;
   enable_municipal_dashboard: boolean;
@@ -35,7 +25,6 @@ export interface FeatureFlags {
 }
 
 const DEFAULT_FLAGS: FeatureFlags = {
-  // Phase 1 — ON
   enable_marketplace: true,
   enable_internal_banking: true,
   enable_stripe_payments: true,
@@ -43,8 +32,6 @@ const DEFAULT_FLAGS: FeatureFlags = {
   enable_nonprofit_election: true,
   enable_discount_waiver: true,
   enable_community_initiatives: true,
-
-  // Phase 2 — Auto-gated (monitoring/simulation ON, execution gated)
   enable_netting_simulation: true,
   enable_netting_execution: false,
   enable_coop_monitoring: true,
@@ -53,8 +40,6 @@ const DEFAULT_FLAGS: FeatureFlags = {
   enable_referral_bonuses: true,
   enable_data_coop_collection: true,
   enable_data_coop_insights: false,
-
-  // Phase 3 — OFF for initial beta
   enable_cooperative_ownership: false,
   enable_cdfi_fund: false,
   enable_municipal_dashboard: false,
@@ -63,39 +48,95 @@ const DEFAULT_FLAGS: FeatureFlags = {
   enable_credit_transfers: false,
 };
 
-// In-memory store — in production, load from DB or config service
-let currentFlags: FeatureFlags = { ...DEFAULT_FLAGS };
+const SETTINGS_KEY = 'feature_flags';
+const DEMO_MODE_KEY = 'demo_mode';
+
+// In-memory cache — loaded from DB on first use, written through on updates
+let cache: FeatureFlags | null = null;
+let demoModeCache: boolean | null = null;
 
 export class FeatureFlagService {
+  static async loadFromDb(): Promise<void> {
+    try {
+      const row = await prisma.systemSetting.findUnique({ where: { key: SETTINGS_KEY } });
+      if (row) {
+        cache = { ...DEFAULT_FLAGS, ...JSON.parse(row.value) };
+      } else {
+        cache = { ...DEFAULT_FLAGS };
+        await prisma.systemSetting.create({ data: { key: SETTINGS_KEY, value: JSON.stringify(DEFAULT_FLAGS) } });
+      }
+
+      const demoRow = await prisma.systemSetting.findUnique({ where: { key: DEMO_MODE_KEY } });
+      demoModeCache = demoRow ? demoRow.value === 'true' : false;
+      if (!demoRow) {
+        await prisma.systemSetting.create({ data: { key: DEMO_MODE_KEY, value: 'false' } });
+      }
+    } catch (err) {
+      console.error('[FeatureFlags] Failed to load from DB, using defaults:', err);
+      cache = { ...DEFAULT_FLAGS };
+      demoModeCache = false;
+    }
+  }
+
   static getAll(): FeatureFlags {
-    return { ...currentFlags };
+    return { ...(cache ?? DEFAULT_FLAGS) };
   }
 
   static isEnabled(flag: keyof FeatureFlags): boolean {
-    return currentFlags[flag] ?? false;
+    return (cache ?? DEFAULT_FLAGS)[flag] ?? false;
   }
 
-  static setFlag(flag: keyof FeatureFlags, value: boolean): void {
-    currentFlags[flag] = value;
+  static async setFlag(flag: keyof FeatureFlags, value: boolean): Promise<void> {
+    if (!cache) cache = { ...DEFAULT_FLAGS };
+    cache[flag] = value;
+    await prisma.systemSetting.upsert({
+      where: { key: SETTINGS_KEY },
+      update: { value: JSON.stringify(cache) },
+      create: { key: SETTINGS_KEY, value: JSON.stringify(cache) },
+    });
   }
 
-  static setMultiple(flags: Partial<FeatureFlags>): void {
-    currentFlags = { ...currentFlags, ...flags };
+  static async setMultiple(flags: Partial<FeatureFlags>): Promise<void> {
+    if (!cache) cache = { ...DEFAULT_FLAGS };
+    cache = { ...cache, ...flags };
+    await prisma.systemSetting.upsert({
+      where: { key: SETTINGS_KEY },
+      update: { value: JSON.stringify(cache) },
+      create: { key: SETTINGS_KEY, value: JSON.stringify(cache) },
+    });
   }
 
-  static resetToDefaults(): void {
-    currentFlags = { ...DEFAULT_FLAGS };
+  static async resetToDefaults(): Promise<void> {
+    cache = { ...DEFAULT_FLAGS };
+    await prisma.systemSetting.upsert({
+      where: { key: SETTINGS_KEY },
+      update: { value: JSON.stringify(DEFAULT_FLAGS) },
+      create: { key: SETTINGS_KEY, value: JSON.stringify(DEFAULT_FLAGS) },
+    });
   }
 
-  /**
-   * Activate Phase 3 features (admin action after beta validation)
-   */
-  static activatePhase3(): void {
-    currentFlags.enable_cooperative_ownership = true;
-    currentFlags.enable_cdfi_fund = true;
-    currentFlags.enable_municipal_dashboard = true;
-    currentFlags.enable_benefits_enrollment = true;
-    currentFlags.enable_supply_chain_matching = true;
-    currentFlags.enable_credit_transfers = true;
+  static async activatePhase3(): Promise<void> {
+    await FeatureFlagService.setMultiple({
+      enable_cooperative_ownership: true,
+      enable_cdfi_fund: true,
+      enable_municipal_dashboard: true,
+      enable_benefits_enrollment: true,
+      enable_supply_chain_matching: true,
+      enable_credit_transfers: true,
+    });
+  }
+
+  // Demo mode: when ON, admin views show simulated data; live users always see real data
+  static isDemoMode(): boolean {
+    return demoModeCache ?? false;
+  }
+
+  static async setDemoMode(enabled: boolean): Promise<void> {
+    demoModeCache = enabled;
+    await prisma.systemSetting.upsert({
+      where: { key: DEMO_MODE_KEY },
+      update: { value: enabled ? 'true' : 'false' },
+      create: { key: DEMO_MODE_KEY, value: enabled ? 'true' : 'false' },
+    });
   }
 }

@@ -49,9 +49,24 @@ export const CartDrawer: React.FC<Props> = ({
     };
 
     if (paymentMethod === 'CASH') {
-      const newToken = Math.random().toString(36).substr(2, 6).toUpperCase();
-      setHandshakeToken(newToken);
-      onCheckout({ ...orderData, paymentMethod: 'CASH', handshakeStatus: 'PENDING', impactToken: newToken });
+      // Generate HMAC-signed token from server; display as QR code
+      setIsProcessing(true);
+      const authToken = localStorage.getItem('gc_auth_token') || localStorage.getItem('gc_access_token') || '';
+      fetch('/api/wallet/qr-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+      })
+        .then(r => r.json())
+        .then(data => {
+          const tok = data.token ?? 'ERROR';
+          setHandshakeToken(tok);
+          onCheckout({ ...orderData, paymentMethod: 'CASH', handshakeStatus: 'PENDING', impactToken: tok });
+        })
+        .catch(() => {
+          // Fallback: show error state but don't use Math.random
+          setHandshakeToken('ERR');
+        })
+        .finally(() => setIsProcessing(false));
     } else {
       setIsProcessing(true);
       setTimeout(() => {

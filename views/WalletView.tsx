@@ -1,10 +1,78 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Wallet, WalletTransaction } from '../types';
 import { format } from 'date-fns';
 import { BrandSubmark } from '../components/BrandAssets';
 import { ConsumerQRDisplay } from '../components/QRPaymentSystem';
 import { useCountUp } from '../hooks/useCountUp';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { apiClient } from '../services/apiClient';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? '');
+
+const CARD_STYLE = {
+  style: {
+    base: {
+      fontSize: '16px',
+      fontFamily: 'inherit',
+      color: '#0f172a',
+      '::placeholder': { color: '#94a3b8' },
+    },
+    invalid: { color: '#e11d48' },
+  },
+};
+
+const FundWalletForm: React.FC<{ amount: number; onSuccess: () => void; onCancel: () => void }> = ({ amount, onSuccess, onCancel }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paying, setPaying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    apiClient.post<{ clientSecret: string }>('/wallet/fund/intent', { amount })
+      .then(r => setClientSecret(r.clientSecret))
+      .catch(e => setError(e.message || 'Could not initialize payment.'));
+  }, [amount]);
+
+  const handlePay = async () => {
+    if (!stripe || !elements || !clientSecret) return;
+    setPaying(true);
+    setError(null);
+    const card = elements.getElement(CardElement);
+    if (!card) { setPaying(false); return; }
+    const { error: stripeErr, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: { card },
+    });
+    if (stripeErr) {
+      setError(stripeErr.message ?? 'Payment failed.');
+      setPaying(false);
+      return;
+    }
+    if (paymentIntent?.status === 'succeeded') {
+      onSuccess();
+    }
+    setPaying(false);
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm font-bold text-slate-700">Funding ${amount.toFixed(2)} to your wallet</p>
+      {!clientSecret && !error && <p className="text-xs text-slate-400">Preparing payment…</p>}
+      {error && <p className="text-xs text-rose-600 font-bold">{error}</p>}
+      {clientSecret && (
+        <div className="p-4 border border-slate-200 rounded-2xl bg-slate-50">
+          <CardElement options={CARD_STYLE} />
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-3">
+        <button onClick={onCancel} disabled={paying} className="py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-slate-200 text-slate-500 hover:bg-slate-50 transition-all disabled:opacity-50">Cancel</button>
+        <button onClick={handlePay} disabled={paying || !clientSecret} className="py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-black text-white hover:bg-[#7851A9] transition-all disabled:opacity-50">{paying ? 'Processing…' : 'Pay Now'}</button>
+      </div>
+    </div>
+  );
+};
 
 interface Props {
   balance: number;
@@ -30,6 +98,7 @@ export const WalletView: React.FC<Props> = ({
   const [amount, setAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState<'WALLET' | 'PAY_IN_PERSON'>('WALLET');
+  const [showStripe, setShowStripe] = useState(false);
 
   const animatedBalance = useCountUp(balance, 1400);
   const animatedCredit = useCountUp(creditBalance, 1600);
@@ -130,32 +199,48 @@ export const WalletView: React.FC<Props> = ({
           </div>
 
           <div className="space-y-4">
-            <div className="relative">
-              <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-slate-300">$</span>
-              <input
-                type="number"
-                placeholder="0.00"
-                value={amount}
-                onChange={e => setAmount(e.target.value)}
-                className="w-full p-6 pl-12 bg-slate-50 border border-slate-100 rounded-3xl text-2xl font-black outline-none focus:ring-4 focus:ring-[#7851A9]/10"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                onClick={() => handleAction('topup')}
-                disabled={isProcessing || !amount}
-                className="bg-black text-white py-6 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all disabled:opacity-50"
-              >
-                {isProcessing ? '...' : 'Fund Wallet'}
-              </button>
-              <button
-                onClick={() => handleAction('withdraw')}
-                disabled={isProcessing || !amount || parseFloat(amount) > balance}
-                className="border-2 border-black text-black py-6 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all disabled:opacity-50"
-              >
-                {isProcessing ? '...' : 'Withdraw'}
-              </button>
-            </div>
+            {showStripe ? (
+              <Elements stripe={stripePromise}>
+                <FundWalletForm
+                  amount={parseFloat(amount) || 0}
+                  onSuccess={() => {
+                    setShowStripe(false);
+                    setAmount('');
+                    onToast?.('Wallet funded! Funds will appear once Stripe confirms payment.', 'success');
+                  }}
+                  onCancel={() => setShowStripe(false)}
+                />
+              </Elements>
+            ) : (
+              <>
+                <div className="relative">
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-slate-300">$</span>
+                  <input
+                    type="number"
+                    placeholder="0.00"
+                    value={amount}
+                    onChange={e => setAmount(e.target.value)}
+                    className="w-full p-6 pl-12 bg-slate-50 border border-slate-100 rounded-3xl text-2xl font-black outline-none focus:ring-4 focus:ring-[#7851A9]/10"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => { if (parseFloat(amount) > 0) setShowStripe(true); }}
+                    disabled={!amount || parseFloat(amount) <= 0}
+                    className="bg-black text-white py-6 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all disabled:opacity-50"
+                  >
+                    Fund Wallet
+                  </button>
+                  <button
+                    onClick={() => handleAction('withdraw')}
+                    disabled={isProcessing || !amount || parseFloat(amount) > balance}
+                    className="border-2 border-black text-black py-6 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all disabled:opacity-50"
+                  >
+                    {isProcessing ? '...' : 'Withdraw'}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
           <p className="text-[10px] text-slate-400 font-medium text-center italic">Withdrawals are processed within 24-48 hours to your linked account.</p>
         </div>

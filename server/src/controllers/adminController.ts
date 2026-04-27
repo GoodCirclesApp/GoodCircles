@@ -3,7 +3,13 @@ import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { AuthRequest } from '../middleware/authMiddleware';
 import { PriceSentinelService } from '../services/priceSentinelService';
+import { FeatureFlagService, FeatureFlags } from '../services/featureFlagService';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+
+async function writeAuditLog(adminId: string, action: string, targetId?: string, detail?: string) {
+  await prisma.adminAuditLog.create({ data: { adminId, action, targetId, detail } }).catch(() => {});
+}
 
 
 
@@ -28,17 +34,21 @@ export const getStats = async (req: AuthRequest, res: Response) => {
       _count: { id: true }
     });
 
+    const totalCount = totalTransactions._count.id;
+    const walletPaidCount = await prisma.transaction.count({ where: { paymentMethod: 'WALLET' } });
+    const internalBankingAdoption = totalCount > 0 ? walletPaidCount / totalCount : 0;
+
     res.json({
       totalRevenue,
-      totalTransactionCount: totalTransactions._count.id,
+      totalTransactionCount: totalCount,
       totalTransactionVolume: Number(totalTransactions._sum.grossAmount || 0),
       totalNonprofitFunding: Number(totalNonprofitFunding._sum.nonprofitShare || 0),
-      communityFundCapital: 1250000, // Mock for now
+      communityFundCapital: 0,
       activeUsersByRole: userCounts.reduce((acc: any, curr) => {
         acc[curr.role] = curr._count.id;
         return acc;
       }, {}),
-      internalBankingAdoption: 0.65 // Mock for now
+      internalBankingAdoption,
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -115,13 +125,32 @@ export const getFinancialOverview = async (req: AuthRequest, res: Response) => {
     return res.status(403).json({ error: 'Unauthorized' });
   }
 
-  res.json({
-    platformFeeRevenue: 45200,
-    processingFeePassThrough: 12800,
-    paymentSplit: { internal: 60, card: 40 },
-    aggregateWalletBalance: 850000,
-    nettingSavings: 15400
-  });
+  try {
+    const [feeAgg, totalCount, walletCount, walletBalanceAgg] = await Promise.all([
+      prisma.transaction.aggregate({ _sum: { platformFee: true, grossAmount: true } }),
+      prisma.transaction.count(),
+      prisma.transaction.count({ where: { paymentMethod: 'WALLET' } }),
+      prisma.wallet.aggregate({ _sum: { balance: true } }),
+    ]);
+
+    const platformFeeRevenue = Number(feeAgg._sum.platformFee ?? 0);
+    const totalVolume = Number(feeAgg._sum.grossAmount ?? 0);
+    const cardCount = totalCount - walletCount;
+    const internalPct = totalCount > 0 ? Math.round((walletCount / totalCount) * 100) : 0;
+    // Stripe card fee saved per wallet transaction ≈ 2.9% + $0.30; estimate savings
+    const avgTxSize = totalCount > 0 ? totalVolume / totalCount : 0;
+    const nettingSavings = walletCount * (avgTxSize * 0.029 + 0.30);
+
+    res.json({
+      platformFeeRevenue,
+      processingFeePassThrough: cardCount * (avgTxSize * 0.029 + 0.30),
+      paymentSplit: { internal: internalPct, card: 100 - internalPct },
+      aggregateWalletBalance: Number(walletBalanceAgg._sum.balance ?? 0),
+      nettingSavings: Math.round(nettingSavings * 100) / 100,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 export const getCooperatives = async (req: AuthRequest, res: Response) => {
@@ -176,14 +205,52 @@ export const getSystemHealth = async (req: AuthRequest, res: Response) => {
     return res.status(403).json({ error: 'Unauthorized' });
   }
 
-  res.json({
-    apiResponseTime: 120,
-    errorRate: 0.005,
-    jobs: [
-      { name: 'Netting', status: 'SUCCESS', lastRun: '2026-03-22T00:00:00Z' },
-      { name: 'Payouts', status: 'SUCCESS', lastRun: '2026-03-22T01:00:00Z' }
-    ]
-  });
+  try {
+    // Nonprofit digest: last sent time from log table
+    const lastDigest = await prisma.nonprofitDigestLog.findFirst({
+      orderBy: { sentAt: 'desc' },
+      select: { sentAt: true },
+    }).catch(() => null);
+
+    // Last wallet top-up completion (proxy for payment processing health)
+    const lastTopUp = await prisma.walletTopUp.findFirst({
+      where: { status: 'SUCCEEDED' },
+      orderBy: { completedAt: 'desc' },
+      select: { completedAt: true },
+    }).catch(() => null);
+
+    // Last transaction (proxy for settlement processor)
+    const lastTx = await prisma.transaction.findFirst({
+      orderBy: { createdAt: 'desc' },
+      select: { createdAt: true },
+    });
+
+    const jobs = [
+      {
+        name: 'Settlement Processor',
+        status: lastTx ? 'SUCCESS' : 'PENDING',
+        lastRun: lastTx?.createdAt ?? null,
+      },
+      {
+        name: 'Nonprofit Digest',
+        status: lastDigest ? 'SUCCESS' : 'PENDING',
+        lastRun: lastDigest?.sentAt ?? null,
+      },
+      {
+        name: 'Wallet Reconciliation',
+        status: lastTopUp ? 'SUCCESS' : 'PENDING',
+        lastRun: lastTopUp?.completedAt ?? null,
+      },
+    ];
+
+    res.json({
+      apiResponseTime: 0,
+      errorRate: 0,
+      jobs,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 export const getSentinelFlags = async (req: AuthRequest, res: Response) => {
@@ -395,8 +462,202 @@ export const deactivateCdfiPartner = async (req: AuthRequest, res: Response) => 
       where: { id: cdfiId },
       data: { partnershipStatus: 'suspended' },
     });
+    await writeAuditLog(req.user.id, 'SUSPEND_CDFI', cdfiId);
     console.log(`[Admin] Suspended CDFI ${cdfiId} by admin ${req.user.id}`);
     res.json({ success: true, cdfi: updated });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ── User account management ──────────────────────────────────────────────────
+
+export const getUserDetail = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  const userId = req.params.userId as string;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        wallet: true,
+        merchant: { select: { businessName: true, isVerified: true } },
+        nonprofit: { select: { orgName: true, ein: true, isVerified: true } },
+        transactions: { orderBy: { createdAt: 'desc' }, take: 10, select: { id: true, grossAmount: true, createdAt: true } },
+      },
+    });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const editUser = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  const userId = req.params.userId as string;
+  const schema = z.object({
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    email: z.string().email().optional(),
+    role: z.enum(['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'PLATFORM', 'CDFI']).optional(),
+    isActive: z.boolean().optional(),
+  });
+  try {
+    const data = schema.parse(req.body);
+    const before = await prisma.user.findUnique({ where: { id: userId }, select: { email: true, role: true, isActive: true } });
+    const user = await prisma.user.update({ where: { id: userId }, data });
+    await writeAuditLog(req.user.id, 'EDIT_USER', userId, JSON.stringify({ before, after: data }));
+    res.json(user);
+  } catch (err: any) {
+    if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const changeAdminPassword = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  const schema = z.object({ currentPassword: z.string(), newPassword: z.string().min(10) });
+  try {
+    const { currentPassword, newPassword } = schema.parse(req.body);
+    const admin = await prisma.user.findUnique({ where: { id: req.user.id } });
+    if (!admin) return res.status(404).json({ error: 'User not found' });
+    const valid = await bcrypt.compare(currentPassword, admin.passwordHash);
+    if (!valid) return res.status(400).json({ error: 'Current password is incorrect' });
+    const hash = await bcrypt.hash(newPassword, 12);
+    await prisma.user.update({ where: { id: req.user.id }, data: { passwordHash: hash } });
+    await writeAuditLog(req.user.id, 'CHANGE_PASSWORD', req.user.id);
+    res.json({ success: true });
+  } catch (err: any) {
+    if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const resetUserPassword = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  const userId = req.params.userId as string;
+  const schema = z.object({ newPassword: z.string().min(8) });
+  try {
+    const { newPassword } = schema.parse(req.body);
+    const hash = await bcrypt.hash(newPassword, 12);
+    await prisma.user.update({ where: { id: userId }, data: { passwordHash: hash } });
+    await writeAuditLog(req.user.id, 'RESET_USER_PASSWORD', userId);
+    res.json({ success: true });
+  } catch (err: any) {
+    if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ── Credit issuance ──────────────────────────────────────────────────────────
+
+export const issueCredits = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  const userId = req.params.userId as string;
+  const schema = z.object({ amount: z.number().positive(), reason: z.string().min(3) });
+  try {
+    const { amount, reason } = schema.parse(req.body);
+    const credit = await prisma.creditLedger.create({
+      data: {
+        userId,
+        amount,
+        entryType: 'CREDIT',
+        source: 'PROMOTIONAL',
+      },
+    });
+    await writeAuditLog(req.user.id, 'ISSUE_CREDITS', userId, JSON.stringify({ amount, reason }));
+    res.json({ success: true, credit });
+  } catch (err: any) {
+    if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ── Balance adjustment ───────────────────────────────────────────────────────
+
+export const adjustWalletBalance = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  const userId = req.params.userId as string;
+  const schema = z.object({
+    amount: z.number(),
+    reason: z.string().min(3),
+    entryType: z.enum(['CREDIT', 'DEBIT']),
+  });
+  try {
+    const { amount, reason, entryType } = schema.parse(req.body);
+    const wallet = await prisma.wallet.findUnique({ where: { userId } });
+    if (!wallet) return res.status(404).json({ error: 'Wallet not found' });
+
+    const delta = entryType === 'CREDIT' ? Math.abs(amount) : -Math.abs(amount);
+    const newBalance = Number(wallet.balance) + delta;
+    if (newBalance < 0) return res.status(400).json({ error: 'Adjustment would result in negative balance' });
+
+    await prisma.wallet.update({ where: { userId }, data: { balance: newBalance } });
+    await prisma.ledgerEntry.create({
+      data: {
+        walletId: wallet.id,
+        entryType,
+        amount: Math.abs(amount),
+        balanceAfter: newBalance,
+        description: `Admin adjustment: ${reason}`,
+      },
+    });
+    await writeAuditLog(req.user.id, 'ADJUST_BALANCE', userId, JSON.stringify({ entryType, amount, reason, newBalance }));
+    res.json({ success: true, newBalance });
+  } catch (err: any) {
+    if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ── Demo reset (expose existing betaController logic) ────────────────────────
+// Imports resetBetaTransactions from betaController and re-exports under admin route
+import { resetBetaTransactions } from './betaController';
+export { resetBetaTransactions as adminResetDemo };
+
+// ── Feature flags management ─────────────────────────────────────────────────
+
+export const getFeatureFlags = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  res.json(FeatureFlagService.getAll());
+};
+
+export const updateFeatureFlag = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  const { flag, value } = req.body;
+  if (typeof flag !== 'string' || typeof value !== 'boolean') {
+    return res.status(400).json({ error: 'flag (string) and value (boolean) required' });
+  }
+  await FeatureFlagService.setFlag(flag as keyof FeatureFlags, value);
+  await writeAuditLog(req.user.id, 'SET_FEATURE_FLAG', undefined, JSON.stringify({ flag, value }));
+  res.json({ message: `Flag "${flag}" set to ${value}`, flags: FeatureFlagService.getAll() });
+};
+
+export const getDemoMode = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  res.json({ demoMode: FeatureFlagService.isDemoMode() });
+};
+
+export const setDemoMode = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  const { enabled } = req.body;
+  if (typeof enabled !== 'boolean') return res.status(400).json({ error: 'enabled (boolean) required' });
+  await FeatureFlagService.setDemoMode(enabled);
+  await writeAuditLog(req.user.id, 'SET_DEMO_MODE', undefined, JSON.stringify({ enabled }));
+  res.json({ demoMode: enabled });
+};
+
+// ── Audit log ────────────────────────────────────────────────────────────────
+
+export const getAuditLog = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  const limit = Math.min(parseInt(req.query.limit as string) || 50, 200);
+  try {
+    const logs = await prisma.adminAuditLog.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+    res.json(logs);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
