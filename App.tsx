@@ -296,8 +296,8 @@ const App: React.FC = () => {
               <MenuBtn active={store.activeView === 'NONPROFIT_SELECTION'} onClick={() => { store.setActiveView('NONPROFIT_SELECTION'); setIsMenuOpen(false); }} label="Causes" />
               <MenuBtn active={store.activeView === 'GOVERNANCE'} onClick={() => { store.setActiveView('GOVERNANCE'); setIsMenuOpen(false); }} label="Governance" />
               <MenuBtn active={store.activeView === 'LEADERBOARD'} onClick={() => { store.setActiveView('LEADERBOARD'); setIsMenuOpen(false); }} label="Leaderboard" />
-              <MenuBtn active={store.activeView === 'FAQ'} onClick={() => { store.setActiveView('FAQ'); setIsMenuOpen(false); }} label="FAQ" />
               <MenuBtn active={store.activeView === 'IMPACT_MAP'} onClick={() => { store.setActiveView('IMPACT_MAP'); setIsMenuOpen(false); }} label="Impact Map" />
+              <MenuBtn active={store.activeView === 'FAQ'} onClick={() => { store.setActiveView('FAQ'); setIsMenuOpen(false); }} label="FAQ" />
 
               {store.effectiveRole === 'NONPROFIT' && (
                 <>
