@@ -71,7 +71,7 @@ export const FAQSection: React.FC<Props> = ({ role }) => {
       <header className="max-w-4xl">
         <div className="flex items-center gap-3 mb-6">
            <div className="w-2 h-2 rounded-full bg-[#7851A9] animate-pulse"></div>
-           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#7851A9] font-accent">Ecosystem Knowledge Base v8.01</p>
+           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#7851A9] font-accent">Ecosystem Knowledge Base v8.02</p>
         </div>
         <h2 className="text-7xl font-black text-black tracking-tighter italic uppercase leading-[0.9]">
           System Guide.

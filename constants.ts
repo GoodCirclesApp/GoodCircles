@@ -419,6 +419,74 @@ const FAQ_FEATURES_GOVERNANCE: FAQItem[] = [
   },
 ];
 
+// ── New features added in the April–May 2026 sprint ─────────────────────────
+
+const FAQ_CDFI: FAQItem[] = [
+  {
+    id: 'cdfi-1',
+    category: 'ECONOMY',
+    question: 'What is a CDFI partner and what role do they play on Good Circles?',
+    answer: 'CDFI stands for Community Development Financial Institution — a Treasury-certified lender whose mission is to deploy capital in underserved communities. On Good Circles, CDFI partners can review local merchants on the platform, assess their transaction history, and offer loans or credit lines directly through the marketplace. This gives small community businesses access to mission-aligned capital they often cannot get from a traditional bank.',
+  },
+  {
+    id: 'cdfi-2',
+    category: 'ECONOMY',
+    question: 'How does a CDFI partner sign up?',
+    answer: 'CDFIs register through the same signup flow as other roles — select the CDFI card, enter your organization name, Treasury certification number, and optionally the states where you lend. Your account is created immediately, but it is set to "Applied" status. A platform administrator reviews your application and activates your account before you can access the CDFI dashboard or review merchant packages. You will receive confirmation once your account is activated.',
+  },
+  {
+    id: 'cdfi-3',
+    category: 'ECONOMY',
+    question: 'What does the CDFI dashboard contain?',
+    answer: 'The CDFI dashboard has three tabs:\n\n• Loan Applications — review incoming loan requests from merchants. Each application shows the merchant\'s name, requested amount, purpose, and LMI (Low-to-Moderate Income area) eligibility status. You can mark applications as Reviewed, Convert (approve for underwriting), or Decline.\n\n• Merchant Packages — a pre-filtered list of merchants in your lending regions with their transaction volume, nonprofit funding generated, and LMI badge. This lets you proactively identify candidates for capital deployment.\n\n• Settings — configure your target census tracts (FIPS codes), milestone transaction threshold, reporting frequency, and TLR (Transmittal Level Report) column mapping for compliance exports.',
+  },
+  {
+    id: 'cdfi-4',
+    category: 'ECONOMY',
+    question: 'What is a TLR export and why does it matter?',
+    answer: 'A Transmittal Level Report (TLR) is a standardized compliance document required by the CDFI Fund for reporting on capital deployment. From the CDFI dashboard, you can export a TLR as a CSV file that maps Good Circles transaction data to your institution\'s required column format. The column mapping is configurable in your Settings tab so you can match your internal reporting templates without manual reformatting.',
+  },
+  {
+    id: 'cdfi-5',
+    category: 'ECONOMY',
+    question: 'What is an LMI badge on a merchant listing?',
+    answer: 'LMI stands for Low-to-Moderate Income. Merchants whose physical location falls within a census tract designated as LMI by the FFIEC (Federal Financial Institutions Examination Council) receive an LMI badge on their profile. For CDFI partners, this is a key qualification signal — loans to businesses in LMI areas typically meet the national objective requirements for CDFI Fund reporting and CDBG compliance.',
+  },
+];
+
+const FAQ_IMPACT_MAP: FAQItem[] = [
+  {
+    id: 'impact-1',
+    category: 'CORE',
+    question: 'What is the Impact Transparency Map?',
+    answer: 'The Impact Transparency Map is a live, interactive visualization of Good Circles\' economic activity across the United States. It shows a tile-map cartogram of all 50 states and DC, colored by total transaction volume. You can click any state to see a city-level breakdown, then click a city to see its individual metrics. The map is available to all signed-in users and is designed to show the real community impact the platform generates — merchant activity, nonprofit funding, and economic health — at any geographic scale.',
+  },
+  {
+    id: 'impact-2',
+    category: 'CORE',
+    question: 'What is Demo Mode vs. Live Mode on the Impact Map?',
+    answer: 'The map has two data modes, switchable from the button at the top right:\n\n• Demo Mode — shows deterministic simulation data scaled to real US state population distributions. The same state always shows the same projected numbers, making it consistent for presentations and demos. This mode gives a realistic picture of what the platform will look like at scale.\n\n• Live Mode — shows only real GoodCircles transaction data pulled directly from the platform\'s database. During early beta, this data will be sparse. As the merchant and member base grows, Live Mode becomes the primary view.\n\nBoth modes can be used at any time.',
+  },
+  {
+    id: 'impact-3',
+    category: 'CORE',
+    question: 'What is the Neighborhood Economic Health Score?',
+    answer: 'The Economic Health Score is a composite 0–100 metric shown for whatever geographic area you\'re currently viewing — national, state, or city. It is calculated from four weighted factors:\n\n• Merchant density (30%) — how many active merchants relative to the area\'s population\n• Transaction velocity (25%) — average transactions per merchant\n• Nonprofit funding rate (25%) — the percentage of transaction volume directed to nonprofits\n• Volume score (20%) — total volume relative to the highest-volume area on the map\n\nA score of 70+ is "Strong," 40–69 is "Moderate," and below 40 is "Early Stage." The score updates as you drill down into different geographies.',
+  },
+  {
+    id: 'impact-4',
+    category: 'GOVERNANCE',
+    question: 'How do I export an impact report for my city or state?',
+    answer: 'Click the "Export Report" button in the top right of the Impact Map. This opens a print dialog with a formatted PDF containing two sections:\n\n1. General Impact Report — transaction volume, nonprofit funding, merchant count, transaction totals, and your Economic Health Score for the selected geography.\n\n2. CDBG Compliance Addendum — documentation formatted for Community Development Block Grant reporting under HUD 24 CFR Part 570. It includes the national objective documentation (LMI Area Benefit), a CAPER narrative paragraph with real numbers filled in, and an IDIS activity reference table with matrix code, accomplishment type, and beneficiary area.\n\nDrill down to the state or city you want to report on before clicking Export — the report reflects whatever level is currently selected.',
+  },
+  {
+    id: 'impact-5',
+    category: 'GOVERNANCE',
+    question: 'What is CDBG and why does Good Circles generate CDBG-ready reports?',
+    answer: 'CDBG stands for Community Development Block Grant — a federal program administered by HUD that funds economic development, housing, and public services in low-to-moderate income communities. Many cities and counties that Good Circles operates in receive CDBG funding and are required to report on how that funding generates economic benefit for LMI residents.\n\nGood Circles generates CAPER (Consolidated Annual Performance and Evaluation Report) narrative language and IDIS (Integrated Disbursement and Information System) activity data automatically from real platform transaction data. This means municipal partners and CDFI partners can use Good Circles data directly in their HUD reporting without manual data collection.',
+  },
+];
+
 export const INITIAL_FAQ: FAQItem[] = [
   ...FAQ_CORE,
   ...FAQ_SHOPPING,
@@ -433,6 +501,8 @@ export const INITIAL_FAQ: FAQItem[] = [
   ...FAQ_FEATURES_MERCHANT,
   ...FAQ_FEATURES_NONPROFIT,
   ...FAQ_FEATURES_GOVERNANCE,
+  ...FAQ_CDFI,
+  ...FAQ_IMPACT_MAP,
 ];
 
 export const PRODUCT_CATEGORIES = [
