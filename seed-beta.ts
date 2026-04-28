@@ -236,6 +236,108 @@ async function seed() {
     console.log('[Seed] ✅ Seeded 4 referral bonus tiers');
   }
 
+  // ─── Affiliate Program + Demo Listings ──────────────────────────────
+  // Uses categories NOT covered by native merchants so the Priority Engine
+  // correctly surfaces these while suppressing them once local merchants exist.
+
+  const affiliateProgramCount = await prisma.affiliateProgram.count();
+  if (affiliateProgramCount === 0) {
+    const demoProgram = await prisma.affiliateProgram.create({
+      data: {
+        name: 'Amazon Associates',
+        platform: 'AMAZON',
+        trackingId: 'goodcircles-20',
+        baseCommRate: 0.04,
+        logoUrl: null,
+        isActive: true,
+      }
+    });
+
+    await prisma.affiliateListing.createMany({
+      data: [
+        {
+          programId: demoProgram.id,
+          externalId: 'B09G9FPHY6',
+          title: 'Anker 65W USB-C Charging Station (4-Port)',
+          description: 'Fast-charge up to 4 devices simultaneously. Compatible with all USB-C devices.',
+          imageUrl: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400&h=400&fit=crop',
+          price: 35.99,
+          affiliateUrl: 'https://www.amazon.com/dp/B09G9FPHY6?tag=goodcircles-20',
+          category: 'Electronics',
+          commRate: 0.04,
+          isActive: true,
+          createdBy: admin.id,
+        },
+        {
+          programId: demoProgram.id,
+          externalId: 'B08N5WRWNW',
+          title: 'Kindle Paperwhite (16 GB) — Waterproof E-Reader',
+          description: 'Adjustable warm light, 6.8" display, weeks of battery life.',
+          imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop',
+          price: 139.99,
+          affiliateUrl: 'https://www.amazon.com/dp/B08N5WRWNW?tag=goodcircles-20',
+          category: 'Electronics',
+          commRate: 0.04,
+          isActive: true,
+          createdBy: admin.id,
+        },
+        {
+          programId: demoProgram.id,
+          externalId: 'B07VGRJDFY',
+          title: 'Patagonia Better Sweater Fleece Jacket',
+          description: 'Made from 100% recycled polyester fleece. Fair Trade Certified.',
+          imageUrl: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=400&fit=crop',
+          price: 99.00,
+          affiliateUrl: 'https://www.amazon.com/dp/B07VGRJDFY?tag=goodcircles-20',
+          category: 'Clothing',
+          commRate: 0.04,
+          isActive: true,
+          createdBy: admin.id,
+        },
+        {
+          programId: demoProgram.id,
+          externalId: 'B09B8YWXDF',
+          title: 'Yoga Mat — Non-Slip, Eco-Friendly, 6mm Thick',
+          description: 'Natural tree rubber base with moisture-wicking top layer. Includes carry strap.',
+          imageUrl: 'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=400&fit=crop',
+          price: 54.99,
+          affiliateUrl: 'https://www.amazon.com/dp/B09B8YWXDF?tag=goodcircles-20',
+          category: 'Sports & Fitness',
+          commRate: 0.04,
+          isActive: true,
+          createdBy: admin.id,
+        },
+        {
+          programId: demoProgram.id,
+          externalId: 'B08BHXG144',
+          title: 'Atomic Habits — James Clear (Hardcover)',
+          description: 'The #1 New York Times bestseller on building good habits and breaking bad ones.',
+          imageUrl: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop',
+          price: 18.99,
+          affiliateUrl: 'https://www.amazon.com/dp/B08BHXG144?tag=goodcircles-20',
+          category: 'Books',
+          commRate: 0.045,
+          isActive: true,
+          createdBy: admin.id,
+        },
+        {
+          programId: demoProgram.id,
+          externalId: 'B07D4P3D6K',
+          title: 'Vitafusion Extra Strength Vitamin D3 Gummies (120ct)',
+          description: '3000 IU per serving. Peach, blackberry, and strawberry flavors. No artificial flavors.',
+          imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=400&fit=crop',
+          price: 14.49,
+          affiliateUrl: 'https://www.amazon.com/dp/B07D4P3D6K?tag=goodcircles-20',
+          category: 'Health & Wellness',
+          commRate: 0.04,
+          isActive: true,
+          createdBy: admin.id,
+        },
+      ]
+    });
+    console.log('[Seed] ✅ Created 1 affiliate program (Amazon Associates) + 6 demo listings');
+  }
+
   // ─── Donation Pool Fund ──────────────────────────────────────────────
 
   await prisma.communityFund.upsert({

@@ -57,7 +57,11 @@ const listingSchema = z.object({
 export const getListings = async (req: Request, res: Response) => {
   try {
     const category = req.query.category as string | undefined;
-    res.json(await AffiliateService.getActiveListings(category));
+    const excludeRaw = req.query.excludeCategories as string | undefined;
+    const excludeCategories = excludeRaw
+      ? excludeRaw.split(',').map(s => s.trim()).filter(Boolean)
+      : [];
+    res.json(await AffiliateService.getActiveListings(category, excludeCategories));
   } catch (err: any) { res.status(500).json({ error: err.message }); }
 };
 

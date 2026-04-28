@@ -335,6 +335,7 @@ model ProductService {
   isClearance Boolean @default(false)
   type String
   category String
+  upc String?              // Universal Product Code — used for affiliate deduplication
   isActive Boolean @default(true)
   createdAt DateTime @default(now())
   transactions Transaction[]
@@ -1072,6 +1073,7 @@ model AffiliateListing {
   price        Decimal               @db.Decimal(10, 2)
   affiliateUrl String
   category     String
+  upc          String?               // Universal Product Code — for golden-record deduplication with native listings
   commRate     Decimal?              @db.Decimal(5, 4) // overrides program default when set
   isActive     Boolean               @default(true)
   createdBy    String                // admin user id

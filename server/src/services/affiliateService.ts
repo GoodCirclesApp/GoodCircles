@@ -38,12 +38,14 @@ export class AffiliateService {
 
   // ── Listings ─────────────────────────────────────────────────────────────
 
-  static getActiveListings(category?: string) {
+  static getActiveListings(category?: string, excludeCategories: string[] = []) {
     return prisma.affiliateListing.findMany({
       where: {
         isActive: true,
         program: { isActive: true },
         ...(category ? { category } : {}),
+        // Priority Engine: suppress affiliate listings in categories already covered by native products
+        ...(excludeCategories.length > 0 ? { category: { notIn: excludeCategories } } : {}),
       },
       include: {
         program: { select: { name: true, platform: true, logoUrl: true } },

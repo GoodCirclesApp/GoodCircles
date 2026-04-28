@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Product, UserRole, FiscalPolicy, CartItem } from '../types';
 import { getEffectiveRates } from '../utils/financeEngine';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
@@ -39,12 +39,22 @@ export const MarketplaceView: React.FC<Props> = ({
   const [affiliateListings, setAffiliateListings] = useState<AffiliateListingData[]>([]);
   const [recentlyAdded, setRecentlyAdded] = useState<string | null>(null);
 
+  // Priority Engine: derive the set of categories covered by native products
+  const nativeCategoryKey = useMemo(
+    () => [...new Set(products.map(p => p.category))].sort().join(','),
+    [products],
+  );
+
+  // Re-fetch affiliate listings whenever native coverage changes — suppresses categories already in-house
   useEffect(() => {
-    fetch('/api/affiliate/listings')
+    const excludeParam = nativeCategoryKey
+      ? `?excludeCategories=${encodeURIComponent(nativeCategoryKey)}`
+      : '';
+    fetch(`/api/affiliate/listings${excludeParam}`)
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setAffiliateListings(data); })
       .catch(() => {});
-  }, []);
+  }, [nativeCategoryKey]);
 
   // Track newly-added cart item for pulse animation
   const prevCartRef = React.useRef<CartItem[]>([]);
@@ -146,6 +156,13 @@ export const MarketplaceView: React.FC<Props> = ({
                       alt={p.name}
                       onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop'; }}
                     />
+                    {/* GoodCircles Native badge — bottom-left of image */}
+                    <div className="absolute bottom-2 left-2">
+                      <div className="bg-emerald-500/90 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white inline-block" />
+                        <span className="text-[8px] font-black text-white uppercase tracking-widest">In-House</span>
+                      </div>
+                    </div>
                     <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
                       {/* Nonprofit impact badge (replaces generic "10% Reward") */}
                       <div className="bg-white/95 backdrop-blur-sm px-2.5 py-1.5 rounded-xl border border-[#C2A76F]/30 shadow-sm flex items-center gap-1.5">
@@ -229,19 +246,19 @@ export const MarketplaceView: React.FC<Props> = ({
         </>
       )}
 
-      {/* Affiliate Partner Listings */}
+      {/* Affiliate Partner Listings — only shown for categories not covered by native merchants */}
       {affiliateListings.length > 0 && (
         <div className="space-y-6">
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-slate-100" />
             <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-100 rounded-xl">
               <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-700">Also Available From Partners</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-700">Supplement — Partner Products</p>
             </div>
             <div className="flex-1 h-px bg-slate-100" />
           </div>
-          <p className="text-center text-xs text-slate-400 font-medium -mt-2">
-            External purchases generate affiliate commissions — 50% benefits our donor advised fund, 50% supports platform operations.
+          <p className="text-center text-xs text-slate-400 font-medium -mt-2 max-w-xl mx-auto">
+            These categories aren't yet offered by local merchants in your node. External purchases earn affiliate commissions — 50% goes to our donor advised fund, 50% supports platform operations. As our merchant network grows, in-house listings will replace these automatically.
           </p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
             {affiliateListings.map(listing => (
