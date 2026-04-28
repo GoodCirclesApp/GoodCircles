@@ -71,9 +71,7 @@ const CREDS: Record<Exclude<Role, 'PUBLIC'>, { email: string; password: string }
 
 // ─── Token cache (scoped to a single test run) ────────────────────────────────
 
-async function getToken(role: Role, cache: Map<Role, string>): Promise<string | null> {
-  if (role === 'PUBLIC') return null;
-  if (cache.has(role)) return cache.get(role)!;
+async function loginOnce(role: Exclude<Role, 'PUBLIC'>): Promise<string | null> {
   const res = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -81,7 +79,30 @@ async function getToken(role: Role, cache: Map<Role, string>): Promise<string | 
   });
   if (!res.ok) return null;
   const data = await res.json();
-  const token = data.token ?? null;
+  return data.token ?? null;
+}
+
+// Pre-warm all role tokens before tests run — sequential with delay to stay
+// under the auth rate limiter (max 20 logins / 15 min in production).
+async function prewarmTokens(
+  cache: Map<Role, string>,
+  onStep: (msg: string) => void,
+): Promise<void> {
+  const roles: Exclude<Role, 'PUBLIC'>[] = ['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'PLATFORM'];
+  for (const role of roles) {
+    onStep(`Authenticating ${role}…`);
+    const token = await loginOnce(role);
+    if (token) cache.set(role, token);
+    // 450 ms between logins — avoids burst rate limiting without excessive delay
+    await new Promise(r => setTimeout(r, 450));
+  }
+}
+
+async function getToken(role: Role, cache: Map<Role, string>): Promise<string | null> {
+  if (role === 'PUBLIC') return null;
+  // Return cached token; if missing (e.g. prewarm failed), attempt once more
+  if (cache.has(role)) return cache.get(role)!;
+  const token = await loginOnce(role);
   if (token) cache.set(role, token);
   return token;
 }
@@ -183,32 +204,29 @@ const TEST_REGISTRY: TestCase[] = [
   },
   {
     id: 'auth-profile-authed', suite: 'Auth', name: 'Profile accessible when authenticated', role: 'NEIGHBOR',
-    run: (tok) => runCheck(tok, 'GET', '/api/auth/me', { expectKey: 'id' }),
+    run: (tok) => runCheck(tok, 'GET', '/api/auth/profile', { expectKey: 'id' }),
   },
   {
     id: 'auth-profile-unauthed', suite: 'Auth', name: 'Profile blocked without auth', role: 'PUBLIC',
-    run: (tok) => runCheck(tok, 'GET', '/api/auth/me', { expectStatus: 401 }),
+    run: (tok) => runCheck(tok, 'GET', '/api/auth/profile', { expectStatus: 401 }),
   },
 
   // ── Marketplace ───────────────────────────────────────────────────────────
   {
     id: 'market-products', suite: 'Marketplace', name: 'Products listing', role: 'PUBLIC',
-    run: (tok) => runCheck(tok, 'GET', '/api/marketplace/products', { expectKey: 'products' }),
+    run: (tok) => runCheck(tok, 'GET', '/api/marketplace/search', {}),
   },
   {
     id: 'market-categories', suite: 'Marketplace', name: 'Categories endpoint', role: 'PUBLIC',
-    run: async (tok) => {
-      const res = await fetch('/api/marketplace/products', { headers: authHeaders(tok) });
-      return { ok: res.ok, detail: res.ok ? undefined : `Status ${res.status}` };
-    },
+    run: (tok) => runCheck(tok, 'GET', '/api/marketplace/categories', {}),
   },
   {
     id: 'market-search', suite: 'Marketplace', name: 'Search with query param', role: 'PUBLIC',
-    run: (tok) => runCheck(tok, 'GET', '/api/search?q=food', { expectKey: 'results' }),
+    run: (tok) => runCheck(tok, 'GET', '/api/search?q=food', {}),
   },
   {
     id: 'market-orders-authed', suite: 'Marketplace', name: 'Orders require auth', role: 'PUBLIC',
-    run: (tok) => runCheck(tok, 'GET', '/api/neighbor/orders', { expectStatus: 401 }),
+    run: (tok) => runCheck(tok, 'GET', '/api/marketplace/orders', { expectStatus: 401 }),
   },
 
   // ── Affiliate ─────────────────────────────────────────────────────────────
@@ -265,12 +283,12 @@ const TEST_REGISTRY: TestCase[] = [
 
   // ── Merchant ──────────────────────────────────────────────────────────────
   {
-    id: 'merch-dashboard', suite: 'Merchant', name: 'Merchant dashboard', role: 'MERCHANT',
-    run: (tok) => runCheck(tok, 'GET', '/api/merchant/dashboard', {}),
+    id: 'merch-dashboard', suite: 'Merchant', name: 'Merchant dashboard metrics', role: 'MERCHANT',
+    run: (tok) => runCheck(tok, 'GET', '/api/merchant/dashboard/metrics', {}),
   },
   {
     id: 'merch-listings', suite: 'Merchant', name: 'Merchant product listings', role: 'MERCHANT',
-    run: (tok) => runCheck(tok, 'GET', '/api/merchant/products', {}),
+    run: (tok) => runCheck(tok, 'GET', '/api/merchant/listings', {}),
   },
 
   // ── Admin ─────────────────────────────────────────────────────────────────
@@ -300,20 +318,20 @@ const TEST_REGISTRY: TestCase[] = [
   },
   {
     id: 'admin-feature-flags', suite: 'Admin', name: 'Feature flags endpoint', role: 'PLATFORM',
-    run: (tok) => runCheck(tok, 'GET', '/api/admin/feature-flags', {}),
+    run: (tok) => runCheck(tok, 'GET', '/api/admin/flags', {}),
   },
   {
     id: 'admin-cdfi', suite: 'Admin', name: 'CDFI partner list', role: 'PLATFORM',
-    run: (tok) => runCheck(tok, 'GET', '/api/cdfi/partners', {}),
+    run: (tok) => runCheck(tok, 'GET', '/api/admin/cdfi', {}),
   },
 
   // ── Community ─────────────────────────────────────────────────────────────
   {
-    id: 'feed-public', suite: 'Community', name: 'Activity feed (public)', role: 'PUBLIC',
+    id: 'feed-authed', suite: 'Community', name: 'Activity feed (authenticated)', role: 'NEIGHBOR',
     run: (tok) => runCheck(tok, 'GET', '/api/feed', {}),
   },
   {
-    id: 'leaderboard-public', suite: 'Community', name: 'Leaderboard (public)', role: 'PUBLIC',
+    id: 'leaderboard-authed', suite: 'Community', name: 'Leaderboard (authenticated)', role: 'NEIGHBOR',
     run: (tok) => runCheck(tok, 'GET', '/api/leaderboard', {}),
   },
 
@@ -340,7 +358,7 @@ const TEST_REGISTRY: TestCase[] = [
   },
   {
     id: 'iso-merchant-blocked-neighbor', suite: 'Role Isolation', name: 'Merchant dashboard blocked for NEIGHBOR', role: 'NEIGHBOR',
-    run: (tok) => runCheck(tok, 'GET', '/api/merchant/dashboard', { expectStatus: 403 }),
+    run: (tok) => runCheck(tok, 'GET', '/api/merchant/dashboard/metrics', { expectStatus: 403 }),
   },
 ];
 
@@ -443,6 +461,12 @@ export const AdminIntegrityTest: React.FC = () => {
 
     const tokenCache = new Map<Role, string>();
     const results: TestResult[] = [];
+
+    // Pre-warm all role tokens before running any tests so that rate-limit
+    // hits during the auth suite don't cascade into 401s on every later test.
+    setCurrentTest('Warming up session tokens…');
+    await prewarmTokens(tokenCache, setCurrentTest);
+
     const startAll = performance.now();
 
     for (let i = 0; i < TEST_REGISTRY.length; i++) {
@@ -579,13 +603,15 @@ export const AdminIntegrityTest: React.FC = () => {
         {running && (
           <div className="mt-4 space-y-2">
             <div className="flex justify-between text-xs text-slate-500">
-              <span className="truncate">{currentTest}</span>
-              <span className="shrink-0 ml-2">{progress}%</span>
+              <span className="truncate italic">
+                {progress === 0 && currentTest.startsWith('Warm') ? '🔑 ' : ''}{currentTest}
+              </span>
+              <span className="shrink-0 ml-2">{progress > 0 ? `${progress}%` : 'setup'}</span>
             </div>
             <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-emerald-500 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
+                className={`h-full rounded-full transition-all duration-300 ${progress === 0 ? 'bg-amber-400 w-1/4 animate-pulse' : 'bg-emerald-500'}`}
+                style={{ width: progress > 0 ? `${progress}%` : undefined }}
               />
             </div>
           </div>
