@@ -176,7 +176,7 @@ export default function AdminIntegrityTest() {
     setError(null);
     setReport(null);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('gc_auth_token');
       const res = await fetch('/api/admin/test/run', {
         method: 'POST',
         headers: {
