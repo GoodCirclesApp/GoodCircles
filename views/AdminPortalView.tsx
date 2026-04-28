@@ -47,6 +47,7 @@ import { MunicipalDemoSimulator } from '../components/MunicipalDemoSimulator';
 import { MockDataManager } from '../components/MockDataManager';
 import { AdminAffiliateDashboard } from '../components/AdminAffiliateDashboard';
 import { ComplianceDashboard } from '../components/ComplianceDashboard';
+import { AdminIntegrityTest } from '../components/AdminIntegrityTest';
 import { Scale } from 'lucide-react';
 
 // Sub-components
@@ -1086,7 +1087,7 @@ type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
   | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT'
-  | 'AUDIT_LOG' | 'SETTINGS';
+  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -1111,6 +1112,7 @@ export const AdminPortalView: React.FC = () => {
     { id: 'CDFI_MGMT', label: 'CDFI Partners', icon: Landmark },
     { id: 'AUDIT_LOG', label: 'Audit Log', icon: ClipboardList },
     { id: 'SETTINGS', label: 'Admin Settings', icon: Settings },
+    { id: 'INTEGRITY', label: 'System Integrity Test', icon: FlaskConical },
   ];
 
   const renderContent = () => {
@@ -1132,6 +1134,7 @@ export const AdminPortalView: React.FC = () => {
       case 'CDFI_MGMT': return <CdfiManagement />;
       case 'AUDIT_LOG': return <AuditLogPanel />;
       case 'SETTINGS': return <AdminSettings />;
+      case 'INTEGRITY': return <AdminIntegrityTest />;
       default: return <SystemDashboard />;
     }
   };

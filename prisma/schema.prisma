@@ -1534,6 +1534,24 @@ model TaxReportingFlag {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// System Integrity Test Reports
+// ─────────────────────────────────────────────────────────────────────────────
+
+model SystemTestReport {
+  id          String   @id @default(uuid())
+  runAt       DateTime @default(now())
+  triggeredBy String
+  durationMs  Int
+  totalTests  Int
+  passed      Int
+  failed      Int
+  warnings    Int      @default(0)
+  reportJson  String   // full JSON blob of suite results
+
+  @@index([runAt])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Platform Settings (key-value, singleton rows for feature flags + demo mode)
 // ─────────────────────────────────────────────────────────────────────────────
 

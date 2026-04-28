@@ -41,6 +41,10 @@ const NonprofitPortal = React.lazy(() => import('./components/NonprofitPortal').
 const AccountingHub = React.lazy(() => import('./components/AccountingHub').then(m => ({ default: m.AccountingHub })));
 const PublicImpactDashboard = React.lazy(() => import('./components/PublicImpactDashboard').then(m => ({ default: m.PublicImpactDashboard })));
 const MerchantLandingPage = React.lazy(() => import('./components/MerchantLandingPage').then(m => ({ default: m.MerchantLandingPage })));
+const NeighborLandingPage = React.lazy(() => import('./components/RoleLandingPages').then(m => ({ default: m.NeighborLandingPage })));
+const NonprofitLandingPage = React.lazy(() => import('./components/RoleLandingPages').then(m => ({ default: m.NonprofitLandingPage })));
+const CdfiLandingPage = React.lazy(() => import('./components/RoleLandingPages').then(m => ({ default: m.CdfiLandingPage })));
+const MunicipalLandingPage = React.lazy(() => import('./components/RoleLandingPages').then(m => ({ default: m.MunicipalLandingPage })));
 const AccountingDashboard = React.lazy(() => import('./components/AccountingDashboard').then(m => ({ default: m.AccountingDashboard })));
 const NettingDashboard = React.lazy(() => import('./components/NettingDashboard').then(m => ({ default: m.NettingDashboard })));
 const AdminNetting = React.lazy(() => import('./components/AdminNetting').then(m => ({ default: m.AdminNetting })));
@@ -68,6 +72,10 @@ const App: React.FC = () => {
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [showPublicImpact, setShowPublicImpact] = useState(false);
   const [showMerchantLanding, setShowMerchantLanding] = useState(false);
+  const [showNeighborLanding, setShowNeighborLanding] = useState(false);
+  const [showNonprofitLanding, setShowNonprofitLanding] = useState(false);
+  const [showCdfiLanding, setShowCdfiLanding] = useState(false);
+  const [showMunicipalLanding, setShowMunicipalLanding] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -182,21 +190,72 @@ const App: React.FC = () => {
 
   if (!store.currentUser) {
     if (showPublicImpact) {
-      return <PublicImpactDashboard onClose={() => setShowPublicImpact(false)} onJoin={() => setShowPublicImpact(false)} />;
+      return <Suspense fallback={null}><PublicImpactDashboard onClose={() => setShowPublicImpact(false)} onJoin={() => setShowPublicImpact(false)} /></Suspense>;
     }
     if (showMerchantLanding) {
-      return <MerchantLandingPage onBack={() => setShowMerchantLanding(false)} onSignUp={() => setShowMerchantLanding(false)} />;
+      return <Suspense fallback={null}><MerchantLandingPage onBack={() => setShowMerchantLanding(false)} onSignUp={() => setShowMerchantLanding(false)} /></Suspense>;
+    }
+    if (showNeighborLanding) {
+      return <Suspense fallback={null}><NeighborLandingPage onBack={() => setShowNeighborLanding(false)} onSignUp={() => setShowNeighborLanding(false)} /></Suspense>;
+    }
+    if (showNonprofitLanding) {
+      return <Suspense fallback={null}><NonprofitLandingPage onBack={() => setShowNonprofitLanding(false)} onSignUp={() => setShowNonprofitLanding(false)} /></Suspense>;
+    }
+    if (showCdfiLanding) {
+      return <Suspense fallback={null}><CdfiLandingPage onBack={() => setShowCdfiLanding(false)} onSignUp={() => setShowCdfiLanding(false)} /></Suspense>;
+    }
+    if (showMunicipalLanding) {
+      return <Suspense fallback={null}><MunicipalLandingPage onBack={() => setShowMunicipalLanding(false)} onSignUp={() => setShowMunicipalLanding(false)} /></Suspense>;
     }
     return (
       <div>
         <AuthSystem onLogin={store.login} />
-        <div className="fixed bottom-8 left-0 right-0 text-center z-50 flex justify-center gap-3">
-          <button onClick={() => setShowPublicImpact(true)} className="px-6 py-3 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-[#CA9CE1]/30 text-xs font-black text-[#7851A9] uppercase tracking-widest hover:shadow-2xl transition-all">
-            View Community Impact
-          </button>
-          <button onClick={() => setShowMerchantLanding(true)} className="px-6 py-3 bg-[#7851A9]/90 backdrop-blur-md rounded-2xl shadow-xl border border-[#7851A9] text-xs font-black text-white uppercase tracking-widest hover:shadow-2xl transition-all">
-            Become a Merchant
-          </button>
+        {/* ── Pre-login role selector bar ─────────────────────────────────────
+            Two rows: primary actions (top) and partner channels (bottom).
+            Each button uses the same elevated glass-pill treatment. ───────── */}
+        <div className="fixed bottom-6 left-0 right-0 z-50 flex flex-col items-center gap-2 px-4">
+          {/* Row 1 — primary audience CTAs */}
+          <div className="flex flex-wrap justify-center gap-2">
+            <button
+              onClick={() => setShowPublicImpact(true)}
+              className="px-5 py-2.5 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-[#CA9CE1]/30 text-[10px] font-black text-[#7851A9] uppercase tracking-widest hover:shadow-2xl hover:scale-105 transition-all"
+            >
+              View Community Impact
+            </button>
+            <button
+              onClick={() => setShowNeighborLanding(true)}
+              className="px-5 py-2.5 bg-emerald-600/90 backdrop-blur-md rounded-2xl shadow-xl border border-emerald-600 text-[10px] font-black text-white uppercase tracking-widest hover:shadow-2xl hover:scale-105 transition-all"
+            >
+              Join as a Neighbor
+            </button>
+            <button
+              onClick={() => setShowMerchantLanding(true)}
+              className="px-5 py-2.5 bg-[#7851A9]/90 backdrop-blur-md rounded-2xl shadow-xl border border-[#7851A9] text-[10px] font-black text-white uppercase tracking-widest hover:shadow-2xl hover:scale-105 transition-all"
+            >
+              Become a Merchant
+            </button>
+          </div>
+          {/* Row 2 — partner & institutional channels */}
+          <div className="flex flex-wrap justify-center gap-2">
+            <button
+              onClick={() => setShowNonprofitLanding(true)}
+              className="px-5 py-2.5 bg-white/85 backdrop-blur-md rounded-2xl shadow-lg border border-[#A20021]/20 text-[10px] font-black text-[#A20021] uppercase tracking-widest hover:shadow-xl hover:scale-105 transition-all"
+            >
+              Register Your Nonprofit
+            </button>
+            <button
+              onClick={() => setShowCdfiLanding(true)}
+              className="px-5 py-2.5 bg-white/85 backdrop-blur-md rounded-2xl shadow-lg border border-[#C2A76F]/30 text-[10px] font-black text-[#9a7d3a] uppercase tracking-widest hover:shadow-xl hover:scale-105 transition-all"
+            >
+              CDFI Partnership
+            </button>
+            <button
+              onClick={() => setShowMunicipalLanding(true)}
+              className="px-5 py-2.5 bg-white/85 backdrop-blur-md rounded-2xl shadow-lg border border-[#1e3a5f]/20 text-[10px] font-black text-[#1e3a5f] uppercase tracking-widest hover:shadow-xl hover:scale-105 transition-all"
+            >
+              Municipal Partner
+            </button>
+          </div>
         </div>
       </div>
     );

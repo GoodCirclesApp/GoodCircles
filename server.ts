@@ -39,6 +39,7 @@ import refundRoutes from './server/src/routes/refundRoutes';
 import dmsRoutes from './server/src/routes/dmsRoutes';
 import searchRoutes from './server/src/routes/searchRoutes';
 import complianceRoutes from './server/src/routes/complianceRoutes';
+import testRoutes from './server/src/routes/testRoutes';
 
 import { ReferralService } from './server/src/services/referralService';
 import { GovernanceService } from './server/src/services/governanceService';
@@ -155,6 +156,7 @@ async function startServer() {
   app.use('/api/dms', dmsRoutes);
   app.use('/api/search', searchRoutes);
   app.use('/api/compliance', complianceRoutes);
+  app.use('/api/admin/test', testRoutes);
 
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Good Circles API is running', version: '1.0.0-beta' });
@@ -531,6 +533,20 @@ async function ensureColumns() {
        CONSTRAINT "AffiliateConversion_pkey"       PRIMARY KEY ("id"),
        CONSTRAINT "AffiliateConversion_lst_fkey"   FOREIGN KEY ("listingId") REFERENCES "AffiliateListing"("id"),
        CONSTRAINT "AffiliateConversion_click_fkey" FOREIGN KEY ("clickId")   REFERENCES "AffiliateClick"("id")
+     )`,
+
+    // System integrity test reports
+    `CREATE TABLE IF NOT EXISTS "SystemTestReport" (
+       "id"          TEXT         NOT NULL,
+       "runAt"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       "triggeredBy" TEXT         NOT NULL,
+       "durationMs"  INTEGER      NOT NULL,
+       "totalTests"  INTEGER      NOT NULL,
+       "passed"      INTEGER      NOT NULL,
+       "failed"      INTEGER      NOT NULL,
+       "warnings"    INTEGER      NOT NULL DEFAULT 0,
+       "reportJson"  TEXT         NOT NULL,
+       CONSTRAINT "SystemTestReport_pkey" PRIMARY KEY ("id")
      )`,
   ];
 
