@@ -38,13 +38,13 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
 
   const totalDisbursed = globalStats
     ? globalStats.totalDonations
-    : orders.reduce((sum, o) => sum + o.accounting.donationAmount, 0) +
+    : orders.reduce((sum, o) => sum + (o.accounting?.donationAmount ?? 0), 0) +
       SAMPLE_ENTRIES.reduce((sum, s) => sum + s.donation, 0);
   const activeNodes = globalStats ? (globalStats.merchantCount + globalStats.nonprofitCount) : new Set(orders.map(o => o.items[0]?.product.merchantId)).size;
   const verificationRate = 100.00; // In this system, all ledger entries are verified by the protocol
 
   const handleExportProof = (order: Order) => {
-    onToast?.(`Exporting certificate for Node GC-${order.id.slice(-8)}...`, 'success');
+    onToast?.(`Exporting certificate for Node GC-${(order.id ?? '').slice(-8)}...`, 'success');
     window.print();
   };
 
@@ -148,14 +148,14 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
                       <td className="py-8 text-xs font-bold text-slate-500">{new Date(o.date).toLocaleDateString()}</td>
                       <td className="py-8">
                         <span className="bg-slate-100 px-3 py-1 rounded-lg text-[10px] font-black text-slate-400 uppercase font-mono group-hover:text-black transition-colors">
-                          SHIELD-#{o.neighborPublicId || o.neighborId.slice(-4).toUpperCase()}
+                          SHIELD-#{o.neighborPublicId || (o.neighborId ?? '????').slice(-4).toUpperCase()}
                         </span>
                       </td>
-                      <td className="py-8 font-mono text-[10px] font-black uppercase tracking-tighter text-slate-800">GC-{o.id.slice(-8)}</td>
+                      <td className="py-8 font-mono text-[10px] font-black uppercase tracking-tighter text-slate-800">GC-{(o.id ?? '').slice(-8)}</td>
                       <td className="py-8 text-xs font-black uppercase text-slate-900">
                         {privacyMode === 'private' ? `NODE-${o.items[0]?.product.merchantId?.slice(-4).toUpperCase() || 'XXXX'}` : (o.items[0]?.product.merchantName || 'Network Entity')}
                       </td>
-                      <td className="py-8 text-xl font-black text-[#7851A9] tracking-tighter">${o.accounting.donationAmount.toFixed(2)}</td>
+                      <td className="py-8 text-xl font-black text-[#7851A9] tracking-tighter">${(o.accounting?.donationAmount ?? 0).toFixed(2)}</td>
                       <td className="py-8 text-right">
                         <button
                           onClick={() => handleExportProof(o)}
