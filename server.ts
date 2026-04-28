@@ -522,6 +522,7 @@ async function ensureColumns() {
        "commRate"      DECIMAL(5,4) NOT NULL,
        "commTotal"     DECIMAL(10,2) NOT NULL,
        "dafShare"      DECIMAL(10,2) NOT NULL,
+       "cdfiShare"     DECIMAL(10,2) NOT NULL DEFAULT 0,
        "platformShare" DECIMAL(10,2) NOT NULL,
        "status"        TEXT         NOT NULL DEFAULT 'PENDING',
        "externalRef"   TEXT,
@@ -546,8 +547,9 @@ async function ensureColumns() {
     `ALTER TABLE "Merchant"         ADD COLUMN IF NOT EXISTS "censusTractId"            TEXT`,
     `ALTER TABLE "Merchant"         ADD COLUMN IF NOT EXISTS "isQualifiedInvestmentArea" BOOLEAN NOT NULL DEFAULT false`,
     `ALTER TABLE "Merchant"         ADD COLUMN IF NOT EXISTS "censusTractCheckedAt"      TIMESTAMP(3)`,
-    `ALTER TABLE "ProductService"   ADD COLUMN IF NOT EXISTS "upc"                       TEXT`,
-    `ALTER TABLE "AffiliateListing" ADD COLUMN IF NOT EXISTS "upc"                       TEXT`,
+    `ALTER TABLE "ProductService"      ADD COLUMN IF NOT EXISTS "upc"       TEXT`,
+    `ALTER TABLE "AffiliateListing"    ADD COLUMN IF NOT EXISTS "upc"       TEXT`,
+    `ALTER TABLE "AffiliateConversion" ADD COLUMN IF NOT EXISTS "cdfiShare" DECIMAL(10,2) NOT NULL DEFAULT 0`,
   ];
 
   for (const sql of columnSql) {

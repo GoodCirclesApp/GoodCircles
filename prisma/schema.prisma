@@ -1108,7 +1108,8 @@ model AffiliateConversion {
   commRate      Decimal          @db.Decimal(5, 4)
   commTotal     Decimal          @db.Decimal(10, 2)
   dafShare      Decimal          @db.Decimal(10, 2) // 50% → donor advised fund
-  platformShare Decimal          @db.Decimal(10, 2) // 50% → platform operations
+  cdfiShare     Decimal          @db.Decimal(10, 2) @default(0) // 5%  → CDFI first-loss pool
+  platformShare Decimal          @db.Decimal(10, 2) // 45% → platform operations
   status        String           @default("PENDING") // PENDING | CONFIRMED | PAID
   externalRef   String?          // order ID from partner for reconciliation
   confirmedAt   DateTime?

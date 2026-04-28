@@ -2,7 +2,9 @@ import { prisma } from '../lib/prisma';
 import { Decimal } from '@prisma/client/runtime/library';
 import { CdfiPackagingService } from './cdfiPackagingService';
 
-const DAF_SPLIT = new Decimal('0.50');
+const DAF_SPLIT      = new Decimal('0.50');
+const CDFI_SPLIT     = new Decimal('0.05');
+const PLATFORM_SPLIT = new Decimal('0.45'); // 1 - DAF - CDFI
 
 export class AffiliateService {
 
@@ -125,9 +127,10 @@ export class AffiliateService {
 
     const commRate = listing.commRate ?? listing.program.baseCommRate;
     const sale = new Decimal(data.saleAmount);
-    const commTotal = sale.mul(commRate);
-    const dafShare = commTotal.mul(DAF_SPLIT);
-    const platformShare = commTotal.sub(dafShare);
+    const commTotal    = sale.mul(commRate);
+    const dafShare     = commTotal.mul(DAF_SPLIT);      // 50%
+    const cdfiShare    = commTotal.mul(CDFI_SPLIT);     // 5%
+    const platformShare = commTotal.mul(PLATFORM_SPLIT); // 45%
 
     const conversion = await prisma.affiliateConversion.create({
       data: {
@@ -137,6 +140,7 @@ export class AffiliateService {
         commRate,
         commTotal,
         dafShare,
+        cdfiShare,
         platformShare,
         externalRef: data.externalRef ?? null,
         status: 'CONFIRMED',
@@ -144,10 +148,10 @@ export class AffiliateService {
       },
     });
 
-    // Allocate 5% of commTotal to CDFI first-loss pool (fire-and-forget)
+    // Allocate exact CDFI share to first-loss pool (fire-and-forget)
     CdfiPackagingService.allocateFirstLossContribution(
       conversion.id,
-      Number(commTotal),
+      Number(cdfiShare),
     ).catch(err => console.error('[Affiliate] First-loss allocation error:', err));
 
     return conversion;
@@ -169,7 +173,7 @@ export class AffiliateService {
     const [confirmed, pending, totalClicks, totalConversions] = await Promise.all([
       prisma.affiliateConversion.aggregate({
         where: { status: 'CONFIRMED' },
-        _sum: { commTotal: true, dafShare: true, platformShare: true, saleAmount: true },
+        _sum: { commTotal: true, dafShare: true, cdfiShare: true, platformShare: true, saleAmount: true },
       }),
       prisma.affiliateConversion.aggregate({
         where: { status: 'PENDING' },
@@ -183,6 +187,7 @@ export class AffiliateService {
       totalSaleVolume:     Number(confirmed._sum.saleAmount    ?? 0),
       totalCommissions:    Number(confirmed._sum.commTotal     ?? 0),
       dafBalance:          Number(confirmed._sum.dafShare      ?? 0),
+      cdfiContributions:   Number(confirmed._sum.cdfiShare     ?? 0),
       platformRevenue:     Number(confirmed._sum.platformShare ?? 0),
       pendingCommissions:  Number(pending._sum.commTotal       ?? 0),
       totalClicks,
