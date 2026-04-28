@@ -43,6 +43,8 @@ const NOISE_PATTERNS = [
   /Download error or resource/i,
   /ServiceWorker/i,
   /manifest/i,
+  /bad HTTP response code.*404.*fetching the script/i,  // service worker sw.js not found
+  /Failed to register a ServiceWorker/i,
 ];
 
 function isNoise(text: string): boolean {
