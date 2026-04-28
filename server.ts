@@ -60,6 +60,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function startServer() {
+  // Ensure all schema columns exist before handling any requests
+  await ensureColumns();
+
   const app = express();
   const PORT = parseInt(process.env.PORT || '3000', 10);
   const isProd = process.env.NODE_ENV === 'production';
@@ -416,6 +419,26 @@ async function startServer() {
       }
     }, 24 * 60 * 60 * 1000);
   });
+}
+
+// Idempotent column guard — adds schema columns that may not yet exist in the live DB.
+// Runs before the server starts listening. Safe to run repeatedly (IF NOT EXISTS).
+async function ensureColumns() {
+  const migrations = [
+    `ALTER TABLE "Merchant" ADD COLUMN IF NOT EXISTS "censusTractId" TEXT`,
+    `ALTER TABLE "Merchant" ADD COLUMN IF NOT EXISTS "isQualifiedInvestmentArea" BOOLEAN NOT NULL DEFAULT false`,
+    `ALTER TABLE "Merchant" ADD COLUMN IF NOT EXISTS "censusTractCheckedAt" TIMESTAMP(3)`,
+    `ALTER TABLE "ProductService" ADD COLUMN IF NOT EXISTS "upc" TEXT`,
+    `ALTER TABLE "AffiliateListing" ADD COLUMN IF NOT EXISTS "upc" TEXT`,
+  ];
+  for (const sql of migrations) {
+    try {
+      await prisma.$executeRawUnsafe(sql);
+    } catch (err: any) {
+      console.error(`[Startup] Column migration failed: ${sql}\n  ${err.message}`);
+    }
+  }
+  console.log('[Startup] Column guard complete.');
 }
 
 console.log('[Server] Initializing server startup...');
