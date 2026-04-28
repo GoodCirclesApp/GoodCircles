@@ -150,27 +150,58 @@ async function workflow(
 
 // ── Main controller ───────────────────────────────────────────────────────────
 
+// Resolve a real DB user for a role with a cascade of fallbacks, then
+// fall through to a synthetic actor so the suite always runs.
+async function resolveActor(
+  role: string,
+  finders: Array<() => Promise<{ id: string; email: string; role: string } | null>>,
+  setupErrors: string[],
+): Promise<{ id: string; email: string; role: string }> {
+  for (const find of finders) {
+    const u = await find().catch(() => null);
+    if (u) return u;
+  }
+  // No real user found — mint a synthetic actor so the suite still runs.
+  // The JWT will be valid; endpoints that look up the user by ID in the DB
+  // will return 404/500, which is itself a meaningful test result.
+  setupErrors.push(
+    `No ${role} user found in DB — running suite with synthetic actor (endpoint errors are real failures)`,
+  );
+  return { id: `synthetic-${role.toLowerCase()}-test`, email: `synthetic-${role.toLowerCase()}@test.internal`, role };
+}
+
 export const runSystemTests = async (req: Request, res: Response) => {
   const startAll = Date.now();
   const setupErrors: string[] = [];
 
-  // ── Find one real user per role ───────────────────────────────────────────
-  const [neighbor, merchant, merchantUser, nonprofit, nonprofitUser, platform] = await Promise.all([
-    prisma.user.findFirst({ where: { role: 'NEIGHBOR', isActive: true }, select: { id: true, email: true, role: true } }),
-    prisma.merchant.findFirst({ where: { isVerified: true }, include: { user: { select: { id: true, email: true, role: true } } } }),
-    null,
-    prisma.nonprofit.findFirst({ where: { isVerified: true }, include: { user: { select: { id: true, email: true, role: true } } } }),
-    null,
-    prisma.user.findFirst({ where: { role: 'PLATFORM', isActive: true }, select: { id: true, email: true, role: true } }),
+  // ── Resolve one actor per role (real DB user preferred; synthetic fallback) ─
+  const [neighbor, merchantActor, nonprofitActor, platform] = await Promise.all([
+    resolveActor('NEIGHBOR', [
+      () => prisma.user.findFirst({ where: { role: 'NEIGHBOR', isActive: true }, select: { id: true, email: true, role: true } }),
+      () => prisma.user.findFirst({ where: { role: 'NEIGHBOR' }, select: { id: true, email: true, role: true } }),
+    ], setupErrors),
+
+    resolveActor('MERCHANT', [
+      () => prisma.merchant.findFirst({ where: { isVerified: true }, include: { user: { select: { id: true, email: true, role: true } } } })
+            .then(m => m?.user ?? null),
+      () => prisma.merchant.findFirst({ include: { user: { select: { id: true, email: true, role: true } } } })
+            .then(m => m?.user ?? null),
+      () => prisma.user.findFirst({ where: { role: 'MERCHANT' }, select: { id: true, email: true, role: true } }),
+    ], setupErrors),
+
+    resolveActor('NONPROFIT', [
+      () => prisma.nonprofit.findFirst({ where: { isVerified: true }, include: { user: { select: { id: true, email: true, role: true } } } })
+            .then(n => n?.user ?? null),
+      () => prisma.nonprofit.findFirst({ include: { user: { select: { id: true, email: true, role: true } } } })
+            .then(n => n?.user ?? null),
+      () => prisma.user.findFirst({ where: { role: 'NONPROFIT' }, select: { id: true, email: true, role: true } }),
+    ], setupErrors),
+
+    resolveActor('PLATFORM', [
+      () => prisma.user.findFirst({ where: { role: 'PLATFORM', isActive: true }, select: { id: true, email: true, role: true } }),
+      () => prisma.user.findFirst({ where: { role: 'PLATFORM' }, select: { id: true, email: true, role: true } }),
+    ], setupErrors),
   ]);
-
-  const merchantActor = merchant?.user ?? null;
-  const nonprofitActor = nonprofitUser ?? nonprofit?.user ?? null;
-
-  if (!neighbor)      setupErrors.push('No active NEIGHBOR user found in DB — neighbor workflows skipped');
-  if (!merchantActor) setupErrors.push('No verified MERCHANT found in DB — merchant workflows skipped');
-  if (!nonprofitActor)setupErrors.push('No verified NONPROFIT found in DB — nonprofit workflows skipped');
-  if (!platform)      setupErrors.push('No PLATFORM user found in DB — admin workflows skipped');
 
   const results: WorkflowResult[] = [];
 
@@ -258,7 +289,7 @@ export const runSystemTests = async (req: Request, res: Response) => {
   // NEIGHBOR SUITE
   // ══════════════════════════════════════════════════════════════════════════
 
-  if (neighbor) {
+  {
     results.push(await workflow('nb-profile', 'Neighbor', 'Load own profile', neighbor, async (tok) => [
       await hit(tok, 'GET', '/api/auth/profile'),
     ]));
@@ -320,7 +351,7 @@ export const runSystemTests = async (req: Request, res: Response) => {
   // MERCHANT SUITE
   // ══════════════════════════════════════════════════════════════════════════
 
-  if (merchantActor) {
+  {
     results.push(await workflow('mc-profile', 'Merchant', 'Load own profile', merchantActor, async (tok) => [
       await hit(tok, 'GET', '/api/auth/profile'),
     ]));
@@ -358,7 +389,7 @@ export const runSystemTests = async (req: Request, res: Response) => {
   // NONPROFIT SUITE
   // ══════════════════════════════════════════════════════════════════════════
 
-  if (nonprofitActor) {
+  {
     results.push(await workflow('np-profile', 'Nonprofit', 'Load own profile', nonprofitActor, async (tok) => [
       await hit(tok, 'GET', '/api/auth/profile'),
     ]));
@@ -396,7 +427,7 @@ export const runSystemTests = async (req: Request, res: Response) => {
   // PLATFORM ADMIN SUITE
   // ══════════════════════════════════════════════════════════════════════════
 
-  if (platform) {
+  {
     results.push(await workflow('pl-profile', 'Platform Admin', 'Admin profile loads', platform, async (tok) => [
       await hit(tok, 'GET', '/api/auth/profile'),
     ]));
