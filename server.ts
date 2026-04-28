@@ -136,6 +136,7 @@ async function startServer() {
   app.use('/api/netting', nettingRoutes);
   app.use('/api/coop', coopRoutes);
   app.use('/api/credits', creditRoutes);
+  app.use('/api/admin/impact', adminImpactRoutes); // must be before /api/admin (which has global auth)
   app.use('/api/admin', adminRoutes);
   app.use('/api/bookings', bookingRoutes);
   app.use('/api/data-coop', dataCoopRoutes);
@@ -146,7 +147,6 @@ async function startServer() {
   app.use('/api/community-fund', communityFundRoutes);
   app.use('/api/benefits', benefitRoutes);
   app.use('/api/supply-chain', supplyChainRoutes);
-  app.use('/api/admin/impact', adminImpactRoutes);
   app.use('/api/municipal', municipalRoutes);
   app.use('/api/beta', betaRoutes);
   app.use('/api/catalog', catalogRoutes);
