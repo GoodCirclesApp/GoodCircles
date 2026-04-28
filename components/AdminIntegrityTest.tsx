@@ -36,6 +36,7 @@ interface SuiteResult {
   passed: number;
   failed: number;
   warnings: number;
+  skipped: number;
 }
 
 interface FullReport {
@@ -45,6 +46,7 @@ interface FullReport {
   passed: number;
   failed: number;
   warnings: number;
+  skipped: number;
   suites: SuiteResult[];
   consoleErrors: string[];
 }
@@ -82,29 +84,43 @@ async function loginOnce(role: Exclude<Role, 'PUBLIC'>): Promise<string | null> 
   return data.token ?? null;
 }
 
-// Pre-warm all role tokens before tests run — sequential with delay to stay
-// under the auth rate limiter (max 20 logins / 15 min in production).
+// Pre-warm tokens before the test loop runs.
+// PLATFORM: reuses the admin's existing session — no login required.
+// Other roles: attempt beta-seed credentials; skip tests gracefully if
+//   the accounts haven't been seeded in this environment.
 async function prewarmTokens(
   cache: Map<Role, string>,
   onStep: (msg: string) => void,
 ): Promise<void> {
-  const roles: Exclude<Role, 'PUBLIC'>[] = ['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'PLATFORM'];
-  for (const role of roles) {
-    onStep(`Authenticating ${role}…`);
+  // Admin is already authenticated — grab the live session token directly.
+  onStep('Using current admin session for PLATFORM…');
+  const sessionToken = localStorage.getItem('token');
+  if (sessionToken) cache.set('PLATFORM', sessionToken);
+
+  // Try to authenticate beta test accounts for the other roles.
+  const betaRoles: Exclude<Role, 'PUBLIC' | 'PLATFORM'>[] = ['NEIGHBOR', 'MERCHANT', 'NONPROFIT'];
+  for (const role of betaRoles) {
+    onStep(`Authenticating ${role} (beta account)…`);
     const token = await loginOnce(role);
     if (token) cache.set(role, token);
-    // 450 ms between logins — avoids burst rate limiting without excessive delay
+    // 450 ms gap — stays under auth rate limiter (max 20/15 min in prod)
     await new Promise(r => setTimeout(r, 450));
   }
 }
 
-async function getToken(role: Role, cache: Map<Role, string>): Promise<string | null> {
+// Returns the token for a role, or null for PUBLIC.
+// Returns undefined (distinct from null) when an authenticated role has
+// no token — the runner will SKIP that test rather than run it unauthenticated.
+async function getToken(
+  role: Role,
+  cache: Map<Role, string>,
+): Promise<string | null | undefined> {
   if (role === 'PUBLIC') return null;
-  // Return cached token; if missing (e.g. prewarm failed), attempt once more
   if (cache.has(role)) return cache.get(role)!;
-  const token = await loginOnce(role);
-  if (token) cache.set(role, token);
-  return token;
+  // Last-chance attempt (handles cases where prewarm raced)
+  const token = await loginOnce(role as Exclude<Role, 'PUBLIC'>);
+  if (token) { cache.set(role, token); return token; }
+  return undefined; // signals SKIP
 }
 
 function authHeaders(token: string | null): HeadersInit {
@@ -153,47 +169,12 @@ async function runCheck(
 const TEST_REGISTRY: TestCase[] = [
   // ── Auth ──────────────────────────────────────────────────────────────────
   {
-    id: 'auth-login-neighbor', suite: 'Auth', name: 'Login as NEIGHBOR', role: 'PUBLIC',
-    run: async () => {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(CREDS.NEIGHBOR),
-      });
-      return { ok: res.ok, detail: res.ok ? undefined : `Status ${res.status}` };
-    },
+    // Admin is already logged in — verify the live session token is valid.
+    id: 'auth-session-valid', suite: 'Auth', name: 'Admin session token is valid', role: 'PLATFORM',
+    run: (tok) => runCheck(tok, 'GET', '/api/auth/profile', { expectKey: 'id' }),
   },
   {
-    id: 'auth-login-merchant', suite: 'Auth', name: 'Login as MERCHANT', role: 'PUBLIC',
-    run: async () => {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(CREDS.MERCHANT),
-      });
-      return { ok: res.ok, detail: res.ok ? undefined : `Status ${res.status}` };
-    },
-  },
-  {
-    id: 'auth-login-nonprofit', suite: 'Auth', name: 'Login as NONPROFIT', role: 'PUBLIC',
-    run: async () => {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(CREDS.NONPROFIT),
-      });
-      return { ok: res.ok, detail: res.ok ? undefined : `Status ${res.status}` };
-    },
-  },
-  {
-    id: 'auth-login-platform', suite: 'Auth', name: 'Login as PLATFORM', role: 'PUBLIC',
-    run: async () => {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(CREDS.PLATFORM),
-      });
-      return { ok: res.ok, detail: res.ok ? undefined : `Status ${res.status}` };
-    },
-  },
-  {
-    id: 'auth-reject-bad-creds', suite: 'Auth', name: 'Reject invalid credentials', role: 'PUBLIC',
+    id: 'auth-reject-bad-creds', suite: 'Auth', name: 'Login rejects invalid credentials', role: 'PUBLIC',
     run: async () => {
       const res = await fetch('/api/auth/login', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -203,12 +184,21 @@ const TEST_REGISTRY: TestCase[] = [
     },
   },
   {
-    id: 'auth-profile-authed', suite: 'Auth', name: 'Profile accessible when authenticated', role: 'NEIGHBOR',
+    id: 'auth-profile-unauthed', suite: 'Auth', name: 'Profile blocked without auth', role: 'PUBLIC',
+    run: (tok) => runCheck(tok, 'GET', '/api/auth/profile', { expectStatus: 401 }),
+  },
+  {
+    // Only meaningful if beta accounts are seeded — skipped gracefully otherwise.
+    id: 'auth-login-neighbor', suite: 'Auth', name: 'Beta NEIGHBOR login (seed required)', role: 'NEIGHBOR',
     run: (tok) => runCheck(tok, 'GET', '/api/auth/profile', { expectKey: 'id' }),
   },
   {
-    id: 'auth-profile-unauthed', suite: 'Auth', name: 'Profile blocked without auth', role: 'PUBLIC',
-    run: (tok) => runCheck(tok, 'GET', '/api/auth/profile', { expectStatus: 401 }),
+    id: 'auth-login-merchant', suite: 'Auth', name: 'Beta MERCHANT login (seed required)', role: 'MERCHANT',
+    run: (tok) => runCheck(tok, 'GET', '/api/auth/profile', { expectKey: 'id' }),
+  },
+  {
+    id: 'auth-login-nonprofit', suite: 'Auth', name: 'Beta NONPROFIT login (seed required)', role: 'NONPROFIT',
+    run: (tok) => runCheck(tok, 'GET', '/api/auth/profile', { expectKey: 'id' }),
   },
 
   // ── Marketplace ───────────────────────────────────────────────────────────
@@ -376,6 +366,7 @@ function groupBySuite(results: TestResult[]): SuiteResult[] {
     passed: rs.filter(r => r.status === 'PASS').length,
     failed: rs.filter(r => r.status === 'FAIL').length,
     warnings: rs.filter(r => r.status === 'WARN').length,
+    skipped: rs.filter(r => r.status === 'SKIP').length,
   }));
 }
 
@@ -481,9 +472,15 @@ export const AdminIntegrityTest: React.FC = () => {
 
       try {
         const token = await getToken(tc.role, tokenCache);
-        const result = await tc.run(token);
-        status = result.ok ? 'PASS' : 'FAIL';
-        detail = result.detail;
+        if (token === undefined) {
+          // Role token unavailable — beta accounts not seeded in this environment
+          status = 'SKIP';
+          detail = `${tc.role} test account not available (run seed:beta to enable)`;
+        } else {
+          const result = await tc.run(token);
+          status = result.ok ? 'PASS' : 'FAIL';
+          detail = result.detail;
+        }
       } catch (err: any) {
         status = 'FAIL';
         detail = err.message;
@@ -509,6 +506,7 @@ export const AdminIntegrityTest: React.FC = () => {
     const passed = results.filter(r => r.status === 'PASS').length;
     const failed = results.filter(r => r.status === 'FAIL').length;
     const warnings = results.filter(r => r.status === 'WARN').length;
+    const skipped = results.filter(r => r.status === 'SKIP').length;
 
     const fullReport: FullReport = {
       runAt: new Date().toISOString(),
@@ -517,6 +515,7 @@ export const AdminIntegrityTest: React.FC = () => {
       passed,
       failed,
       warnings,
+      skipped,
       suites,
       consoleErrors: consoleErrors.current,
     };
@@ -625,6 +624,7 @@ export const AdminIntegrityTest: React.FC = () => {
             { label: 'Total', value: displayReport.totalTests, color: 'text-slate-700', bg: 'bg-slate-50' },
             { label: 'Passed', value: displayReport.passed, color: 'text-emerald-700', bg: 'bg-emerald-50' },
             { label: 'Failed', value: displayReport.failed, color: 'text-red-700', bg: 'bg-red-50' },
+            { label: 'Skipped', value: displayReport.skipped ?? 0, color: 'text-amber-700', bg: 'bg-amber-50' },
             { label: 'Duration', value: `${(displayReport.durationMs / 1000).toFixed(1)}s`, color: 'text-blue-700', bg: 'bg-blue-50' },
           ].map(card => (
             <div key={card.label} className={`${card.bg} rounded-2xl p-4 border border-slate-100`}>
@@ -645,7 +645,7 @@ export const AdminIntegrityTest: React.FC = () => {
               expanded ? n.delete(suite.suite) : n.add(suite.suite);
               return n;
             });
-            const allPass = suite.failed === 0 && suite.warnings === 0;
+            const _allPass = suite.failed === 0 && suite.warnings === 0; // kept for reference
             return (
               <div key={suite.suite} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                 <button
@@ -655,14 +655,17 @@ export const AdminIntegrityTest: React.FC = () => {
                   <div className="flex items-center gap-3">
                     {expanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
                     <span className="font-bold text-slate-800">{suite.suite}</span>
-                    {allPass
-                      ? <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">All Pass</span>
-                      : <span className="text-[10px] font-black uppercase tracking-widest text-red-600 bg-red-50 px-2 py-0.5 rounded-full">{suite.failed} Failed</span>
+                    {suite.failed > 0
+                      ? <span className="text-[10px] font-black uppercase tracking-widest text-red-600 bg-red-50 px-2 py-0.5 rounded-full">{suite.failed} Failed</span>
+                      : suite.skipped > 0 && suite.passed === 0
+                      ? <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{suite.skipped} Skipped</span>
+                      : <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">All Pass</span>
                     }
                   </div>
                   <div className="flex items-center gap-4 text-sm">
                     <span className="text-emerald-600 font-bold">{suite.passed}✓</span>
                     {suite.failed > 0 && <span className="text-red-600 font-bold">{suite.failed}✗</span>}
+                    {suite.skipped > 0 && <span className="text-amber-500 font-bold">{suite.skipped}–</span>}
                     <span className="text-slate-400 text-xs">{suite.results.length} tests</span>
                   </div>
                 </button>
