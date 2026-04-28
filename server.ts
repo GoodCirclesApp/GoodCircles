@@ -421,24 +421,171 @@ async function startServer() {
   });
 }
 
-// Idempotent column guard — adds schema columns that may not yet exist in the live DB.
-// Runs before the server starts listening. Safe to run repeatedly (IF NOT EXISTS).
+// Idempotent schema guard — creates missing tables and columns before the server
+// accepts any requests. Safe to run on every deploy (IF NOT EXISTS / count checks).
 async function ensureColumns() {
-  const migrations = [
-    `ALTER TABLE "Merchant" ADD COLUMN IF NOT EXISTS "censusTractId" TEXT`,
-    `ALTER TABLE "Merchant" ADD COLUMN IF NOT EXISTS "isQualifiedInvestmentArea" BOOLEAN NOT NULL DEFAULT false`,
-    `ALTER TABLE "Merchant" ADD COLUMN IF NOT EXISTS "censusTractCheckedAt" TIMESTAMP(3)`,
-    `ALTER TABLE "ProductService" ADD COLUMN IF NOT EXISTS "upc" TEXT`,
-    `ALTER TABLE "AffiliateListing" ADD COLUMN IF NOT EXISTS "upc" TEXT`,
+  // ── New tables (added post-launch; prisma db push may not have run) ──────────
+  const tableSql = [
+    // Feature flags & demo mode
+    `CREATE TABLE IF NOT EXISTS "SystemSetting" (
+       "key"       TEXT        NOT NULL,
+       "value"     TEXT        NOT NULL,
+       "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       CONSTRAINT "SystemSetting_pkey" PRIMARY KEY ("key")
+     )`,
+
+    // Admin audit log
+    `CREATE TABLE IF NOT EXISTS "AdminAuditLog" (
+       "id"        TEXT        NOT NULL,
+       "adminId"   TEXT        NOT NULL,
+       "action"    TEXT        NOT NULL,
+       "targetId"  TEXT,
+       "detail"    TEXT,
+       "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       CONSTRAINT "AdminAuditLog_pkey" PRIMARY KEY ("id")
+     )`,
+
+    // Stripe wallet top-up tracking
+    `CREATE TABLE IF NOT EXISTS "WalletTopUp" (
+       "id"                    TEXT         NOT NULL,
+       "userId"                TEXT         NOT NULL,
+       "amount"                DECIMAL(10,2) NOT NULL,
+       "stripePaymentIntentId" TEXT         NOT NULL,
+       "status"                TEXT         NOT NULL DEFAULT 'PENDING',
+       "createdAt"             TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       "completedAt"           TIMESTAMP(3),
+       CONSTRAINT "WalletTopUp_pkey"                      PRIMARY KEY ("id"),
+       CONSTRAINT "WalletTopUp_stripePaymentIntentId_key" UNIQUE ("stripePaymentIntentId"),
+       CONSTRAINT "WalletTopUp_userId_fkey"               FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE
+     )`,
+
+    // Nonprofit daily digest scheduling
+    `CREATE TABLE IF NOT EXISTS "NonprofitDigestLog" (
+       "id"            TEXT         NOT NULL,
+       "nonprofitId"   TEXT         NOT NULL,
+       "sentAt"        TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       "donationCount" INTEGER      NOT NULL,
+       "totalAmount"   DECIMAL(10,2) NOT NULL,
+       CONSTRAINT "NonprofitDigestLog_pkey" PRIMARY KEY ("id")
+     )`,
+
+    // Affiliate programs
+    `CREATE TABLE IF NOT EXISTS "AffiliateProgram" (
+       "id"          TEXT         NOT NULL,
+       "name"        TEXT         NOT NULL,
+       "platform"    TEXT         NOT NULL,
+       "trackingId"  TEXT         NOT NULL,
+       "baseCommRate" DECIMAL(5,4) NOT NULL DEFAULT 0.04,
+       "logoUrl"     TEXT,
+       "isActive"    BOOLEAN      NOT NULL DEFAULT true,
+       "createdAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       CONSTRAINT "AffiliateProgram_pkey" PRIMARY KEY ("id")
+     )`,
+
+    // Affiliate product listings
+    `CREATE TABLE IF NOT EXISTS "AffiliateListing" (
+       "id"          TEXT         NOT NULL,
+       "programId"   TEXT         NOT NULL,
+       "externalId"  TEXT,
+       "title"       TEXT         NOT NULL,
+       "description" TEXT,
+       "imageUrl"    TEXT,
+       "price"       DECIMAL(10,2) NOT NULL,
+       "affiliateUrl" TEXT        NOT NULL,
+       "category"    TEXT         NOT NULL,
+       "upc"         TEXT,
+       "commRate"    DECIMAL(5,4),
+       "isActive"    BOOLEAN      NOT NULL DEFAULT true,
+       "createdBy"   TEXT         NOT NULL,
+       "createdAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       CONSTRAINT "AffiliateListing_pkey"      PRIMARY KEY ("id"),
+       CONSTRAINT "AffiliateListing_prog_fkey" FOREIGN KEY ("programId") REFERENCES "AffiliateProgram"("id")
+     )`,
+
+    // Affiliate click tracking
+    `CREATE TABLE IF NOT EXISTS "AffiliateClick" (
+       "id"        TEXT         NOT NULL,
+       "listingId" TEXT         NOT NULL,
+       "userId"    TEXT,
+       "userRole"  TEXT,
+       "clickedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       CONSTRAINT "AffiliateClick_pkey"    PRIMARY KEY ("id"),
+       CONSTRAINT "AffiliateClick_lst_fkey" FOREIGN KEY ("listingId") REFERENCES "AffiliateListing"("id")
+     )`,
+
+    // Affiliate conversion tracking
+    `CREATE TABLE IF NOT EXISTS "AffiliateConversion" (
+       "id"            TEXT         NOT NULL,
+       "listingId"     TEXT         NOT NULL,
+       "clickId"       TEXT         UNIQUE,
+       "saleAmount"    DECIMAL(10,2) NOT NULL,
+       "commRate"      DECIMAL(5,4) NOT NULL,
+       "commTotal"     DECIMAL(10,2) NOT NULL,
+       "dafShare"      DECIMAL(10,2) NOT NULL,
+       "platformShare" DECIMAL(10,2) NOT NULL,
+       "status"        TEXT         NOT NULL DEFAULT 'PENDING',
+       "externalRef"   TEXT,
+       "confirmedAt"   TIMESTAMP(3),
+       "createdAt"     TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       CONSTRAINT "AffiliateConversion_pkey"       PRIMARY KEY ("id"),
+       CONSTRAINT "AffiliateConversion_lst_fkey"   FOREIGN KEY ("listingId") REFERENCES "AffiliateListing"("id"),
+       CONSTRAINT "AffiliateConversion_click_fkey" FOREIGN KEY ("clickId")   REFERENCES "AffiliateClick"("id")
+     )`,
   ];
-  for (const sql of migrations) {
+
+  for (const sql of tableSql) {
     try {
       await prisma.$executeRawUnsafe(sql);
     } catch (err: any) {
-      console.error(`[Startup] Column migration failed: ${sql}\n  ${err.message}`);
+      console.error(`[Startup] Table migration failed:\n  ${err.message}`);
     }
   }
-  console.log('[Startup] Column guard complete.');
+
+  // ── Missing columns on existing tables ───────────────────────────────────────
+  const columnSql = [
+    `ALTER TABLE "Merchant"         ADD COLUMN IF NOT EXISTS "censusTractId"            TEXT`,
+    `ALTER TABLE "Merchant"         ADD COLUMN IF NOT EXISTS "isQualifiedInvestmentArea" BOOLEAN NOT NULL DEFAULT false`,
+    `ALTER TABLE "Merchant"         ADD COLUMN IF NOT EXISTS "censusTractCheckedAt"      TIMESTAMP(3)`,
+    `ALTER TABLE "ProductService"   ADD COLUMN IF NOT EXISTS "upc"                       TEXT`,
+    `ALTER TABLE "AffiliateListing" ADD COLUMN IF NOT EXISTS "upc"                       TEXT`,
+  ];
+
+  for (const sql of columnSql) {
+    try {
+      await prisma.$executeRawUnsafe(sql);
+    } catch (err: any) {
+      console.error(`[Startup] Column migration failed:\n  ${err.message}`);
+    }
+  }
+
+  // ── Seed affiliate demo data if no programs exist ─────────────────────────────
+  try {
+    const programCount = await prisma.affiliateProgram.count();
+    if (programCount === 0) {
+      const admin = await prisma.user.findFirst({ where: { role: 'PLATFORM' }, select: { id: true } });
+      const adminId = admin?.id ?? 'system';
+
+      const program = await prisma.affiliateProgram.create({
+        data: { name: 'Amazon Associates', platform: 'AMAZON', trackingId: 'goodcircles-20', baseCommRate: 0.04, isActive: true },
+      });
+
+      await prisma.affiliateListing.createMany({
+        data: [
+          { programId: program.id, externalId: 'B09G9FPHY6', title: 'Anker 65W USB-C Charging Station (4-Port)', description: 'Fast-charge up to 4 devices simultaneously. Compatible with all USB-C devices.', imageUrl: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400&h=400&fit=crop', price: 35.99, affiliateUrl: 'https://www.amazon.com/dp/B09G9FPHY6?tag=goodcircles-20', category: 'Electronics', commRate: 0.04, isActive: true, createdBy: adminId },
+          { programId: program.id, externalId: 'B08N5WRWNW', title: 'Kindle Paperwhite (16 GB) — Waterproof E-Reader', description: 'Adjustable warm light, 6.8" display, weeks of battery life.', imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop', price: 139.99, affiliateUrl: 'https://www.amazon.com/dp/B08N5WRWNW?tag=goodcircles-20', category: 'Electronics', commRate: 0.04, isActive: true, createdBy: adminId },
+          { programId: program.id, externalId: 'B07VGRJDFY', title: 'Patagonia Better Sweater Fleece Jacket', description: 'Made from 100% recycled polyester fleece. Fair Trade Certified.', imageUrl: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=400&fit=crop', price: 99.00, affiliateUrl: 'https://www.amazon.com/dp/B07VGRJDFY?tag=goodcircles-20', category: 'Clothing', commRate: 0.04, isActive: true, createdBy: adminId },
+          { programId: program.id, externalId: 'B09B8YWXDF', title: 'Yoga Mat — Non-Slip, Eco-Friendly, 6mm Thick', description: 'Natural tree rubber base with moisture-wicking top layer. Includes carry strap.', imageUrl: 'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=400&fit=crop', price: 54.99, affiliateUrl: 'https://www.amazon.com/dp/B09B8YWXDF?tag=goodcircles-20', category: 'Sports & Fitness', commRate: 0.04, isActive: true, createdBy: adminId },
+          { programId: program.id, externalId: 'B08BHXG144', title: 'Atomic Habits — James Clear (Hardcover)', description: 'The #1 New York Times bestseller on building good habits and breaking bad ones.', imageUrl: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop', price: 18.99, affiliateUrl: 'https://www.amazon.com/dp/B08BHXG144?tag=goodcircles-20', category: 'Books', commRate: 0.045, isActive: true, createdBy: adminId },
+          { programId: program.id, externalId: 'B07D4P3D6K', title: 'Vitafusion Extra Strength Vitamin D3 Gummies (120ct)', description: '3000 IU per serving. Peach, blackberry, and strawberry flavors. No artificial flavors.', imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=400&fit=crop', price: 14.49, affiliateUrl: 'https://www.amazon.com/dp/B07D4P3D6K?tag=goodcircles-20', category: 'Health & Wellness', commRate: 0.04, isActive: true, createdBy: adminId },
+        ],
+      });
+      console.log('[Startup] Seeded Amazon Associates affiliate program with 6 demo listings.');
+    }
+  } catch (err: any) {
+    console.error(`[Startup] Affiliate seed failed: ${err.message}`);
+  }
+
+  console.log('[Startup] Schema guard complete.');
 }
 
 console.log('[Server] Initializing server startup...');
