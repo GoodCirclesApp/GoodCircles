@@ -47,7 +47,7 @@ import { MunicipalDemoSimulator } from '../components/MunicipalDemoSimulator';
 import { MockDataManager } from '../components/MockDataManager';
 import { AdminAffiliateDashboard } from '../components/AdminAffiliateDashboard';
 import { ComplianceDashboard } from '../components/ComplianceDashboard';
-import { AdminIntegrityTest } from '../components/AdminIntegrityTest';
+import AdminIntegrityTest from '../components/AdminIntegrityTest';
 import { Scale } from 'lucide-react';
 
 // Sub-components
