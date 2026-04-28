@@ -23,7 +23,7 @@ export const ImpactDashboard: React.FC<{ regionId?: string, isMunicipal?: boolea
       } else if (regionId) {
         url = `/api/admin/impact/regions/${regionId}/dashboard`;
       } else {
-        url = '/api/admin/impact/impact/platform-wide';
+        url = '/api/admin/impact/platform-wide';
       }
 
       const res = await fetch(url, { headers });

@@ -26,8 +26,8 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
   const [privacyMode, setPrivacyMode] = useState<'public' | 'private'>('public');
 
   const filteredOrders = orders.filter(o =>
-    o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (o.neighborPublicId || '').toLowerCase().includes(searchTerm.toLowerCase())
+    (o.id ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (o.neighborPublicId ?? '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredSamples = SAMPLE_ENTRIES.filter(s =>

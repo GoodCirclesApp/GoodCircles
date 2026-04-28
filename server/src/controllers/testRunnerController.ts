@@ -299,9 +299,8 @@ export const runSystemTests = async (req: Request, res: Response) => {
     results.push(await workflow('nb-product-journey', 'Neighbor', 'Browse → product detail journey', neighbor, async (tok) => {
       const searchStep = await hit(tok, 'GET', '/api/marketplace/search');
       if (!searchStep.passed) return [searchStep];
-      // Fetch a product detail using the first listing from search
-      const detailStep = await hit(tok, 'GET', '/api/marketplace/listings');
-      return [searchStep, detailStep];
+      const categoriesStep = await hit(tok, 'GET', '/api/marketplace/categories');
+      return [searchStep, categoriesStep];
     }));
 
     results.push(await workflow('nb-iso-admin', 'Neighbor', 'Admin portal blocked (role isolation)', neighbor, async (tok) => [

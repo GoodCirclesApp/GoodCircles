@@ -566,6 +566,12 @@ async function ensureColumns() {
     `ALTER TABLE "ProductService"      ADD COLUMN IF NOT EXISTS "upc"       TEXT`,
     `ALTER TABLE "AffiliateListing"    ADD COLUMN IF NOT EXISTS "upc"       TEXT`,
     `ALTER TABLE "AffiliateConversion" ADD COLUMN IF NOT EXISTS "cdfiShare" DECIMAL(10,2) NOT NULL DEFAULT 0`,
+    // CDFIPartner automation fields added to schema after initial deploy
+    `ALTER TABLE "CDFIPartner" ADD COLUMN IF NOT EXISTS "targetCensusTracts"  TEXT[]       NOT NULL DEFAULT '{}'`,
+    `ALTER TABLE "CDFIPartner" ADD COLUMN IF NOT EXISTS "reportingFrequency"  TEXT         NOT NULL DEFAULT 'ANNUAL'`,
+    `ALTER TABLE "CDFIPartner" ADD COLUMN IF NOT EXISTS "tlrColumnMapping"    JSONB`,
+    `ALTER TABLE "CDFIPartner" ADD COLUMN IF NOT EXISTS "milestoneThreshold"  INTEGER      NOT NULL DEFAULT 50`,
+    `ALTER TABLE "CDFIPartner" ADD COLUMN IF NOT EXISTS "firstLossPoolId"     TEXT`,
   ];
 
   for (const sql of columnSql) {

@@ -32,9 +32,9 @@ const LOGO_PATHS = {
 
 const SUBMARK_PATHS = {
   gold:      '/logos/submark-gold-48.png',
-  white:     '/logos/submark-white-48.png',
-  goldFull:  '/logos/submark-gold.png',
-  whiteFull: '/logos/submark-white.png',
+  white:     '/logos/submark-gold-48.png',   // white variant pending asset upload
+  goldFull:  '/logos/submark-gold-48.png',
+  whiteFull: '/logos/logo-white.png',         // white variant pending asset upload
 } as const;
 
 interface IconProps {

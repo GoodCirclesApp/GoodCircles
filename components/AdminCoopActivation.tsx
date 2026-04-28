@@ -39,10 +39,12 @@ export const AdminCoopActivation: React.FC = () => {
   const [evaluating, setEvaluating] = useState(false);
 
   const fetchData = async () => {
+    const token = localStorage.getItem('gc_auth_token') ?? '';
+    const headers = { Authorization: `Bearer ${token}` };
     try {
       const [trackingRes, impactRes] = await Promise.all([
-        fetch('/api/admin/activation'),
-        fetch('/api/admin/impact')
+        fetch('/api/netting/activation', { headers }),
+        fetch('/api/admin/impact/platform-wide', { headers }),
       ]);
 
       if (trackingRes.ok) setTracking(await trackingRes.json());
@@ -60,8 +62,12 @@ export const AdminCoopActivation: React.FC = () => {
 
   const handleEvaluate = async () => {
     setEvaluating(true);
+    const token = localStorage.getItem('gc_auth_token') ?? '';
     try {
-      const response = await fetch('/api/admin/evaluate', { method: 'POST' });
+      const response = await fetch('/api/netting/evaluate', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.ok) {
         await fetchData();
       }
