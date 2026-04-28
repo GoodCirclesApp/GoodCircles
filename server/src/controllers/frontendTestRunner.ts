@@ -35,7 +35,9 @@ const APP_URL = process.env.RAILWAY_PUBLIC_DOMAIN
   : `http://127.0.0.1:${process.env.PORT || 3000}`;
 
 // Console errors that are cosmetic/infrastructure and not user-facing bugs
-const NOISE_PATTERNS = [
+// Patterns that match cosmetic infrastructure noise (missing static assets,
+// service worker, CDN warnings). API paths (/api/...) are never filtered.
+const CONSOLE_NOISE_PATTERNS = [
   /favicon/i,
   /icon\.svg/i,
   /sw\.js/i,
@@ -43,12 +45,24 @@ const NOISE_PATTERNS = [
   /Download error or resource/i,
   /ServiceWorker/i,
   /manifest/i,
-  /bad HTTP response code.*404.*fetching the script/i,  // service worker sw.js not found
+  /bad HTTP response code.*404.*fetching the script/i,
   /Failed to register a ServiceWorker/i,
 ];
 
-function isNoise(text: string): boolean {
-  return NOISE_PATTERNS.some(p => p.test(text));
+// For network responses: suppress 404s on known-missing static assets only
+const STATIC_NOISE_PATHS = [
+  /favicon/i,
+  /icon\.svg/i,
+  /\/sw\.js$/i,
+  /submark-white/i,
+  /\.png$|\.ico$|\.svg$/i,
+];
+
+function isNoise(textOrUrl: string): boolean {
+  // If it's an API path, never suppress it
+  if (/\/api\//i.test(textOrUrl)) return false;
+  return CONSOLE_NOISE_PATTERNS.some(p => p.test(textOrUrl)) ||
+         STATIC_NOISE_PATHS.some(p => p.test(textOrUrl));
 }
 
 // Admin portal sidebar items (from AdminPortalView.tsx menuItems)
@@ -88,6 +102,13 @@ async function withPage(
   });
   page.on('pageerror', err => {
     errors.push(`CRASH: ${err.message}`);
+  });
+  // Capture actual URL on any 4xx/5xx response so console errors are identifiable
+  page.on('response', res => {
+    const status = res.status();
+    if (status >= 400 && !isNoise(res.url())) {
+      errors.push(`HTTP ${status} ${res.url()}`);
+    }
   });
 
   try {
@@ -163,11 +184,11 @@ async function publicSuite(browser: import('playwright').Browser): Promise<Front
   const steps = await withPage(browser, null, async page => {
     page.on('console', msg => { if (msg.type() === 'error' && !isNoise(msg.text())) errors.push(msg.text()); });
     page.on('pageerror', err => errors.push(`CRASH: ${err.message}`));
+    page.on('response', res => { if (res.status() >= 400 && !isNoise(res.url())) errors.push(`HTTP ${res.status()} ${res.url()}`); });
 
     const results: FrontendStep[] = [];
 
     results.push(await step(page, 'Landing page renders without crash', async () => {
-      // already navigated by withPage; just check the body is present
       await page.waitForSelector('body', { timeout: 10_000 });
     }, errors));
 
@@ -195,6 +216,7 @@ async function roleSuite(
   const steps = await withPage(browser, token, async page => {
     page.on('console', msg => { if (msg.type() === 'error' && !isNoise(msg.text())) errors.push(msg.text()); });
     page.on('pageerror', err => errors.push(`CRASH: ${err.message}`));
+    page.on('response', res => { if (res.status() >= 400 && !isNoise(res.url())) errors.push(`HTTP ${res.status()} ${res.url()}`); });
 
     const results: FrontendStep[] = [];
 
@@ -226,6 +248,7 @@ async function adminSuite(
   const steps = await withPage(browser, token, async page => {
     page.on('console', msg => { if (msg.type() === 'error' && !isNoise(msg.text())) errors.push(msg.text()); });
     page.on('pageerror', err => errors.push(`CRASH: ${err.message}`));
+    page.on('response', res => { if (res.status() >= 400 && !isNoise(res.url())) errors.push(`HTTP ${res.status()} ${res.url()}`); });
 
     const results: FrontendStep[] = [];
 
