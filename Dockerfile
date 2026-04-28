@@ -8,6 +8,9 @@ COPY package.json package-lock.json ./
 
 RUN npm ci --include=dev
 
+# Install Playwright Chromium + system deps (cached when package.json unchanged)
+RUN npx playwright install chromium --with-deps
+
 COPY . .
 
 RUN npm run build

@@ -11,6 +11,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { generateTokens } from '../utils/tokenUtils';
+import { runFrontendTests, FrontendSuiteResult } from './frontendTestRunner';
 
 // ── Self-HTTP base URL ────────────────────────────────────────────────────────
 // The server calls its own endpoints so that auth middleware, rate limiting,
@@ -53,6 +54,13 @@ export interface TestRunReport {
   rolesCovered: string[];
   workflows: WorkflowResult[];
   setupErrors: string[];
+  frontend: {
+    suites: FrontendSuiteResult[];
+    totalSteps: number;
+    passed: number;
+    failed: number;
+    setupError?: string;
+  };
 }
 
 // ── HTTP helper ───────────────────────────────────────────────────────────────
@@ -510,6 +518,15 @@ export const runSystemTests = async (req: Request, res: Response) => {
     ]));
   }
 
+  // ── Frontend (browser) tests ──────────────────────────────────────────────
+  const { results: frontendSuites, setupError: feSetupError } = await runFrontendTests({
+    neighbor, merchant: merchantActor, nonprofit: nonprofitActor, platform,
+  });
+
+  const feTotalSteps = frontendSuites.reduce((n, s) => n + s.steps.length, 0);
+  const fePassedSteps = frontendSuites.reduce((n, s) => n + s.steps.filter(st => st.passed).length, 0);
+  const feFailedSteps = feTotalSteps - fePassedSteps;
+
   // ── Compile report ────────────────────────────────────────────────────────
 
   const passed = results.filter(r => r.passed).length;
@@ -525,6 +542,13 @@ export const runSystemTests = async (req: Request, res: Response) => {
     rolesCovered,
     workflows: results,
     setupErrors,
+    frontend: {
+      suites: frontendSuites,
+      totalSteps: feTotalSteps,
+      passed: fePassedSteps,
+      failed: feFailedSteps,
+      setupError: feSetupError,
+    },
   };
 
   res.json(report);
