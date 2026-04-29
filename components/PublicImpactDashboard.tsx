@@ -480,19 +480,22 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
               <div className="max-w-lg mx-auto">
                 {/* Transaction Flow */}
-                <div className="text-center mb-8">
+                <div className="text-center mb-2">
                   <div className="inline-block px-6 py-3 bg-slate-100 rounded-2xl">
-                    <span className="text-sm font-bold text-slate-500">Consumer pays</span>
-                    <span className="text-2xl font-black text-slate-800 ml-2">$100</span>
+                    <span className="text-sm font-bold text-slate-500">Example: $100 listing</span>
+                    <span className="text-2xl font-black text-slate-800 ml-2">· COGS $40</span>
                   </div>
                 </div>
+                <p className="text-center text-[10px] text-slate-400 font-semibold mb-6 tracking-wide">
+                  Actual amounts vary per transaction based on each product's cost of goods (COGS)
+                </p>
 
                 <div className="space-y-4">
                   {[
-                    { label: 'Consumer Saves', amount: '$10', percent: '10%', color: BRAND.gold, bg: `${BRAND.gold}15`, desc: 'Automatic discount on every purchase' },
-                    { label: 'Merchant Receives', amount: '$89.10', percent: '89.1%', color: BRAND.purple, bg: `${BRAND.purple}10`, desc: 'Revenue after discount and platform fee' },
-                    { label: 'Nonprofit Receives', amount: '$3.12', percent: '~10% of profit', color: BRAND.crimson, bg: `${BRAND.crimson}10`, desc: 'Automatic donation from merchant net profit' },
-                    { label: 'Platform Fee', amount: '$0.90', percent: '1%', color: BRAND.lavender, bg: `${BRAND.lavender}20`, desc: 'Lowest fee in the industry — sustains operations' },
+                    { label: 'Consumer Saves', amount: '$10.00', percent: '10% of listing', color: BRAND.gold, bg: `${BRAND.gold}15`, desc: 'Automatic discount applied to every purchase' },
+                    { label: 'Merchant Receives', amount: '$84.50', percent: 'COGS + 89% of profit', color: BRAND.purple, bg: `${BRAND.purple}10`, desc: 'Cost of goods ($40) plus 89% of net profit ($44.50)' },
+                    { label: 'Nonprofit Receives', amount: '$5.00', percent: '10% of profit', color: BRAND.crimson, bg: `${BRAND.crimson}10`, desc: '10% of net profit ($50) — automatic, no fundraising needed' },
+                    { label: 'Platform Fee', amount: '$0.50', percent: '1% of profit', color: BRAND.lavender, bg: `${BRAND.lavender}20`, desc: '1% of net profit — lowest fee in the industry' },
                   ].map((row, i) => (
                     <motion.div
                       key={row.label}
