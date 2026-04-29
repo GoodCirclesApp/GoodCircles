@@ -90,9 +90,11 @@ export const ProductDetailModal: React.FC<Props> = ({
 
   const discountedPrice = product.price * (1 - GC_DISCOUNT_RATE);
   const discountAmt = product.price * GC_DISCOUNT_RATE;
-  const nonprofitAmt = discountedPrice * 0.10;
-  const platformAmt = discountedPrice * 0.01;
-  const merchantAmt = discountedPrice - nonprofitAmt - platformAmt;
+  // 10/10/1 splits apply to net profit (revenue after COGS), not to gross revenue
+  const netProfit = Math.max(0, discountedPrice - (product.cogs ?? 0));
+  const nonprofitAmt = netProfit * 0.10;
+  const platformAmt = netProfit * 0.01;
+  const merchantAmt = (product.cogs ?? 0) + netProfit * 0.89;
 
   return (
     <div className="fixed inset-0 z-[105] flex items-center justify-center p-0 sm:p-6">

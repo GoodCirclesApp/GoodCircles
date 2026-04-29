@@ -53,14 +53,10 @@ export const AccountingService = {
    */
   auditOrderMath(order: Order): boolean {
     const tolerance = 0.01;
-    const calculatedDonation = order.accounting.grossProfit * 0.10;
-    const calculatedPlatformFee = order.accounting.grossProfit * 0.01;
-    
-    // Check if the donation meets the 2% floor requirement
-    const floor = order.subtotal * 0.02;
-    const expectedDonation = Math.max(calculatedDonation, floor);
-    
+    // 10/10/1 model: donation = 10% of net profit (grossProfit), platform fee = 1% of net profit
+    const expectedDonation = order.accounting.grossProfit * 0.10;
+    const expectedPlatformFee = order.accounting.grossProfit * 0.01;
     return Math.abs(order.accounting.donationAmount - expectedDonation) < tolerance &&
-           Math.abs(order.accounting.platformFee - calculatedPlatformFee) < tolerance;
+           Math.abs(order.accounting.platformFee - expectedPlatformFee) < tolerance;
   }
 };

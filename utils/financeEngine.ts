@@ -101,7 +101,10 @@ export const calculateOrderTotals = (
     grossProfit: totalGrossProfit,
     donationAmount: isDiscountWaived ? totalDonation + totalDiscount : totalDonation,
     platformFee: totalPlatformFee,
-    merchantNet: (totalMsrp - totalDiscount) - totalDonation - totalPlatformFee,
+    // merchantNet = COGS + 89% of net profit. Using totalCogs + totalGrossProfit * 0.89
+    // is correct in all discount modes (PRICE_REDUCTION, PLATFORM_CREDITS, waived) because
+    // totalGrossProfit is already computed on the correct effective revenue for each mode.
+    merchantNet: totalCogs + totalGrossProfit * 0.89,
     totalCogs: totalCogs,
     feesSaved: feesSaved,
     appliedCredits: appliedCredits,
