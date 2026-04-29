@@ -23,17 +23,19 @@ const BRAND = {
 
 const PIE_COLORS = [BRAND.purple, BRAND.gold, '#34D399', BRAND.crimson, BRAND.lavender];
 
-function formatCurrency(n: number): string {
-  if (n >= 1e9) return `$${(n/1e9).toFixed(1)}B`;
-  if (n >= 1e6) return `$${(n/1e6).toFixed(1)}M`;
-  if (n >= 1000) return `$${(n/1000).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
+function formatCurrency(n: number | null | undefined): string {
+  const v = n ?? 0;
+  if (v >= 1e9) return `$${(v/1e9).toFixed(1)}B`;
+  if (v >= 1e6) return `$${(v/1e6).toFixed(1)}M`;
+  if (v >= 1000) return `$${(v/1000).toFixed(1)}K`;
+  return `$${v.toFixed(0)}`;
 }
 
-function formatNumber(n: number): string {
-  if (n >= 1e6) return `${(n/1e6).toFixed(1)}M`;
-  if (n >= 1000) return `${(n/1000).toFixed(1)}K`;
-  return n.toString();
+function formatNumber(n: number | null | undefined): string {
+  const v = n ?? 0;
+  if (v >= 1e6) return `${(v/1e6).toFixed(1)}M`;
+  if (v >= 1000) return `${(v/1000).toFixed(1)}K`;
+  return v.toString();
 }
 
 interface PlatformStats {
