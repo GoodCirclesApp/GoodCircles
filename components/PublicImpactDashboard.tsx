@@ -109,7 +109,11 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
         const response = await fetch('/api/admin/impact/platform-wide');
         if (response.ok) {
           const data = await response.json();
-          setStats(data);
+          if (data && typeof data.totalUsers === 'number') {
+            setStats(data);
+          } else {
+            setStats(generateDemoStats());
+          }
         } else {
           setStats(generateDemoStats());
         }
@@ -252,8 +256,8 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
             {/* Secondary stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: 'Local Merchants', value: stats.totalMerchants.toString(), icon: Store, color: BRAND.purple },
-                { label: 'Nonprofits Funded', value: stats.totalNonprofits.toString(), icon: Award, color: BRAND.crimson },
+                { label: 'Local Merchants', value: (stats.totalMerchants ?? 0).toString(), icon: Store, color: BRAND.purple },
+                { label: 'Nonprofits Funded', value: (stats.totalNonprofits ?? 0).toString(), icon: Award, color: BRAND.crimson },
                 { label: 'Total Transactions', value: formatNumber(stats.totalTransactions), icon: Zap, color: BRAND.gold },
                 { label: 'Kept Locally', value: formatCurrency(stats.totalLocalRetention), icon: MapPin, color: '#34D399' },
               ].map(s => (
