@@ -54,8 +54,23 @@ interface PlatformStats {
 }
 
 // Demo stats for beta (replaced by real API data in production)
+// Numbers reflect the actual 10/10/1 model:
+//   grossAmount = listed price; consumer pays grossAmount - discountAmount
+//   discountAmount = 10% of grossAmount (consumer savings)
+//   platformFee ≈ 1% of (grossAmount - discountAmount)
+//   merchantNet = (grossAmount - discountAmount) - platformFee - nonprofitShare
+//   nonprofitShare = 10% of merchantNet (before nonprofit deduction, i.e. ~9.1% of what consumer paid)
+//   localRetention = merchantNet + nonprofitShare (money staying in the local economy)
 function generateDemoStats(): PlatformStats {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+  // Derived from 1,842 transactions averaging $51.17 listed price
+  // grossVolume = 94,250  |  consumer pays 90% = 84,825
+  // discountAmount = 9,425 (10%)
+  // platformFee = 848 (1% of 84,825)
+  // merchantNet before nonprofit = 84,825 - 848 = 83,977
+  // nonprofitShare = 10% of merchantNet = 8,398
+  // merchantNet after nonprofit = 83,977 - 8,398 = 75,579
+  // localRetention = merchantNet + nonprofitShare = 75,579 + 8,398 = 83,977
+  const months = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'];
   return {
     totalUsers: 247,
     totalMerchants: 18,
@@ -63,19 +78,22 @@ function generateDemoStats(): PlatformStats {
     totalTransactions: 1842,
     totalVolume: 94250,
     totalConsumerSavings: 9425,
-    totalNonprofitFunding: 3299,
-    totalLocalRetention: 64090,
-    monthlyGrowthData: months.map((m, i) => ({
-      month: m,
-      users: Math.round(40 + i * 35 + Math.random() * 20),
-      volume: Math.round(8000 + i * 6000 + Math.random() * 3000),
-      donations: Math.round(400 + i * 300 + Math.random() * 200),
-    })),
+    totalNonprofitFunding: 8398,
+    totalLocalRetention: 83977,
+    monthlyGrowthData: months.map((m, i) => {
+      const monthlyGross = Math.round(8000 + i * 6000 + (i * 1337) % 3000);
+      return {
+        month: m,
+        users: Math.round(12 + i * 28 + (i * 7) % 15),
+        volume: monthlyGross,
+        donations: Math.round(monthlyGross * 0.089),
+      };
+    }),
     topNonprofits: [
-      { name: 'Community Food Bank', received: 1245 },
-      { name: 'Youth Scholars Alliance', received: 987 },
-      { name: 'Green Cleanup Initiative', received: 654 },
-      { name: 'Local Arts Foundation', received: 413 },
+      { name: 'Community Food Bank', received: 3192 },
+      { name: 'Youth Scholars Alliance', received: 2541 },
+      { name: 'Green Cleanup Initiative', received: 1687 },
+      { name: 'Local Arts Foundation', received: 978 },
     ],
     topMerchants: [
       { name: 'The Harvest Table', transactions: 412 },
@@ -85,11 +103,11 @@ function generateDemoStats(): PlatformStats {
       { name: 'Justice Law', transactions: 189 },
     ],
     categoryBreakdown: [
-      { name: 'Food & Dining', value: 35 },
-      { name: 'Home Services', value: 22 },
-      { name: 'Education', value: 18 },
-      { name: 'Professional', value: 15 },
-      { name: 'Other', value: 10 },
+      { name: 'Food & Dining', value: 33840 },
+      { name: 'Home Services', value: 21230 },
+      { name: 'Education', value: 17480 },
+      { name: 'Professional', value: 14560 },
+      { name: 'Other', value: 7140 },
     ],
   };
 }
@@ -297,7 +315,7 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
             {/* Category Breakdown */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-                <h3 className="text-sm font-black text-[#7851A9] uppercase tracking-widest mb-6">Spending by Category</h3>
+                <h3 className="text-sm font-black text-[#7851A9] uppercase tracking-widest mb-6">Transaction Volume by Category</h3>
                 <div style={{ height: 280 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -305,7 +323,7 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
                         label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
                         {stats.categoryBreakdown.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                       </Pie>
-                      <Tooltip />
+                      <Tooltip formatter={(v: number) => [formatCurrency(v), 'Volume']} contentStyle={{ borderRadius: 12, border: '1px solid #CA9CE1', fontSize: 12 }} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>

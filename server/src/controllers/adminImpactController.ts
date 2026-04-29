@@ -82,7 +82,7 @@ export const addMunicipalIncentive = async (req: Request, res: Response) => {
 export const getPlatformWideImpact = async (req: Request, res: Response) => {
   try {
     const [
-      totalUsers,
+      totalNeighbors,
       totalMerchants,
       totalNonprofits,
       txAggregate,
@@ -91,12 +91,13 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
       monthlyRaw,
       categoryRaw,
     ] = await Promise.all([
-      prisma.user.count(),
+      // Community Members = consumers only (NEIGHBOR role), not all platform users
+      prisma.user.count({ where: { role: 'NEIGHBOR' } }),
       prisma.merchant.count(),
       prisma.nonprofit.count(),
       prisma.transaction.aggregate({
         _count: { id: true },
-        _sum: { grossAmount: true, discountAmount: true, nonprofitShare: true },
+        _sum: { grossAmount: true, discountAmount: true, nonprofitShare: true, merchantNet: true },
       }),
       prisma.transaction.groupBy({
         by: ['nonprofitId'],
@@ -111,14 +112,16 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
         take: 5,
       }),
       prisma.transaction.findMany({
-        select: { createdAt: true, grossAmount: true, nonprofitShare: true, neighborId: true },
+        select: { createdAt: true, grossAmount: true, nonprofitShare: true, merchantNet: true, neighborId: true },
         orderBy: { createdAt: 'asc' },
       }),
-      prisma.productService.groupBy({
-        by: ['category'],
+      // Category breakdown by transaction count (actual spending, not just listing count)
+      prisma.transaction.groupBy({
+        by: ['productServiceId'],
         _count: { id: true },
-        orderBy: { _count: { id: 'desc' } },
-        take: 5,
+        _sum: { grossAmount: true },
+        orderBy: { _sum: { grossAmount: 'desc' } },
+        take: 50,
       }),
     ]);
 
@@ -132,6 +135,22 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
     const mRecords = await prisma.merchant.findMany({ where: { id: { in: mIds } }, select: { id: true, businessName: true } });
     const mMap = Object.fromEntries(mRecords.map(m => [m.id, m.businessName]));
 
+    // Resolve categories for the top transaction products
+    const psIds = categoryRaw.map(r => r.productServiceId);
+    const psRecords = await prisma.productService.findMany({ where: { id: { in: psIds } }, select: { id: true, category: true } });
+    const psMap = Object.fromEntries(psRecords.map(p => [p.id, p.category]));
+
+    // Aggregate by category (group the top products by their category)
+    const categoryTotals: Record<string, number> = {};
+    for (const r of categoryRaw) {
+      const cat = psMap[r.productServiceId] ?? 'Other';
+      categoryTotals[cat] = (categoryTotals[cat] ?? 0) + Number(r._sum.grossAmount ?? 0);
+    }
+    const categoryBreakdownFinal = Object.entries(categoryTotals)
+      .map(([name, value]) => ({ name, value: Math.round(value) }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5);
+
     // Build monthly growth data (last 6 months)
     const now = new Date();
     const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -143,24 +162,32 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
       return {
         month: MONTH_NAMES[d.getMonth()],
         users: uniqueUsers,
-        volume: txs.reduce((s, t) => s + Number(t.grossAmount ?? 0), 0),
+        // Volume = what consumer actually paid (gross minus discount)
+        volume: txs.reduce((s, t) => s + Number(t.grossAmount ?? 0) - Number(0), 0),
         donations: txs.reduce((s, t) => s + Number(t.nonprofitShare ?? 0), 0),
       };
     });
 
+    // totalVolume = gross listed price across all transactions
     const totalVolume = Number(txAggregate._sum.grossAmount ?? 0);
     const totalConsumerSavings = Number(txAggregate._sum.discountAmount ?? 0);
     const totalNonprofitFunding = Number(txAggregate._sum.nonprofitShare ?? 0);
+    const totalMerchantNet = Number(txAggregate._sum.merchantNet ?? 0);
+
+    // Local retention = money that stayed in the local economy:
+    // merchant revenue (merchantNet) + nonprofit funding (nonprofitShare)
+    // Consumer savings are returned to the consumer. Platform fee leaves the local pool.
+    const totalLocalRetention = totalMerchantNet + totalNonprofitFunding;
 
     res.json({
-      totalUsers,
+      totalUsers: totalNeighbors,
       totalMerchants,
       totalNonprofits,
       totalTransactions: txAggregate._count.id ?? 0,
       totalVolume,
       totalConsumerSavings,
       totalNonprofitFunding,
-      totalLocalRetention: totalVolume * 0.68,
+      totalLocalRetention,
       monthlyGrowthData,
       topNonprofits: topNonprofitsRaw.map(r => ({
         name: npMap[r.nonprofitId] ?? 'Unknown Nonprofit',
@@ -170,8 +197,8 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
         name: mMap[r.merchantId] ?? 'Unknown Merchant',
         transactions: r._count.id ?? 0,
       })),
-      categoryBreakdown: categoryRaw.length > 0
-        ? categoryRaw.map(r => ({ name: r.category ?? 'Other', value: r._count.id }))
+      categoryBreakdown: categoryBreakdownFinal.length > 0
+        ? categoryBreakdownFinal
         : [{ name: 'Marketplace', value: 1 }],
     });
   } catch (err: any) {
