@@ -96,14 +96,13 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
       prisma.nonprofit.count(),
       prisma.transaction.aggregate({
         _count: { id: true },
-        _sum: { amount: true, discountAmount: true, donationAmount: true },
+        _sum: { grossAmount: true, discountAmount: true, nonprofitShare: true },
       }),
       prisma.transaction.groupBy({
         by: ['nonprofitId'],
-        _sum: { donationAmount: true },
-        orderBy: { _sum: { donationAmount: 'desc' } },
+        _sum: { nonprofitShare: true },
+        orderBy: { _sum: { nonprofitShare: 'desc' } },
         take: 6,
-        where: { nonprofitId: { not: null } },
       }),
       prisma.transaction.groupBy({
         by: ['merchantId'],
@@ -112,10 +111,10 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
         take: 5,
       }),
       prisma.transaction.findMany({
-        select: { createdAt: true, amount: true, donationAmount: true, userId: true },
+        select: { createdAt: true, grossAmount: true, nonprofitShare: true, neighborId: true },
         orderBy: { createdAt: 'asc' },
       }),
-      prisma.product.groupBy({
+      prisma.productService.groupBy({
         by: ['category'],
         _count: { id: true },
         orderBy: { _count: { id: 'desc' } },
@@ -123,10 +122,10 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
       }),
     ]);
 
-    // Resolve nonprofit names
-    const npIds = topNonprofitsRaw.map(r => r.nonprofitId).filter(Boolean) as string[];
-    const npRecords = await prisma.nonprofit.findMany({ where: { id: { in: npIds } }, select: { id: true, name: true } });
-    const npMap = Object.fromEntries(npRecords.map(n => [n.id, n.name]));
+    // Resolve nonprofit names (field is orgName, not name)
+    const npIds = topNonprofitsRaw.map(r => r.nonprofitId);
+    const npRecords = await prisma.nonprofit.findMany({ where: { id: { in: npIds } }, select: { id: true, orgName: true } });
+    const npMap = Object.fromEntries(npRecords.map(n => [n.id, n.orgName]));
 
     // Resolve merchant names
     const mIds = topMerchantsRaw.map(r => r.merchantId);
@@ -140,18 +139,18 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
       const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
       const next = new Date(d.getFullYear(), d.getMonth() + 1, 1);
       const txs = monthlyRaw.filter(t => t.createdAt >= d && t.createdAt < next);
-      const uniqueUsers = new Set(txs.map(t => t.userId)).size;
+      const uniqueUsers = new Set(txs.map(t => t.neighborId)).size;
       return {
         month: MONTH_NAMES[d.getMonth()],
         users: uniqueUsers,
-        volume: txs.reduce((s, t) => s + (t.amount ?? 0), 0),
-        donations: txs.reduce((s, t) => s + (t.donationAmount ?? 0), 0),
+        volume: txs.reduce((s, t) => s + Number(t.grossAmount ?? 0), 0),
+        donations: txs.reduce((s, t) => s + Number(t.nonprofitShare ?? 0), 0),
       };
     });
 
-    const totalVolume = txAggregate._sum.amount ?? 0;
-    const totalConsumerSavings = txAggregate._sum.discountAmount ?? 0;
-    const totalNonprofitFunding = txAggregate._sum.donationAmount ?? 0;
+    const totalVolume = Number(txAggregate._sum.grossAmount ?? 0);
+    const totalConsumerSavings = Number(txAggregate._sum.discountAmount ?? 0);
+    const totalNonprofitFunding = Number(txAggregate._sum.nonprofitShare ?? 0);
 
     res.json({
       totalUsers,
@@ -164,8 +163,8 @@ export const getPlatformWideImpact = async (req: Request, res: Response) => {
       totalLocalRetention: totalVolume * 0.68,
       monthlyGrowthData,
       topNonprofits: topNonprofitsRaw.map(r => ({
-        name: npMap[r.nonprofitId!] ?? 'Unknown Nonprofit',
-        received: r._sum.donationAmount ?? 0,
+        name: npMap[r.nonprofitId] ?? 'Unknown Nonprofit',
+        received: Number(r._sum.nonprofitShare ?? 0),
       })),
       topMerchants: topMerchantsRaw.map(r => ({
         name: mMap[r.merchantId] ?? 'Unknown Merchant',
