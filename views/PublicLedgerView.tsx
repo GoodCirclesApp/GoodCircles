@@ -153,7 +153,7 @@ export const PublicLedgerView: React.FC<Props> = ({ orders, batches, globalStats
                       </td>
                       <td className="py-8 font-mono text-[10px] font-black uppercase tracking-tighter text-slate-800">GC-{(o.id ?? '').slice(-8)}</td>
                       <td className="py-8 text-xs font-black uppercase text-slate-900">
-                        {privacyMode === 'private' ? `NODE-${o.items[0]?.product.merchantId?.slice(-4).toUpperCase() || 'XXXX'}` : (o.items[0]?.product.merchantName || 'Network Entity')}
+                        {privacyMode === 'private' ? `NODE-${o.items?.[0]?.product.merchantId?.slice(-4).toUpperCase() || 'XXXX'}` : (o.items?.[0]?.product.merchantName || 'Network Entity')}
                       </td>
                       <td className="py-8 text-xl font-black text-[#7851A9] tracking-tighter">${(o.accounting?.donationAmount ?? 0).toFixed(2)}</td>
                       <td className="py-8 text-right">
