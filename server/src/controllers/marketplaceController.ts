@@ -387,13 +387,21 @@ export const checkout = async (req: AuthRequest, res: Response) => {
           merchantName: merchant.businessName,
           businessName: merchant.businessName,
           customerFirstName: neighbor.firstName || 'Customer',
+          customerLastName: neighbor.lastName || '',
+          customerEmail: neighbor.email,
+          paymentMethod: rawPaymentMethod,
           productName: product.name,
           quantity: item.quantity,
           grossAmount: Number(tx.grossAmount),
-          merchantNet: Number(tx.merchantNet),
+          discountAmount: Number(tx.discountAmount ?? 0),
+          customerPaid: Number(bd.neighborPays ?? tx.grossAmount),
+          cogs: Number(product.cogs ?? 0),
+          netProfit: Number(bd.neighborPays ?? tx.grossAmount) - Number(product.cogs ?? 0),
           nonprofitShare: Number(tx.nonprofitShare),
           nonprofitName: nonprofit.orgName,
-          fulfillmentMethod: 'TBD',
+          platformFee: Number(tx.platformFee),
+          merchantNet: Number(tx.merchantNet),
+          fulfillmentMethod: rawPaymentMethod === 'INTERNAL' ? 'Circle Wallet' : 'Card Payment',
           transactionId: tx.id
         }).catch(err => console.error('[Checkout] Failed to send merchant order email:', err));
       }

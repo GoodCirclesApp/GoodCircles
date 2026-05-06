@@ -172,26 +172,37 @@ export const handleWebhook = async (req: Request, res: Response) => {
         const fullTx = await prisma.transaction.findUnique({
           where: { id: transaction.id },
           include: {
-            neighbor: { select: { email: true, firstName: true } },
+            neighbor: { select: { email: true, firstName: true, lastName: true } },
             merchant: { select: { businessName: true, user: { select: { email: true, firstName: true } } } },
             nonprofit: { select: { orgName: true } },
-            productService: { select: { name: true } },
+            productService: { select: { name: true, cogs: true } },
           },
         });
         if (fullTx) {
           const fulfillment = fullTx.paymentMethod === 'QR' ? 'In-Store QR Pay' : 'Online Payment';
+          const cogs = Number(fullTx.productService.cogs ?? 0);
+          const customerPaid = Number(fullTx.grossAmount) - Number(fullTx.discountAmount);
+          const netProfit = customerPaid - cogs;
           // Merchant notification
           await sendMerchantOrderEmail({
             merchantEmail: fullTx.merchant.user.email,
             merchantName: fullTx.merchant.user.firstName ?? fullTx.merchant.businessName,
             businessName: fullTx.merchant.businessName,
             customerFirstName: fullTx.neighbor.firstName ?? 'A customer',
+            customerLastName: fullTx.neighbor.lastName ?? '',
+            customerEmail: fullTx.neighbor.email,
+            paymentMethod: fullTx.paymentMethod,
             productName: fullTx.productService.name,
             quantity: 1,
             grossAmount: Number(fullTx.grossAmount),
-            merchantNet: Number(fullTx.merchantNet),
+            discountAmount: Number(fullTx.discountAmount),
+            customerPaid,
+            cogs,
+            netProfit,
             nonprofitShare: Number(fullTx.nonprofitShare),
             nonprofitName: fullTx.nonprofit.orgName,
+            platformFee: Number(fullTx.platformFee),
+            merchantNet: Number(fullTx.merchantNet),
             fulfillmentMethod: fulfillment,
             transactionId: fullTx.id,
           });
