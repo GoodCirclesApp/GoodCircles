@@ -67,8 +67,7 @@ export const submitWaitlist = async (req: Request, res: Response) => {
   // Check for duplicate email
   const existing = await prisma.waitlistEntry.findUnique({ where: { email: data.email } });
   if (existing) {
-    // Return their existing position rather than an error — idempotent
-    return res.json({ position: existing.position, inviteCode: existing.inviteCode, alreadyRegistered: true });
+    return res.json({ position: existing.position + COUNT_FLOOR, inviteCode: existing.inviteCode, alreadyRegistered: true });
   }
 
   const inviteCode = generateInviteCode(data.role);
@@ -108,7 +107,7 @@ export const submitWaitlist = async (req: Request, res: Response) => {
     // Race condition on unique email — return existing entry
     if (err.code === 'P2002') {
       const dup = await prisma.waitlistEntry.findUnique({ where: { email: data.email } });
-      if (dup) return res.json({ position: dup.position, inviteCode: dup.inviteCode, alreadyRegistered: true });
+      if (dup) return res.json({ position: dup.position + COUNT_FLOOR, inviteCode: dup.inviteCode, alreadyRegistered: true });
     }
     console.error('[Waitlist] Create error:', err.message);
     return res.status(500).json({ error: 'Failed to save your spot. Please try again.' });
@@ -117,15 +116,17 @@ export const submitWaitlist = async (req: Request, res: Response) => {
   // Invalidate count cache
   cachedCount = null;
 
+  const displayPosition = entry.position + COUNT_FLOOR;
+
   // Send confirmation email (non-blocking)
   sendWaitlistConfirmEmail({
     email:      entry.email,
     role:       entry.role,
-    position:   entry.position,
+    position:   displayPosition,
     inviteCode: entry.inviteCode,
   }).catch(err => console.error('[Waitlist] Email error:', err));
 
-  return res.json({ position: entry.position, inviteCode: entry.inviteCode });
+  return res.json({ position: displayPosition, inviteCode: entry.inviteCode });
 };
 
 export const getCount = async (_req: Request, res: Response) => {
@@ -181,7 +182,7 @@ function buildLaunchPerks(role: string): object {
     case 'NEIGHBOR':
       return { doubleCreditsMonths: 1, description: 'One month of double-impact credits at launch' };
     case 'MERCHANT':
-      return { onboardingFeeWaived: true, firstMonthFree: true, description: 'Onboarding fee waived, first month free' };
+      return { foundingMerchant: true, priorityListing: true, earlyAccess: true, description: 'Founding Merchant designation, priority city listing, and early catalog setup access before public launch' };
     case 'NONPROFIT':
       return { preVerified: true, priorityListing: true, description: 'Pre-verified and priority-listed at launch' };
     case 'CDFI':

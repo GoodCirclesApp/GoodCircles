@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-accent: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --gc-purple: #7851A9;
+  --gc-lavender: #CA9CE1;
+  --gc-gold: #C2A76F;
+  --gc-crimson: #A20021;
+  --gc-emerald: #059669;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}

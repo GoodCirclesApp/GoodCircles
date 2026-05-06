@@ -31,7 +31,7 @@ const ROLE_LABELS: Record<string, string> = {
 
 const ROLE_PERKS: Record<string, string> = {
   NEIGHBOR:  'At launch, you\'ll receive one free month of double-impact credits — your savings double, your nonprofit gets twice the donation.',
-  MERCHANT:  'As an early merchant, your onboarding fee is waived and your first month on the platform is free.',
+  MERCHANT:  'As a Founding Merchant, you\'ll get early catalog setup access and priority placement in your city when we launch in September 2026.',
   NONPROFIT: 'Your nonprofit will be pre-verified and visible to neighbors from day one — no waiting in a queue.',
   CDFI:      'You\'ll receive a private briefing with our founding team before the public launch.',
   MUNICIPAL: 'You\'ll receive a private briefing with our founding team before the public launch.',
