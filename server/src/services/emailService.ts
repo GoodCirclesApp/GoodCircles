@@ -201,3 +201,65 @@ export async function sendNonprofitDailyDigest(opts: {
     html,
   });
 }
+
+// ── Merchant welcome email ──────────────────────────────────────────────
+export async function sendMerchantWelcomeEmail(opts: {
+  merchantEmail: string;
+  businessName: string;
+}): Promise<boolean> {
+  const html = `
+<!DOCTYPE html><html><body style="font-family:sans-serif;color:#111;max-width:600px;margin:0 auto;padding:24px">
+  <div style="border-bottom:3px solid #7851A9;padding-bottom:16px;margin-bottom:24px">
+    <img src="${APP_URL}/gc-logo.png" alt="Good Circles" height="36" style="margin-bottom:8px" />
+    <h2 style="margin:0;font-size:20px">Welcome to Good Circles!</h2>
+  </div>
+  <p>Hi ${opts.businessName},</p>
+  <p>Your merchant account has been created. You're now part of a community where every sale fuels local nonprofits.</p>
+  <h3 style="color:#7851A9">What's Next?</h3>
+  <ul>
+    <li>Complete your merchant profile with services/products</li>
+    <li>Set your pricing and availability</li>
+    <li>Start receiving orders from Good Circles customers</li>
+  </ul>
+  <p>Every purchase through Good Circles includes a 10% discount for customers, 10% donation to a nonprofit of their choice, and 1% to keep our platform running.</p>
+  <a href="${APP_URL}" style="display:inline-block;margin-top:16px;background:#7851A9;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Go to Merchant Dashboard</a>
+  <p style="font-size:12px;color:#888;margin-top:32px">Questions? Contact support at admin@goodcircles.org</p>
+</body></html>`;
+  return sendEmail({
+    to: opts.merchantEmail,
+    toName: opts.businessName,
+    subject: 'Welcome to Good Circles!',
+    html,
+  });
+}
+
+// ── Nonprofit welcome email ─────────────────────────────────────────────
+export async function sendNonprofitWelcomeEmail(opts: {
+  nonprofitEmail: string;
+  orgName: string;
+}): Promise<boolean> {
+  const html = `
+<!DOCTYPE html><html><body style="font-family:sans-serif;color:#111;max-width:600px;margin:0 auto;padding:24px">
+  <div style="border-bottom:3px solid #7851A9;padding-bottom:16px;margin-bottom:24px">
+    <img src="${APP_URL}/gc-logo.png" alt="Good Circles" height="36" style="margin-bottom:8px" />
+    <h2 style="margin:0;font-size:20px">Welcome to Good Circles!</h2>
+  </div>
+  <p>Hi ${opts.orgName},</p>
+  <p>Your nonprofit account is now active on Good Circles. You're tapped into a network of local merchants and conscious consumers.</p>
+  <h3 style="color:#7851A9">How It Works</h3>
+  <ul>
+    <li><strong>Merchants</strong> join our platform to reach community-minded customers</li>
+    <li><strong>Consumers</strong> choose your nonprofit as their impact partner when they shop</li>
+    <li><strong>You receive</strong> 10% of every purchase made in your name, automatically</li>
+  </ul>
+  <p>Your dashboard tracks all donations in real time and exports records for your reporting needs.</p>
+  <a href="${APP_URL}" style="display:inline-block;margin-top:16px;background:#7851A9;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Nonprofit Dashboard</a>
+  <p style="font-size:12px;color:#888;margin-top:32px">Questions? Contact us at admin@goodcircles.org</p>
+</body></html>`;
+  return sendEmail({
+    to: opts.nonprofitEmail,
+    toName: opts.orgName,
+    subject: 'Welcome to Good Circles!',
+    html,
+  });
+}

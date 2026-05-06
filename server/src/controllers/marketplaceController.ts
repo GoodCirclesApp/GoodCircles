@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma';
 import { TransactionService } from '../services/transactionService';
 import { AvailabilityService } from '../services/availabilityService';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { sendCustomerReceiptEmail, sendMerchantOrderEmail } from '../services/emailService';
 
 // Category-based placeholder images using picsum.photos (free, no API key needed)
 const CATEGORY_IMAGES: Record<string, string[]> = {
@@ -347,6 +348,57 @@ export const checkout = async (req: AuthRequest, res: Response) => {
         creditsToApply: creditsForItem
       });
       const { transaction: tx, breakdown: bd } = result;
+
+      // Send emails (non-blocking)
+      const neighbor = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        include: { neighbor: true }
+      });
+      const merchant = await prisma.merchant.findUnique({
+        where: { id: item.merchantId },
+        include: { user: true }
+      });
+      const product = await prisma.productService.findUnique({
+        where: { id: item.productServiceId }
+      });
+      const nonprofit = await prisma.nonprofit.findUnique({
+        where: { id: tx.nonprofitId }
+      });
+
+      if (neighbor?.neighbor && merchant?.user && product && nonprofit) {
+        // Send customer receipt
+        sendCustomerReceiptEmail({
+          customerEmail: neighbor.user.email,
+          customerFirstName: neighbor.firstName || 'Customer',
+          merchantName: merchant.businessName,
+          productName: product.name,
+          quantity: item.quantity,
+          grossAmount: Number(tx.grossAmount),
+          discountAmount: Number(tx.discountAmount ?? 0),
+          customerPaid: Number(bd.neighborPays ?? tx.grossAmount),
+          nonprofitShare: Number(tx.nonprofitShare),
+          nonprofitName: nonprofit.name,
+          platformFee: Number(tx.platformFee),
+          transactionId: tx.id
+        }).catch(err => console.error('[Checkout] Failed to send customer receipt:', err));
+
+        // Send merchant order notification
+        sendMerchantOrderEmail({
+          merchantEmail: merchant.user.email,
+          merchantName: merchant.businessName,
+          businessName: merchant.businessName,
+          customerFirstName: neighbor.firstName || 'Customer',
+          productName: product.name,
+          quantity: item.quantity,
+          grossAmount: Number(tx.grossAmount),
+          merchantNet: Number(tx.merchantNet),
+          nonprofitShare: Number(tx.nonprofitShare),
+          nonprofitName: nonprofit.name,
+          fulfillmentMethod: 'TBD', // TODO: get from product details
+          transactionId: tx.id
+        }).catch(err => console.error('[Checkout] Failed to send merchant order email:', err));
+      }
+
       results.push({
         id:                 tx.id,
         date:               tx.createdAt,

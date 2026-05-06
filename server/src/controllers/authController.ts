@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { generateTokens, verifyRefreshToken } from '../utils/tokenUtils';
 import { AuthRequest } from '../middleware/authMiddleware';
 import { IrsVerificationService } from '../services/irsVerificationService';
+import { sendMerchantWelcomeEmail, sendNonprofitWelcomeEmail } from '../services/emailService';
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -116,6 +117,25 @@ export const register = async (req: Request, res: Response) => {
 
       return user;
     });
+
+    // Send welcome email based on role
+    if (data.role === 'MERCHANT' && data.businessName) {
+      sendMerchantWelcomeEmail({
+        merchantEmail: result.email,
+        businessName: data.businessName
+      }).catch(err => {
+        console.error('[Auth] Failed to send merchant welcome email:', err);
+        // Don't throw - email failure shouldn't block signup
+      });
+    } else if (data.role === 'NONPROFIT' && data.orgName) {
+      sendNonprofitWelcomeEmail({
+        nonprofitEmail: result.email,
+        orgName: data.orgName
+      }).catch(err => {
+        console.error('[Auth] Failed to send nonprofit welcome email:', err);
+        // Don't throw - email failure shouldn't block signup
+      });
+    }
 
     const tokens = generateTokens(result);
     const response: Record<string, any> = {
