@@ -40,6 +40,7 @@ import dmsRoutes from './server/src/routes/dmsRoutes';
 import searchRoutes from './server/src/routes/searchRoutes';
 import complianceRoutes from './server/src/routes/complianceRoutes';
 import testRoutes from './server/src/routes/testRoutes';
+import waitlistRoutes from './server/src/routes/waitlistRoutes';
 
 import { ReferralService } from './server/src/services/referralService';
 import { GovernanceService } from './server/src/services/governanceService';
@@ -77,7 +78,7 @@ async function startServer() {
   // ── CORS ───────────────────────────────────────────────────────
   const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
-    : ['http://localhost:3000', 'http://localhost:5173'];
+    : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:3001'];
 
   app.use(cors({
     origin: (origin, callback) => {
@@ -157,6 +158,7 @@ async function startServer() {
   app.use('/api/search', searchRoutes);
   app.use('/api/compliance', complianceRoutes);
   app.use('/api/admin/test', testRoutes);
+  app.use('/api/waitlist', waitlistRoutes);
 
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Good Circles API is running', version: '1.0.0-beta' });

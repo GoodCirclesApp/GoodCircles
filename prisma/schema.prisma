@@ -1628,3 +1628,61 @@ model InformActFlag {
   @@index([taxYear])
   @@index([requiresVerification])
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Pre-Launch Waitlist
+// ─────────────────────────────────────────────────────────────────────────────
+
+model WaitlistEntry {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  role        String   // NEIGHBOR | MERCHANT | NONPROFIT | CDFI | MUNICIPAL
+  position    Int      @default(autoincrement())
+  inviteCode  String   @unique
+
+  // Common
+  zipCode     String?
+  city        String?
+  state       String?
+
+  // NEIGHBOR
+  preferredCauseHint String?
+
+  // MERCHANT
+  businessName String?
+  website      String?
+  category     String?
+
+  // NONPROFIT
+  orgName String?
+  ein     String?
+
+  // CDFI
+  cdfiCertNumber String?
+  lendingRegions String[]  @default([])
+
+  // MUNICIPAL
+  jurisdiction      String?
+  decisionMakerRole String?
+  interestArea      String?
+
+  // Funnel metadata
+  referrer    String?
+  utmSource   String?
+  utmCampaign String?
+  ipHash      String?
+  requestBriefing Boolean @default(false)
+
+  // Launch flow
+  launchPerks      Json?
+  emailConfirmedAt DateTime?
+  invitedAt        DateTime?
+  redeemedAt       DateTime?
+  redeemedUserId   String?
+
+  createdAt DateTime @default(now())
+
+  @@index([role])
+  @@index([state, city])
+  @@index([createdAt])
+}
