@@ -351,8 +351,7 @@ export const checkout = async (req: AuthRequest, res: Response) => {
 
       // Send emails (non-blocking)
       const neighbor = await prisma.user.findUnique({
-        where: { id: req.user.id },
-        include: { neighbor: true }
+        where: { id: req.user.id }
       });
       const merchant = await prisma.merchant.findUnique({
         where: { id: item.merchantId },
@@ -365,10 +364,10 @@ export const checkout = async (req: AuthRequest, res: Response) => {
         where: { id: tx.nonprofitId }
       });
 
-      if (neighbor?.neighbor && merchant?.user && product && nonprofit) {
+      if (neighbor && merchant?.user && product && nonprofit) {
         // Send customer receipt
         sendCustomerReceiptEmail({
-          customerEmail: neighbor.user.email,
+          customerEmail: neighbor.email,
           customerFirstName: neighbor.firstName || 'Customer',
           merchantName: merchant.businessName,
           productName: product.name,
@@ -377,7 +376,7 @@ export const checkout = async (req: AuthRequest, res: Response) => {
           discountAmount: Number(tx.discountAmount ?? 0),
           customerPaid: Number(bd.neighborPays ?? tx.grossAmount),
           nonprofitShare: Number(tx.nonprofitShare),
-          nonprofitName: nonprofit.name,
+          nonprofitName: nonprofit.orgName,
           platformFee: Number(tx.platformFee),
           transactionId: tx.id
         }).catch(err => console.error('[Checkout] Failed to send customer receipt:', err));
@@ -393,8 +392,8 @@ export const checkout = async (req: AuthRequest, res: Response) => {
           grossAmount: Number(tx.grossAmount),
           merchantNet: Number(tx.merchantNet),
           nonprofitShare: Number(tx.nonprofitShare),
-          nonprofitName: nonprofit.name,
-          fulfillmentMethod: 'TBD', // TODO: get from product details
+          nonprofitName: nonprofit.orgName,
+          fulfillmentMethod: 'TBD',
           transactionId: tx.id
         }).catch(err => console.error('[Checkout] Failed to send merchant order email:', err));
       }
