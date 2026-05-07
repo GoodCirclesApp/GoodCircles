@@ -18,7 +18,7 @@ const FAQS = [
   },
   {
     q: 'What if my nonprofit isn\'t already on the platform?',
-    a: 'At launch, you\'ll be able to elect any eligible U.S. 501(c)(3). Nonprofits don\'t need to sign up in advance — they just need a valid EIN. If you run a nonprofit, joining the waitlist now gets you pre-verified and visible to neighbors from day one.',
+    a: 'Nonprofits need a free GoodCircles account to be elected and receive donations. If your favorite organization isn\'t on the platform yet, you can invite them — membership is completely free for nonprofits. If you run a nonprofit, joining the waitlist now gets you pre-verified and visible to neighbors from day one.',
   },
   {
     q: 'Is GoodCircles available in my city?',
