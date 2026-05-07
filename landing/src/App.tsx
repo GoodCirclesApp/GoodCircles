@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type Role } from './lib/brand';
-import { getWaitlistCount } from './lib/api';
 
 import Nav from './components/Nav';
 import Hero from './sections/Hero';
@@ -29,12 +28,7 @@ export interface ConfirmationData {
 
 export default function App() {
   const [phase, setPhase]           = useState<Phase>('hero');
-  const [liveCount, setLiveCount]   = useState(2847);
   const [confirmation, setConfirmation] = useState<ConfirmationData | null>(null);
-
-  useEffect(() => {
-    getWaitlistCount().then(setLiveCount);
-  }, []);
 
   const selectedRole: Role | null =
     phase.startsWith('story:') ? (phase.slice(6) as Role) : null;
@@ -48,7 +42,6 @@ export default function App() {
 
   function handleConfirm(data: ConfirmationData) {
     setConfirmation(data);
-    setLiveCount(c => c + 1);
     // Scroll to top for full-page confirmation feel
     window.scrollTo({ top: 0, behavior: 'smooth' });
     // Brief delay then swap to confirmation
@@ -82,7 +75,7 @@ export default function App() {
         ) : (
           <motion.div key="main" initial={{ opacity: 1 }} animate={{ opacity: 1 }}>
             {/* Hero — always visible */}
-            <Hero liveCount={liveCount} />
+            <Hero />
 
             {/* Mirror or Story — swaps in place */}
             <div id="mirror-section">

@@ -2,11 +2,7 @@ import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { BRAND } from '../lib/brand';
 
-interface HeroProps {
-  liveCount: number;
-}
-
-export default function Hero({ liveCount }: HeroProps) {
+export default function Hero() {
   return (
     <section
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
@@ -32,7 +28,7 @@ export default function Hero({ liveCount }: HeroProps) {
         transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Live counter */}
+      {/* Brand pill */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -40,9 +36,8 @@ export default function Hero({ liveCount }: HeroProps) {
         className="absolute top-24 right-6 sm:right-8 flex items-center gap-2 px-4 py-2 rounded-full"
         style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)' }}
       >
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
         <span className="text-white text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-          {liveCount.toLocaleString()} already in the circle
+          Purpose built for your community
         </span>
       </motion.div>
 
