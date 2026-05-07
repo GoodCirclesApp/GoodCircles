@@ -1686,3 +1686,13 @@ model WaitlistEntry {
   @@index([state, city])
   @@index([createdAt])
 }
+
+model WaitlistOverflow {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  role      String
+  createdAt DateTime @default(now())
+
+  @@index([role])
+  @@index([createdAt])
+}

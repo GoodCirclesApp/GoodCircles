@@ -3,10 +3,11 @@ import { AuthRequest } from '../middleware/authMiddleware';
 import { prisma } from '../lib/prisma';
 import { z } from 'zod';
 import crypto from 'crypto';
-import { sendWaitlistConfirmEmail } from '../services/waitlistEmailService';
+import { sendWaitlistConfirmEmail, sendWaitlistOverflowEmail } from '../services/waitlistEmailService';
 
-// Floor count so the number looks warm before real signups accumulate
-const COUNT_FLOOR = 2847;
+const COUNT_FLOOR  = 2847;
+const WAITLIST_CAP = parseInt(process.env.WAITLIST_CAP ?? '10000', 10);
+
 let cachedCount: number | null = null;
 let cacheExpiresAt = 0;
 
@@ -70,6 +71,24 @@ export const submitWaitlist = async (req: Request, res: Response) => {
     return res.json({ position: existing.position + COUNT_FLOOR, inviteCode: existing.inviteCode, alreadyRegistered: true });
   }
 
+  // Check cap — route to overflow if full
+  const currentCount = await prisma.waitlistEntry.count();
+  if (currentCount >= WAITLIST_CAP) {
+    // Add to overflow (idempotent — ignore duplicate email)
+    try {
+      await prisma.waitlistOverflow.upsert({
+        where:  { email: data.email },
+        update: {},
+        create: { email: data.email, role: data.role },
+      });
+      sendWaitlistOverflowEmail({ email: data.email, role: data.role })
+        .catch(err => console.error('[Waitlist] Overflow email error:', err));
+    } catch {
+      // Silently swallow — overflow capture is best-effort
+    }
+    return res.json({ overflow: true });
+  }
+
   const inviteCode = generateInviteCode(data.role);
 
   const launchPerks = buildLaunchPerks(data.role);
@@ -126,7 +145,7 @@ export const submitWaitlist = async (req: Request, res: Response) => {
     inviteCode: entry.inviteCode,
   }).catch(err => console.error('[Waitlist] Email error:', err));
 
-  return res.json({ position: displayPosition, inviteCode: entry.inviteCode });
+  return res.json({ position: displayPosition, inviteCode: entry.inviteCode, overflow: false });
 };
 
 export const getCount = async (_req: Request, res: Response) => {
@@ -175,6 +194,23 @@ export const listForAdmin = async (req: Request, res: Response) => {
   }
 
   return res.json({ entries, total, page: parseInt(page), limit: parseInt(limit) });
+};
+
+export const listOverflow = async (req: Request, res: Response) => {
+  const entries = await prisma.waitlistOverflow.findMany({ orderBy: { createdAt: 'asc' } });
+  const { csv } = req.query as Record<string, string>;
+  if (csv === 'true') {
+    const headers = 'email,role,createdAt';
+    const rows = entries.map(e =>
+      [e.email, e.role, e.createdAt.toISOString()]
+        .map(v => `"${String(v).replace(/"/g, '""')}"`)
+        .join(',')
+    );
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="waitlist-overflow.csv"');
+    return res.send([headers, ...rows].join('\n'));
+  }
+  return res.json({ entries, total: entries.length, cap: WAITLIST_CAP });
 };
 
 function buildLaunchPerks(role: string): object {

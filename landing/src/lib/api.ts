@@ -30,8 +30,9 @@ export interface WaitlistPayload {
 }
 
 export interface WaitlistResponse {
-  position:          number;
-  inviteCode:        string;
+  position?:          number;
+  inviteCode?:        string;
+  overflow?:          boolean;
   alreadyRegistered?: boolean;
 }
 

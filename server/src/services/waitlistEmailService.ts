@@ -79,6 +79,62 @@ function wrap(body: string): string {
 </html>`;
 }
 
+export interface WaitlistOverflowParams {
+  email: string;
+  role:  string;
+}
+
+export async function sendWaitlistOverflowEmail(params: WaitlistOverflowParams): Promise<boolean> {
+  const { email, role } = params;
+  const roleLabel = ROLE_LABELS[role] ?? role;
+
+  const body = `
+    <h1 style="margin:0 0 8px;font-size:28px;font-weight:900;color:#1a1a1a;line-height:1.1;">
+      You're on the interest list.
+    </h1>
+    <p style="margin:0 0 28px;font-size:16px;color:#555;">
+      Our founding circle is currently full, but we didn't want to lose you.
+      We've added you to the interest list as a <strong>${roleLabel}</strong> —
+      and you'll be the first to know the moment a spot opens.
+    </p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr><td style="background:#f8f5ff;border:2px solid ${B.purple};border-radius:12px;padding:20px;text-align:center;">
+        <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${B.purple};">
+          What happens next
+        </p>
+        <p style="margin:0;font-size:15px;color:#374151;line-height:1.6;">
+          When a spot opens, you'll receive a direct invitation with a link to claim your place in the founding circle.
+          No action needed on your end — just watch your inbox.
+        </p>
+      </td></tr>
+    </table>
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr><td align="center">
+        <a href="https://www.goodcircles.org"
+           style="display:inline-block;background:linear-gradient(135deg,${B.purple},${B.lavender});color:#fff;
+                  font-weight:900;font-size:14px;letter-spacing:1px;text-transform:uppercase;
+                  text-decoration:none;padding:14px 36px;border-radius:50px;">
+          Visit GoodCircles.org &rarr;
+        </a>
+      </td></tr>
+    </table>
+  `;
+
+  try {
+    const result = await resend.emails.send({
+      from:    FROM,
+      to:      email,
+      subject: `You're on the GoodCircles interest list`,
+      html:    wrap(body),
+    });
+    return !result.error;
+  } catch {
+    return false;
+  }
+}
+
 export interface WaitlistConfirmParams {
   email:      string;
   role:       string;

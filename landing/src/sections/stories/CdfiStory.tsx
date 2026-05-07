@@ -35,7 +35,7 @@ export default function CdfiStory({ onConfirm, onBack }: Props) {
         lendingRegions: lendingRegion  ? [lendingRegion] : undefined,
         requestBriefing: true,
       });
-      onConfirm({ position: res.position, inviteCode: res.inviteCode, role: 'CDFI', email });
+      onConfirm({ position: res.position, inviteCode: res.inviteCode, overflow: res.overflow, role: 'CDFI', email });
     } catch (err: any) {
       setError(err.message ?? 'Something went wrong. Please try again.');
     } finally {

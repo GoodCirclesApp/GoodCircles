@@ -32,24 +32,99 @@ export default function Confirmation({ data }: Props) {
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, '_blank');
   }
 
+  const Orbs = () => (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <motion.div className="absolute rounded-full" style={{ width: 500, height: 500, background: BRAND.emerald, filter: 'blur(120px)', opacity: 0.05, top: '-5%', right: '-5%' }}
+        animate={{ x: [0, 20, 0] }} transition={{ duration: 20, repeat: Infinity }} />
+      <motion.div className="absolute rounded-full" style={{ width: 400, height: 400, background: '#fff', filter: 'blur(100px)', opacity: 0.04, bottom: '10%', left: '5%' }}
+        animate={{ y: [0, -15, 0] }} transition={{ duration: 16, repeat: Infinity }} />
+    </div>
+  );
+
+  const Logo = () => (
+    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex justify-center mb-10">
+      <img src="/logos/logo-white-md.png" alt="GoodCircles" style={{ height: 48, width: 'auto' }} />
+    </motion.div>
+  );
+
+  // Overflow screen — founding circle is full
+  if (data.overflow) {
+    return (
+      <section
+        className="min-h-screen flex flex-col items-center justify-center px-6 py-20"
+        style={{ background: `linear-gradient(135deg, ${BRAND.purple} 0%, ${BRAND.lavender} 60%, ${BRAND.gold} 100%)` }}
+      >
+        <Orbs />
+        <div className="relative z-10 max-w-lg w-full text-center">
+          <Logo />
+
+          {/* Mail icon */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2, type: 'spring', stiffness: 200 }}
+            className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8"
+            style={{ background: 'rgba(255,255,255,0.2)', border: '2px solid rgba(255,255,255,0.4)' }}
+          >
+            <motion.svg width="34" height="34" viewBox="0 0 34 34" fill="none"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}>
+              <rect x="3" y="8" width="28" height="20" rx="3" stroke="white" strokeWidth="2.5"/>
+              <motion.path d="M3 11 L17 20 L31 11" stroke="white" strokeWidth="2.5" strokeLinecap="round"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.6, ease: 'easeOut' }}/>
+            </motion.svg>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-3xl sm:text-4xl font-black text-white mb-4"
+            style={{ letterSpacing: '-0.01em' }}
+          >
+            You're on the interest list.
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.55 }}
+            className="text-white/75 text-base mb-8 leading-relaxed"
+            style={{ fontFamily: "'Fira Sans', sans-serif" }}
+          >
+            Our founding circle is currently full — but we didn't want to lose you.
+            We've added <strong className="text-white/90">{data.email}</strong> to the interest list.
+            You'll be the first to know the moment a spot opens.
+          </motion.p>
+
+          {/* What happens next */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            className="mb-10 px-6 py-5 rounded-2xl mx-auto text-left"
+            style={{ background: 'rgba(255,255,255,0.12)', border: '1.5px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}
+          >
+            <p className="text-xs font-black uppercase tracking-widest text-white/50 mb-3">What happens next</p>
+            <p className="text-sm text-white/80 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
+              When a spot opens, you'll receive a direct invitation with a link to claim your place in the founding circle.
+              No action needed — just watch your inbox.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  // Standard confirmation screen
   return (
     <section
       className="min-h-screen flex flex-col items-center justify-center px-6 py-20"
       style={{ background: `linear-gradient(135deg, ${BRAND.purple} 0%, ${BRAND.lavender} 60%, ${BRAND.gold} 100%)` }}
     >
-      {/* Floating orbs (subtle) */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <motion.div className="absolute rounded-full" style={{ width: 500, height: 500, background: BRAND.emerald, filter: 'blur(120px)', opacity: 0.05, top: '-5%', right: '-5%' }}
-          animate={{ x: [0, 20, 0] }} transition={{ duration: 20, repeat: Infinity }} />
-        <motion.div className="absolute rounded-full" style={{ width: 400, height: 400, background: '#fff', filter: 'blur(100px)', opacity: 0.04, bottom: '10%', left: '5%' }}
-          animate={{ y: [0, -15, 0] }} transition={{ duration: 16, repeat: Infinity }} />
-      </div>
+      <Orbs />
 
       <div className="relative z-10 max-w-lg w-full text-center">
-        {/* Logo */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex justify-center mb-10">
-          <img src="/logos/logo-white-md.png" alt="GoodCircles" style={{ height: 48, width: 'auto' }} />
-        </motion.div>
+        <Logo />
 
         {/* Animated checkmark */}
         <motion.div
@@ -81,7 +156,7 @@ export default function Confirmation({ data }: Props) {
           className="font-black leading-none mb-3"
           style={{ fontSize: 'clamp(3rem, 10vw, 5.5rem)', color: BRAND.gold, letterSpacing: '-0.02em' }}
         >
-          #{data.position.toLocaleString()}
+          #{data.position?.toLocaleString()}
         </motion.p>
 
         <motion.h1
