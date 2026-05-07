@@ -1,0 +1,8 @@
+[build]
+  command   = "cd landing && npm install && npm run build"
+  publish   = "landing/dist"
+
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
