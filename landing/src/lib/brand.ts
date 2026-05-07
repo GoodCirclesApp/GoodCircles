@@ -42,7 +42,7 @@ export const ROLE_CONFIG: Record<Role, {
     label:     'CDFI Partner',
     color:     BRAND.darkGold,
     inputRing: 'focus:ring-yellow-600/40',
-    statement: 'I fund small businesses in underserved communities and want to back the ones that are already proving themselves.',
+    statement: 'I fund small businesses in underserved communities and want to back the ones that are already empowering their communities.',
     tagline:   'Find and support mission-aligned businesses already building roots in their community.',
   },
   MUNICIPAL: {
