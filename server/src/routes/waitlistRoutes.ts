@@ -16,6 +16,9 @@ const submitLimiter = rateLimit({
 router.post('/', submitLimiter, waitlistController.submitWaitlist);
 router.get('/count', waitlistController.getCount);
 router.get('/invite/:code', waitlistController.lookupInviteCode);
+router.get('/admin/briefings', authenticateToken, authorizeRole(['PLATFORM']), waitlistController.listBriefings);
+router.patch('/admin/briefings/:id', authenticateToken, authorizeRole(['PLATFORM']), waitlistController.updateBriefing);
+router.delete('/admin/briefings/:id', authenticateToken, authorizeRole(['PLATFORM']), waitlistController.deleteBriefing);
 router.post('/admin/resend-confirm', authenticateToken, authorizeRole(['PLATFORM']), waitlistController.resendConfirmEmail);
 router.get('/admin', authenticateToken, authorizeRole(['PLATFORM']), waitlistController.listForAdmin);
 router.get('/admin/overflow', authenticateToken, authorizeRole(['PLATFORM']), waitlistController.listOverflow);

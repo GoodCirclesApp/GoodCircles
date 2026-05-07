@@ -1085,6 +1085,187 @@ const AdminSettings = () => {
 
 // Main View
 
+const BRIEFING_STATUS: Record<string, { label: string; cls: string }> = {
+  pending:   { label: 'Pending',   cls: 'bg-amber-100 text-amber-700' },
+  scheduled: { label: 'Scheduled', cls: 'bg-blue-100 text-blue-700' },
+  completed: { label: 'Completed', cls: 'bg-emerald-100 text-emerald-700' },
+};
+
+const BriefingRequests = () => {
+  const token = localStorage.getItem('gc_auth_token');
+  const [entries, setEntries] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [tab, setTab]         = useState<'CDFI' | 'MUNICIPAL'>('CDFI');
+  const [notes, setNotes]     = useState<Record<string, string>>({});
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  useEffect(() => { load(); }, []);
+
+  async function load() {
+    setLoading(true);
+    try {
+      const res  = await fetch('/api/waitlist/admin/briefings', { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      const all  = data.entries ?? [];
+      setEntries(all);
+      const n: Record<string, string> = {};
+      all.forEach((e: any) => { n[e.id] = e.briefingNotes ?? ''; });
+      setNotes(n);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function updateStatus(id: string, status: string) {
+    await fetch(`/api/waitlist/admin/briefings/${id}`, {
+      method:  'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ status }),
+    });
+    setEntries(prev => prev.map(e => e.id === id ? { ...e, briefingStatus: status } : e));
+  }
+
+  async function saveNotes(id: string) {
+    await fetch(`/api/waitlist/admin/briefings/${id}`, {
+      method:  'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ notes: notes[id] ?? '' }),
+    });
+  }
+
+  async function dismiss(id: string) {
+    setDeleting(id);
+    await fetch(`/api/waitlist/admin/briefings/${id}`, {
+      method:  'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setEntries(prev => prev.filter(e => e.id !== id));
+    setDeleting(null);
+  }
+
+  const visible = entries.filter(e => e.role === tab);
+  const pending   = entries.filter(e => e.role === tab && !e.briefingStatus).length;
+  const scheduled = entries.filter(e => e.role === tab && e.briefingStatus === 'scheduled').length;
+  const completed = entries.filter(e => e.role === tab && e.briefingStatus === 'completed').length;
+
+  return (
+    <div className="space-y-6">
+      {/* Tabs + counts */}
+      <div className="flex flex-wrap gap-3 items-center justify-between">
+        <div className="flex gap-2">
+          {(['CDFI', 'MUNICIPAL'] as const).map(r => (
+            <button key={r} onClick={() => setTab(r)}
+              className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${tab === r ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
+              {r === 'CDFI' ? 'CDFI Partners' : 'Municipal Partners'}
+              <span className={`ml-2 px-1.5 py-0.5 rounded-full text-[10px] ${tab === r ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                {entries.filter(e => e.role === r).length}
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-3 text-xs font-bold">
+          <span className="px-3 py-1.5 bg-amber-50 text-amber-700 rounded-full">{pending} Pending</span>
+          <span className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full">{scheduled} Scheduled</span>
+          <span className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full">{completed} Completed</span>
+        </div>
+      </div>
+
+      {loading && <div className="text-center py-16 text-slate-400 text-sm font-bold">Loading...</div>}
+
+      {!loading && visible.length === 0 && (
+        <div className="bg-white rounded-2xl border border-slate-100 flex flex-col items-center justify-center py-16 text-slate-400">
+          <div className="text-4xl mb-3">📋</div>
+          <div className="text-sm font-bold">No briefing requests yet for {tab === 'CDFI' ? 'CDFI' : 'Municipal'} partners.</div>
+        </div>
+      )}
+
+      <div className="grid gap-4">
+        {visible.map(e => {
+          const status = e.briefingStatus ?? 'pending';
+          const badge  = BRIEFING_STATUS[status] ?? BRIEFING_STATUS.pending;
+          return (
+            <div key={e.id} className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm space-y-4">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full ${badge.cls}`}>{badge.label}</span>
+                    <span className="text-[10px] font-bold text-slate-400">{new Date(e.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  </div>
+                  <div className="font-black text-slate-900 text-lg">{e.email}</div>
+                  <div className="text-sm text-slate-500 font-medium">{[e.city, e.state].filter(Boolean).join(', ') || 'Location not provided'}</div>
+                </div>
+                {/* Delete */}
+                <button onClick={() => dismiss(e.id)} disabled={deleting === e.id}
+                  className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all shrink-0"
+                  title="Remove from briefing list">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Role-specific details */}
+              <div className="grid sm:grid-cols-2 gap-3">
+                {tab === 'CDFI' ? (<>
+                  {e.orgName        && <Detail label="Organization"    value={e.orgName} />}
+                  {e.cdfiCertNumber && <Detail label="CDFI Cert #"     value={e.cdfiCertNumber} />}
+                  {e.lendingRegions?.length > 0 && <Detail label="Lending Regions" value={e.lendingRegions.join(', ')} />}
+                </>) : (<>
+                  {e.jurisdiction      && <Detail label="Jurisdiction"      value={e.jurisdiction} />}
+                  {e.decisionMakerRole && <Detail label="Role / Title"      value={e.decisionMakerRole} />}
+                  {e.interestArea      && <Detail label="Area of Interest"  value={e.interestArea} />}
+                </>)}
+                <Detail label="Invite Code" value={e.inviteCode} mono />
+              </div>
+
+              {/* Admin notes */}
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Admin Notes</label>
+                <textarea
+                  rows={2}
+                  value={notes[e.id] ?? ''}
+                  onChange={ev => setNotes(prev => ({ ...prev, [e.id]: ev.target.value }))}
+                  onBlur={() => saveNotes(e.id)}
+                  placeholder="Add scheduling notes, contact details, etc…"
+                  className="w-full text-sm text-slate-700 border border-slate-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400"
+                />
+              </div>
+
+              {/* Status actions */}
+              <div className="flex gap-2 pt-1">
+                {status !== 'scheduled' && status !== 'completed' && (
+                  <button onClick={() => updateStatus(e.id, 'scheduled')}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors">
+                    Mark Scheduled
+                  </button>
+                )}
+                {status === 'scheduled' && (
+                  <button onClick={() => updateStatus(e.id, 'completed')}
+                    className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors">
+                    Mark Completed
+                  </button>
+                )}
+                {status !== 'pending' && (
+                  <button onClick={() => updateStatus(e.id, '')}
+                    className="px-4 py-2 bg-slate-100 text-slate-500 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors">
+                    Reset to Pending
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const Detail = ({ label, value, mono }: { label: string; value: string; mono?: boolean }) => (
+  <div className="bg-slate-50 rounded-xl px-4 py-3">
+    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">{label}</div>
+    <div className={`text-sm font-semibold text-slate-700 ${mono ? 'font-mono' : ''}`}>{value}</div>
+  </div>
+);
+
 const ROLE_COLORS: Record<string, string> = {
   NEIGHBOR:  'bg-emerald-100 text-emerald-700',
   MERCHANT:  'bg-amber-100 text-amber-700',
@@ -1259,7 +1440,7 @@ type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
   | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT'
-  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST';
+  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST' | 'BRIEFINGS';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -1282,7 +1463,8 @@ export const AdminPortalView: React.FC = () => {
     { id: 'SENTINEL', label: 'Price Sentinel', icon: ShieldAlert },
     { id: 'COMPLIANCE', label: 'L3C Compliance', icon: Scale },
     { id: 'CDFI_MGMT', label: 'CDFI Partners', icon: Landmark },
-    { id: 'WAITLIST', label: 'Waitlist', icon: ListChecks },
+    { id: 'WAITLIST',   label: 'Waitlist',           icon: ListChecks },
+    { id: 'BRIEFINGS',  label: 'Briefing Requests',  icon: ClipboardList },
     { id: 'AUDIT_LOG', label: 'Audit Log', icon: ClipboardList },
     { id: 'SETTINGS', label: 'Admin Settings', icon: Settings },
     { id: 'INTEGRITY', label: 'System Integrity Test', icon: FlaskConical },
@@ -1305,7 +1487,8 @@ export const AdminPortalView: React.FC = () => {
       case 'SENTINEL': return <PriceSentinelReview />;
       case 'COMPLIANCE': return <ComplianceDashboard />;
       case 'CDFI_MGMT': return <CdfiManagement />;
-      case 'WAITLIST': return <WaitlistManagement />;
+      case 'WAITLIST':   return <WaitlistManagement />;
+      case 'BRIEFINGS':  return <BriefingRequests />;
       case 'AUDIT_LOG': return <AuditLogPanel />;
       case 'SETTINGS': return <AdminSettings />;
       case 'INTEGRITY': return <AdminIntegrityTest />;

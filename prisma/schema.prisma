@@ -1673,6 +1673,10 @@ model WaitlistEntry {
   ipHash      String?
   requestBriefing Boolean @default(false)
 
+  // Briefing workflow (CDFI + MUNICIPAL)
+  briefingStatus String?   // null=pending | "scheduled" | "completed" | "dismissed"
+  briefingNotes  String?
+
   // Launch flow
   launchPerks      Json?
   emailConfirmedAt DateTime?
