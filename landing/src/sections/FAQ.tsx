@@ -10,7 +10,7 @@ const FAQS = [
   },
   {
     q: 'Is my email shared with anyone?',
-    a: 'No. We use your email for exactly one purpose: to notify you when GoodCircles launches. We will never sell, rent, or share your contact information with third parties.',
+    a: 'GoodCircles will never sell your data or share it outside the platform. Within the circle, relevant information is shared with the nonprofits you elect and the merchants you shop with — that\'s how the community works. But no data leaves GoodCircles. Ever.',
   },
   {
     q: 'Does joining the waitlist cost anything?',
