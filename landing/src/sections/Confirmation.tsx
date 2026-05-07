@@ -322,7 +322,7 @@ export default function Confirmation({ data }: Props) {
             by inviting your circle to join your Good Circle
           </p>
           <p className="text-white/45 text-xs text-center mb-6 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
-            A personal message converts better than any post. Edit this, make it yours, then copy and send — or open it directly in your mail app.
+            A personal message converts better than any post. Edit it, make it yours, and send. The more of your community joins before launch, the more GoodCircles is worth to you on day one — more merchants to shop, more neighbors to shop with.
           </p>
 
           {/* Tab selector */}

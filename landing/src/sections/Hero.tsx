@@ -84,9 +84,9 @@ export default function Hero() {
           style={{ fontFamily: "'Fira Sans', sans-serif", fontWeight: 500 }}
         >
           GoodCircles is the community marketplace launching{' '}
-          <strong className="text-white/90">September 2026.</strong>{' '}
+          <strong className="text-white/90">this September.</strong>{' '}
           Shop local. Save 10% on every purchase. Fund the nonprofit you love —
-          automatically, forever. The founding circle is forming now.
+          automatically, forever. Founding spots are filling now.
         </motion.p>
 
         {/* Scroll CTA */}

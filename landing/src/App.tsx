@@ -4,6 +4,7 @@ import { type Role } from './lib/brand';
 
 import Nav from './components/Nav';
 import Hero from './sections/Hero';
+import ImpactDemo from './sections/ImpactDemo';
 import RoleMirror from './sections/RoleMirror';
 import NeighborStory from './sections/stories/NeighborStory';
 import MerchantStory from './sections/stories/MerchantStory';
@@ -77,6 +78,9 @@ export default function App() {
           <motion.div key="main" initial={{ opacity: 1 }} animate={{ opacity: 1 }}>
             {/* Hero — always visible */}
             <Hero />
+
+            {/* How the money moves — auto-looping animation */}
+            <ImpactDemo />
 
             {/* Mirror or Story — swaps in place */}
             <div id="mirror-section">
