@@ -152,7 +152,7 @@ export async function sendWaitlistConfirmEmail(params: WaitlistConfirmParams): P
 
   const body = `
     <h1 style="margin:0 0 8px;font-size:28px;font-weight:900;color:#1a1a1a;line-height:1.1;">
-      You're #${position.toLocaleString()} in the circle.
+      Congratulations, you are in!
     </h1>
     <p style="margin:0 0 28px;font-size:16px;color:#555;">
       ${greeting} You're officially on the GoodCircles waitlist as a <strong>${roleLabel}</strong>.
@@ -214,7 +214,7 @@ export async function sendWaitlistConfirmEmail(params: WaitlistConfirmParams): P
     const result = await resend.emails.send({
       from:    FROM,
       to:      email,
-      subject: `You're #${position.toLocaleString()} in the circle — GoodCircles launch confirmed`,
+      subject: `You're in the GoodCircles founding circle — launch confirmed`,
       html:    wrap(body),
     });
     return !result.error;
