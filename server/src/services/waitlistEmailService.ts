@@ -144,39 +144,60 @@ export async function sendWaitlistConfirmEmail(params: WaitlistConfirmParams): P
 
   const body = `
     <h1 style="margin:0 0 8px;font-size:28px;font-weight:900;color:#1a1a1a;line-height:1.1;">
-      Congratulations, you are in!
+      You're in the founding circle.
     </h1>
-    <p style="margin:0 0 28px;font-size:16px;color:#555;">
-      ${greeting} You're officially on the GoodCircles waitlist as a <strong>${roleLabel}</strong>.
-      We'll reach out the moment the marketplace opens.
+    <p style="margin:0 0 28px;font-size:16px;color:#555;line-height:1.6;">
+      ${greeting} Your founding spot as a <strong style="color:#1a1a1a;">${roleLabel}</strong> is confirmed.
+      When GoodCircles launches in September 2026, you'll be among the first through the door —
+      with founding status that's yours permanently.
     </p>
 
     <!-- Invite code pill -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
       <tr><td style="background:#f8f5ff;border:2px solid ${accentColor};border-radius:12px;padding:20px;text-align:center;">
         <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${accentColor};">
-          Your Invite Code
+          Your Founding Invite Code
         </p>
         <p style="margin:0;font-size:26px;font-weight:900;letter-spacing:4px;color:#1a1a1a;font-family:monospace;">
           ${inviteCode}
         </p>
-        <p style="margin:6px 0 0;font-size:12px;color:#888;">
-          Keep this — you'll need it at launch.
+        <p style="margin:8px 0 0;font-size:12px;color:#888;line-height:1.5;">
+          Keep this safe — it's your key to the marketplace at launch.<br/>
+          Share it to bring others into the founding circle.
         </p>
       </td></tr>
     </table>
 
+    <!-- Nudge to share -->
+    <p style="margin:0 0 28px;font-size:13px;color:#888;text-align:center;font-style:italic;">
+      The most powerful thing you can do right now? Tell one neighbor, one local business, or one nonprofit.
+    </p>
+
     <!-- What's next -->
-    <h2 style="margin:0 0 12px;font-size:16px;font-weight:700;color:#1a1a1a;">What happens next?</h2>
-    <p style="margin:0 0 8px;font-size:14px;color:#555;">
-      1. We're building out the final features before launch.
-    </p>
-    <p style="margin:0 0 8px;font-size:14px;color:#555;">
-      2. You'll get an exclusive early-access email with your personalized magic link.
-    </p>
-    <p style="margin:0 0 28px;font-size:14px;color:#555;">
-      3. Your invite code <strong>${inviteCode}</strong> confirms your spot and account type at signup.
-    </p>
+    <h2 style="margin:0 0 16px;font-size:16px;font-weight:700;color:#1a1a1a;">What happens next</h2>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+      <tr>
+        <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
+          <p style="margin:0;font-size:14px;color:#333;">
+            <strong style="color:${accentColor};">1.</strong>&nbsp; We're finishing the final features before launch — you'll be notified as we get closer.
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
+          <p style="margin:0;font-size:14px;color:#333;">
+            <strong style="color:${accentColor};">2.</strong>&nbsp; You'll receive an exclusive early-access email with your personalized sign-in link.
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:10px 0;">
+          <p style="margin:0;font-size:14px;color:#333;">
+            <strong style="color:${accentColor};">3.</strong>&nbsp; Your invite code <strong>${inviteCode}</strong> locks in your role and founding status at signup.
+          </p>
+        </td>
+      </tr>
+    </table>
 
     <!-- CTA -->
     <table width="100%" cellpadding="0" cellspacing="0">
@@ -185,7 +206,7 @@ export async function sendWaitlistConfirmEmail(params: WaitlistConfirmParams): P
            style="display:inline-block;background:linear-gradient(135deg,${B.purple},${B.lavender});color:#fff;
                   font-weight:900;font-size:14px;letter-spacing:1px;text-transform:uppercase;
                   text-decoration:none;padding:14px 36px;border-radius:50px;">
-          Visit GoodCircles.org &rarr;
+          Grow your Good Circle &rarr;
         </a>
       </td></tr>
     </table>
@@ -195,7 +216,7 @@ export async function sendWaitlistConfirmEmail(params: WaitlistConfirmParams): P
     const result = await resend.emails.send({
       from:    FROM,
       to:      email,
-      subject: `You're in the GoodCircles founding circle — launch confirmed`,
+      subject: `You're a founding member of GoodCircles — your spot is confirmed`,
       html:    wrap(body),
     });
     return !result.error;

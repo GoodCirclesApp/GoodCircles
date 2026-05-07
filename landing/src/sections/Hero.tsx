@@ -28,19 +28,6 @@ export default function Hero() {
         transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Brand pill */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
-        className="absolute top-24 right-6 sm:right-8 flex items-center gap-2 px-4 py-2 rounded-full"
-        style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)' }}
-      >
-        <span className="text-white text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-          Purpose built for your community
-        </span>
-      </motion.div>
-
       {/* Main content */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pt-20">
         {/* Logo */}
@@ -51,6 +38,25 @@ export default function Hero() {
           className="flex justify-center mb-10"
         >
           <img src="/logos/logo-white-md.png" alt="GoodCircles" style={{ height: 64, width: 'auto' }} />
+        </motion.div>
+
+        {/* Founding badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="inline-flex items-center gap-2 px-5 py-2 rounded-full mb-8"
+          style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}
+        >
+          <motion.span
+            className="w-2 h-2 rounded-full flex-shrink-0"
+            style={{ background: '#4ade80' }}
+            animate={{ opacity: [1, 0.3, 1], scale: [1, 1.4, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <span className="text-white text-[11px] font-black uppercase tracking-widest whitespace-nowrap">
+            Founding Circle — Spots Are Limited
+          </span>
         </motion.div>
 
         {/* The question */}
@@ -77,9 +83,10 @@ export default function Hero() {
           className="text-white/75 text-lg sm:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
           style={{ fontFamily: "'Fira Sans', sans-serif", fontWeight: 500 }}
         >
-          GoodCircles is a community marketplace launching{' '}
+          GoodCircles is the community marketplace launching{' '}
           <strong className="text-white/90">September 2026.</strong>{' '}
-          Shop local, save 10%, and automatically fund the nonprofits you love — all in one place.
+          Shop local. Save 10% on every purchase. Fund the nonprofit you love —
+          automatically, forever. The founding circle is forming now.
         </motion.p>
 
         {/* Scroll CTA */}
@@ -94,7 +101,7 @@ export default function Hero() {
           }}
           className="inline-flex flex-col items-center gap-2 text-white/60 hover:text-white/90 transition-colors cursor-pointer group"
         >
-          <span className="text-xs font-black uppercase tracking-widest">Find your circle</span>
+          <span className="text-xs font-black uppercase tracking-widest">Join the founding circle</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}

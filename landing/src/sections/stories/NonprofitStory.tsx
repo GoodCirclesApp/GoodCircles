@@ -113,10 +113,10 @@ export default function NonprofitStory({ onConfirm, onBack }: Props) {
         {/* Screen C — Form */}
         <motion.div {...fadeUp(0.5)}>
           <div className="p-8 rounded-3xl" style={{ background: '#fff', boxShadow: `0 4px 40px ${COLOR}15` }}>
-            <h3 className="text-2xl font-black text-slate-900 mb-2">Reserve your nonprofit's spot.</h3>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">Claim your nonprofit's founding spot.</h3>
             <p className="text-slate-500 mb-8" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
-              Your organization will be pre-verified and visible to neighbors from day one.
-              Providing your EIN now skips the verification queue at launch.
+              Founding nonprofits are pre-verified and visible to neighbors from day one.
+              Your EIN now skips the verification queue at launch. Spots are limited.
             </p>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -136,10 +136,10 @@ export default function NonprofitStory({ onConfirm, onBack }: Props) {
               <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
                 className="w-full py-5 rounded-2xl font-black text-sm uppercase tracking-wider text-white transition-all disabled:opacity-60"
                 style={{ background: `linear-gradient(135deg, ${COLOR}, #7a0019)` }}>
-                {loading ? 'Reserving your spot…' : "Reserve my nonprofit's spot →"}
+                {loading ? 'Claiming your spot…' : 'Claim our founding spot →'}
               </motion.button>
 
-              <p className="text-center text-xs text-slate-400">One email at launch. Unsubscribe with one click.</p>
+              <p className="text-center text-xs text-slate-400">Founding nonprofit status. One email at launch. Unsubscribe anytime.</p>
             </form>
           </div>
         </motion.div>

@@ -81,9 +81,10 @@ export default function MunicipalStory({ onConfirm, onBack }: Props) {
 
         <motion.div {...fadeUp(0.4)}>
           <div className="p-8 rounded-3xl" style={{ background: '#fff', boxShadow: `0 4px 40px ${COLOR}18` }}>
-            <h3 className="text-2xl font-black text-slate-900 mb-2">Request a partnership briefing.</h3>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">Request a founding partnership briefing.</h3>
             <p className="text-slate-500 mb-8" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
               Our team will reach out before launch to walk through the partnership model.
+              Founding municipal partners shape how GoodCircles serves their community.
             </p>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <input type="email" placeholder="Your government email" value={email} onChange={e => setEmail(e.target.value)} required
@@ -104,7 +105,7 @@ export default function MunicipalStory({ onConfirm, onBack }: Props) {
               <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
                 className="w-full py-5 rounded-2xl font-black text-sm uppercase tracking-wider text-white disabled:opacity-60"
                 style={{ background: `linear-gradient(135deg, ${COLOR}, #0f2040)` }}>
-                {loading ? 'Submitting…' : 'Request a partnership briefing →'}
+                {loading ? 'Submitting…' : 'Request a founding briefing →'}
               </motion.button>
               <p className="text-center text-xs text-slate-400">We'll contact you directly. No spam.</p>
             </form>

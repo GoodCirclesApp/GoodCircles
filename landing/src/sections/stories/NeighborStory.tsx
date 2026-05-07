@@ -97,9 +97,9 @@ export default function NeighborStory({ onConfirm, onBack }: Props) {
         {/* Screen C — The form */}
         <motion.div {...fadeUp(0.4)}>
           <div className="p-8 rounded-3xl" style={{ background: '#fff', boxShadow: `0 4px 40px ${COLOR}12` }}>
-            <h3 className="text-2xl font-black text-slate-900 mb-2">Hold your spot.</h3>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">Claim your founding spot.</h3>
             <p className="text-slate-500 mb-8" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
-              We launch September 2026. Be first in line.
+              Founding members get first access when GoodCircles launches September 2026. Spots are limited.
             </p>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -129,11 +129,11 @@ export default function NeighborStory({ onConfirm, onBack }: Props) {
                 className="w-full py-5 rounded-2xl font-black text-sm uppercase tracking-wider text-white transition-all disabled:opacity-60"
                 style={{ background: `linear-gradient(135deg, ${COLOR}, #047857)` }}
               >
-                {loading ? 'Saving your spot…' : 'Hold my spot →'}
+                {loading ? 'Claiming your spot…' : 'Claim my founding spot →'}
               </motion.button>
 
               <p className="text-center text-xs text-slate-400">
-                One email at launch. Unsubscribe with one click.
+                Founding member status. One email at launch. Unsubscribe anytime.
               </p>
             </form>
           </div>

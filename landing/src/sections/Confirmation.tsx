@@ -7,13 +7,78 @@ interface Props {
   data: ConfirmationData;
 }
 
+type InviteTab = 'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT';
+
 const SHARE_COPY: Record<string, string> = {
-  NEIGHBOR:  "I just joined GoodCircles — a community marketplace launching September 2026 where shopping local saves you 10% and funds nonprofits automatically. Find your circle:",
-  MERCHANT:  "I just reserved my spot as a Founding Merchant on GoodCircles, launching September 2026. Keep 89% of net profit and build a community-loyal customer base. Join me:",
-  NONPROFIT: "I just reserved our nonprofit's spot on GoodCircles, launching September 2026. A marketplace that routes 10% of merchant profit to nonprofits — automatically. Check it out:",
-  CDFI:      "Just requested a partnership briefing with GoodCircles — a community marketplace launching September 2026 with real-time merchant data for CDFI underwriting.",
-  MUNICIPAL: "Just requested a partnership briefing with GoodCircles — a community marketplace launching September 2026 that tracks local spend retention and supports small business.",
+  NEIGHBOR:  "I just claimed my founding spot in GoodCircles — the community marketplace launching September 2026. Every local purchase saves you 10% and automatically funds the nonprofit you love. Forever. No extra steps. Founding spots are limited:",
+  MERCHANT:  "I just claimed my Founding Merchant spot on GoodCircles. Unlike every other platform: keep 89% of net profit, zero algorithm tax on your visibility, and your customers save 10% on every purchase. This is what local business has been waiting for:",
+  NONPROFIT: "I just claimed our nonprofit's founding spot on GoodCircles — a marketplace that routes 10% of merchant profit to nonprofits automatically, on every transaction, forever. No fundraising. No grants. Just recurring revenue that grows with the community:",
+  CDFI:      "Just requested a founding partnership briefing with GoodCircles — a community marketplace launching September 2026 with live merchant performance data, QIA targeting, and TLR-ready packages built for CDFI underwriting:",
+  MUNICIPAL: "Just requested a founding partnership briefing with GoodCircles — a community marketplace launching September 2026 that tracks local spend retention and surfaces small business growth in real time. No new programs. Just the data your community needs:",
 };
+
+const EMAIL_SUBJECTS: Record<InviteTab, string> = {
+  NEIGHBOR: 'I found something — and I had to tell you',
+  MERCHANT: 'A marketplace built for local businesses like yours',
+  NONPROFIT: 'Recurring funding — no grant required',
+};
+
+function getTemplateBody(role: InviteTab, inviteCode: string): string {
+  const code = inviteCode || 'YOUR-INVITE-CODE';
+  const link = `https://www.goodcircles.org?ref=${code}`;
+
+  if (role === 'NEIGHBOR') {
+    return `Hey,
+
+I just claimed my founding spot in GoodCircles and you were one of the first people I thought to tell.
+
+It's a community marketplace launching September 2026. The short version: you shop local, automatically save 10% on every purchase, and 10% of the merchant's profit flows to the nonprofit of your choice — every transaction, forever, with zero extra effort.
+
+No coupon codes. No extra apps. Just a smarter way to spend money you're already spending.
+
+Use my invite code to claim your founding spot: ${code}
+
+→ ${link}
+
+[Your name]`;
+  }
+
+  if (role === 'MERCHANT') {
+    return `Hi,
+
+I just claimed my Founding Merchant spot on GoodCircles and thought of your business immediately.
+
+Here's what makes it different from every other platform: you keep 89% of your net profit (compare that to Amazon's ~70% or Etsy's ~80%), your customers save 10% automatically which drives real loyalty, and 10% of your profit goes to local nonprofits as a tax-deductible contribution.
+
+No algorithm charging you to be seen. No race to the bottom on price. A community that actively wants to shop local — and a platform built to make it happen.
+
+Founding Merchant status is permanent. Early merchants earn it once.
+
+Use my invite code to reserve your spot: ${code}
+
+→ ${link}
+
+[Your name]`;
+  }
+
+  return `Hi,
+
+I just claimed a founding spot in GoodCircles and your organization was the first thing I thought of.
+
+GoodCircles is a community marketplace launching September 2026. The model: when neighbors shop local through GoodCircles, 10% of every merchant's net profit flows directly to the nonprofit their customers have elected — automatically, on every transaction, forever.
+
+No fundraising events. No grant applications. No donor cultivation. Just recurring revenue that compounds as your community grows.
+
+200 neighbors shopping local can generate over $14,000 a year for your organization.
+
+Use my invite code to claim your nonprofit's founding spot: ${code}
+
+→ ${link}
+
+Founding nonprofits are pre-verified and visible to neighbors from day one.
+
+[Your name]`;
+}
 
 export default function Confirmation({ data }: Props) {
   const config = ROLE_CONFIG[data.role];
@@ -23,6 +88,29 @@ export default function Confirmation({ data }: Props) {
   const fullText  = `${shareText} ${shareUrl}`;
 
   const [copied, setCopied] = useState<string | null>(null);
+  const [inviteTab, setInviteTab] = useState<InviteTab>('NEIGHBOR');
+  const [emailCopied, setEmailCopied] = useState(false);
+
+  const inviteCode = data.inviteCode ?? '';
+  const [messageBodies, setMessageBodies] = useState<Record<InviteTab, string>>({
+    NEIGHBOR: getTemplateBody('NEIGHBOR', inviteCode),
+    MERCHANT: getTemplateBody('MERCHANT', inviteCode),
+    NONPROFIT: getTemplateBody('NONPROFIT', inviteCode),
+  });
+
+  function updateBody(body: string) {
+    setMessageBodies(prev => ({ ...prev, [inviteTab]: body }));
+  }
+
+  function handleCopyEmail() {
+    const subject = EMAIL_SUBJECTS[inviteTab];
+    const body = messageBodies[inviteTab];
+    navigator.clipboard.writeText(`Subject: ${subject}\n\n${body}`);
+    setEmailCopied(true);
+    setTimeout(() => setEmailCopied(false), 3000);
+  }
+
+  const mailtoLink = `mailto:?subject=${encodeURIComponent(EMAIL_SUBJECTS[inviteTab])}&body=${encodeURIComponent(messageBodies[inviteTab])}`;
 
   function copyWithFeedback(label: string) {
     navigator.clipboard.writeText(fullText);
@@ -58,7 +146,7 @@ export default function Confirmation({ data }: Props) {
     </motion.div>
   );
 
-  // Overflow screen — founding circle is full
+  // Overflow screen
   if (data.overflow) {
     return (
       <section
@@ -69,7 +157,6 @@ export default function Confirmation({ data }: Props) {
         <div className="relative z-10 max-w-lg w-full text-center">
           <Logo />
 
-          {/* Mail icon */}
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -107,7 +194,6 @@ export default function Confirmation({ data }: Props) {
             You'll be the first to know the moment a spot opens.
           </motion.p>
 
-          {/* What happens next */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -166,7 +252,7 @@ export default function Confirmation({ data }: Props) {
           className="font-black text-white mb-4"
           style={{ fontSize: 'clamp(2rem, 7vw, 3.5rem)', letterSpacing: '-0.02em', lineHeight: 1.05 }}
         >
-          Congratulations,<br />you are in!
+          You're in the<br />founding circle.
         </motion.h1>
 
         <motion.p
@@ -176,8 +262,8 @@ export default function Confirmation({ data }: Props) {
           className="text-white/75 text-base mb-2 leading-relaxed"
           style={{ fontFamily: "'Fira Sans', sans-serif" }}
         >
-          We just sent a confirmation to <strong className="text-white/90">{data.email}</strong>.
-          It has your invite code — keep it.
+          A confirmation is on its way to <strong className="text-white/90">{data.email}</strong>.
+          It has your invite code — keep it safe. It's your key to the marketplace at launch.
         </motion.p>
 
         {/* Invite code */}
@@ -188,17 +274,20 @@ export default function Confirmation({ data }: Props) {
           className="my-8 px-8 py-5 rounded-2xl mx-auto inline-block"
           style={{ background: 'rgba(255,255,255,0.12)', border: '1.5px solid rgba(255,255,255,0.3)', backdropFilter: 'blur(8px)' }}
         >
-          <p className="text-xs font-black uppercase tracking-widest text-white/60 mb-1">Your Invite Code</p>
+          <p className="text-xs font-black uppercase tracking-widest text-white/60 mb-1">Your Founding Invite Code</p>
           <p className="text-2xl font-black tracking-widest text-white font-mono">{data.inviteCode}</p>
+          <p className="text-[11px] text-white/45 mt-2" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
+            Share it — it unlocks founding spots for the people you bring in.
+          </p>
         </motion.div>
 
-        {/* Share buttons */}
+        {/* Social share */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 1.1 }}
         >
-          <p className="text-white/50 text-xs font-black uppercase tracking-widest mb-4">Share the circle</p>
+          <p className="text-white/50 text-xs font-black uppercase tracking-widest mb-4">Spread the word</p>
           <div className="grid grid-cols-3 gap-3">
             <ShareBtn onClick={shareX}><XIcon /> X</ShareBtn>
             <ShareBtn onClick={shareLinkedIn}><LinkedInIcon /> LinkedIn</ShareBtn>
@@ -216,6 +305,91 @@ export default function Confirmation({ data }: Props) {
               Link copied — paste it in your {copied === 'instagram' ? 'Instagram story or bio' : 'TikTok bio or video description'}.
             </p>
           )}
+        </motion.div>
+
+        {/* Personal invite section */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.3 }}
+          className="mt-10 pt-8 text-left"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.15)' }}
+        >
+          <h3 className="text-white font-black text-lg text-center mb-1">
+            Double (or more) your impact
+          </h3>
+          <p className="text-white/60 text-sm text-center mb-6" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
+            by inviting your circle to join your Good Circle
+          </p>
+          <p className="text-white/45 text-xs text-center mb-6 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
+            A personal message converts better than any post. Edit this, make it yours, then copy and send — or open it directly in your mail app.
+          </p>
+
+          {/* Tab selector */}
+          <div className="flex gap-2 mb-5 justify-center flex-wrap">
+            {(['NEIGHBOR', 'MERCHANT', 'NONPROFIT'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setInviteTab(tab)}
+                className="px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all"
+                style={{
+                  background: inviteTab === tab ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.07)',
+                  border: `1px solid ${inviteTab === tab ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)'}`,
+                  color: inviteTab === tab ? '#fff' : 'rgba(255,255,255,0.45)',
+                }}
+              >
+                {tab === 'NEIGHBOR' ? 'Neighbor' : tab === 'MERCHANT' ? 'Local Business' : 'Nonprofit'}
+              </button>
+            ))}
+          </div>
+
+          {/* Subject line */}
+          <div className="mb-3">
+            <p className="text-white/40 text-[10px] font-black uppercase tracking-widest mb-1">Subject line</p>
+            <p className="text-white/70 text-sm font-medium" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
+              {EMAIL_SUBJECTS[inviteTab]}
+            </p>
+          </div>
+
+          {/* Editable message body */}
+          <p className="text-white/40 text-[10px] font-black uppercase tracking-widest mb-2">Message</p>
+          <textarea
+            value={messageBodies[inviteTab]}
+            onChange={e => updateBody(e.target.value)}
+            rows={11}
+            className="w-full rounded-2xl p-4 text-sm text-slate-800 resize-none mb-4 focus:outline-none"
+            style={{
+              background: 'rgba(255,255,255,0.93)',
+              fontFamily: "'Fira Sans', sans-serif",
+              lineHeight: 1.65,
+            }}
+          />
+
+          {/* Action buttons */}
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleCopyEmail}
+              className="py-3 rounded-full text-xs font-black uppercase tracking-wider transition-all"
+              style={{
+                background: emailCopied ? 'rgba(74,222,128,0.2)' : 'rgba(255,255,255,0.15)',
+                border: `1px solid ${emailCopied ? 'rgba(74,222,128,0.5)' : 'rgba(255,255,255,0.25)'}`,
+                color: emailCopied ? '#4ade80' : '#fff',
+              }}
+            >
+              {emailCopied ? '✓ Copied!' : 'Copy full message'}
+            </button>
+            <a
+              href={mailtoLink}
+              className="py-3 rounded-full text-xs font-black uppercase tracking-wider text-center transition-all"
+              style={{
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                color: 'rgba(255,255,255,0.6)',
+              }}
+            >
+              Open in mail app
+            </a>
+          </div>
         </motion.div>
       </div>
     </section>

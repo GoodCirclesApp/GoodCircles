@@ -132,9 +132,10 @@ export default function MerchantStory({ onConfirm, onBack }: Props) {
         {/* Screen C — The form */}
         <motion.div {...fadeUp(0.5)}>
           <div className="p-8 rounded-3xl" style={{ background: '#fff', boxShadow: `0 4px 40px ${COLOR}20` }}>
-            <h3 className="text-2xl font-black text-slate-900 mb-2">Reserve your merchant spot.</h3>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">Claim your Founding Merchant spot.</h3>
             <p className="text-slate-500 mb-8" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
-              Founding Merchants get early catalog access and priority placement at launch.
+              Founding Merchant status is permanent — early merchants earn it once.
+              Priority catalog access and placement at launch. Spots are limited.
             </p>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -154,11 +155,11 @@ export default function MerchantStory({ onConfirm, onBack }: Props) {
               <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
                 className="w-full py-5 rounded-2xl font-black text-sm uppercase tracking-wider text-white transition-all disabled:opacity-60"
                 style={{ background: `linear-gradient(135deg, ${COLOR}, #9a7d3a)` }}>
-                {loading ? 'Reserving your spot…' : 'Reserve my merchant slot →'}
+                {loading ? 'Claiming your spot…' : 'Claim my Founding Merchant spot →'}
               </motion.button>
 
               <p className="text-center text-xs text-slate-400">
-                One email at launch. Unsubscribe with one click.
+                Founding Merchant status. One email at launch. Unsubscribe anytime.
               </p>
             </form>
           </div>

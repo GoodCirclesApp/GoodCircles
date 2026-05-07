@@ -12,13 +12,29 @@ export default function RoleMirror({ onSelect }: Props) {
   return (
     <section className="py-24 px-6" style={{ background: '#FDFCFE' }}>
       <div className="max-w-3xl mx-auto">
+        {/* Founding banner */}
+        <motion.div
+          {...fadeUp(0)}
+          className="flex items-center justify-center gap-2 mb-5"
+        >
+          <motion.span
+            className="w-2 h-2 rounded-full flex-shrink-0"
+            style={{ background: '#4ade80' }}
+            animate={{ opacity: [1, 0.3, 1], scale: [1, 1.4, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: '3px', textTransform: 'uppercase', color: BRAND.purple }}>
+            Founding circle is open — September 2026 launch
+          </span>
+        </motion.div>
+
         {/* Section label */}
         <motion.p
-          {...fadeUp(0)}
+          {...fadeUp(0.05)}
           className="text-center mb-12"
           style={{ fontSize: 10, fontWeight: 900, letterSpacing: '3px', textTransform: 'uppercase', color: '#aaa' }}
         >
-          Which one is true for you?
+          This is your founding moment. Which is true for you?
         </motion.p>
 
         {/* Statement cards */}
@@ -74,8 +90,8 @@ export default function RoleMirror({ onSelect }: Props) {
           className="text-center mt-10 text-xs text-slate-400"
           style={{ fontFamily: "'Fira Sans', sans-serif" }}
         >
-          We'll reach out once — when GoodCircles launches in September 2026.{' '}
-          <span style={{ color: BRAND.purple }}>No spam. Unsubscribe anytime.</span>
+          Founding spots are limited.{' '}
+          <span style={{ color: BRAND.purple }}>One email at launch. Unsubscribe anytime.</span>
         </motion.p>
       </div>
     </section>
