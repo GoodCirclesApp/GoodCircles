@@ -210,6 +210,23 @@ export const listOverflow = async (req: Request, res: Response) => {
   return res.json({ entries, total: entries.length, cap: WAITLIST_CAP });
 };
 
+export const resendConfirmEmail = async (req: Request, res: Response) => {
+  const { email } = req.body as { email?: string };
+  if (!email) return res.status(400).json({ error: 'email required' });
+
+  const entry = await prisma.waitlistEntry.findUnique({ where: { email } });
+  if (!entry) return res.status(404).json({ error: 'Email not found on waitlist' });
+
+  const sent = await sendWaitlistConfirmEmail({
+    email:      entry.email,
+    role:       entry.role,
+    position:   entry.position + COUNT_FLOOR,
+    inviteCode: entry.inviteCode,
+  });
+
+  return res.json({ sent });
+};
+
 export const lookupInviteCode = async (req: Request, res: Response) => {
   const { code } = req.params as { code: string };
   if (!code) return res.status(400).json({ valid: false });

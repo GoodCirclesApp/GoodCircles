@@ -16,6 +16,7 @@ const submitLimiter = rateLimit({
 router.post('/', submitLimiter, waitlistController.submitWaitlist);
 router.get('/count', waitlistController.getCount);
 router.get('/invite/:code', waitlistController.lookupInviteCode);
+router.post('/admin/resend-confirm', authenticateToken, authorizeRole(['PLATFORM']), waitlistController.resendConfirmEmail);
 router.get('/admin', authenticateToken, authorizeRole(['PLATFORM']), waitlistController.listForAdmin);
 router.get('/admin/overflow', authenticateToken, authorizeRole(['PLATFORM']), waitlistController.listOverflow);
 
