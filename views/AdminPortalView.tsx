@@ -39,6 +39,8 @@ import {
   ToggleLeft,
   ToggleRight,
   Trash2,
+  ListChecks,
+  Download,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { adminService } from '../services/adminService';
@@ -1083,11 +1085,181 @@ const AdminSettings = () => {
 
 // Main View
 
+const ROLE_COLORS: Record<string, string> = {
+  NEIGHBOR:  'bg-emerald-100 text-emerald-700',
+  MERCHANT:  'bg-amber-100 text-amber-700',
+  NONPROFIT: 'bg-rose-100 text-rose-700',
+  CDFI:      'bg-yellow-100 text-yellow-800',
+  MUNICIPAL: 'bg-blue-100 text-blue-700',
+};
+
+const WaitlistManagement = () => {
+  const token = localStorage.getItem('gc_auth_token');
+  const [entries, setEntries]     = useState<any[]>([]);
+  const [total, setTotal]         = useState(0);
+  const [page, setPage]           = useState(1);
+  const [roleFilter, setRoleFilter] = useState('');
+  const [loading, setLoading]     = useState(false);
+  const [tab, setTab]             = useState<'waitlist' | 'overflow'>('waitlist');
+
+  const limit = 50;
+
+  useEffect(() => { load(); }, [tab, page, roleFilter]);
+
+  async function load() {
+    setLoading(true);
+    try {
+      const base = tab === 'waitlist'
+        ? `/api/waitlist/admin?page=${page}&limit=${limit}${roleFilter ? `&role=${roleFilter}` : ''}`
+        : `/api/waitlist/admin/overflow`;
+      const res = await fetch(base, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      setEntries(data.entries ?? []);
+      setTotal(data.total ?? (data.entries?.length ?? 0));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function exportCsv() {
+    const base = tab === 'waitlist'
+      ? `/api/waitlist/admin?csv=true${roleFilter ? `&role=${roleFilter}` : ''}`
+      : `/api/waitlist/admin/overflow?csv=true`;
+    const a = document.createElement('a');
+    a.href = base;
+    // Attach auth — open in new tab since fetch-download with auth headers is complex
+    window.open(base + `&token=${token}`, '_blank');
+  }
+
+  const roles = ['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'CDFI', 'MUNICIPAL'];
+  const pages = Math.ceil(total / limit);
+
+  return (
+    <div className="space-y-6">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="bg-white rounded-2xl border border-slate-100 p-5 text-center">
+          <div className="text-3xl font-black text-slate-900">{total.toLocaleString()}</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mt-1">
+            {tab === 'waitlist' ? 'On Waitlist' : 'On Interest List'}
+          </div>
+        </div>
+        {tab === 'waitlist' && roles.map(role => {
+          const count = entries.filter(e => e.role === role).length;
+          return (
+            <div key={role} className="bg-white rounded-2xl border border-slate-100 p-5 text-center">
+              <div className="text-2xl font-black text-slate-900">{count}</div>
+              <div className={`text-xs font-bold uppercase tracking-wider mt-1 inline-block px-2 py-0.5 rounded-full ${ROLE_COLORS[role]}`}>{role}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Controls */}
+      <div className="bg-white rounded-2xl border border-slate-100 p-4 flex flex-wrap gap-3 items-center justify-between">
+        <div className="flex gap-2">
+          <button onClick={() => { setTab('waitlist'); setPage(1); }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${tab === 'waitlist' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
+            Waitlist
+          </button>
+          <button onClick={() => { setTab('overflow'); setPage(1); }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${tab === 'overflow' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
+            Interest List (Overflow)
+          </button>
+        </div>
+        <div className="flex gap-2 items-center">
+          {tab === 'waitlist' && (
+            <select value={roleFilter} onChange={e => { setRoleFilter(e.target.value); setPage(1); }}
+              className="text-xs border border-slate-200 rounded-xl px-3 py-2 font-bold text-slate-600 bg-white">
+              <option value="">All Roles</option>
+              {roles.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          )}
+          <button onClick={load} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
+            <RefreshCw className="w-4 h-4 text-slate-400" />
+          </button>
+          <button onClick={exportCsv}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-700 transition-colors">
+            <Download className="w-3.5 h-3.5" /> Export CSV
+          </button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center py-16 text-slate-400 text-sm font-bold">Loading...</div>
+        ) : entries.length === 0 ? (
+          <div className="flex items-center justify-center py-16 text-slate-400 text-sm font-bold">No entries yet.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  {tab === 'waitlist' && <th className="text-left px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">#</th>}
+                  <th className="text-left px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Email</th>
+                  <th className="text-left px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Role</th>
+                  {tab === 'waitlist' && <>
+                    <th className="text-left px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Invite Code</th>
+                    <th className="text-left px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Location</th>
+                    <th className="text-left px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Redeemed</th>
+                  </>}
+                  <th className="text-left px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Joined</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {entries.map((e: any) => (
+                  <tr key={e.id} className="hover:bg-slate-50 transition-colors">
+                    {tab === 'waitlist' && (
+                      <td className="px-5 py-3 font-black text-slate-400 text-xs">#{e.position + 2847}</td>
+                    )}
+                    <td className="px-5 py-3 font-medium text-slate-700">{e.email}</td>
+                    <td className="px-5 py-3">
+                      <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${ROLE_COLORS[e.role] ?? 'bg-slate-100 text-slate-500'}`}>
+                        {e.role}
+                      </span>
+                    </td>
+                    {tab === 'waitlist' && <>
+                      <td className="px-5 py-3 font-mono text-xs text-slate-500">{e.inviteCode}</td>
+                      <td className="px-5 py-3 text-xs text-slate-500">{[e.city, e.state].filter(Boolean).join(', ') || '—'}</td>
+                      <td className="px-5 py-3">
+                        {e.redeemedAt
+                          ? <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Redeemed</span>
+                          : <span className="text-[10px] font-bold text-slate-400">—</span>}
+                      </td>
+                    </>}
+                    <td className="px-5 py-3 text-xs text-slate-400">{new Date(e.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Pagination */}
+      {tab === 'waitlist' && pages > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 disabled:opacity-40 hover:bg-slate-50">
+            Previous
+          </button>
+          <span className="text-xs font-bold text-slate-500">Page {page} of {pages}</span>
+          <button disabled={page === pages} onClick={() => setPage(p => p + 1)}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 disabled:opacity-40 hover:bg-slate-50">
+            Next
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
   | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT'
-  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY';
+  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -1110,6 +1282,7 @@ export const AdminPortalView: React.FC = () => {
     { id: 'SENTINEL', label: 'Price Sentinel', icon: ShieldAlert },
     { id: 'COMPLIANCE', label: 'L3C Compliance', icon: Scale },
     { id: 'CDFI_MGMT', label: 'CDFI Partners', icon: Landmark },
+    { id: 'WAITLIST', label: 'Waitlist', icon: ListChecks },
     { id: 'AUDIT_LOG', label: 'Audit Log', icon: ClipboardList },
     { id: 'SETTINGS', label: 'Admin Settings', icon: Settings },
     { id: 'INTEGRITY', label: 'System Integrity Test', icon: FlaskConical },
@@ -1132,6 +1305,7 @@ export const AdminPortalView: React.FC = () => {
       case 'SENTINEL': return <PriceSentinelReview />;
       case 'COMPLIANCE': return <ComplianceDashboard />;
       case 'CDFI_MGMT': return <CdfiManagement />;
+      case 'WAITLIST': return <WaitlistManagement />;
       case 'AUDIT_LOG': return <AuditLogPanel />;
       case 'SETTINGS': return <AdminSettings />;
       case 'INTEGRITY': return <AdminIntegrityTest />;
