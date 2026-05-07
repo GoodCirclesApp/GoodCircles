@@ -63,8 +63,11 @@ export default function Hero() {
         >
           What if every dollar{' '}
           <br className="hidden sm:block" />
-          you spent built{' '}
-          <span style={{ color: BRAND.gold }}>the place you live?</span>
+          you spent built the{' '}
+          <span style={{
+            color: '#fff',
+            textShadow: `0 0 18px ${BRAND.gold}, 0 0 40px ${BRAND.gold}99, 0 0 70px ${BRAND.gold}55`,
+          }}>community</span>{' '}you live in?
         </motion.h1>
 
         <motion.p
