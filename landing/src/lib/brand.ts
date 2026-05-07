@@ -49,7 +49,7 @@ export const ROLE_CONFIG: Record<Role, {
     label:     'Municipal Partner',
     color:     BRAND.navy,
     inputRing: 'focus:ring-blue-900/40',
-    statement: 'I work in city government and want to keep economic activity inside my district.',
+    statement: 'I work in city government and want to strengthen economic activity within my community.',
     tagline:   'Track local spend retention and support small business without new programs.',
   },
 };
