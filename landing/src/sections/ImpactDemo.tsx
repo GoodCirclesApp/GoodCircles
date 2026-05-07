@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BRAND, fadeUp } from '../lib/brand';
 
-// Illustrative amounts for a $100 purchase at ~30% merchant net margin
-const DEMO = { gross: 100, discount: 10, merchant: 26.70, nonprofit: 3.00 };
+// Illustrative amounts: $100 MSRP, $60 COGS, consumer saves 10%
+// Merchant receives $86.70 ($60 COGS recovery + $26.70 = 89% of $30 gross profit)
+// Nonprofit receives $3.00 (10% of $30 gross profit), platform $0.30 (1%)
+const DEMO = { gross: 100, discount: 10, merchant: 86.70, nonprofit: 3.00 };
 
 type Phase = 'IDLE' | 'HUB' | 'STREAMS' | 'CARDS' | 'IMPACT' | 'COMPLETE';
 
@@ -48,7 +50,7 @@ export default function ImpactDemo() {
     add(() => setPhase('CARDS'),    1600);
     add(() => setPhase('IMPACT'),   2200);
     add(() => setPhase('COMPLETE'), 3100);
-    add(() => setRunKey(k => k + 1), 6800); // 3.7s pause at COMPLETE, then loop
+    add(() => setRunKey(k => k + 1), 30000); // replay every 30s
 
     return () => timers.forEach(clearTimeout);
   }, [runKey]);
@@ -203,7 +205,7 @@ export default function ImpactDemo() {
                     <span className="text-lg">🏪</span>
                     <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 text-center">Merchant keeps</p>
                     <p className="text-xl font-black italic tracking-tighter">{fmt(merchantVal)}</p>
-                    <p className="text-[8px] font-medium text-slate-500 text-center leading-tight">89% of net profit</p>
+                    <p className="text-[8px] font-medium text-slate-500 text-center leading-tight">COGS + 89% of profit</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -272,9 +274,9 @@ export default function ImpactDemo() {
           className="text-center text-sm text-slate-400 mt-5 leading-relaxed max-w-lg mx-auto"
           style={{ fontFamily: "'Fira Sans', sans-serif" }}
         >
-          Real example: you buy a $100 gift from a local boutique. You keep $10 in your pocket.
-          The boutique keeps their profit. $3 flows to the food pantry you chose at signup.
-          No coupon codes, no extra apps, no thinking about it — just this, every time.
+          Real example: a $100 item from a local boutique. You pay $90 — $10 stays in your pocket.
+          The boutique receives $86.70 (their cost of goods plus profit share). $3 goes to the
+          food pantry you chose at signup. No coupon codes, no extra apps, no thinking about it — just this, every time.
         </motion.p>
 
       </div>
