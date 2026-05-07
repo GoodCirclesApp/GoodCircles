@@ -42,8 +42,8 @@ export const ROLE_CONFIG: Record<Role, {
     label:     'CDFI Partner',
     color:     BRAND.darkGold,
     inputRing: 'focus:ring-yellow-600/40',
-    statement: 'I deploy capital into underserved communities and need real-time merchant data to underwrite confidently.',
-    tagline:   'Access structured merchant performance data for QIA lending.',
+    statement: 'I fund small businesses in underserved communities and want to back the ones that are already proving themselves.',
+    tagline:   'Find and support mission-aligned businesses already building roots in their community.',
   },
   MUNICIPAL: {
     label:     'Municipal Partner',
