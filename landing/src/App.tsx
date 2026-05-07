@@ -9,7 +9,8 @@ import RoleMirror from './sections/RoleMirror';
 import NeighborStory from './sections/stories/NeighborStory';
 import MerchantStory from './sections/stories/MerchantStory';
 import NonprofitStory from './sections/stories/NonprofitStory';
-import CdfiMunicipalStory from './sections/stories/CdfiMunicipalStory';
+import CdfiStory from './sections/stories/CdfiStory';
+import MunicipalStory from './sections/stories/MunicipalStory';
 import Confirmation from './sections/Confirmation';
 import FAQ from './sections/FAQ';
 import Footer from './sections/Footer';
@@ -98,9 +99,8 @@ export default function App() {
                     {selectedRole === 'NEIGHBOR'  && <NeighborStory    onConfirm={handleConfirm} onBack={handleBack} />}
                     {selectedRole === 'MERCHANT'  && <MerchantStory    onConfirm={handleConfirm} onBack={handleBack} />}
                     {selectedRole === 'NONPROFIT' && <NonprofitStory   onConfirm={handleConfirm} onBack={handleBack} />}
-                    {(selectedRole === 'CDFI' || selectedRole === 'MUNICIPAL') && (
-                      <CdfiMunicipalStory role={selectedRole} onConfirm={handleConfirm} onBack={handleBack} />
-                    )}
+                    {selectedRole === 'CDFI'      && <CdfiStory      onConfirm={handleConfirm} onBack={handleBack} />}
+                    {selectedRole === 'MUNICIPAL' && <MunicipalStory  onConfirm={handleConfirm} onBack={handleBack} />}
                   </motion.div>
                 ) : (
                   <motion.div
