@@ -213,6 +213,22 @@ export const listOverflow = async (req: Request, res: Response) => {
   return res.json({ entries, total: entries.length, cap: WAITLIST_CAP });
 };
 
+export const lookupInviteCode = async (req: Request, res: Response) => {
+  const { code } = req.params as { code: string };
+  if (!code) return res.status(400).json({ valid: false });
+
+  const entry = await prisma.waitlistEntry.findUnique({ where: { inviteCode: code } });
+  if (!entry) return res.status(404).json({ valid: false, reason: 'not_found' });
+  if (entry.redeemedAt) return res.status(409).json({ valid: false, reason: 'already_used' });
+
+  return res.json({
+    valid:       true,
+    role:        entry.role,
+    email:       entry.email,
+    launchPerks: entry.launchPerks,
+  });
+};
+
 function buildLaunchPerks(role: string): object {
   switch (role) {
     case 'NEIGHBOR':

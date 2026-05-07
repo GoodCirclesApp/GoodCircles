@@ -148,25 +148,14 @@ export default function Confirmation({ data }: Props) {
           </motion.svg>
         </motion.div>
 
-        {/* Position */}
-        <motion.p
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="font-black leading-none mb-3"
-          style={{ fontSize: 'clamp(3rem, 10vw, 5.5rem)', color: BRAND.gold, letterSpacing: '-0.02em' }}
+          className="font-black text-white mb-4"
+          style={{ fontSize: 'clamp(2rem, 7vw, 3.5rem)', letterSpacing: '-0.02em', lineHeight: 1.05 }}
         >
-          #{data.position?.toLocaleString()}
-        </motion.p>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.55 }}
-          className="text-3xl sm:text-4xl font-black text-white mb-4"
-          style={{ letterSpacing: '-0.01em' }}
-        >
-          You're in the circle.
+          Congratulations,<br />you are in!
         </motion.h1>
 
         <motion.p

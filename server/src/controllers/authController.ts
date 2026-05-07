@@ -10,7 +10,7 @@ import { sendMerchantWelcomeEmail, sendNonprofitWelcomeEmail } from '../services
 const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-  role: z.enum(['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'CDFI']),
+  role: z.enum(['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'CDFI', 'MUNICIPAL']),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   // Merchant specific
@@ -26,12 +26,29 @@ const registerSchema = z.object({
   cdfiOrgName: z.string().optional(),
   cdfiCertificationNumber: z.string().optional(),
   lendingRegions: z.array(z.string()).optional(),
+  // Waitlist invite code — bypasses launch gates and redeems perks
+  inviteCode: z.string().optional(),
 });
 
 export const register = async (req: Request, res: Response) => {
   try {
     const data = registerSchema.parse(req.body);
     const passwordHash = await bcrypt.hash(data.password, 12);
+
+    // Validate invite code if provided
+    let waitlistEntry: { id: string; role: string; launchPerks: any } | null = null;
+    if (data.inviteCode) {
+      waitlistEntry = await prisma.waitlistEntry.findUnique({
+        where: { inviteCode: data.inviteCode },
+        select: { id: true, role: true, launchPerks: true, redeemedAt: true },
+      }) as any;
+      if (!waitlistEntry) {
+        return res.status(400).json({ error: 'Invalid invite code.' });
+      }
+      if ((waitlistEntry as any).redeemedAt) {
+        return res.status(400).json({ error: 'This invite code has already been used.' });
+      }
+    }
 
     // IRS verification gate for nonprofit registrations
     let irsVerified = false;
@@ -112,6 +129,14 @@ export const register = async (req: Request, res: Response) => {
             lendingRegions: JSON.stringify(data.lendingRegions || []),
             partnershipStatus: 'applied',
           },
+        });
+      }
+
+      // Mark waitlist invite code as redeemed
+      if (waitlistEntry) {
+        await tx.waitlistEntry.update({
+          where: { id: waitlistEntry.id },
+          data:  { redeemedAt: new Date(), redeemedUserId: user.id },
         });
       }
 
