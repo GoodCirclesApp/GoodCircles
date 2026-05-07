@@ -36,16 +36,16 @@ export const register = async (req: Request, res: Response) => {
     const passwordHash = await bcrypt.hash(data.password, 12);
 
     // Validate invite code if provided
-    let waitlistEntry: { id: string; role: string; launchPerks: any } | null = null;
+    let waitlistEntry: { id: string; role: string; redeemedAt: Date | null } | null = null;
     if (data.inviteCode) {
       waitlistEntry = await prisma.waitlistEntry.findUnique({
         where: { inviteCode: data.inviteCode },
-        select: { id: true, role: true, launchPerks: true, redeemedAt: true },
-      }) as any;
+        select: { id: true, role: true, redeemedAt: true },
+      });
       if (!waitlistEntry) {
         return res.status(400).json({ error: 'Invalid invite code.' });
       }
-      if ((waitlistEntry as any).redeemedAt) {
+      if (waitlistEntry.redeemedAt) {
         return res.status(400).json({ error: 'This invite code has already been used.' });
       }
     }

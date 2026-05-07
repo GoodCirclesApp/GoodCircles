@@ -29,13 +29,6 @@ const ROLE_LABELS: Record<string, string> = {
   MUNICIPAL: 'Municipal Partner',
 };
 
-const ROLE_PERKS: Record<string, string> = {
-  NEIGHBOR:  'At launch, you\'ll receive one free month of double-impact credits — your savings double, your nonprofit gets twice the donation.',
-  MERCHANT:  'As a Founding Merchant, you\'ll get early catalog setup access and priority placement in your city when we launch in September 2026.',
-  NONPROFIT: 'Your nonprofit will be pre-verified and visible to neighbors from day one — no waiting in a queue.',
-  CDFI:      'You\'ll receive a private briefing with our founding team before the public launch.',
-  MUNICIPAL: 'You\'ll receive a private briefing with our founding team before the public launch.',
-};
 
 function wrap(body: string): string {
   return `<!DOCTYPE html>
@@ -147,7 +140,6 @@ export async function sendWaitlistConfirmEmail(params: WaitlistConfirmParams): P
   const { email, role, position, inviteCode, firstName } = params;
   const accentColor = ROLE_COLORS[role] ?? B.purple;
   const roleLabel   = ROLE_LABELS[role] ?? role;
-  const perk        = ROLE_PERKS[role] ?? '';
   const greeting    = firstName ? `Hi ${firstName},` : 'Welcome,';
 
   const body = `
@@ -169,21 +161,10 @@ export async function sendWaitlistConfirmEmail(params: WaitlistConfirmParams): P
           ${inviteCode}
         </p>
         <p style="margin:6px 0 0;font-size:12px;color:#888;">
-          Keep this — it unlocks your launch-day perks.
+          Keep this — you'll need it at launch.
         </p>
       </td></tr>
     </table>
-
-    ${perk ? `
-    <!-- Launch perk -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
-      <tr><td style="background:#f0fdf4;border-left:4px solid ${B.emerald};border-radius:0 8px 8px 0;padding:16px 20px;">
-        <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${B.emerald};">
-          Your Early-Access Perk
-        </p>
-        <p style="margin:0;font-size:14px;color:#374151;">${perk}</p>
-      </td></tr>
-    </table>` : ''}
 
     <!-- What's next -->
     <h2 style="margin:0 0 12px;font-size:16px;font-weight:700;color:#1a1a1a;">What happens next?</h2>
@@ -194,7 +175,7 @@ export async function sendWaitlistConfirmEmail(params: WaitlistConfirmParams): P
       2. You'll get an exclusive early-access email with your personalized magic link.
     </p>
     <p style="margin:0 0 28px;font-size:14px;color:#555;">
-      3. Your invite code <strong>${inviteCode}</strong> redeems your launch perks automatically at signup.
+      3. Your invite code <strong>${inviteCode}</strong> confirms your spot and account type at signup.
     </p>
 
     <!-- CTA -->

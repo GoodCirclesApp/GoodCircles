@@ -91,8 +91,6 @@ export const submitWaitlist = async (req: Request, res: Response) => {
 
   const inviteCode = generateInviteCode(data.role);
 
-  const launchPerks = buildLaunchPerks(data.role);
-
   let entry;
   try {
     entry = await prisma.waitlistEntry.create({
@@ -119,7 +117,6 @@ export const submitWaitlist = async (req: Request, res: Response) => {
         decisionMakerRole: data.decisionMakerRole,
         interestArea:      data.interestArea,
         requestBriefing:   data.requestBriefing ?? false,
-        launchPerks,
       },
     });
   } catch (err: any) {
@@ -222,25 +219,9 @@ export const lookupInviteCode = async (req: Request, res: Response) => {
   if (entry.redeemedAt) return res.status(409).json({ valid: false, reason: 'already_used' });
 
   return res.json({
-    valid:       true,
-    role:        entry.role,
-    email:       entry.email,
-    launchPerks: entry.launchPerks,
+    valid:  true,
+    role:   entry.role,
+    email:  entry.email,
   });
 };
 
-function buildLaunchPerks(role: string): object {
-  switch (role) {
-    case 'NEIGHBOR':
-      return { doubleCreditsMonths: 1, description: 'One month of double-impact credits at launch' };
-    case 'MERCHANT':
-      return { foundingMerchant: true, priorityListing: true, earlyAccess: true, description: 'Founding Merchant designation, priority city listing, and early catalog setup access before public launch' };
-    case 'NONPROFIT':
-      return { preVerified: true, priorityListing: true, description: 'Pre-verified and priority-listed at launch' };
-    case 'CDFI':
-    case 'MUNICIPAL':
-      return { privateBriefing: true, description: 'Private pre-launch briefing with founding team' };
-    default:
-      return {};
-  }
-}

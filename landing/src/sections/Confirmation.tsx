@@ -181,20 +181,6 @@ export default function Confirmation({ data }: Props) {
           <p className="text-2xl font-black tracking-widest text-white font-mono">{data.inviteCode}</p>
         </motion.div>
 
-        {/* Perk blurb */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1 }}
-          className="mb-10 px-6 py-4 rounded-2xl mx-auto"
-          style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
-        >
-          <p className="text-sm text-white/80 leading-relaxed" style={{ fontFamily: "'Fira Sans', sans-serif" }}>
-            <span style={{ color: accentColor }}>✦</span>{' '}
-            {config.tagline}
-          </p>
-        </motion.div>
-
         {/* Share buttons */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
