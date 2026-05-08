@@ -60,7 +60,7 @@ export async function listEmails(req: Request, res: Response) {
 
 export async function getEmail(req: Request, res: Response) {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const email = await prisma.inboundEmail.findUnique({ where: { id } });
     if (!email) return res.status(404).json({ error: 'Not found.' });
 
@@ -77,7 +77,7 @@ export async function getEmail(req: Request, res: Response) {
 
 export async function replyToEmail(req: Request, res: Response) {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { body: replyBody } = req.body ?? {};
 
     if (!replyBody?.trim()) {
