@@ -15,21 +15,34 @@ export async function receiveWebhook(req: Request, res: Response) {
   try {
     // Resend wraps inbound email fields under a `data` key
     const payload = req.body?.data ?? req.body ?? {};
-    console.log('[InboundEmail] payload keys:', Object.keys(payload));
-    console.log('[InboundEmail] text:', payload.text, '| html length:', payload.html?.length ?? 0);
-    const { from, to, subject, text, html } = payload;
+    const { from, to, subject, email_id } = payload;
 
     const { name: fromName, address: fromAddress } = parseFrom(from ?? '');
     const toAddress = Array.isArray(to) ? to[0] : (to ?? 'support@goodcircles.org');
 
+    // Resend's inbound webhook omits the body — fetch the full email via API
+    let textBody: string | null = null;
+    let htmlBody: string | null = null;
+    if (email_id) {
+      try {
+        const full = await resend.emails.get(email_id);
+        textBody = (full.data as any)?.text ?? null;
+        htmlBody = (full.data as any)?.html ?? null;
+        console.log('[InboundEmail] fetched body via API — text length:', textBody?.length ?? 0);
+      } catch (err) {
+        console.log('[InboundEmail] could not fetch body via API:', err);
+      }
+    }
+
     await prisma.inboundEmail.create({
       data: {
+        resendId: email_id ?? null,
         fromAddress,
         fromName,
         toAddress,
         subject: subject ?? '(no subject)',
-        textBody: text ?? null,
-        htmlBody: html ?? null,
+        textBody,
+        htmlBody,
       },
     });
 
