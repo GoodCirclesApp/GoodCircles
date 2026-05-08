@@ -88,7 +88,11 @@ async function startServer() {
 
   app.use(cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      if (!origin) return callback(null, true); // server-to-server
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      // Allow any HTTPS origin — sensitive endpoints are protected by JWT Bearer
+      // tokens (not cookies), so CSRF via CORS bypass is not a threat vector.
+      if (origin.startsWith('https://')) return callback(null, true);
       callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
