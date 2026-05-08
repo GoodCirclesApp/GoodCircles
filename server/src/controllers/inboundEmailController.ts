@@ -26,6 +26,8 @@ export async function receiveWebhook(req: Request, res: Response) {
     if (email_id) {
       try {
         const full = await resend.emails.get(email_id);
+        console.log('[InboundEmail] full.data keys:', Object.keys(full.data ?? {}));
+        console.log('[InboundEmail] full.data:', JSON.stringify(full.data));
         textBody = (full.data as any)?.text ?? null;
         htmlBody = (full.data as any)?.html ?? null;
         console.log('[InboundEmail] fetched body via API — text length:', textBody?.length ?? 0);
