@@ -116,9 +116,10 @@ async function startServer() {
     app.use(express.static(distPath));
   }
 
-  // Stripe Webhook needs raw body - must be before express.json()
+  // Webhooks need raw body - must be before express.json()
   app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
   app.use('/api/catalog/webhook/stripe', express.raw({ type: 'application/json' }));
+  app.use('/api/inbound/webhook', express.raw({ type: 'application/json' }));
 
   app.use(express.json());
   app.use('/api/email', emailRoutes);

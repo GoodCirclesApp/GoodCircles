@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { prisma } from '../lib/prisma';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET ?? '';
 const REPLY_FROM = 'GoodCircles Support <support@goodcircles.org>';
 
 function parseFrom(raw: string): { name: string | null; address: string } {
@@ -13,36 +14,61 @@ function parseFrom(raw: string): { name: string | null; address: string } {
 
 export async function receiveWebhook(req: Request, res: Response) {
   try {
-    // Resend wraps inbound email fields under a `data` key
-    const payload = req.body?.data ?? req.body ?? {};
-    const { from, to, subject, email_id } = payload;
+    const svixId        = req.headers['svix-id'] as string;
+    const svixTimestamp = req.headers['svix-timestamp'] as string;
+    const svixSignature = req.headers['svix-signature'] as string;
+
+    if (!svixId || !svixTimestamp || !svixSignature) {
+      return res.status(400).json({ error: 'Missing webhook signature headers.' });
+    }
+
+    // Verify signature — req.body is a Buffer because of express.raw()
+    let result: any;
+    try {
+      result = (resend as any).webhooks.verify({
+        payload:       req.body.toString(),
+        headers:       { id: svixId, timestamp: svixTimestamp, signature: svixSignature },
+        webhookSecret: WEBHOOK_SECRET,
+      });
+    } catch {
+      return res.status(400).json({ error: 'Invalid webhook signature.' });
+    }
+
+    // Only process inbound emails
+    if (result?.type !== 'email.received') {
+      return res.status(200).json({ ok: true });
+    }
+
+    const { from, to, subject, email_id } = result.data ?? {};
 
     const { name: fromName, address: fromAddress } = parseFrom(from ?? '');
     const toAddress = Array.isArray(to) ? to[0] : (to ?? 'support@goodcircles.org');
 
-    // Resend's inbound webhook omits the body — fetch the full email via API
+    // Fetch full body via the receiving API
     let textBody: string | null = null;
     let htmlBody: string | null = null;
     if (email_id) {
       try {
-        const full = await resend.emails.get(email_id);
-        console.log('[InboundEmail] full.data keys:', Object.keys(full.data ?? {}));
-        console.log('[InboundEmail] full.data:', JSON.stringify(full.data));
-        textBody = (full.data as any)?.text ?? null;
-        htmlBody = (full.data as any)?.html ?? null;
-        console.log('[InboundEmail] fetched body via API — text length:', textBody?.length ?? 0);
+        const { data: full, error: fetchErr } = await (resend as any).emails.receiving.get(email_id);
+        if (fetchErr) {
+          console.error('[InboundEmail] receiving.get error:', fetchErr);
+        } else {
+          textBody = full?.text ?? null;
+          htmlBody = full?.html ?? null;
+          console.log('[InboundEmail] body fetched — text:', textBody?.length ?? 0, 'html:', htmlBody?.length ?? 0);
+        }
       } catch (err) {
-        console.log('[InboundEmail] could not fetch body via API:', err);
+        console.error('[InboundEmail] could not fetch body:', err);
       }
     }
 
     await prisma.inboundEmail.create({
       data: {
-        resendId: email_id ?? null,
+        resendId:    email_id ?? null,
         fromAddress,
         fromName,
         toAddress,
-        subject: subject ?? '(no subject)',
+        subject:     subject ?? '(no subject)',
         textBody,
         htmlBody,
       },
@@ -109,10 +135,10 @@ export async function replyToEmail(req: Request, res: Response) {
     const subject = email.subject.startsWith('Re:') ? email.subject : `Re: ${email.subject}`;
 
     const result = await resend.emails.send({
-      from: REPLY_FROM,
-      to: email.fromAddress,
+      from:    REPLY_FROM,
+      to:      email.fromAddress,
       subject,
-      text: replyBody.trim(),
+      text:    replyBody.trim(),
     });
 
     if (result.error) {
@@ -122,7 +148,7 @@ export async function replyToEmail(req: Request, res: Response) {
 
     await prisma.inboundEmail.update({
       where: { id },
-      data: { isReplied: true, repliedAt: new Date() },
+      data:  { isReplied: true, repliedAt: new Date() },
     });
 
     res.json({ ok: true });
