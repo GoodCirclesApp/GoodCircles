@@ -14,28 +14,29 @@ function parseFrom(raw: string): { name: string | null; address: string } {
 
 export async function receiveWebhook(req: Request, res: Response) {
   try {
-    // req.body is a Buffer from express.raw() — parse it manually
+    // req.body is a Buffer from express.raw()
     const rawBody = Buffer.isBuffer(req.body) ? req.body.toString() : JSON.stringify(req.body);
-    let parsed: any = {};
-    try { parsed = JSON.parse(rawBody); } catch { /* ignore */ }
 
-    // Verify signature if secret is configured (non-blocking — log but don't reject)
+    // Verify Svix signature (non-blocking — log but never drop the email)
     if (WEBHOOK_SECRET) {
       try {
         const svixId        = req.headers['svix-id'] as string;
         const svixTimestamp = req.headers['svix-timestamp'] as string;
         const svixSignature = req.headers['svix-signature'] as string;
         if (svixId && svixTimestamp && svixSignature) {
-          (resend as any).webhooks.verify({
+          resend.webhooks.verify({
             payload:       rawBody,
             headers:       { id: svixId, timestamp: svixTimestamp, signature: svixSignature },
             webhookSecret: WEBHOOK_SECRET,
           });
         }
       } catch (verifyErr) {
-        console.warn('[InboundEmail] signature verification failed:', verifyErr);
+        console.warn('[InboundEmail] signature verification failed (continuing):', verifyErr);
       }
     }
+
+    let parsed: any = {};
+    try { parsed = JSON.parse(rawBody); } catch { /* ignore */ }
 
     // Only process inbound emails
     if (parsed?.type !== 'email.received') {
@@ -47,12 +48,12 @@ export async function receiveWebhook(req: Request, res: Response) {
     const { name: fromName, address: fromAddress } = parseFrom(from ?? '');
     const toAddress = Array.isArray(to) ? to[0] : (to ?? 'support@goodcircles.org');
 
-    // Fetch full body via the receiving API
+    // Fetch full body via the receiving API (added in Resend SDK v4+)
     let textBody: string | null = null;
     let htmlBody: string | null = null;
     if (email_id) {
       try {
-        const { data: full, error: fetchErr } = await (resend as any).emails.receiving.get(email_id);
+        const { data: full, error: fetchErr } = await resend.emails.receiving.get(email_id);
         if (fetchErr) {
           console.error('[InboundEmail] receiving.get error:', fetchErr);
         } else {
