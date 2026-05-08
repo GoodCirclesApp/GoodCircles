@@ -211,43 +211,63 @@ export const listOverflow = async (req: Request, res: Response) => {
 };
 
 export const listBriefings = async (req: Request, res: Response) => {
-  const entries = await prisma.waitlistEntry.findMany({
-    where: {
-      requestBriefing: true,
-      role: { in: ['CDFI', 'MUNICIPAL'] },
-      briefingStatus: { not: 'dismissed' },
-    },
-    orderBy: { createdAt: 'asc' },
-  });
-  return res.json({ entries });
+  try {
+    const entries = await prisma.waitlistEntry.findMany({
+      where: {
+        requestBriefing: true,
+        role: { in: ['CDFI', 'MUNICIPAL'] },
+        // Include null (new entries) and anything not dismissed
+        OR: [
+          { briefingStatus: null },
+          { briefingStatus: { not: 'dismissed' } },
+        ],
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+    return res.json({ entries });
+  } catch (err: any) {
+    console.error('[Briefings] listBriefings error:', err.message);
+    return res.status(500).json({ error: 'Failed to fetch briefings.' });
+  }
 };
 
 export const updateBriefing = async (req: Request, res: Response) => {
-  const { id } = req.params as { id: string };
-  const { status, notes } = req.body as { status?: string; notes?: string };
+  try {
+    const { id } = req.params as { id: string };
+    const { status, notes } = req.body as { status?: string; notes?: string };
 
-  const allowed = ['scheduled', 'completed'];
-  if (status && !allowed.includes(status)) {
-    return res.status(400).json({ error: 'Invalid status' });
+    const allowed = ['scheduled', 'completed', '', null];
+    if (status !== undefined && !allowed.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    const entry = await prisma.waitlistEntry.update({
+      where: { id },
+      data: {
+        // Empty string means "reset to pending" — store as null
+        ...(status !== undefined ? { briefingStatus: status === '' ? null : status } : {}),
+        ...(notes  !== undefined ? { briefingNotes: notes } : {}),
+      },
+    });
+    return res.json({ entry });
+  } catch (err: any) {
+    console.error('[Briefings] updateBriefing error:', err.message);
+    return res.status(500).json({ error: 'Failed to update briefing.' });
   }
-
-  const entry = await prisma.waitlistEntry.update({
-    where: { id },
-    data: {
-      ...(status !== undefined ? { briefingStatus: status } : {}),
-      ...(notes  !== undefined ? { briefingNotes:  notes  } : {}),
-    },
-  });
-  return res.json({ entry });
 };
 
 export const deleteBriefing = async (req: Request, res: Response) => {
-  const { id } = req.params as { id: string };
-  await prisma.waitlistEntry.update({
-    where: { id },
-    data:  { briefingStatus: 'dismissed' },
-  });
-  return res.json({ ok: true });
+  try {
+    const { id } = req.params as { id: string };
+    await prisma.waitlistEntry.update({
+      where: { id },
+      data:  { briefingStatus: 'dismissed' },
+    });
+    return res.json({ ok: true });
+  } catch (err: any) {
+    console.error('[Briefings] deleteBriefing error:', err.message);
+    return res.status(500).json({ error: 'Failed to dismiss briefing.' });
+  }
 };
 
 export const resendConfirmEmail = async (req: Request, res: Response) => {
