@@ -13,7 +13,9 @@ function parseFrom(raw: string): { name: string | null; address: string } {
 
 export async function receiveWebhook(req: Request, res: Response) {
   try {
-    const { from, to, subject, text, html } = req.body ?? {};
+    // Resend wraps inbound email fields under a `data` key
+    const payload = req.body?.data ?? req.body ?? {};
+    const { from, to, subject, text, html } = payload;
 
     const { name: fromName, address: fromAddress } = parseFrom(from ?? '');
     const toAddress = Array.isArray(to) ? to[0] : (to ?? 'support@goodcircles.org');
