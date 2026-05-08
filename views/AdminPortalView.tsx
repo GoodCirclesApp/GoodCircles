@@ -1100,6 +1100,7 @@ const SupportInbox = () => {
   const [sending, setSending]             = useState(false);
   const [sendMsg, setSendMsg]             = useState<{ ok: boolean; text: string } | null>(null);
   const [deleting, setDeleting]           = useState<string | null>(null);
+  const [clearingRead, setClearingRead]   = useState(false);
 
   async function load() {
     setLoading(true);
@@ -1155,6 +1156,23 @@ const SupportInbox = () => {
     }
   }
 
+  async function clearRead() {
+    const readCount = emails.filter(e => e.isRead).length;
+    if (readCount === 0) return;
+    if (!window.confirm(`Delete all ${readCount} read email${readCount !== 1 ? 's' : ''}? Unread emails will not be touched.`)) return;
+    setClearingRead(true);
+    try {
+      await fetch('/api/inbound/read', {
+        method:  'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEmails(prev => prev.filter(e => !e.isRead));
+      if (selected && selected.isRead) setSelected(null);
+    } finally {
+      setClearingRead(false);
+    }
+  }
+
   async function deleteThread(emailId: string) {
     if (!window.confirm('Delete this email thread? This cannot be undone.')) return;
     setDeleting(emailId);
@@ -1185,9 +1203,22 @@ const SupportInbox = () => {
               <span className="ml-2 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-black rounded-full">{unreadCount}</span>
             )}
           </div>
-          <button onClick={load} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
-            <RefreshCw className={`w-3.5 h-3.5 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
-          </button>
+          <div className="flex items-center gap-1">
+            {emails.some(e => e.isRead) && (
+              <button
+                onClick={clearRead}
+                disabled={clearingRead}
+                className="flex items-center gap-1 px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-rose-500 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-50"
+                title="Delete all read emails"
+              >
+                <Trash2 className="w-3 h-3" />
+                {clearingRead ? 'Clearing…' : 'Clear read'}
+              </button>
+            )}
+            <button onClick={load} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
+              <RefreshCw className={`w-3.5 h-3.5 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">

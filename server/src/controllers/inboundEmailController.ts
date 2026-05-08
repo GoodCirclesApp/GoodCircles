@@ -138,6 +138,16 @@ export async function deleteEmail(req: Request, res: Response) {
   }
 }
 
+export async function deleteReadEmails(_req: Request, res: Response) {
+  try {
+    const { count } = await prisma.inboundEmail.deleteMany({ where: { isRead: true } });
+    res.json({ ok: true, deleted: count });
+  } catch (err) {
+    console.error('[InboundEmail] deleteRead error:', err);
+    res.status(500).json({ error: 'Failed to delete read emails.' });
+  }
+}
+
 export async function replyToEmail(req: Request, res: Response) {
   try {
     const id = String(req.params.id);
