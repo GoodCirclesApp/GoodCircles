@@ -26,7 +26,7 @@ export default function NeighborStory({ onConfirm, onBack }: Props) {
     setError('');
     try {
       const res: WaitlistResponse = await submitWaitlist({ role: 'NEIGHBOR', email, zipCode: zip || undefined });
-      onConfirm({ position: res.position, inviteCode: res.inviteCode, overflow: res.overflow, role: 'NEIGHBOR', email });
+      onConfirm({ position: res.position, inviteCode: res.inviteCode, overflow: res.overflow, alreadyRegistered: res.alreadyRegistered, role: 'NEIGHBOR', email });
     } catch (err: any) {
       setError(err.message ?? 'Something went wrong. Please try again.');
     } finally {

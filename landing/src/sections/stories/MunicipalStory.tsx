@@ -35,7 +35,7 @@ export default function MunicipalStory({ onConfirm, onBack }: Props) {
         interestArea:      interestArea      || undefined,
         requestBriefing:   true,
       });
-      onConfirm({ position: res.position, inviteCode: res.inviteCode, overflow: res.overflow, role: 'MUNICIPAL', email });
+      onConfirm({ position: res.position, inviteCode: res.inviteCode, overflow: res.overflow, alreadyRegistered: res.alreadyRegistered, role: 'MUNICIPAL', email });
     } catch (err: any) {
       setError(err.message ?? 'Something went wrong. Please try again.');
     } finally {

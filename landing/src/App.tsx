@@ -21,11 +21,12 @@ export type Phase =
   | 'confirmation';
 
 export interface ConfirmationData {
-  position?:   number;
-  inviteCode?: string;
-  role:        Role;
-  email:       string;
-  overflow?:   boolean;
+  position?:          number;
+  inviteCode?:        string;
+  role:               Role;
+  email:              string;
+  overflow?:          boolean;
+  alreadyRegistered?: boolean;
 }
 
 export default function App() {

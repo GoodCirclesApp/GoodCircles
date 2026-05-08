@@ -262,8 +262,10 @@ export default function Confirmation({ data }: Props) {
           className="text-white/75 text-base mb-2 leading-relaxed"
           style={{ fontFamily: "'Fira Sans', sans-serif" }}
         >
-          A confirmation is on its way to <strong className="text-white/90">{data.email}</strong>.
-          It has your invite code — keep it safe. It's your key to the marketplace at launch.
+          {data.alreadyRegistered
+            ? <>Welcome back — <strong className="text-white/90">{data.email}</strong> is already in the founding circle. Your invite code is below.</>
+            : <>A confirmation is on its way to <strong className="text-white/90">{data.email}</strong>. It has your invite code — keep it safe. It's your key to the marketplace at launch.</>
+          }
         </motion.p>
 
         {/* Invite code */}

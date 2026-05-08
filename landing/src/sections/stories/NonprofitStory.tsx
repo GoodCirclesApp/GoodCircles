@@ -32,7 +32,7 @@ export default function NonprofitStory({ onConfirm, onBack }: Props) {
         ein: ein || undefined,
         city: city || undefined,
       });
-      onConfirm({ position: res.position, inviteCode: res.inviteCode, overflow: res.overflow, role: 'NONPROFIT', email });
+      onConfirm({ position: res.position, inviteCode: res.inviteCode, overflow: res.overflow, alreadyRegistered: res.alreadyRegistered, role: 'NONPROFIT', email });
     } catch (err: any) {
       setError(err.message ?? 'Something went wrong. Please try again.');
     } finally {

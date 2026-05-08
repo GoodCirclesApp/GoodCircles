@@ -39,7 +39,7 @@ export default function MerchantStory({ onConfirm, onBack }: Props) {
         city: city || undefined,
         category: category || undefined,
       });
-      onConfirm({ position: res.position, inviteCode: res.inviteCode, overflow: res.overflow, role: 'MERCHANT', email });
+      onConfirm({ position: res.position, inviteCode: res.inviteCode, overflow: res.overflow, alreadyRegistered: res.alreadyRegistered, role: 'MERCHANT', email });
     } catch (err: any) {
       setError(err.message ?? 'Something went wrong. Please try again.');
     } finally {

@@ -131,7 +131,6 @@ async function startServer() {
   app.use('/api/inbound/webhook', express.raw({ type: 'application/json' }));
 
   app.use(express.json());
-  app.use('/api/email', emailRoutes);
 
   // ══════════════════════════════════════════════════════════════
   // API Routes
