@@ -41,6 +41,11 @@ import {
   Trash2,
   ListChecks,
   Download,
+  Inbox,
+  MailOpen,
+  Send,
+  CornerDownLeft,
+  Circle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { adminService } from '../services/adminService';
@@ -1083,6 +1088,196 @@ const AdminSettings = () => {
   );
 };
 
+// ── Support Inbox ─────────────────────────────────────────────────────────────
+
+const SupportInbox = () => {
+  const token = localStorage.getItem('gc_auth_token');
+  const [emails, setEmails]         = useState<any[]>([]);
+  const [selected, setSelected]     = useState<any | null>(null);
+  const [loading, setLoading]       = useState(false);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [replyBody, setReplyBody]   = useState('');
+  const [sending, setSending]       = useState(false);
+  const [sendMsg, setSendMsg]       = useState<{ ok: boolean; text: string } | null>(null);
+
+  async function load() {
+    setLoading(true);
+    try {
+      const res  = await fetch('/api/inbound', { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      setEmails(data.emails ?? []);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function open(email: any) {
+    setSelected(null);
+    setReplyBody('');
+    setSendMsg(null);
+    setDetailLoading(true);
+    try {
+      const res  = await fetch(`/api/inbound/${email.id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      setSelected(data.email);
+      setEmails(prev => prev.map(e => e.id === email.id ? { ...e, isRead: true } : e));
+    } finally {
+      setDetailLoading(false);
+    }
+  }
+
+  async function sendReply() {
+    if (!selected || !replyBody.trim()) return;
+    setSending(true);
+    setSendMsg(null);
+    try {
+      const res = await fetch(`/api/inbound/${selected.id}/reply`, {
+        method:  'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ body: replyBody }),
+      });
+      if (!res.ok) throw new Error('Send failed');
+      setSendMsg({ ok: true, text: 'Reply sent.' });
+      setReplyBody('');
+      setSelected((prev: any) => prev ? { ...prev, isReplied: true, repliedAt: new Date().toISOString() } : prev);
+      setEmails(prev => prev.map(e => e.id === selected.id ? { ...e, isReplied: true } : e));
+    } catch {
+      setSendMsg({ ok: false, text: 'Failed to send. Please try again.' });
+    } finally {
+      setSending(false);
+    }
+  }
+
+  useEffect(() => { load(); }, []);
+
+  const unreadCount = emails.filter(e => !e.isRead).length;
+
+  return (
+    <div className="flex gap-0 h-[calc(100vh-160px)] min-h-[500px] bg-white rounded-2xl border border-slate-100 overflow-hidden">
+      {/* Thread list */}
+      <div className="w-80 shrink-0 border-r border-slate-100 flex flex-col">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <div>
+            <span className="font-black text-sm">Inbox</span>
+            {unreadCount > 0 && (
+              <span className="ml-2 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-black rounded-full">{unreadCount}</span>
+            )}
+          </div>
+          <button onClick={load} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
+            <RefreshCw className={`w-3.5 h-3.5 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+          {loading && emails.length === 0 ? (
+            <div className="flex items-center justify-center py-16 text-slate-400 text-sm">Loading…</div>
+          ) : emails.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 gap-3 text-slate-300">
+              <Inbox className="w-10 h-10" />
+              <p className="text-sm font-bold text-slate-400">No messages yet</p>
+              <p className="text-xs text-slate-300 text-center px-6">Emails sent to support@goodcircles.org will appear here.</p>
+            </div>
+          ) : (
+            emails.map(email => (
+              <button
+                key={email.id}
+                onClick={() => open(email)}
+                className={`w-full text-left px-5 py-4 border-b border-slate-50 transition-colors hover:bg-slate-50 ${selected?.id === email.id ? 'bg-emerald-50 border-l-2 border-l-emerald-500' : ''}`}
+              >
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    {!email.isRead && <Circle className="w-2 h-2 text-emerald-500 fill-emerald-500 shrink-0" />}
+                    <span className={`text-xs truncate ${!email.isRead ? 'font-black text-slate-900' : 'font-medium text-slate-600'}`}>
+                      {email.fromName || email.fromAddress}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 shrink-0 whitespace-nowrap">
+                    {new Date(email.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </span>
+                </div>
+                <p className={`text-xs truncate mb-1 ${!email.isRead ? 'font-bold text-slate-800' : 'text-slate-600'}`}>{email.subject}</p>
+                {email.isReplied && (
+                  <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                    <CornerDownLeft className="w-2.5 h-2.5" /> Replied
+                  </span>
+                )}
+              </button>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Detail pane */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {detailLoading ? (
+          <div className="flex items-center justify-center flex-1 text-slate-400 text-sm">Loading…</div>
+        ) : !selected ? (
+          <div className="flex flex-col items-center justify-center flex-1 gap-3 text-slate-300">
+            <MailOpen className="w-12 h-12" />
+            <p className="text-sm font-bold text-slate-400">Select a message</p>
+          </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div className="px-8 py-5 border-b border-slate-100">
+              <h3 className="font-black text-lg text-slate-900 mb-2">{selected.subject}</h3>
+              <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-500">
+                <span><strong>From:</strong> {selected.fromName ? `${selected.fromName} <${selected.fromAddress}>` : selected.fromAddress}</span>
+                <span><strong>To:</strong> {selected.toAddress}</span>
+                <span><strong>Received:</strong> {new Date(selected.createdAt).toLocaleString()}</span>
+                {selected.isReplied && selected.repliedAt && (
+                  <span className="text-emerald-600 font-bold"><strong>Replied:</strong> {new Date(selected.repliedAt).toLocaleString()}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto px-8 py-6">
+              {selected.htmlBody ? (
+                <iframe
+                  srcDoc={selected.htmlBody}
+                  className="w-full h-full border-0 rounded-xl"
+                  sandbox="allow-same-origin"
+                  title="Email content"
+                />
+              ) : (
+                <pre className="text-sm text-slate-700 whitespace-pre-wrap font-sans leading-relaxed">{selected.textBody || '(empty message)'}</pre>
+              )}
+            </div>
+
+            {/* Reply composer */}
+            <div className="px-8 py-5 border-t border-slate-100 bg-slate-50/60">
+              {sendMsg && (
+                <div className={`mb-3 px-4 py-2 rounded-xl text-xs font-bold ${sendMsg.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                  {sendMsg.text}
+                </div>
+              )}
+              <div className="flex gap-3 items-end">
+                <textarea
+                  rows={3}
+                  placeholder={`Reply to ${selected.fromName || selected.fromAddress}…`}
+                  value={replyBody}
+                  onChange={e => setReplyBody(e.target.value)}
+                  className="flex-1 text-sm text-slate-700 border border-slate-200 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 bg-white"
+                />
+                <button
+                  onClick={sendReply}
+                  disabled={sending || !replyBody.trim()}
+                  className="flex items-center gap-2 px-5 py-3 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50 shrink-0"
+                >
+                  {sending ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                  {sending ? 'Sending…' : 'Send'}
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-2">Sent from support@goodcircles.org · The recipient will see your reply in their email inbox.</p>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Main View
 
 const BRIEFING_STATUS: Record<string, { label: string; cls: string }> = {
@@ -1440,7 +1635,7 @@ type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
   | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT'
-  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST' | 'BRIEFINGS';
+  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST' | 'BRIEFINGS' | 'INBOX';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -1465,6 +1660,7 @@ export const AdminPortalView: React.FC = () => {
     { id: 'CDFI_MGMT', label: 'CDFI Partners', icon: Landmark },
     { id: 'WAITLIST',   label: 'Waitlist',           icon: ListChecks },
     { id: 'BRIEFINGS',  label: 'Briefing Requests',  icon: ClipboardList },
+    { id: 'INBOX',      label: 'Support Inbox',      icon: Inbox },
     { id: 'AUDIT_LOG', label: 'Audit Log', icon: ClipboardList },
     { id: 'SETTINGS', label: 'Admin Settings', icon: Settings },
     { id: 'INTEGRITY', label: 'System Integrity Test', icon: FlaskConical },
@@ -1489,6 +1685,7 @@ export const AdminPortalView: React.FC = () => {
       case 'CDFI_MGMT': return <CdfiManagement />;
       case 'WAITLIST':   return <WaitlistManagement />;
       case 'BRIEFINGS':  return <BriefingRequests />;
+      case 'INBOX':      return <SupportInbox />;
       case 'AUDIT_LOG': return <AuditLogPanel />;
       case 'SETTINGS': return <AdminSettings />;
       case 'INTEGRITY': return <AdminIntegrityTest />;

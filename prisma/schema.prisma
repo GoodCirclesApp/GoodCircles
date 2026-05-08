@@ -1700,3 +1700,25 @@ model WaitlistOverflow {
   @@index([role])
   @@index([createdAt])
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Support Inbox (inbound emails via Resend webhook)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model InboundEmail {
+  id          String    @id @default(uuid())
+  resendId    String?   @unique
+  fromAddress String
+  fromName    String?
+  toAddress   String
+  subject     String
+  textBody    String?
+  htmlBody    String?
+  isRead      Boolean   @default(false)
+  isReplied   Boolean   @default(false)
+  repliedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([isRead])
+  @@index([createdAt])
+}
