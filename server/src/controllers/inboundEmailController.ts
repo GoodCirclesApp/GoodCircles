@@ -15,6 +15,8 @@ export async function receiveWebhook(req: Request, res: Response) {
   try {
     // Resend wraps inbound email fields under a `data` key
     const payload = req.body?.data ?? req.body ?? {};
+    console.log('[InboundEmail] payload keys:', Object.keys(payload));
+    console.log('[InboundEmail] text:', payload.text, '| html length:', payload.html?.length ?? 0);
     const { from, to, subject, text, html } = payload;
 
     const { name: fromName, address: fromAddress } = parseFrom(from ?? '');
