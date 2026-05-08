@@ -81,6 +81,11 @@ async function startServer() {
     ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
     : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:3001'];
 
+  // Allow the separately-deployed landing page (Netlify / Vercel etc.)
+  if (process.env.LANDING_URL) {
+    allowedOrigins.push(process.env.LANDING_URL.trim());
+  }
+
   app.use(cors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
