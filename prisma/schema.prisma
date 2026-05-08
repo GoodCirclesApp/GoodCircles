@@ -1706,19 +1706,30 @@ model WaitlistOverflow {
 // ─────────────────────────────────────────────────────────────────────────────
 
 model InboundEmail {
-  id          String    @id @default(uuid())
-  resendId    String?   @unique
+  id          String               @id @default(uuid())
+  resendId    String?              @unique
   fromAddress String
   fromName    String?
   toAddress   String
   subject     String
   textBody    String?
   htmlBody    String?
-  isRead      Boolean   @default(false)
-  isReplied   Boolean   @default(false)
+  isRead      Boolean              @default(false)
+  isReplied   Boolean              @default(false)
   repliedAt   DateTime?
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime             @default(now())
+  replies     InboundEmailReply[]
 
   @@index([isRead])
   @@index([createdAt])
+}
+
+model InboundEmailReply {
+  id      String       @id @default(uuid())
+  emailId String
+  email   InboundEmail @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  body    String
+  sentAt  DateTime     @default(now())
+
+  @@index([emailId])
 }

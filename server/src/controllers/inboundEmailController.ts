@@ -110,7 +110,10 @@ export async function listEmails(req: Request, res: Response) {
 export async function getEmail(req: Request, res: Response) {
   try {
     const id = String(req.params.id);
-    const email = await prisma.inboundEmail.findUnique({ where: { id } });
+    const email = await prisma.inboundEmail.findUnique({
+      where:   { id },
+      include: { replies: { orderBy: { sentAt: 'asc' } } },
+    });
     if (!email) return res.status(404).json({ error: 'Not found.' });
 
     if (!email.isRead) {
@@ -121,6 +124,17 @@ export async function getEmail(req: Request, res: Response) {
   } catch (err) {
     console.error('[InboundEmail] get error:', err);
     res.status(500).json({ error: 'Failed to fetch email.' });
+  }
+}
+
+export async function deleteEmail(req: Request, res: Response) {
+  try {
+    const id = String(req.params.id);
+    await prisma.inboundEmail.delete({ where: { id } });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[InboundEmail] delete error:', err);
+    res.status(500).json({ error: 'Failed to delete email.' });
   }
 }
 
@@ -153,6 +167,10 @@ export async function replyToEmail(req: Request, res: Response) {
     await prisma.inboundEmail.update({
       where: { id },
       data:  { isReplied: true, repliedAt: new Date() },
+    });
+
+    await prisma.inboundEmailReply.create({
+      data: { emailId: id, body: replyBody.trim() },
     });
 
     res.json({ ok: true });

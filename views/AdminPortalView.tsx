@@ -1092,13 +1092,14 @@ const AdminSettings = () => {
 
 const SupportInbox = () => {
   const token = localStorage.getItem('gc_auth_token');
-  const [emails, setEmails]         = useState<any[]>([]);
-  const [selected, setSelected]     = useState<any | null>(null);
-  const [loading, setLoading]       = useState(false);
+  const [emails, setEmails]               = useState<any[]>([]);
+  const [selected, setSelected]           = useState<any | null>(null);
+  const [loading, setLoading]             = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
-  const [replyBody, setReplyBody]   = useState('');
-  const [sending, setSending]       = useState(false);
-  const [sendMsg, setSendMsg]       = useState<{ ok: boolean; text: string } | null>(null);
+  const [replyBody, setReplyBody]         = useState('');
+  const [sending, setSending]             = useState(false);
+  const [sendMsg, setSendMsg]             = useState<{ ok: boolean; text: string } | null>(null);
+  const [deleting, setDeleting]           = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -1137,14 +1138,35 @@ const SupportInbox = () => {
         body:    JSON.stringify({ body: replyBody }),
       });
       if (!res.ok) throw new Error('Send failed');
-      setSendMsg({ ok: true, text: 'Reply sent.' });
+      const newReply = { id: Date.now().toString(), body: replyBody.trim(), sentAt: new Date().toISOString() };
+      setSendMsg({ ok: true, text: 'Reply sent and saved to thread.' });
       setReplyBody('');
-      setSelected((prev: any) => prev ? { ...prev, isReplied: true, repliedAt: new Date().toISOString() } : prev);
+      setSelected((prev: any) => prev ? {
+        ...prev,
+        isReplied: true,
+        repliedAt: new Date().toISOString(),
+        replies: [...(prev.replies ?? []), newReply],
+      } : prev);
       setEmails(prev => prev.map(e => e.id === selected.id ? { ...e, isReplied: true } : e));
     } catch {
       setSendMsg({ ok: false, text: 'Failed to send. Please try again.' });
     } finally {
       setSending(false);
+    }
+  }
+
+  async function deleteThread(emailId: string) {
+    if (!window.confirm('Delete this email thread? This cannot be undone.')) return;
+    setDeleting(emailId);
+    try {
+      await fetch(`/api/inbound/${emailId}`, {
+        method:  'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEmails(prev => prev.filter(e => e.id !== emailId));
+      if (selected?.id === emailId) setSelected(null);
+    } finally {
+      setDeleting(null);
     }
   }
 
@@ -1179,29 +1201,41 @@ const SupportInbox = () => {
             </div>
           ) : (
             emails.map(email => (
-              <button
+              <div
                 key={email.id}
-                onClick={() => open(email)}
-                className={`w-full text-left px-5 py-4 border-b border-slate-50 transition-colors hover:bg-slate-50 ${selected?.id === email.id ? 'bg-emerald-50 border-l-2 border-l-emerald-500' : ''}`}
+                className={`group relative border-b border-slate-50 transition-colors hover:bg-slate-50 ${selected?.id === email.id ? 'bg-emerald-50 border-l-2 border-l-emerald-500' : ''}`}
               >
-                <div className="flex items-start justify-between gap-2 mb-1">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    {!email.isRead && <Circle className="w-2 h-2 text-emerald-500 fill-emerald-500 shrink-0" />}
-                    <span className={`text-xs truncate ${!email.isRead ? 'font-black text-slate-900' : 'font-medium text-slate-600'}`}>
-                      {email.fromName || email.fromAddress}
+                <button
+                  onClick={() => open(email)}
+                  className="w-full text-left px-5 py-4 pr-10"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      {!email.isRead && <Circle className="w-2 h-2 text-emerald-500 fill-emerald-500 shrink-0" />}
+                      <span className={`text-xs truncate ${!email.isRead ? 'font-black text-slate-900' : 'font-medium text-slate-600'}`}>
+                        {email.fromName || email.fromAddress}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-slate-400 shrink-0 whitespace-nowrap">
+                      {new Date(email.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
                   </div>
-                  <span className="text-[10px] text-slate-400 shrink-0 whitespace-nowrap">
-                    {new Date(email.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  </span>
-                </div>
-                <p className={`text-xs truncate mb-1 ${!email.isRead ? 'font-bold text-slate-800' : 'text-slate-600'}`}>{email.subject}</p>
-                {email.isReplied && (
-                  <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
-                    <CornerDownLeft className="w-2.5 h-2.5" /> Replied
-                  </span>
-                )}
-              </button>
+                  <p className={`text-xs truncate mb-1 ${!email.isRead ? 'font-bold text-slate-800' : 'text-slate-600'}`}>{email.subject}</p>
+                  {email.isReplied && (
+                    <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                      <CornerDownLeft className="w-2.5 h-2.5" /> Replied
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => deleteThread(email.id)}
+                  disabled={deleting === email.id}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                  title="Delete thread"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
             ))
           )}
         </div>
@@ -1219,30 +1253,58 @@ const SupportInbox = () => {
         ) : (
           <>
             {/* Header */}
-            <div className="px-8 py-5 border-b border-slate-100">
-              <h3 className="font-black text-lg text-slate-900 mb-2">{selected.subject}</h3>
-              <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-500">
-                <span><strong>From:</strong> {selected.fromName ? `${selected.fromName} <${selected.fromAddress}>` : selected.fromAddress}</span>
-                <span><strong>To:</strong> {selected.toAddress}</span>
-                <span><strong>Received:</strong> {new Date(selected.createdAt).toLocaleString()}</span>
-                {selected.isReplied && selected.repliedAt && (
-                  <span className="text-emerald-600 font-bold"><strong>Replied:</strong> {new Date(selected.repliedAt).toLocaleString()}</span>
-                )}
+            <div className="px-8 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
+              <div>
+                <h3 className="font-black text-lg text-slate-900 mb-2">{selected.subject}</h3>
+                <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-500">
+                  <span><strong>From:</strong> {selected.fromName ? `${selected.fromName} <${selected.fromAddress}>` : selected.fromAddress}</span>
+                  <span><strong>To:</strong> {selected.toAddress}</span>
+                  <span><strong>Received:</strong> {new Date(selected.createdAt).toLocaleString()}</span>
+                </div>
               </div>
+              <button
+                onClick={() => deleteThread(selected.id)}
+                disabled={deleting === selected.id}
+                className="shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"
+                title="Delete thread"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> Delete
+              </button>
             </div>
 
-            {/* Body */}
-            <div className="flex-1 overflow-y-auto px-8 py-6">
-              {selected.htmlBody ? (
-                <iframe
-                  srcDoc={selected.htmlBody}
-                  className="w-full h-full border-0 rounded-xl"
-                  sandbox="allow-same-origin"
-                  title="Email content"
-                />
-              ) : (
-                <pre className="text-sm text-slate-700 whitespace-pre-wrap font-sans leading-relaxed">{selected.textBody || '(empty message)'}</pre>
-              )}
+            {/* Thread — original message + saved replies */}
+            <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+              {/* Inbound message */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                  {selected.fromName || selected.fromAddress} · {new Date(selected.createdAt).toLocaleString()}
+                </p>
+                <div className="bg-slate-50 rounded-2xl rounded-tl-sm p-5">
+                  {selected.htmlBody ? (
+                    <iframe
+                      srcDoc={selected.htmlBody}
+                      className="w-full border-0"
+                      style={{ minHeight: 120 }}
+                      sandbox="allow-same-origin"
+                      title="Email content"
+                    />
+                  ) : (
+                    <pre className="text-sm text-slate-700 whitespace-pre-wrap font-sans leading-relaxed">{selected.textBody || '(empty message)'}</pre>
+                  )}
+                </div>
+              </div>
+
+              {/* Saved replies */}
+              {(selected.replies ?? []).map((reply: any) => (
+                <div key={reply.id} className="flex flex-col items-end">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                    You (support@goodcircles.org) · {new Date(reply.sentAt).toLocaleString()}
+                  </p>
+                  <div className="bg-emerald-600 text-white rounded-2xl rounded-tr-sm px-5 py-4 max-w-[85%]">
+                    <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed">{reply.body}</pre>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Reply composer */}
@@ -1269,7 +1331,7 @@ const SupportInbox = () => {
                   {sending ? 'Sending…' : 'Send'}
                 </button>
               </div>
-              <p className="text-[10px] text-slate-400 mt-2">Sent from support@goodcircles.org · The recipient will see your reply in their email inbox.</p>
+              <p className="text-[10px] text-slate-400 mt-2">Sent from support@goodcircles.org · Replies are saved to this thread.</p>
             </div>
           </>
         )}
