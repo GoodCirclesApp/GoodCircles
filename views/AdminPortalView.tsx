@@ -1101,6 +1101,13 @@ const SupportInbox = () => {
   const [sendMsg, setSendMsg]             = useState<{ ok: boolean; text: string } | null>(null);
   const [deleting, setDeleting]           = useState<string | null>(null);
   const [clearingRead, setClearingRead]   = useState(false);
+  const [composing, setComposing]         = useState(false);
+  const [composeTo, setComposeTo]         = useState('');
+  const [composeToName, setComposeToName] = useState('');
+  const [composeSubject, setComposeSubject] = useState('');
+  const [composeBody, setComposeBody]     = useState('');
+  const [composeSending, setComposeSending] = useState(false);
+  const [composeMsg, setComposeMsg]       = useState<{ ok: boolean; text: string } | null>(null);
 
   async function load() {
     setLoading(true);
@@ -1188,6 +1195,33 @@ const SupportInbox = () => {
     }
   }
 
+  async function sendCompose() {
+    if (!composeTo.trim() || !composeSubject.trim() || !composeBody.trim()) return;
+    setComposeSending(true);
+    setComposeMsg(null);
+    try {
+      const html = composeBody.trim().split('\n\n')
+        .map(p => `<p style="margin:0 0 1em 0">${p.replace(/\n/g, '<br/>')}</p>`).join('');
+      const res = await fetch('/api/email/send', {
+        method:  'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          to:      composeTo.trim(),
+          toName:  composeToName.trim() || undefined,
+          subject: composeSubject.trim(),
+          html,
+        }),
+      });
+      if (!res.ok) throw new Error('Send failed');
+      setComposeMsg({ ok: true, text: `Email sent to ${composeTo.trim()}.` });
+      setComposeTo(''); setComposeToName(''); setComposeSubject(''); setComposeBody('');
+    } catch {
+      setComposeMsg({ ok: false, text: 'Failed to send. Please try again.' });
+    } finally {
+      setComposeSending(false);
+    }
+  }
+
   useEffect(() => { load(); }, []);
 
   const unreadCount = emails.filter(e => !e.isRead).length;
@@ -1215,6 +1249,13 @@ const SupportInbox = () => {
                 {clearingRead ? 'Clearing…' : 'Clear read'}
               </button>
             )}
+            <button
+              onClick={() => { setComposing(true); setSelected(null); setComposeMsg(null); }}
+              className="flex items-center gap-1 px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+              title="Compose new email"
+            >
+              <Edit3 className="w-3 h-3" /> Compose
+            </button>
             <button onClick={load} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
               <RefreshCw className={`w-3.5 h-3.5 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -1276,6 +1317,92 @@ const SupportInbox = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {detailLoading ? (
           <div className="flex items-center justify-center flex-1 text-slate-400 text-sm">Loading…</div>
+        ) : composing ? (
+          <div className="flex flex-col h-full">
+            {/* Compose header */}
+            <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100">
+              <h3 className="font-black text-lg text-slate-900">New Message</h3>
+              <button
+                onClick={() => { setComposing(false); setComposeMsg(null); }}
+                className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
+                title="Discard"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Compose fields */}
+            <div className="flex-1 overflow-y-auto px-8 py-6 flex flex-col gap-4">
+              {composeMsg && (
+                <div className={`px-4 py-3 rounded-xl text-xs font-bold ${composeMsg.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                  {composeMsg.text}
+                </div>
+              )}
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1 block">To *</label>
+                  <input
+                    type="email"
+                    placeholder="recipient@example.com"
+                    value={composeTo}
+                    onChange={e => setComposeTo(e.target.value)}
+                    className="w-full text-sm border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 bg-white"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1 block">Recipient name</label>
+                  <input
+                    type="text"
+                    placeholder="Jane Smith (optional)"
+                    value={composeToName}
+                    onChange={e => setComposeToName(e.target.value)}
+                    className="w-full text-sm border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 bg-white"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1 block">Subject *</label>
+                <input
+                  type="text"
+                  placeholder="Subject"
+                  value={composeSubject}
+                  onChange={e => setComposeSubject(e.target.value)}
+                  className="w-full text-sm border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 bg-white"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1 block">Message *</label>
+                <textarea
+                  rows={12}
+                  placeholder="Write your message here…&#10;&#10;Separate paragraphs with a blank line."
+                  value={composeBody}
+                  onChange={e => setComposeBody(e.target.value)}
+                  className="w-full text-sm border border-slate-200 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 bg-white"
+                />
+              </div>
+            </div>
+
+            {/* Compose footer */}
+            <div className="px-8 py-4 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between gap-4">
+              <p className="text-[10px] text-slate-400">Sent from support@goodcircles.org</p>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => { setComposing(false); setComposeMsg(null); setComposeTo(''); setComposeToName(''); setComposeSubject(''); setComposeBody(''); }}
+                  className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 transition-colors"
+                >
+                  Discard
+                </button>
+                <button
+                  onClick={sendCompose}
+                  disabled={composeSending || !composeTo.trim() || !composeSubject.trim() || !composeBody.trim()}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                >
+                  {composeSending ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                  {composeSending ? 'Sending…' : 'Send'}
+                </button>
+              </div>
+            </div>
+          </div>
         ) : !selected ? (
           <div className="flex flex-col items-center justify-center flex-1 gap-3 text-slate-300">
             <MailOpen className="w-12 h-12" />
