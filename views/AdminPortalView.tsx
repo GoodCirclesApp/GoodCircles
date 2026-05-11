@@ -49,6 +49,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { adminService } from '../services/adminService';
+import { apiClient } from '../services/apiClient';
 import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
 import { MunicipalDemoSimulator } from '../components/MunicipalDemoSimulator';
 import { MockDataManager } from '../components/MockDataManager';
@@ -1091,7 +1092,6 @@ const AdminSettings = () => {
 // ── Support Inbox ─────────────────────────────────────────────────────────────
 
 const SupportInbox = () => {
-  const token = localStorage.getItem('gc_auth_token');
   const [emails, setEmails]               = useState<any[]>([]);
   const [selected, setSelected]           = useState<any | null>(null);
   const [loading, setLoading]             = useState(false);
@@ -1112,8 +1112,7 @@ const SupportInbox = () => {
   async function load() {
     setLoading(true);
     try {
-      const res  = await fetch('/api/inbound', { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
+      const data = await apiClient.get<{ emails: any[] }>('/inbound');
       setEmails(data.emails ?? []);
     } finally {
       setLoading(false);
@@ -1126,8 +1125,7 @@ const SupportInbox = () => {
     setSendMsg(null);
     setDetailLoading(true);
     try {
-      const res  = await fetch(`/api/inbound/${email.id}`, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
+      const data = await apiClient.get<{ email: any }>(`/inbound/${email.id}`);
       setSelected(data.email);
       setEmails(prev => prev.map(e => e.id === email.id ? { ...e, isRead: true } : e));
     } finally {
@@ -1140,12 +1138,7 @@ const SupportInbox = () => {
     setSending(true);
     setSendMsg(null);
     try {
-      const res = await fetch(`/api/inbound/${selected.id}/reply`, {
-        method:  'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ body: replyBody }),
-      });
-      if (!res.ok) throw new Error('Send failed');
+      await apiClient.post(`/inbound/${selected.id}/reply`, { body: replyBody });
       const newReply = { id: Date.now().toString(), body: replyBody.trim(), sentAt: new Date().toISOString() };
       setSendMsg({ ok: true, text: 'Reply sent and saved to thread.' });
       setReplyBody('');
@@ -1169,10 +1162,7 @@ const SupportInbox = () => {
     if (!window.confirm(`Delete all ${readCount} read email${readCount !== 1 ? 's' : ''}? Unread emails will not be touched.`)) return;
     setClearingRead(true);
     try {
-      await fetch('/api/inbound/read', {
-        method:  'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiClient.delete('/inbound/read');
       setEmails(prev => prev.filter(e => !e.isRead));
       if (selected && selected.isRead) setSelected(null);
     } finally {
@@ -1184,10 +1174,7 @@ const SupportInbox = () => {
     if (!window.confirm('Delete this email thread? This cannot be undone.')) return;
     setDeleting(emailId);
     try {
-      await fetch(`/api/inbound/${emailId}`, {
-        method:  'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiClient.delete(`/inbound/${emailId}`);
       setEmails(prev => prev.filter(e => e.id !== emailId));
       if (selected?.id === emailId) setSelected(null);
     } finally {
@@ -1202,21 +1189,16 @@ const SupportInbox = () => {
     try {
       const html = composeBody.trim().split('\n\n')
         .map(p => `<p style="margin:0 0 1em 0">${p.replace(/\n/g, '<br/>')}</p>`).join('');
-      const res = await fetch('/api/email/send', {
-        method:  'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
-          to:      composeTo.trim(),
-          toName:  composeToName.trim() || undefined,
-          subject: composeSubject.trim(),
-          html,
-        }),
+      await apiClient.post('/email/send', {
+        to:      composeTo.trim(),
+        toName:  composeToName.trim() || undefined,
+        subject: composeSubject.trim(),
+        html,
       });
-      if (!res.ok) throw new Error('Send failed');
       setComposeMsg({ ok: true, text: `Email sent to ${composeTo.trim()}.` });
       setComposeTo(''); setComposeToName(''); setComposeSubject(''); setComposeBody('');
-    } catch {
-      setComposeMsg({ ok: false, text: 'Failed to send. Please try again.' });
+    } catch (err: any) {
+      setComposeMsg({ ok: false, text: err.message?.includes('expired') ? 'Session expired — please log in again.' : 'Failed to send. Please try again.' });
     } finally {
       setComposeSending(false);
     }
