@@ -27,6 +27,8 @@ const betaRegisterSchema = z.object({
   cdfiOrgName: z.string().optional(),
   cdfiCertificationNumber: z.string().optional(),
   lendingRegions: z.array(z.string()).optional(),
+  // Neighbor fields
+  electedNonprofitId: z.string().optional(),
 });
 
 export const betaRegister = async (req: Request, res: Response) => {
@@ -112,15 +114,19 @@ export const betaRegister = async (req: Request, res: Response) => {
         });
       }
 
-      // 5. Elect a default nonprofit (first verified one)
+      // 5. Elect nonprofit — use user's choice if provided, otherwise pick first verified
       if (data.role === 'NEIGHBOR') {
-        const defaultNonprofit = await tx.nonprofit.findFirst({
-          where: { isVerified: true },
-        });
-        if (defaultNonprofit) {
+        let nonprofitId = data.electedNonprofitId;
+        if (!nonprofitId) {
+          const defaultNonprofit = await tx.nonprofit.findFirst({
+            where: { isVerified: true },
+          });
+          nonprofitId = defaultNonprofit?.id;
+        }
+        if (nonprofitId) {
           await tx.user.update({
             where: { id: user.id },
-            data: { electedNonprofitId: defaultNonprofit.id },
+            data: { electedNonprofitId: nonprofitId },
           });
         }
       }

@@ -422,7 +422,7 @@ const App: React.FC = () => {
             {store.activeView === 'NONPROFIT_SELECTION' && (
               <NonprofitSelectionView
                 currentNonprofitId={store.currentUser?.electedNonprofitId}
-                onSelect={(id) => store.updateUser({ ...store.currentUser!, electedNonprofitId: id })}
+                onSelect={(id) => store.patchUser({ electedNonprofitId: id })}
               />
             )}
             {store.activeView === 'WALLET' && (

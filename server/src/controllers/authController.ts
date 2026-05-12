@@ -28,6 +28,8 @@ const registerSchema = z.object({
   lendingRegions: z.array(z.string()).optional(),
   // Waitlist invite code — bypasses launch gates and redeems perks
   inviteCode: z.string().optional(),
+  // Neighbor specific
+  electedNonprofitId: z.string().optional(),
 });
 
 export const register = async (req: Request, res: Response) => {
@@ -72,6 +74,9 @@ export const register = async (req: Request, res: Response) => {
           role: data.role,
           firstName: data.firstName,
           lastName: data.lastName,
+          ...(data.role === 'NEIGHBOR' && data.electedNonprofitId
+            ? { electedNonprofitId: data.electedNonprofitId }
+            : {}),
         },
       });
 
@@ -248,12 +253,12 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
 };
 
 const updateProfileSchema = z.object({
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  email: z.string().email().optional(),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  discountMode: z.enum(['PRICE_REDUCTION', 'PLATFORM_CREDITS']).optional(),
+  firstName: z.string().nullish(),
+  lastName: z.string().nullish(),
+  email: z.string().email().nullish(),
+  phone: z.string().nullish(),
+  address: z.string().nullish(),
+  discountMode: z.enum(['PRICE_REDUCTION', 'PLATFORM_CREDITS']).nullish(),
 });
 
 export const updateProfile = async (req: AuthRequest, res: Response) => {

@@ -43,14 +43,8 @@ export const NonprofitSelector: React.FC<NonprofitSelectorProps> = ({
     }
   };
 
-  const handleSelect = async (nonprofitId: string) => {
-    try {
-      await neighborService.setElectedNonprofit(nonprofitId);
-      onSelect(nonprofitId);
-    } catch (err) {
-      setError('Could not select nonprofit. Please try again.');
-      console.error(err);
-    }
+  const handleSelect = (nonprofitId: string) => {
+    onSelect(nonprofitId);
   };
 
 

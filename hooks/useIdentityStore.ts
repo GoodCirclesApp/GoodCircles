@@ -84,6 +84,15 @@ export function useIdentityStore() {
     }
   };
 
+  const patchUser = (partial: Partial<User>) => {
+    setCurrentUser(prev => {
+      if (!prev) return prev;
+      const patched = { ...prev, ...partial };
+      localStorage.setItem('gc_session_user', JSON.stringify(patched));
+      return patched;
+    });
+  };
+
   const effectiveRole = impersonationRole || currentUser?.role;
 
   return {
@@ -94,6 +103,7 @@ export function useIdentityStore() {
     login,
     logout,
     updateUser,
+    patchUser,
     isLoading
   };
 }

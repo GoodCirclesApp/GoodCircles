@@ -30,6 +30,8 @@ export const authService = {
     cdfiOrgName?: string;
     cdfiCertificationNumber?: string;
     lendingRegions?: string[];
+    // Neighbor fields
+    electedNonprofitId?: string;
   }): Promise<AuthResponse> {
     const nameParts = (userData.name || '').trim().split(/\s+/);
     const firstName = nameParts[0] || 'Beta';
@@ -50,6 +52,7 @@ export const authService = {
       cdfiOrgName: userData.cdfiOrgName,
       cdfiCertificationNumber: userData.cdfiCertificationNumber,
       lendingRegions: userData.lendingRegions,
+      electedNonprofitId: userData.electedNonprofitId,
     });
   },
 

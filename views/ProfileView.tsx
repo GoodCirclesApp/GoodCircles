@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import NonprofitSelector from '../components/NonprofitSelector';
 import { User } from '../types';
+import { neighborService } from '../services/neighborService';
 
 interface ProfileViewProps {
   user: User;
@@ -52,9 +53,7 @@ export function ProfileView({ user, onUpdate }: ProfileViewProps) {
 
     try {
       setIsLoading(true);
-      await onUpdate({
-        electedNonprofitId: nonprofitId,
-      });
+      await neighborService.setElectedNonprofit(nonprofitId);
       setSuccessMessage('Nonprofit selection updated successfully!');
     } catch (error) {
       setErrorMessage(
