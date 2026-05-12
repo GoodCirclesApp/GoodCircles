@@ -499,7 +499,7 @@ export const editUser = async (req: AuthRequest, res: Response) => {
     firstName: z.string().optional(),
     lastName: z.string().optional(),
     email: z.string().email().optional(),
-    role: z.enum(['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'PLATFORM', 'CDFI']).optional(),
+    role: z.enum(['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'PLATFORM', 'PLATFORM_VIEWER', 'CDFI']).optional(),
     isActive: z.boolean().optional(),
   });
   try {
