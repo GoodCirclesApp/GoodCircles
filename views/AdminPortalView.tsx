@@ -799,7 +799,7 @@ const UserDetailModal = ({ user, onClose, onRefresh, isViewer }: { user: any; on
               <div>
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Role</label>
                 <select className={inputCls + ' mt-1'} value={editData.role} onChange={e => !isViewer && setEditData(p => ({ ...p, role: e.target.value }))} disabled={isViewer}>
-                  {['CONSUMER', 'MERCHANT', 'NONPROFIT', 'CDFI', 'ADMIN'].map(r => <option key={r}>{r}</option>)}
+                  {['NEIGHBOR', 'MERCHANT', 'NONPROFIT', 'CDFI', 'PLATFORM', 'PLATFORM_VIEWER'].map(r => <option key={r}>{r}</option>)}
                 </select>
               </div>
               {!isViewer && <button onClick={saveEdit} disabled={saving} className="w-full py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50">{saving ? 'Saving…' : 'Save Changes'}</button>}
