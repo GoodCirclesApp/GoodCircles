@@ -170,14 +170,16 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 
 ## 9. PLUGIN INVENTORY
 
-| Plugin | Primary use |
-|--------|-------------|
-| marketing | Campaign plans, content drafts, brand reviews, SEO audits, email sequences, performance reports, competitive briefs |
-| searchfit-seo | Keyword clustering, schema markup, on-page/technical SEO, AI search visibility |
-| postiz | Multi-platform social scheduling (28+ channels) |
-| adobe-for-creativity | Visual asset production, social variants, video clips |
-| brightdata-plugin | Competitive intelligence, web scraping, market research |
-| engineering | Code review, architecture, debugging, deploy checklists, incident response |
+> ⚠️ Note: Plugin availability is environment-dependent. The plugins below are specified in the marketing directive. ToolSearch returned no matches for these names — confirm which are active before invoking. Fall back to WebSearch + WebFetch + sub-agents for any plugin that's unavailable.
+
+| Plugin | Primary use | Status |
+|--------|-------------|--------|
+| marketing | Campaign plans, content drafts, brand reviews, SEO audits, email sequences, performance reports, competitive briefs | Verify |
+| searchfit-seo | Keyword clustering, schema markup, on-page/technical SEO, AI search visibility | Verify |
+| postiz | Multi-platform social scheduling (28+ channels) | Verify |
+| adobe-for-creativity | Visual asset production, social variants, video clips | Verify |
+| brightdata-plugin | Competitive intelligence, web scraping, market research | Verify |
+| engineering | Code review, architecture, debugging, deploy checklists, incident response | Verify |
 | figma | Design-to-code, design systems |
 | data | SQL, dashboards, statistical analysis, data validation |
 | product-management | Feature specs, roadmaps, metrics review, research synthesis, sprint planning |
@@ -189,20 +191,26 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 
 ## 10. STANDING REFERENCES
 
-| Asset | Location |
-|-------|----------|
-| CapCut production package (5 videos) | C:\Users\timh2\Downloads\goodcircles_capcut_package\ |
-| Context folder (business plan, exec brief, vendor lists, marketing plan, tax analysis) | ../Context/ (relative to repo root) |
-| Slash commands | .claude/commands/ |
-| Decisions log | .claude/decisions_log.md |
-| Memory files | C:\Users\timh2\.claude\projects\C--Windows-System32\memory\ |
-| Landing page | landing/ (Netlify deployed) |
-| Server | server/ (Railway deployed — goodcircles-production.up.railway.app) |
-| Admin portal | views/AdminPortalView.tsx |
-| Waitlist controller | server/src/controllers/waitlistController.ts |
-| Inbound email controller | server/src/controllers/inboundEmailController.ts |
-| Email service | server/src/services/emailService.ts |
-| Waitlist email service | server/src/services/waitlistEmailService.ts |
+| Asset | Location | Status |
+|-------|----------|--------|
+| **Active priorities** | .claude/active_priorities.md | Live — update when priorities shift |
+| **Done archive** | .claude/done.md | Archive completed work here with date + outcome |
+| **Decisions log** | .claude/decisions_log.md | Append on every meaningful decision |
+| **Slash commands (16)** | .claude/commands/ | All marketing ops workflows |
+| **CapCut production package (5 videos)** | C:\Users\timh2\Downloads\goodcircles_capcut_package\ | Ready — needs editing in CapCut |
+| **Facebook 9-slide carousel prompt** | Conversation context (2026-05-10 session) | Ready — send to Claude Cowork for PNG output |
+| **Landing page — Hero copy** | landing/src/sections/Hero.tsx | Production-ready, live |
+| **Landing page — Role Mirror** | landing/src/sections/RoleMirror.tsx | Production-ready, live |
+| **Landing page — Impact Demo** | landing/src/sections/ImpactDemo.tsx | Production-ready, live |
+| **Landing page — Story pages (5 roles)** | landing/src/sections/stories/ | Production-ready, live, forms operational |
+| **Landing page — FAQ** | landing/src/sections/FAQ.tsx | Production-ready, live |
+| **Landing page — Confirmation + share copy** | landing/src/sections/Confirmation.tsx | Production-ready, live |
+| **Transactional email templates (6)** | server/src/services/emailService.ts | Production-ready, Resend-integrated |
+| **Waitlist email templates** | server/src/services/waitlistEmailService.ts | Production-ready, Resend-integrated |
+| **Context folder** (business plan, exec brief, vendor lists, marketing plan, tax analysis) | ../Context/ (relative to repo root) | Reference |
+| **Memory files** | C:\Users\timh2\.claude\projects\C--Windows-System32\memory\ | Persistent across sessions |
+| **Admin portal** | views/AdminPortalView.tsx | Support inbox + outbound compose operational |
+| **Waitlist controller** | server/src/controllers/waitlistController.ts | All 5 roles operational |
 
 ---
 
