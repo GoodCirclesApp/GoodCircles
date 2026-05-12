@@ -1,5 +1,5 @@
 
-export type UserRole = 'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT' | 'PLATFORM' | 'CDFI';
+export type UserRole = 'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT' | 'PLATFORM' | 'PLATFORM_VIEWER' | 'CDFI';
 export type AccountStatus = 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'REJECTED';
 export type DisputeStatus = 'NONE' | 'OPEN' | 'RESOLVED' | 'REJECTED';
 export type ProductType = 'PRODUCT' | 'SERVICE';

@@ -388,7 +388,7 @@ const App: React.FC = () => {
                 </>
               )}
 
-              {store.effectiveRole === 'PLATFORM' && (
+              {(store.effectiveRole === 'PLATFORM' || store.effectiveRole === 'PLATFORM_VIEWER') && (
                 <>
                   <div className="mt-3 mb-1 px-3 text-[10px] font-black text-[#7851A9] uppercase tracking-widest border-t border-slate-100 pt-3">Admin</div>
                   <MenuBtn active={store.activeView === 'ADMIN_NETTING'} onClick={() => { store.setActiveView('ADMIN_NETTING'); setIsMenuOpen(false); }} label="Netting Admin" />
@@ -528,7 +528,7 @@ const App: React.FC = () => {
                   </div>
                 )}
 
-                {store.effectiveRole === 'PLATFORM' && (
+                {(store.effectiveRole === 'PLATFORM' || store.effectiveRole === 'PLATFORM_VIEWER') && (
                   <div className="space-y-16">
                     <div className="bg-[#A20021]/5 border border-[#A20021]/20 p-8 rounded-[3rem] flex flex-col md:flex-row items-center justify-between gap-6">
                       <div>

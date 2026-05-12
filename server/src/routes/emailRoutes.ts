@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { sendEmail } from '../services/emailService';
-import { authenticateToken } from '../middleware/authMiddleware';
+import { authenticateToken, blockViewOnly } from '../middleware/authMiddleware';
 
 const router = Router();
 router.use(authenticateToken);
 
 // POST /api/email/send
 // Body: { to: string, toName: string, subject: string, html: string }
-router.post('/send', async (req, res) => {
+router.post('/send', blockViewOnly, async (req, res) => {
   const { to, toName, subject, html } = req.body;
 
   if (!to || !subject || !html) {

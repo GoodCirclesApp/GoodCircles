@@ -1,10 +1,19 @@
 import { Router } from 'express';
 import * as adminController from '../controllers/adminController';
 import * as mockDataController from '../controllers/mockDataController';
-import { authenticateToken } from '../middleware/authMiddleware';
+import { authenticateToken, blockViewOnly, AuthRequest } from '../middleware/authMiddleware';
+import { Response, NextFunction } from 'express';
 
 const router = Router();
 router.use(authenticateToken);
+
+// Block PLATFORM_VIEWER on all state-changing requests
+router.use((req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.method !== 'GET' && req.user?.role === 'PLATFORM_VIEWER') {
+    return res.status(403).json({ error: 'View-only account. This action is not permitted.' });
+  }
+  next();
+});
 
 // Stats & overview
 router.get('/stats', adminController.getStats);

@@ -170,22 +170,30 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 
 ## 9. PLUGIN INVENTORY
 
-> ⚠️ Note: Plugin availability is environment-dependent. The plugins below are specified in the marketing directive. ToolSearch returned no matches for these names — confirm which are active before invoking. Fall back to WebSearch + WebFetch + sub-agents for any plugin that's unavailable.
+> **Confirmed 2026-05-11:** The 10 marketing plugins below are NOT installed in Claude Code terminal. They are Cowork-specific. For tasks requiring those plugins, use Claude.ai Cowork. Active MCP servers in terminal are Gmail, Google Calendar, and Google Drive only.
 
-| Plugin | Primary use | Status |
-|--------|-------------|--------|
-| marketing | Campaign plans, content drafts, brand reviews, SEO audits, email sequences, performance reports, competitive briefs | Verify |
-| searchfit-seo | Keyword clustering, schema markup, on-page/technical SEO, AI search visibility | Verify |
-| postiz | Multi-platform social scheduling (28+ channels) | Verify |
-| adobe-for-creativity | Visual asset production, social variants, video clips | Verify |
-| brightdata-plugin | Competitive intelligence, web scraping, market research | Verify |
-| engineering | Code review, architecture, debugging, deploy checklists, incident response | Verify |
+### Active in Claude Code terminal (MCP servers)
+| Tool | Use |
+|------|-----|
+| Gmail (`mcp__claude_ai_Gmail__*`) | Send/read email from familyfirstcommunications@gmail.com |
+| Google Calendar (`mcp__claude_ai_Google_Calendar__*`) | Schedule, reminders, content calendar blocking |
+| Google Drive (`mcp__claude_ai_Google_Drive__*`) | Access/save assets to Drive |
+
+### Cowork-only (not available in terminal)
+| Plugin | Primary use |
+|--------|-------------|
+| marketing | Campaign plans, content drafts, brand reviews, SEO audits, email sequences, performance reports, competitive briefs |
+| searchfit-seo | Keyword clustering, schema markup, on-page/technical SEO, AI search visibility |
+| postiz | Multi-platform social scheduling (28+ channels) |
+| adobe-for-creativity | Visual asset production, social variants, video clips |
+| brightdata-plugin | Competitive intelligence, web scraping, market research |
+| engineering | Code review, architecture, debugging, deploy checklists, incident response |
 | figma | Design-to-code, design systems |
 | data | SQL, dashboards, statistical analysis, data validation |
 | product-management | Feature specs, roadmaps, metrics review, research synthesis, sprint planning |
 | customer-support | Ticket triage, response drafts, KB articles, escalation packaging |
 
-**Claude-native tools in active use:** WebSearch, WebFetch, Sub-agents, Skills, Slash commands, Scheduled tasks, File system read/write
+**Claude-native fallback (always available in terminal):** WebSearch, WebFetch, Sub-agents, Skills, Slash commands, Scheduled tasks, File system read/write
 
 ---
 
@@ -307,6 +315,7 @@ Password for all: `BetaTest2026!`
 | Email | Role |
 |---|---|
 | admin@goodcircles.org | Platform Admin |
+| viewer@goodcircles.org | Platform Viewer (read-only) |
 | alice@beta.test | Consumer |
 | bob@beta.test | Consumer |
 | marco@theharvesttable.com | Merchant |

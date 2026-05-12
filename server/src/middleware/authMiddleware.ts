@@ -38,3 +38,10 @@ export const authorizeRole = (roles: string[]) => {
     next();
   };
 };
+
+export const blockViewOnly = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.user?.role === 'PLATFORM_VIEWER') {
+    return res.status(403).json({ error: 'View-only account. This action is not permitted.' });
+  }
+  next();
+};

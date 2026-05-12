@@ -68,7 +68,7 @@ const DEMO_STATS = {
   internalBankingAdoption: 0.68,
 };
 
-const SystemDashboard = () => {
+const SystemDashboard = ({ isViewer }: { isViewer?: boolean }) => {
   const [stats, setStats] = useState<any>(null);
   const [seedResult, setSeedResult] = useState<any>(null);
   const [seeding, setSeeding] = useState(false);
@@ -103,22 +103,24 @@ const SystemDashboard = () => {
         <StatCard title="Nonprofit Funding" value={`$${activeStats.totalNonprofitFunding.toLocaleString()}`} icon={<Heart className="w-5 h-5" />} trend="+15%" />
         <StatCard title="Active Users" value={Object.values(activeStats.activeUsersByRole).reduce((a: any, b: any) => a + b, 0).toString()} icon={<Users className="w-5 h-5" />} trend="+5%" />
       </div>
-      <div className="bg-white p-6 rounded-2xl border border-amber-100 flex items-center justify-between gap-6">
-        <div>
-          <p className="text-sm font-black uppercase tracking-tight">Seed Nonprofits</p>
-          <p className="text-xs text-slate-400 font-medium mt-0.5">Populate the database with 5 verified nonprofits for testing.</p>
-          {seedResult && (
-            <div className="mt-2 text-xs text-emerald-700 font-bold">{seedResult.message} — {seedResult.results?.map((r: any) => `${r.orgName}: ${r.status}`).join(' · ')}</div>
-          )}
+      {!isViewer && (
+        <div className="bg-white p-6 rounded-2xl border border-amber-100 flex items-center justify-between gap-6">
+          <div>
+            <p className="text-sm font-black uppercase tracking-tight">Seed Nonprofits</p>
+            <p className="text-xs text-slate-400 font-medium mt-0.5">Populate the database with 5 verified nonprofits for testing.</p>
+            {seedResult && (
+              <div className="mt-2 text-xs text-emerald-700 font-bold">{seedResult.message} — {seedResult.results?.map((r: any) => `${r.orgName}: ${r.status}`).join(' · ')}</div>
+            )}
+          </div>
+          <button
+            onClick={handleSeedNonprofits}
+            disabled={seeding}
+            className="shrink-0 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-colors disabled:opacity-50"
+          >
+            {seeding ? 'Seeding...' : 'Run Seed'}
+          </button>
         </div>
-        <button
-          onClick={handleSeedNonprofits}
-          disabled={seeding}
-          className="shrink-0 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-colors disabled:opacity-50"
-        >
-          {seeding ? 'Seeding...' : 'Run Seed'}
-        </button>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white p-6 rounded-2xl border border-slate-100">
@@ -202,7 +204,7 @@ const DEMO_TRANSACTIONS = [
   { id: 'demo-tx-005', merchant: { businessName: 'Northside Hardware' }, grossAmount: 209.00, createdAt: new Date(Date.now() - 22 * 60 * 60 * 1000).toISOString() },
 ];
 
-const TransactionMonitoring = () => {
+const TransactionMonitoring = ({ isViewer }: { isViewer?: boolean }) => {
   const [transactions, setTransactions] = useState<any[]>([]);
   useEffect(() => { adminService.getTransactions().then(setTransactions); }, []);
   const isDemo = transactions.length === 0;
@@ -218,7 +220,7 @@ const TransactionMonitoring = () => {
       <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-slate-50"><tr><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Transaction</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Amount</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Date</th><th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th></tr></thead>
-          <tbody className="divide-y divide-slate-100">{activeTxs.map(tx => (<tr key={tx.id} className="hover:bg-slate-50"><td className="px-6 py-4"><div className="text-sm font-bold">{tx.merchant?.businessName || 'Merchant'}</div><div className="text-xs text-slate-400">ID: {tx.id.slice(0, 8)}...</div></td><td className="px-6 py-4 font-bold text-sm">${Number(tx.grossAmount).toFixed(2)}</td><td className="px-6 py-4"><span className="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">COMPLETED</span></td><td className="px-6 py-4 text-sm text-slate-500">{new Date(tx.createdAt).toLocaleString()}</td><td className="px-6 py-4 text-right">{!isDemo && <button className="text-xs font-bold text-rose-600">REFUND</button>}</td></tr>))}</tbody>
+          <tbody className="divide-y divide-slate-100">{activeTxs.map(tx => (<tr key={tx.id} className="hover:bg-slate-50"><td className="px-6 py-4"><div className="text-sm font-bold">{tx.merchant?.businessName || 'Merchant'}</div><div className="text-xs text-slate-400">ID: {tx.id.slice(0, 8)}...</div></td><td className="px-6 py-4 font-bold text-sm">${Number(tx.grossAmount).toFixed(2)}</td><td className="px-6 py-4"><span className="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">COMPLETED</span></td><td className="px-6 py-4 text-sm text-slate-500">{new Date(tx.createdAt).toLocaleString()}</td><td className="px-6 py-4 text-right">{!isDemo && !isViewer && <button className="text-xs font-bold text-rose-600">REFUND</button>}</td></tr>))}</tbody>
         </table>
       </div>
     </div>
@@ -471,7 +473,7 @@ const SystemHealth = () => {
   );
 };
 
-const PriceSentinelReview = () => {
+const PriceSentinelReview = ({ isViewer }: { isViewer?: boolean }) => {
   const [flags, setFlags] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState<string | null>(null);
@@ -551,22 +553,26 @@ const PriceSentinelReview = () => {
                   <td className="px-6 py-4 text-sm font-bold text-slate-500">${Number(flag.suggestedMax ?? 0).toFixed(2)}</td>
                   <td className="px-6 py-4 text-xs text-slate-400">{new Date(flag.createdAt).toLocaleDateString()}</td>
                   <td className="px-6 py-4 text-right">
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        onClick={() => handle(flag.id, true)}
-                        disabled={acting === flag.id}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold hover:bg-emerald-100 transition-colors disabled:opacity-50"
-                      >
-                        <ThumbsUp className="w-3 h-3" /> Approve
-                      </button>
-                      <button
-                        onClick={() => handle(flag.id, false)}
-                        disabled={acting === flag.id}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100 transition-colors disabled:opacity-50"
-                      >
-                        <ThumbsDown className="w-3 h-3" /> Reject
-                      </button>
-                    </div>
+                    {isViewer ? (
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">View Only</span>
+                    ) : (
+                      <div className="flex gap-2 justify-end">
+                        <button
+                          onClick={() => handle(flag.id, true)}
+                          disabled={acting === flag.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold hover:bg-emerald-100 transition-colors disabled:opacity-50"
+                        >
+                          <ThumbsUp className="w-3 h-3" /> Approve
+                        </button>
+                        <button
+                          onClick={() => handle(flag.id, false)}
+                          disabled={acting === flag.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100 transition-colors disabled:opacity-50"
+                        >
+                          <ThumbsDown className="w-3 h-3" /> Reject
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -587,7 +593,7 @@ const STATUS_STYLES: Record<string, string> = {
   inactive:  'bg-slate-100 text-slate-500',
 };
 
-const CdfiManagement = () => {
+const CdfiManagement = ({ isViewer }: { isViewer?: boolean }) => {
   const [cdfis, setCdfis] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState<string | null>(null);
@@ -676,26 +682,30 @@ const CdfiManagement = () => {
                     {new Date(cdfi.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      {cdfi.partnershipStatus !== 'active' && (
-                        <button
-                          onClick={() => activate(cdfi.id)}
-                          disabled={working === cdfi.id}
-                          className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all disabled:opacity-40"
-                        >
-                          {working === cdfi.id ? '…' : 'Activate'}
-                        </button>
-                      )}
-                      {cdfi.partnershipStatus === 'active' && (
-                        <button
-                          onClick={() => deactivate(cdfi.id)}
-                          disabled={working === cdfi.id}
-                          className="px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-40"
-                        >
-                          {working === cdfi.id ? '…' : 'Suspend'}
-                        </button>
-                      )}
-                    </div>
+                    {isViewer ? (
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">—</span>
+                    ) : (
+                      <div className="flex gap-2">
+                        {cdfi.partnershipStatus !== 'active' && (
+                          <button
+                            onClick={() => activate(cdfi.id)}
+                            disabled={working === cdfi.id}
+                            className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all disabled:opacity-40"
+                          >
+                            {working === cdfi.id ? '…' : 'Activate'}
+                          </button>
+                        )}
+                        {cdfi.partnershipStatus === 'active' && (
+                          <button
+                            onClick={() => deactivate(cdfi.id)}
+                            disabled={working === cdfi.id}
+                            className="px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-40"
+                          >
+                            {working === cdfi.id ? '…' : 'Suspend'}
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -713,7 +723,7 @@ const CdfiManagement = () => {
 
 // ── User Detail Modal ────────────────────────────────────────────────────────
 
-const UserDetailModal = ({ user, onClose, onRefresh }: { user: any; onClose: () => void; onRefresh: () => void }) => {
+const UserDetailModal = ({ user, onClose, onRefresh, isViewer }: { user: any; onClose: () => void; onRefresh: () => void; isViewer?: boolean }) => {
   const [tab, setTab] = useState<'info' | 'credits' | 'balance' | 'password'>('info');
   const [editData, setEditData] = useState({ firstName: user.firstName || '', lastName: user.lastName || '', role: user.role });
   const [creditAmount, setCreditAmount] = useState('');
@@ -771,8 +781,11 @@ const UserDetailModal = ({ user, onClose, onRefresh }: { user: any; onClose: () 
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-xl"><X className="w-4 h-4" /></button>
         </div>
         <div className="flex border-b border-slate-100">
-          {([['info', 'Edit'], ['credits', 'Credits'], ['balance', 'Balance'], ['password', 'Password']] as const).map(([id, label]) => (
-            <button key={id} onClick={() => setTab(id)} className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition-colors ${tab === id ? 'border-b-2 border-emerald-600 text-emerald-700' : 'text-slate-400 hover:text-slate-600'}`}>{label}</button>
+          {(isViewer
+            ? [['info', 'Info']] as const
+            : [['info', 'Edit'], ['credits', 'Credits'], ['balance', 'Balance'], ['password', 'Password']] as const
+          ).map(([id, label]) => (
+            <button key={id} onClick={() => setTab(id as typeof tab)} className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition-colors ${tab === id ? 'border-b-2 border-emerald-600 text-emerald-700' : 'text-slate-400 hover:text-slate-600'}`}>{label}</button>
           ))}
         </div>
         <div className="p-6 space-y-4">
@@ -780,16 +793,16 @@ const UserDetailModal = ({ user, onClose, onRefresh }: { user: any; onClose: () 
           {tab === 'info' && (
             <>
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">First Name</label><input className={inputCls + ' mt-1'} value={editData.firstName} onChange={e => setEditData(p => ({ ...p, firstName: e.target.value }))} /></div>
-                <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Last Name</label><input className={inputCls + ' mt-1'} value={editData.lastName} onChange={e => setEditData(p => ({ ...p, lastName: e.target.value }))} /></div>
+                <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">First Name</label><input className={inputCls + ' mt-1'} value={editData.firstName} onChange={e => !isViewer && setEditData(p => ({ ...p, firstName: e.target.value }))} readOnly={isViewer} /></div>
+                <div><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Last Name</label><input className={inputCls + ' mt-1'} value={editData.lastName} onChange={e => !isViewer && setEditData(p => ({ ...p, lastName: e.target.value }))} readOnly={isViewer} /></div>
               </div>
               <div>
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Role</label>
-                <select className={inputCls + ' mt-1'} value={editData.role} onChange={e => setEditData(p => ({ ...p, role: e.target.value }))}>
+                <select className={inputCls + ' mt-1'} value={editData.role} onChange={e => !isViewer && setEditData(p => ({ ...p, role: e.target.value }))} disabled={isViewer}>
                   {['CONSUMER', 'MERCHANT', 'NONPROFIT', 'CDFI', 'ADMIN'].map(r => <option key={r}>{r}</option>)}
                 </select>
               </div>
-              <button onClick={saveEdit} disabled={saving} className="w-full py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50">{saving ? 'Saving…' : 'Save Changes'}</button>
+              {!isViewer && <button onClick={saveEdit} disabled={saving} className="w-full py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50">{saving ? 'Saving…' : 'Save Changes'}</button>}
             </>
           )}
           {tab === 'credits' && (
@@ -826,7 +839,7 @@ const UserDetailModal = ({ user, onClose, onRefresh }: { user: any; onClose: () 
 
 // ── Enhanced UserManagement with detail modal ─────────────────────────────────
 
-const UserManagementEnhanced = () => {
+const UserManagementEnhanced = ({ isViewer }: { isViewer?: boolean }) => {
   const [users, setUsers] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
@@ -846,7 +859,7 @@ const UserManagementEnhanced = () => {
 
   return (
     <div className="space-y-6">
-      {selectedUser && <UserDetailModal user={selectedUser} onClose={() => setSelectedUser(null)} onRefresh={load} />}
+      {selectedUser && <UserDetailModal user={selectedUser} onClose={() => setSelectedUser(null)} onRefresh={load} isViewer={isViewer} />}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -882,8 +895,8 @@ const UserManagementEnhanced = () => {
                 <td className="px-6 py-4 text-sm text-slate-500">{new Date(user.createdAt).toLocaleDateString()}</td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button onClick={() => setSelectedUser(user)} className="px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors flex items-center gap-1"><Eye className="w-3 h-3" /> Manage</button>
-                    <button onClick={() => toggleStatus(user.id, user.isActive)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${user.isActive ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'}`}>{user.isActive ? 'Deactivate' : 'Activate'}</button>
+                    <button onClick={() => setSelectedUser(user)} className="px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors flex items-center gap-1"><Eye className="w-3 h-3" /> {isViewer ? 'View' : 'Manage'}</button>
+                    {!isViewer && <button onClick={() => toggleStatus(user.id, user.isActive)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${user.isActive ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'}`}>{user.isActive ? 'Deactivate' : 'Activate'}</button>}
                   </div>
                 </td>
               </tr>
@@ -950,7 +963,18 @@ const AuditLogPanel = () => {
 
 // ── Admin Settings (password, demo mode, flags, demo reset) ──────────────────
 
-const AdminSettings = () => {
+const AdminSettings = ({ isViewer }: { isViewer?: boolean }) => {
+  if (isViewer) return (
+    <div className="max-w-2xl">
+      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-8 flex items-center gap-5">
+        <Eye className="w-8 h-8 text-blue-400 shrink-0" />
+        <div>
+          <p className="font-black text-base text-blue-900">View-Only Access</p>
+          <p className="text-sm text-blue-600 mt-1">Password changes, demo mode, feature flags, and demo reset are only available to full Platform Admin accounts.</p>
+        </div>
+      </div>
+    </div>
+  );
   const [currentPwd, setCurrentPwd] = useState('');
   const [newPwd, setNewPwd] = useState('');
   const [confirmPwd, setConfirmPwd] = useState('');
@@ -1091,7 +1115,7 @@ const AdminSettings = () => {
 
 // ── Support Inbox ─────────────────────────────────────────────────────────────
 
-const SupportInbox = () => {
+const SupportInbox = ({ isViewer }: { isViewer?: boolean }) => {
   const [emails, setEmails]               = useState<any[]>([]);
   const [selected, setSelected]           = useState<any | null>(null);
   const [loading, setLoading]             = useState(false);
@@ -1220,7 +1244,7 @@ const SupportInbox = () => {
             )}
           </div>
           <div className="flex items-center gap-1">
-            {emails.some(e => e.isRead) && (
+            {!isViewer && emails.some(e => e.isRead) && (
               <button
                 onClick={clearRead}
                 disabled={clearingRead}
@@ -1231,13 +1255,15 @@ const SupportInbox = () => {
                 {clearingRead ? 'Clearing…' : 'Clear read'}
               </button>
             )}
-            <button
-              onClick={() => { setComposing(true); setSelected(null); setComposeMsg(null); }}
-              className="flex items-center gap-1 px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-              title="Compose new email"
-            >
-              <Edit3 className="w-3 h-3" /> Compose
-            </button>
+            {!isViewer && (
+              <button
+                onClick={() => { setComposing(true); setSelected(null); setComposeMsg(null); }}
+                className="flex items-center gap-1 px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                title="Compose new email"
+              >
+                <Edit3 className="w-3 h-3" /> Compose
+              </button>
+            )}
             <button onClick={load} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
               <RefreshCw className={`w-3.5 h-3.5 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -1281,14 +1307,16 @@ const SupportInbox = () => {
                     </span>
                   )}
                 </button>
-                <button
-                  onClick={() => deleteThread(email.id)}
-                  disabled={deleting === email.id}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
-                  title="Delete thread"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                {!isViewer && (
+                  <button
+                    onClick={() => deleteThread(email.id)}
+                    disabled={deleting === email.id}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                    title="Delete thread"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             ))
           )}
@@ -1402,14 +1430,16 @@ const SupportInbox = () => {
                   <span><strong>Received:</strong> {new Date(selected.createdAt).toLocaleString()}</span>
                 </div>
               </div>
-              <button
-                onClick={() => deleteThread(selected.id)}
-                disabled={deleting === selected.id}
-                className="shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"
-                title="Delete thread"
-              >
-                <Trash2 className="w-3.5 h-3.5" /> Delete
-              </button>
+              {!isViewer && (
+                <button
+                  onClick={() => deleteThread(selected.id)}
+                  disabled={deleting === selected.id}
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"
+                  title="Delete thread"
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> Delete
+                </button>
+              )}
             </div>
 
             {/* Thread — original message + saved replies */}
@@ -1448,31 +1478,38 @@ const SupportInbox = () => {
             </div>
 
             {/* Reply composer */}
-            <div className="px-8 py-5 border-t border-slate-100 bg-slate-50/60">
-              {sendMsg && (
-                <div className={`mb-3 px-4 py-2 rounded-xl text-xs font-bold ${sendMsg.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
-                  {sendMsg.text}
-                </div>
-              )}
-              <div className="flex gap-3 items-end">
-                <textarea
-                  rows={3}
-                  placeholder={`Reply to ${selected.fromName || selected.fromAddress}…`}
-                  value={replyBody}
-                  onChange={e => setReplyBody(e.target.value)}
-                  className="flex-1 text-sm text-slate-700 border border-slate-200 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 bg-white"
-                />
-                <button
-                  onClick={sendReply}
-                  disabled={sending || !replyBody.trim()}
-                  className="flex items-center gap-2 px-5 py-3 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50 shrink-0"
-                >
-                  {sending ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                  {sending ? 'Sending…' : 'Send'}
-                </button>
+            {isViewer ? (
+              <div className="px-8 py-4 border-t border-slate-100 bg-slate-50/60 flex items-center gap-2">
+                <Eye className="w-4 h-4 text-slate-300 shrink-0" />
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">View Only — replies require a full Platform Admin account</p>
               </div>
-              <p className="text-[10px] text-slate-400 mt-2">Sent from support@goodcircles.org · Replies are saved to this thread.</p>
-            </div>
+            ) : (
+              <div className="px-8 py-5 border-t border-slate-100 bg-slate-50/60">
+                {sendMsg && (
+                  <div className={`mb-3 px-4 py-2 rounded-xl text-xs font-bold ${sendMsg.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                    {sendMsg.text}
+                  </div>
+                )}
+                <div className="flex gap-3 items-end">
+                  <textarea
+                    rows={3}
+                    placeholder={`Reply to ${selected.fromName || selected.fromAddress}…`}
+                    value={replyBody}
+                    onChange={e => setReplyBody(e.target.value)}
+                    className="flex-1 text-sm text-slate-700 border border-slate-200 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 bg-white"
+                  />
+                  <button
+                    onClick={sendReply}
+                    disabled={sending || !replyBody.trim()}
+                    className="flex items-center gap-2 px-5 py-3 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors disabled:opacity-50 shrink-0"
+                  >
+                    {sending ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                    {sending ? 'Sending…' : 'Send'}
+                  </button>
+                </div>
+                <p className="text-[10px] text-slate-400 mt-2">Sent from support@goodcircles.org · Replies are saved to this thread.</p>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -1488,7 +1525,7 @@ const BRIEFING_STATUS: Record<string, { label: string; cls: string }> = {
   completed: { label: 'Completed', cls: 'bg-emerald-100 text-emerald-700' },
 };
 
-const BriefingRequests = () => {
+const BriefingRequests = ({ isViewer }: { isViewer?: boolean }) => {
   const token = localStorage.getItem('gc_auth_token');
   const [entries, setEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -1593,11 +1630,13 @@ const BriefingRequests = () => {
                   <div className="text-sm text-slate-500 font-medium">{[e.city, e.state].filter(Boolean).join(', ') || 'Location not provided'}</div>
                 </div>
                 {/* Delete */}
-                <button onClick={() => dismiss(e.id)} disabled={deleting === e.id}
-                  className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all shrink-0"
-                  title="Remove from briefing list">
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                {!isViewer && (
+                  <button onClick={() => dismiss(e.id)} disabled={deleting === e.id}
+                    className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all shrink-0"
+                    title="Remove from briefing list">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
 
               {/* Role-specific details */}
@@ -1620,34 +1659,37 @@ const BriefingRequests = () => {
                 <textarea
                   rows={2}
                   value={notes[e.id] ?? ''}
-                  onChange={ev => setNotes(prev => ({ ...prev, [e.id]: ev.target.value }))}
-                  onBlur={() => saveNotes(e.id)}
-                  placeholder="Add scheduling notes, contact details, etc…"
-                  className="w-full text-sm text-slate-700 border border-slate-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400"
+                  onChange={ev => !isViewer && setNotes(prev => ({ ...prev, [e.id]: ev.target.value }))}
+                  onBlur={() => !isViewer && saveNotes(e.id)}
+                  readOnly={isViewer}
+                  placeholder={isViewer ? '(view only)' : 'Add scheduling notes, contact details, etc…'}
+                  className={`w-full text-sm text-slate-700 border border-slate-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 ${isViewer ? 'bg-slate-50 text-slate-400 cursor-default' : ''}`}
                 />
               </div>
 
               {/* Status actions */}
-              <div className="flex gap-2 pt-1">
-                {status !== 'scheduled' && status !== 'completed' && (
-                  <button onClick={() => updateStatus(e.id, 'scheduled')}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors">
-                    Mark Scheduled
-                  </button>
-                )}
-                {status === 'scheduled' && (
-                  <button onClick={() => updateStatus(e.id, 'completed')}
-                    className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors">
-                    Mark Completed
-                  </button>
-                )}
-                {status !== 'pending' && (
-                  <button onClick={() => updateStatus(e.id, '')}
-                    className="px-4 py-2 bg-slate-100 text-slate-500 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors">
-                    Reset to Pending
-                  </button>
-                )}
-              </div>
+              {!isViewer && (
+                <div className="flex gap-2 pt-1">
+                  {status !== 'scheduled' && status !== 'completed' && (
+                    <button onClick={() => updateStatus(e.id, 'scheduled')}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors">
+                      Mark Scheduled
+                    </button>
+                  )}
+                  {status === 'scheduled' && (
+                    <button onClick={() => updateStatus(e.id, 'completed')}
+                      className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors">
+                      Mark Completed
+                    </button>
+                  )}
+                  {status !== 'pending' && (
+                    <button onClick={() => updateStatus(e.id, '')}
+                      className="px-4 py-2 bg-slate-100 text-slate-500 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors">
+                      Reset to Pending
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
@@ -1843,6 +1885,7 @@ export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const store = useGoodCirclesStore();
+  const isViewer = store.currentUser?.role === 'PLATFORM_VIEWER';
 
   const menuItems = [
     { id: 'DASHBOARD', label: 'System Dashboard', icon: LayoutDashboard },
@@ -1870,9 +1913,9 @@ export const AdminPortalView: React.FC = () => {
 
   const renderContent = () => {
     switch (activeSubView) {
-      case 'DASHBOARD': return <SystemDashboard />;
-      case 'USERS': return <UserManagementEnhanced />;
-      case 'TRANSACTIONS': return <TransactionMonitoring />;
+      case 'DASHBOARD': return <SystemDashboard isViewer={isViewer} />;
+      case 'USERS': return <UserManagementEnhanced isViewer={isViewer} />;
+      case 'TRANSACTIONS': return <TransactionMonitoring isViewer={isViewer} />;
       case 'FINANCIALS': return <FinancialOverview />;
       case 'COOPS': return <CooperativeManagement />;
       case 'FUND': return <CommunityFundOversight />;
@@ -1882,16 +1925,16 @@ export const AdminPortalView: React.FC = () => {
       case 'DEMO': return <MunicipalDemoSimulator />;
       case 'MOCK_DATA': return <MockDataManager />;
       case 'AFFILIATE': return <AdminAffiliateDashboard />;
-      case 'SENTINEL': return <PriceSentinelReview />;
+      case 'SENTINEL': return <PriceSentinelReview isViewer={isViewer} />;
       case 'COMPLIANCE': return <ComplianceDashboard />;
-      case 'CDFI_MGMT': return <CdfiManagement />;
+      case 'CDFI_MGMT': return <CdfiManagement isViewer={isViewer} />;
       case 'WAITLIST':   return <WaitlistManagement />;
-      case 'BRIEFINGS':  return <BriefingRequests />;
-      case 'INBOX':      return <SupportInbox />;
+      case 'BRIEFINGS':  return <BriefingRequests isViewer={isViewer} />;
+      case 'INBOX':      return <SupportInbox isViewer={isViewer} />;
       case 'AUDIT_LOG': return <AuditLogPanel />;
-      case 'SETTINGS': return <AdminSettings />;
+      case 'SETTINGS': return <AdminSettings isViewer={isViewer} />;
       case 'INTEGRITY': return <AdminIntegrityTest />;
-      default: return <SystemDashboard />;
+      default: return <SystemDashboard isViewer={isViewer} />;
     }
   };
 
@@ -1910,14 +1953,22 @@ export const AdminPortalView: React.FC = () => {
             </button>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-100"><div className={`flex items-center gap-3 p-3 rounded-xl bg-slate-50 ${!isSidebarOpen && 'justify-center'}`}><div className="w-8 h-8 rounded-full bg-slate-200 shrink-0" />{isSidebarOpen && (<div className="overflow-hidden"><div className="font-bold text-xs truncate">Platform Admin</div><div className="text-[10px] text-slate-400 truncate">admin@goodcircles.org</div></div>)}</div></div>
+        <div className="p-4 border-t border-slate-100"><div className={`flex items-center gap-3 p-3 rounded-xl bg-slate-50 ${!isSidebarOpen && 'justify-center'}`}><div className="w-8 h-8 rounded-full bg-slate-200 shrink-0 flex items-center justify-center text-xs font-black text-slate-500">{(store.currentUser?.firstName?.[0] || store.currentUser?.email?.[0] || 'A').toUpperCase()}</div>{isSidebarOpen && (<div className="overflow-hidden"><div className="font-bold text-xs truncate">{isViewer ? 'View-Only Account' : 'Platform Admin'}</div><div className="text-[10px] text-slate-400 truncate">{store.currentUser?.email || 'admin@goodcircles.org'}</div></div>)}</div></div>
       </motion.aside>
 
       <main className="flex-1 overflow-y-auto">
         <header className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-10 px-8 py-4">
           <div className="flex justify-between items-center">
             <div><h2 className="text-2xl font-black italic uppercase tracking-tighter">{menuItems.find(i => i.id === activeSubView)?.label}</h2><p className="text-slate-400 text-xs font-medium">Platform Management Portal</p></div>
-            <div className="flex items-center gap-4"><div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full"><div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" /><span className="text-[10px] font-bold text-emerald-700 uppercase">System Online</span></div></div>
+            <div className="flex items-center gap-3">
+              {isViewer && (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-full border border-blue-100">
+                  <Eye className="w-3 h-3 text-blue-500" />
+                  <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">View Only</span>
+                </div>
+              )}
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full"><div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" /><span className="text-[10px] font-bold text-emerald-700 uppercase">System Online</span></div>
+            </div>
           </div>
         </header>
         <div className="p-8 max-w-7xl mx-auto">

@@ -8,9 +8,9 @@ const router = Router();
 router.post('/webhook', ctrl.receiveWebhook);
 
 // Admin-only endpoints
-router.get('/',              authenticateToken, authorizeRole(['PLATFORM']), ctrl.listEmails);
+router.get('/',              authenticateToken, authorizeRole(['PLATFORM', 'PLATFORM_VIEWER']), ctrl.listEmails);
 router.delete('/read',       authenticateToken, authorizeRole(['PLATFORM']), ctrl.deleteReadEmails);
-router.get('/:id',           authenticateToken, authorizeRole(['PLATFORM']), ctrl.getEmail);
+router.get('/:id',           authenticateToken, authorizeRole(['PLATFORM', 'PLATFORM_VIEWER']), ctrl.getEmail);
 router.post('/:id/reply',    authenticateToken, authorizeRole(['PLATFORM']), ctrl.replyToEmail);
 router.delete('/:id',        authenticateToken, authorizeRole(['PLATFORM']), ctrl.deleteEmail);
 

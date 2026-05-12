@@ -41,6 +41,26 @@ async function seed() {
   });
   console.log(`[Seed] ✅ Admin: admin@goodcircles.org`);
 
+  // ─── Platform Viewer (view-only admin) ──────────────────────────────
+
+  const viewer = await prisma.user.upsert({
+    where: { email: 'viewer@goodcircles.org' },
+    update: {},
+    create: {
+      email: 'viewer@goodcircles.org',
+      passwordHash,
+      role: 'PLATFORM_VIEWER',
+      firstName: 'Platform',
+      lastName: 'Viewer',
+    }
+  });
+  await prisma.wallet.upsert({
+    where: { userId: viewer.id },
+    update: {},
+    create: { userId: viewer.id, balance: 0 }
+  });
+  console.log(`[Seed] ✅ Viewer: viewer@goodcircles.org`);
+
   // ─── Nonprofits ──────────────────────────────────────────────────────
 
   const nonprofitData = [
