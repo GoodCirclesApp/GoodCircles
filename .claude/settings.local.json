@@ -5,7 +5,23 @@
       "Bash(node_modules/.bin/tsc --noEmit)",
       "Bash(node_modules/.bin/vite build *)",
       "Bash(node_modules/.bin/vitest run *)",
-      "Bash(node_modules/.bin/prisma generate *)"
+      "Bash(node_modules/.bin/prisma generate *)",
+      "Bash(find \"/c/Users/timh2/OneDrive/Desktop/Goodcircles project/GoodCircles-main \\(1\\)/GoodCircles-main\" -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" -o -name \"*.js\" \\\\\\) ! -path \"*/node_modules/*\" ! -path \"*/dist/*\" -exec grep -l \"sk_\\\\|pk_\\\\|password.*=.*['\\\\\"].*['\\\\\"]\" {} \\\\;)",
+      "Bash(find \"/c/Users/timh2/OneDrive/Desktop/Goodcircles project/GoodCircles-main \\(1\\)/GoodCircles-main\" -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) ! -path \"*/node_modules/*\" ! -path \"*/dist/*\" ! -path \"*/test*\" ! -path \"*spec*\" -exec grep -l \"any\" {} \\\\;)",
+      "Bash(find \"/c/Users/timh2/OneDrive/Desktop/Goodcircles project/GoodCircles-main \\(1\\)/GoodCircles-main\" -type f \\\\\\( -name \"*.ts\" \\\\\\) ! -path \"*/node_modules/*\" ! -path \"*/dist/*\" ! -path \"*/test*\" ! -path \"*spec*\" -exec grep -c \": any\" {} +)",
+      "Bash(grep -v \":0$\")",
+      "Bash(find \"/c/Users/timh2/OneDrive/Desktop/Goodcircles project/GoodCircles-main \\(1\\)/GoodCircles-main\" -type f \\\\\\( -name \"*.ts\" \\\\\\) ! -path \"*/node_modules/*\" ! -path \"*/dist/*\" ! -path \"*/test*\" ! -path \"*spec*\" ! -name \"server.ts\" ! -name \"seed*.ts\" ! -name \"check-seed.ts\" -exec grep -l \"console\\\\.\\(log\\\\|warn\\\\|error\\)\" {} \\\\;)",
+      "Bash(find \"/c/Users/timh2/OneDrive/Desktop/Goodcircles project/GoodCircles-main \\(1\\)/GoodCircles-main\" -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) ! -path \"*/node_modules/*\" ! -path \"*/dist/*\" -exec grep -n \"TODO\\\\|FIXME\\\\|HACK\" {} +)",
+      "Bash(xargs -0 grep -h \"^import.*from\")",
+      "Bash(find \"/c/Users/timh2/OneDrive/Desktop/Goodcircles project/GoodCircles-main \\(1\\)/GoodCircles-main\" -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) ! -path \"*/node_modules/*\" ! -path \"*/dist/*\" -exec grep -l \"GEMINI_API_KEY\\\\|ANTHROPIC_API_KEY\" {} \\\\;)",
+      "Bash(grep -rn \"process\\\\.env\\\\.GEMINI\\\\|process\\\\.env\\\\.API_KEY\" \"/c/Users/timh2/OneDrive/Desktop/Goodcircles project/GoodCircles-main \\(1\\)/GoodCircles-main\" --include=\"*.tsx\" --include=\"*.ts\" ! -path \"*/node_modules/*\" ! -path \"*/dist/*\")",
+      "Bash(find \"/c/Users/timh2/OneDrive/Desktop/Goodcircles project/GoodCircles-main \\(1\\)/GoodCircles-main\" -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) ! -path \"*/node_modules/*\" ! -path \"*/dist/*\" -exec grep -l \"stub\\\\|mock\\\\|fake\\\\|placeholder\\\\|TEMP\\\\|test.*data\" {} \\\\;)",
+      "Bash(find *)",
+      "Bash(python3 *)",
+      "Bash(python -c ' *)",
+      "Bash(python *)",
+      "Bash(dir *)",
+      "Bash(xargs grep *)"
     ]
   }
 }
