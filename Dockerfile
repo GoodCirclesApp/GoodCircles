@@ -7,6 +7,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 RUN npm ci --include=dev
+RUN npx playwright install chromium --with-deps
 
 COPY . .
 
