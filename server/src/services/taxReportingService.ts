@@ -1,5 +1,6 @@
 import { prisma } from '../lib/prisma';
 import { sendEmail } from './emailService';
+import { wrap, heading, paragraph } from './emailLayoutService';
 
 const THRESHOLD_1099K = 600; // IRS current threshold (post-2023 rule)
 const INFORM_TX_THRESHOLD = 200;
@@ -107,14 +108,15 @@ export class TaxReportingService {
           to: email,
           toName: firstName || 'Merchant',
           subject: `Action Required: IRS Form 1099-K for ${taxYear}`,
-          html: `
-            <p>Hi ${firstName},</p>
-            <p>Your Good Circles merchant account exceeded $${THRESHOLD_1099K} in gross sales for ${taxYear}.
-            Good Circles is required to issue you IRS Form 1099-K reporting $${Number(flag.grossSales).toFixed(2)} in gross sales.</p>
-            <p>Please ensure your tax information is up to date in your Merchant Dashboard.
-            You will receive your 1099-K by January 31, ${taxYear + 1}.</p>
-            <p>— Good Circles L3C</p>
-          `,
+          html: wrap({
+            body:
+              heading('IRS Form 1099-K') +
+              paragraph(`Hi ${firstName},`) +
+              paragraph(`Your Good Circles merchant account exceeded $${THRESHOLD_1099K} in gross sales for ${taxYear}. Good Circles is required to issue you IRS Form 1099-K reporting $${Number(flag.grossSales).toFixed(2)} in gross sales.`) +
+              paragraph(`Please ensure your tax information is up to date in your Merchant Dashboard. You will receive your 1099-K by January 31, ${taxYear + 1}.`),
+            footerVariant: 'TRANSACTIONAL',
+          }),
+          meta: { triggerSource: 'TAX_1099K', layoutVariant: 'TRANSACTIONAL' },
         });
         await prisma.taxReportingFlag.update({
           where: { merchantId_taxYear: { merchantId: flag.merchantId, taxYear } },

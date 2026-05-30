@@ -129,6 +129,7 @@ async function startServer() {
   app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
   app.use('/api/catalog/webhook/stripe', express.raw({ type: 'application/json' }));
   app.use('/api/inbound/webhook', express.raw({ type: 'application/json' }));
+  app.use('/api/email/webhook/resend', express.raw({ type: 'application/json' }));
 
   app.use(express.json());
 

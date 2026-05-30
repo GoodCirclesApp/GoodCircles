@@ -1,5 +1,6 @@
 import { prisma } from '../lib/prisma';
 import { sendEmail } from './emailService';
+import { wrap, heading, paragraph } from './emailLayoutService';
 import { CrmWebhookService } from './crmWebhookService';
 
 const MILESTONES = [
@@ -45,6 +46,7 @@ export class DonorMilestoneService {
         toName: user.firstName ?? 'Neighbor',
         subject: this.emailSubject(m.key, nonprofit.orgName),
         html: this.emailHtml(m.key, user.firstName ?? 'Neighbor', nonprofit.orgName, totalDonated),
+        meta: { triggerSource: 'DONOR_MILESTONE', userId, layoutVariant: 'TRANSACTIONAL' },
       });
 
       // Fire CRM webhook
@@ -74,14 +76,8 @@ export class DonorMilestoneService {
       TOTAL_500:      `$500 to ${orgName} — generated automatically through $${total.toFixed(2)} in cumulative purchases. You're among the most impactful members in your community.`,
       TOTAL_1000:     `You have now contributed $1,000 to ${orgName} through Good Circles. That is not a small number. It represents a year of intentional living, and ${orgName} feels it.`,
     };
-    const body = messages[milestone] ?? `You've reached a new giving milestone with ${orgName}.`;
-    return `
-      <div style="font-family: sans-serif; max-width: 540px; margin: 0 auto; padding: 40px 24px; color: #1a1a1a;">
-        <p style="font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: #7851A9;">Good Circles</p>
-        <h1 style="font-size: 28px; font-weight: 900; margin: 16px 0 8px;">Hello, ${firstName}.</h1>
-        <p style="font-size: 16px; line-height: 1.7; color: #444;">${body}</p>
-        <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;" />
-        <p style="font-size: 12px; color: #999;">Good Circles · Community Commerce Platform · Unsubscribe</p>
-      </div>`;
+    const msg = messages[milestone] ?? `You've reached a new giving milestone with ${orgName}.`;
+    const body = `${heading(`Hello, ${firstName}.`)}${paragraph(msg)}`;
+    return wrap({ body, footerVariant: 'TRANSACTIONAL' });
   }
 }

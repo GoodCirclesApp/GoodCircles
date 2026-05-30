@@ -1,109 +1,100 @@
-import { Resend } from 'resend';
+import {
+  wrap as layoutWrap,
+  heading,
+  button as layoutButton,
+  dataTable,
+  BRAND,
+  FROM_ADDRESSES,
+} from './emailLayoutService';
+import {
+  isSuppressed,
+  recordSend,
+  finalizeSend,
+  recordSuppressedSkip,
+} from './emailCampaignService';
+import { transport, withLogo, type EmailAttachment } from './emailTransport';
 
-const FROM_ADDRESS = process.env.EMAIL_FROM || 'Good Circles <notifications@goodcircles.org>';
+export type { EmailAttachment };
+
 const APP_URL = process.env.APP_URL || 'https://goodcircles.org';
 
-// ── Brand tokens ──────────────────────────────────────────────────────────────
-const B = {
-  purple:   '#7851A9',
-  gold:     '#C2A76F',
-  lavender: '#CA9CE1',
-  green:    '#059669',
-  gray:     '#6B7280',
-  lightBg:  '#F9FAFB',
-  border:   '#E5E7EB',
-  purpleBg: '#F0EBFF',
-};
+// Brand tokens now live in the shared emailLayoutService; aliased so the existing
+// transactional senders below keep using `B.*` unchanged.
+const B = BRAND;
 
-// ── Shared layout helpers ─────────────────────────────────────────────────────
-
-function emailHeader(title: string): string {
-  // Logo is served from the app's static files (public/logos/ → dist/logos/).
-  // APP_URL must be set in Railway env vars to the live deployment URL.
-  const logoUrl = `${APP_URL}/logos/logo-white-md.png`;
-
-  return `
-  <div style="background:linear-gradient(135deg,${B.purple} 0%,${B.lavender} 100%);padding:28px 32px 20px;text-align:center;border-radius:12px 12px 0 0;">
-    <img src="${logoUrl}" alt="Good Circles" height="56" style="display:block;margin:0 auto 10px;" />
-    <p style="color:rgba(255,255,255,0.75);font-size:11px;margin:0;letter-spacing:3px;text-transform:uppercase;font-family:Arial,sans-serif;">Community Marketplace</p>
-  </div>
-  <div style="background:${B.purple};padding:14px 32px;border-bottom:1px solid ${B.border};">
-    <p style="margin:0;font-size:16px;font-weight:700;color:#fff;font-family:Arial,sans-serif;">${title}</p>
-  </div>`;
-}
-
-function emailFooter(extra?: string): string {
-  return `
-  <div style="background:${B.lightBg};padding:24px 32px;text-align:center;border:1px solid ${B.border};border-top:none;border-radius:0 0 12px 12px;">
-    ${extra ? `<p style="color:${B.gray};font-size:12px;margin:0 0 8px;">${extra}</p>` : ''}
-    <p style="color:#9CA3AF;font-size:11px;margin:0;">Good Circles &bull; Building community, one circle at a time.</p>
-    <p style="color:#D1D5DB;font-size:10px;margin:6px 0 0;">Questions? <a href="mailto:admin@goodcircles.org" style="color:${B.purple};text-decoration:none;">admin@goodcircles.org</a></p>
-  </div>`;
-}
-
-function emailButton(label: string, url: string): string {
-  return `<div style="text-align:center;margin:28px 0 8px;">
-    <a href="${url}" style="background:${B.purple};color:#fff;padding:13px 36px;border-radius:10px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.5px;display:inline-block;font-family:Arial,sans-serif;">${label}</a>
-  </div>`;
-}
-
-function emailTable(rows: [string, string, string?][]): string {
-  return `<table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;">
-    ${rows.map(([label, value, color], i) => `
-    <tr style="background:${i % 2 === 0 ? B.lightBg : '#fff'};">
-      <td style="padding:10px 14px;font-weight:600;color:#374151;width:48%;">${label}</td>
-      <td style="padding:10px 14px;color:${color || '#111'};">${value}</td>
-    </tr>`).join('')}
-  </table>`;
-}
-
-function wrap(header: string, body: string, footer: string): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:16px 0;background:#F3F4F6;font-family:Arial,'Helvetica Neue',sans-serif;">
-  <div style="max-width:600px;margin:0 auto;">
-    ${header}
-    <div style="background:#fff;padding:32px;border:1px solid ${B.border};border-top:none;">
-      ${body}
-    </div>
-    ${footer}
-  </div>
-</body>
-</html>`;
+// Back-compat shims: the transactional senders below were written against the old
+// local helpers. These delegate to the shared emailLayoutService so every send now
+// uses the locked aesthetic (System B shell) + CID-embedded logo without rewriting
+// each sender. Transactional mail uses the solid-rect button and the light footer.
+const emailHeader = (title: string): string => heading(title);
+const emailButton = (label: string, url: string): string => layoutButton(label, url, 'solid');
+const emailTable = (rows: [string, string, string?][]): string => dataTable(rows);
+const emailFooter = (extra?: string): string | undefined => extra;
+function wrap(header: string, body: string, footerExtra?: string): string {
+  return layoutWrap({ body: `${header}${body}`, footerVariant: 'TRANSACTIONAL', footerExtra });
 }
 
 // ── Core send function ────────────────────────────────────────────────────────
+
+// When provided, the send is recorded as an EmailCampaign + EmailRecipient (for the
+// unified dashboard + delivery tracking) and suppression is enforced. Automated
+// triggers pass this; ad-hoc sends without it still work (back-compat).
+export interface EmailSendMeta {
+  triggerSource?: string;                          // e.g. REGISTRATION_MERCHANT
+  type?: string;                                   // defaults to AUTOMATED
+  userId?: string | null;
+  layoutVariant?: 'TRANSACTIONAL' | 'MARKETING';
+}
 
 export async function sendEmail(options: {
   to: string;
   toName: string;
   subject: string;
   html: string;
+  from?: string;
+  replyTo?: string;
+  attachments?: EmailAttachment[];
+  meta?: EmailSendMeta;
 }): Promise<boolean> {
-  if (!process.env.RESEND_API_KEY) {
-    console.group('[EMAIL SIMULATION] RESEND_API_KEY not configured');
-    console.log(`To: ${options.toName} (${options.to})`);
-    console.log(`Subject: ${options.subject}`);
-    console.groupEnd();
-    return true;
+  const from = options.from || FROM_ADDRESSES.transactional;
+  const allAttachments = withLogo(options.attachments);
+
+  // Path A — tracked send (automated triggers / anything passing meta).
+  if (options.meta) {
+    if (await isSuppressed(options.to)) {
+      console.log(`[Email] Skipped suppressed address: ${options.to}`);
+      const ids = await recordSend({
+        ...metaToRecord(options, from),
+      });
+      if (ids) await recordSuppressedSkip(ids);
+      return true;
+    }
+    const ids = await recordSend(metaToRecord(options, from));
+    const result = await transport(from, options, allAttachments);
+    if (ids) await finalizeSend(ids, { ok: result.ok, resendId: result.id, error: result.error });
+    return result.ok;
   }
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  try {
-    const { data, error } = await resend.emails.send({
-      from: FROM_ADDRESS,
-      to: [options.to],
-      subject: options.subject,
-      html: options.html,
-    });
-    if (error) { console.error('[Email] Resend error:', error); return false; }
-    console.log(`[Email] Sent successfully to ${options.to} — ID: ${data?.id}`);
-    return true;
-  } catch (err) {
-    console.error('[Email] Unexpected error:', err);
-    return false;
-  }
+  // Path B — untracked ad-hoc send (back-compat).
+  const result = await transport(from, options, allAttachments);
+  return result.ok;
+}
+
+function metaToRecord(
+  options: { to: string; toName: string; subject: string; html: string; meta?: EmailSendMeta },
+  from: string,
+) {
+  return {
+    triggerSource: options.meta?.triggerSource,
+    type: options.meta?.type,
+    fromAddress: from,
+    subject: options.subject,
+    bodyHtml: options.html,
+    emailAddress: options.to,
+    toName: options.toName,
+    userId: options.meta?.userId ?? null,
+    layoutVariant: options.meta?.layoutVariant,
+  };
 }
 
 // ── Merchant welcome ──────────────────────────────────────────────────────────
@@ -139,6 +130,7 @@ export async function sendMerchantWelcomeEmail(opts: {
     toName: opts.businessName,
     subject: `Welcome to Good Circles, ${opts.businessName}!`,
     html: wrap(emailHeader('Welcome to Good Circles!'), body, emailFooter()),
+    meta: { triggerSource: 'REGISTRATION_MERCHANT', layoutVariant: 'TRANSACTIONAL' },
   });
 }
 
@@ -169,6 +161,7 @@ export async function sendNonprofitWelcomeEmail(opts: {
     toName: opts.orgName,
     subject: `Welcome to Good Circles, ${opts.orgName}!`,
     html: wrap(emailHeader('Welcome to Good Circles!'), body, emailFooter()),
+    meta: { triggerSource: 'REGISTRATION_NONPROFIT', layoutVariant: 'TRANSACTIONAL' },
   });
 }
 
@@ -214,6 +207,7 @@ export async function sendCustomerReceiptEmail(opts: {
     toName: opts.customerFirstName,
     subject: `Receipt: ${opts.productName} from ${opts.merchantName}`,
     html: wrap(emailHeader('Your Purchase Receipt'), body, emailFooter()),
+    meta: { triggerSource: 'PURCHASE_RECEIPT', layoutVariant: 'TRANSACTIONAL' },
   });
 }
 
@@ -311,6 +305,7 @@ export async function sendMerchantOrderEmail(opts: {
     toName: opts.businessName,
     subject: `New Order: ${opts.productName} — $${opts.grossAmount.toFixed(2)}`,
     html: wrap(emailHeader('New Order Received'), body, emailFooter()),
+    meta: { triggerSource: 'MERCHANT_ORDER', layoutVariant: 'TRANSACTIONAL' },
   });
 }
 
@@ -338,6 +333,7 @@ export async function sendWalletTopUpEmail(opts: {
     toName: opts.firstName,
     subject: `$${opts.amount.toFixed(2)} added to your Circle Account`,
     html: wrap(emailHeader('Circle Account Funded'), body, emailFooter()),
+    meta: { triggerSource: 'WALLET_TOPUP', layoutVariant: 'TRANSACTIONAL' },
   });
 }
 
@@ -401,5 +397,6 @@ export async function sendNonprofitDailyDigest(opts: {
     toName: opts.nonprofitName,
     subject: `Good Circles: $${opts.totalAmount.toFixed(2)} in donations today`,
     html: wrap(emailHeader('Daily Donation Summary'), body, emailFooter(footerNote)),
+    meta: { triggerSource: 'NONPROFIT_DIGEST', layoutVariant: 'TRANSACTIONAL' },
   });
 }

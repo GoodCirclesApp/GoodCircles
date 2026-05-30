@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import { Resend } from 'resend';
 import { prisma } from '../lib/prisma';
+import { sendEmail } from '../services/emailService';
+import { linkInboundReply } from '../services/emailCampaignService';
+import { wrap, heading, paragraph, FROM_ADDRESSES } from '../services/emailLayoutService';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET ?? '';
-const REPLY_FROM = 'GoodCircles Support <support@goodcircles.org>';
 
 function parseFrom(raw: string): { name: string | null; address: string } {
   const m = raw.match(/^(.*?)\s*<([^>]+)>$/);
@@ -66,7 +68,7 @@ export async function receiveWebhook(req: Request, res: Response) {
       }
     }
 
-    await prisma.inboundEmail.create({
+    const created = await prisma.inboundEmail.create({
       data: {
         resendId:    email_id ?? null,
         fromAddress,
@@ -77,6 +79,10 @@ export async function receiveWebhook(req: Request, res: Response) {
         htmlBody,
       },
     });
+
+    // Reply-linking: if this address recently received a campaign, tie it back so the
+    // admin sees "this person replied to your outreach" (best-effort, non-blocking).
+    await linkInboundReply(created.id, fromAddress);
 
     res.status(200).json({ ok: true });
   } catch (err) {
@@ -162,15 +168,25 @@ export async function replyToEmail(req: Request, res: Response) {
 
     const subject = email.subject.startsWith('Re:') ? email.subject : `Re: ${email.subject}`;
 
-    const result = await resend.emails.send({
-      from:    REPLY_FROM,
-      to:      email.fromAddress,
+    // Render the reply through the shared brand layout (CID logo, on-brand shell)
+    // and route it through sendEmail so it is tracked like every other send.
+    const safeBody = replyBody.trim().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
+    const html = wrap({
+      body: heading('Good Circles Support') + paragraph(safeBody),
+      footerVariant: 'TRANSACTIONAL',
+    });
+    const ok = await sendEmail({
+      to: email.fromAddress,
+      toName: email.fromName || '',
       subject,
-      text:    replyBody.trim(),
+      html,
+      from: FROM_ADDRESSES.support,
+      replyTo: 'support@goodcircles.org',
+      meta: { triggerSource: 'SUPPORT_REPLY', layoutVariant: 'TRANSACTIONAL' },
     });
 
-    if (result.error) {
-      console.error('[InboundEmail] reply send error:', result.error);
+    if (!ok) {
+      console.error('[InboundEmail] reply send failed');
       return res.status(500).json({ error: 'Failed to send reply.' });
     }
 
