@@ -8,7 +8,9 @@ import { authenticateToken, blockViewOnly } from '../middleware/authMiddleware';
 
 const router = Router();
 const resend = new Resend(process.env.RESEND_API_KEY);
-const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET ?? '';
+// Delivery webhook is a separate Resend endpoint from the inbound one, so it has its
+// own signing secret. Falls back to the shared RESEND_WEBHOOK_SECRET if not set.
+const WEBHOOK_SECRET = process.env.RESEND_DELIVERY_WEBHOOK_SECRET ?? process.env.RESEND_WEBHOOK_SECRET ?? '';
 
 // ── Resend delivery webhook (UNAUTHENTICATED) ────────────────────────────────
 // Raw body is registered for this path in server.ts (before express.json) so the
