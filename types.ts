@@ -86,7 +86,6 @@ export interface CartItem {
   quantity: number;
 }
 
-// Added internalFee to track GCLA maintenance costs
 export interface Order {
   id: string;
   date: string;
@@ -97,7 +96,6 @@ export interface Order {
   subtotal: number;
   tax: number;
   cardFee: number;
-  internalFee: number; 
   totalPaid: number;
   grossAmount: number;
   status: string;

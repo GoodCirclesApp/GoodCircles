@@ -266,10 +266,10 @@ export const CartDrawer: React.FC<Props> = ({
                     <PaymentCard 
                       active={paymentMethod === 'BALANCE'} 
                       onClick={() => setPaymentMethod('BALANCE')}
-                      label="Circle Account Balance" 
+                      label="Circle Account Balance"
                       desc={`Use your internal wallet ($${walletBalance.toFixed(2)} available).`}
-                      tag="0.5% Surcharge"
-                      tagColor={isInsufficientBalance ? "bg-red-500" : "bg-[#C2A76F]"}
+                      tag="0% Surcharge"
+                      tagColor={isInsufficientBalance ? "bg-red-500" : "bg-emerald-500"}
                     />
                     <PaymentCard 
                       active={paymentMethod === 'CARD'} 
@@ -296,12 +296,6 @@ export const CartDrawer: React.FC<Props> = ({
                    <div className="flex justify-between text-xs font-bold text-slate-400 uppercase">
                       <span>Merchant Service Fee</span>
                       <span className="text-[#A20021]">+${totals.cardFee.toFixed(2)}</span>
-                   </div>
-                 )}
-                 {paymentMethod === 'BALANCE' && (
-                   <div className="flex justify-between text-xs font-bold text-slate-400 uppercase">
-                      <span>Internal Maintenance Fee</span>
-                      <span className="text-[#C2A76F]">+${totals.internalFee.toFixed(2)}</span>
                    </div>
                  )}
                  {appliedCredits > 0 && (

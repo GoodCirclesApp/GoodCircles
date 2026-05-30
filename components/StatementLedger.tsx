@@ -21,7 +21,6 @@ export const StatementLedger: React.FC<Props> = ({ orders, role }) => {
                 <>
                   <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">COGS</th>
                   <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Platform (1%)</th>
-                  <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-[#C2A76F]">Internal (0.5%)</th>
                 </>
               )}
               <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-[#7851A9]">
@@ -34,7 +33,7 @@ export const StatementLedger: React.FC<Props> = ({ orders, role }) => {
           <tbody className="divide-y divide-slate-50">
             {orders.length === 0 ? (
               <tr>
-                <td colSpan={role === 'MERCHANT' ? 8 : 5} className="p-20 text-center text-slate-300 font-bold italic uppercase tracking-widest text-xs">
+                <td colSpan={role === 'MERCHANT' ? 7 : 5} className="p-20 text-center text-slate-300 font-bold italic uppercase tracking-widest text-xs">
                   No transaction history recorded for this period.
                 </td>
               </tr>
@@ -54,7 +53,6 @@ export const StatementLedger: React.FC<Props> = ({ orders, role }) => {
                     <>
                       <td className="p-8 text-sm font-bold text-slate-400">-${o.accounting.totalCogs.toFixed(2)}</td>
                       <td className="p-8 text-sm font-bold text-slate-400">-${o.accounting.platformFee.toFixed(2)}</td>
-                      <td className="p-8 text-sm font-bold text-[#C2A76F]">-${(o.internalFee || 0).toFixed(2)}</td>
                     </>
                   )}
                   

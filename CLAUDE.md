@@ -326,3 +326,34 @@ Password for all: `BetaTest2026!`
 | contact@localfoodbank.org | Nonprofit |
 | info@youthscholars.org | Nonprofit |
 | team@greencleanup.org | Nonprofit |
+
+---
+
+## 16. ENGINEERING LAUNCH READINESS — Chief Engineer Review (2026-05-29)
+
+> Grounded in code, not assumption. Verified against the repo on 2026-05-29 (last commit 2026-05-21, 59 commits in trailing 30 days). T-minus ~3.3 months to the September 2026 Mississippi live launch.
+
+### Scale reality check
+The codebase is **far larger than the "beta" framing** in Sections 14–15. There are **38 server services, 35 controllers, 34 route files, and 91 Prisma models** (1,735-line schema). It spans CDFI packaging, FFIEC geocoding, DMS export, governance, data-coop, cooperative, community-fund, supply-chain, AI underwriting, tax reporting, and IRS verification — well beyond a consumer marketplace MVP. Surface area = launch risk; most of it is untested (6 test files total).
+
+### 🔴 P0 — Launch blockers (money + data integrity)
+
+1. **No automated money-out (Stripe Connect disbursement is not wired).** `stripeService.createCheckoutSession` computes `merchantAmount` (79%) and `nonprofitAmount` (10%) **and then discards them** — the Checkout Session is a plain charge to the platform account with only a `transfer_group`; there is **no `transfer_data`, `application_fee_amount`, `transfers.create`, `destination`, or `payouts.create` anywhere in `server/src`.** `WalletService.withdraw` only debits the internal ledger; it does not move real money. **Net: funds flow IN and are accounted internally, but nothing pays merchants or nonprofits in real dollars.** This is the single largest gap between the product promise and the code. Must build + test destination charges (or separate transfers) and payout scheduling before any live transaction.
+2. **Two unreconciled split math frames.** Ledger (`transactionService.calculateDistribution`) records 89/10/1 of **net profit**; `stripeService` uses 79/10/11 of the **amount charged** (which is `neighborPays`, post-discount — not gross, despite the "Gross: 100%" comment). These must be single-sourced and reconciled, with a test asserting Σ(transfers) + platform retention == amount captured, to the cent, using Decimal throughout.
+3. **Destructive DB deploys.** `start` runs `prisma db push --accept-data-loss` on every Railway boot and **there is no `prisma/migrations/` directory.** On any schema drift against 91 models this can silently drop columns/data in production. Before launch: generate a baseline migration, switch the deploy to `prisma migrate deploy`, and remove `--accept-data-loss`.
+4. **Refunds not executed.** `refundService.ts` has `TODO: Stripe partial refund execution deferred to live-testing webhook` — refund money movement is a stub. Required for any real-payment launch (chargebacks/consumer protection).
+
+### 🟡 P1 — Hardening before launch
+
+5. **Test coverage is thin for a payments platform.** Only auth, communityFund, cooperative, netting, transaction, wallet have tests. No tests on checkout/webhook, refunds, credit ledger, or the disbursement path once built. Add money-path integration tests against a real test DB (per the "don't mock the DB" rule).
+6. **Secret hygiene.** The GitHub PAT is embedded in the git remote URL (`git remote -v` leaks it) and stored in plaintext memory. `.env` is correctly gitignored and `dist/` is untracked — good. Rotate the PAT, use a credential helper, and confirm no historical commit contains secrets.
+7. **Stripe go-live checklist** (was Section 14): set `VITE_STRIPE_PUBLISHABLE_KEY` (pk_live), swap `sk_test_`→`sk_live_`, set `STRIPE_WEBHOOK_SECRET`, enable `payment_intent.succeeded` + `checkout.session.completed`. Verify webhook raw-body route ordering in `server.ts`.
+8. **Connect onboarding gate.** Checkout already 400s if merchant/nonprofit lack `stripeAccountId`. Onboarding (`createConnectAccount`/`createAccountLink`) exists but needs an end-to-end Express-onboarding flow + KYC status tracking before merchants/nonprofits can be paid.
+
+### 🟢 P2 — Good, keep
+- Security middleware present: `helmet`, global `apiLimiter`, `authLimiter`, waitlist `submitLimiter`. `.env` and `dist/` properly ignored. JWT access(15m)/refresh(7d) with apiClient auto-refresh. Decimal.js used in split math (avoids float drift).
+
+### Process gap
+`.claude/active_priorities.md` and `done.md` track **marketing only** (CapCut, carousel, partner pipeline). There is **no engineering launch track**. Recommend a parallel `.claude/engineering_priorities.md` mirroring P0–P1 above so technical launch readiness is visible alongside marketing.
+
+> **Pre-launch blockers in Section 14 are understated** — they list env vars only. The real blocker is the unbuilt disbursement layer (#1) and migration safety (#3). Treat Section 14's "Intentionally Deferred: Wallet Withdraw / Stripe Connect" as a P0, not a deferral, for a live-money launch.

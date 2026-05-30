@@ -22,7 +22,7 @@ export const calculateDistribution = (
   grossAmount: number,
   cogsAmount: number,
   discountWaived: boolean,
-  isInternal: boolean,
+  _isInternal: boolean, // internal/balance payment flag — retained for signature; no longer carries a fee
   discountMode: 'PRICE_REDUCTION' | 'PLATFORM_CREDITS' = 'PRICE_REDUCTION',
   creditsToApply: number = 0
 ) => {
@@ -32,34 +32,41 @@ export const calculateDistribution = (
   // Consumer Discount (10% of MSRP)
   const discountAmount = msrp.mul(new Decimal(0.10));
 
-  // Effective revenue = actual price received from the sale.
-  // In PRICE_REDUCTION mode the discount reduces the sale price directly.
-  // In PLATFORM_CREDITS mode or when waived, the neighbor pays full MSRP.
-  const applyPriceReduction = !discountWaived && discountMode === 'PRICE_REDUCTION';
-  const effectiveRevenue = applyPriceReduction ? msrp.sub(discountAmount) : msrp;
+  // CONSERVATION MODEL:
+  // The merchant / nonprofit / platform split is ALWAYS computed on the discounted
+  // (effective) revenue, so their take is identical no matter what the neighbor does
+  // with the 10% discount. The discount has exactly ONE destination, and that choice
+  // only changes what the neighbor pays and where the 10% lands:
+  //   - PRICE_REDUCTION (not waived): neighbor keeps it as a lower price.
+  //   - waived:                       neighbor pays full MSRP; the 10% funds a community initiative.
+  //   - PLATFORM_CREDITS (not waived): neighbor pays full MSRP; the 10% is returned as closed-loop credit.
+  // This guarantees: distributed (merchantNet + nonprofitShare + platformProfitShare
+  //   + waivedContribution + creditIssued) == the neighbor's pre-credit obligation.
+  const effectiveRevenue = msrp.sub(discountAmount);
 
-  // Net profit = effective revenue minus cost of goods sold.
-  // The 10/10/1 split is applied to net profit, not to gross MSRP profit.
+  // Net profit = effective revenue minus cost of goods sold. The 10/10/1 split is on net profit.
   const netProfit = effectiveRevenue.sub(cogs);
   const nonprofitShare = netProfit.mul(new Decimal(0.10));
   const platformProfitShare = netProfit.mul(new Decimal(0.01));
   const merchantProfitShare = netProfit.mul(new Decimal(0.89));
 
-  // neighborPays = effectiveRevenue before credits are applied.
-  // merchantNet = COGS + merchant's 89% profit share (discount already baked into netProfit).
-  let neighborPays = effectiveRevenue;
+  // merchantNet = COGS + merchant's 89% profit share (always on the discounted base).
   const merchantNet = cogs.add(merchantProfitShare);
+
+  // Destination of the 10% discount — exactly one of these is non-zero.
+  const keepsAsPriceReduction = !discountWaived && discountMode === 'PRICE_REDUCTION';
+  const waivedContribution = discountWaived ? discountAmount : new Decimal(0);
+  const creditIssued =
+    (!discountWaived && discountMode === 'PLATFORM_CREDITS') ? discountAmount : new Decimal(0);
+
+  // Neighbor pays the effective (discounted) price only when they keep the reduction;
+  // otherwise they pay full MSRP and the 10% is routed (to an initiative or back as credit).
+  let neighborPays = keepsAsPriceReduction ? effectiveRevenue : msrp;
 
   // Apply credits if any
   const appliedCredits = new Decimal(creditsToApply);
   neighborPays = neighborPays.sub(appliedCredits);
   if (neighborPays.lessThan(0)) neighborPays = new Decimal(0);
-
-  // Internal Processing Fee (0.5% of the amount paid)
-  let internalFee = new Decimal(0);
-  if (isInternal) {
-    internalFee = neighborPays.mul(new Decimal(0.005));
-  }
 
   return {
     msrp,
@@ -68,9 +75,10 @@ export const calculateDistribution = (
     neighborPays,
     neighborDiscount: discountAmount,
     nonprofitShare,
-    platformFee: platformProfitShare.add(internalFee),
+    platformFee: platformProfitShare,
     merchantNet,
-    internalFee,
+    waivedContribution,
+    creditIssued,
     appliedCredits
   };
 };

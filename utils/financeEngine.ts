@@ -1,8 +1,7 @@
 
 import { CartItem, OrderAccounting, FiscalPolicy, User } from '../types';
 import {
-  CARD_PROCESSING_FEE,
-  INTERNAL_BANKING_FEE
+  CARD_PROCESSING_FEE
 } from '../constants';
 
 // Added getEffectiveRates function to handle category-specific overrides
@@ -86,16 +85,14 @@ export const calculateOrderTotals = (
   const tax = subtotal * policy.taxRate;
   
   const cardFee = paymentMethod === 'CARD' ? subtotal * CARD_PROCESSING_FEE : 0;
-  const internalFee = paymentMethod === 'BALANCE' ? subtotal * INTERNAL_BANKING_FEE : 0;
 
-  const feesSaved = paymentMethod === 'CASH' 
-    ? subtotal * CARD_PROCESSING_FEE 
-    : paymentMethod === 'BALANCE' 
-      ? subtotal * (CARD_PROCESSING_FEE - INTERNAL_BANKING_FEE)
-      : 0;
+  // Paying by cash or balance avoids the card processing fee entirely (balance payments are free).
+  const feesSaved = (paymentMethod === 'CASH' || paymentMethod === 'BALANCE')
+    ? subtotal * CARD_PROCESSING_FEE
+    : 0;
 
-  // Total paid is subtotal + tax + fees - applied credits
-  const totalPaid = Math.max(0, subtotal + tax + cardFee + internalFee - appliedCredits);
+  // Total paid is subtotal + tax + card fee - applied credits
+  const totalPaid = Math.max(0, subtotal + tax + cardFee - appliedCredits);
 
   const accounting: OrderAccounting = {
     grossProfit: totalGrossProfit,
@@ -117,7 +114,6 @@ export const calculateOrderTotals = (
     subtotal,
     tax,
     cardFee,
-    internalFee,
     totalPaid,
     accounting,
     discountMode,

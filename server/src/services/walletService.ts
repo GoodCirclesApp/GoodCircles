@@ -18,7 +18,7 @@ export class WalletService {
   // Credits an amount to the platform treasury singleton and records a ledger entry.
   static async creditPlatformTreasury(
     amount: Decimal,
-    entryType: 'PLATFORM_FEE' | 'INTERNAL_FEE' | 'CONVERSION_FEE',
+    entryType: 'PLATFORM_FEE' | 'CONVERSION_FEE',
     description: string,
     transactionId: string | null,
     client: Prisma.TransactionClient
@@ -141,6 +141,36 @@ export class WalletService {
           description: `Donation from transaction ${transaction.id}`,
         },
       });
+
+      // 3b. Route the waived discount to the initiative's parent nonprofit (real money).
+      // When the neighbor waives their 10% they pay full MSRP, so the foregone discount is a
+      // genuine contribution that must land in a real wallet for the ledger to conserve —
+      // otherwise the neighbor is debited full price while merchant/nonprofit/platform only
+      // sum to the discounted base. Initiatives are owned by a nonprofit, so credit that nonprofit.
+      if (transaction.discountWaived && transaction.waivedToInitiativeId) {
+        const initiative = await client.communityInitiative.findUnique({
+          where: { id: transaction.waivedToInitiativeId },
+          include: { nonprofit: { include: { user: true } } },
+        });
+        const initiativeNonprofitUserId = initiative?.nonprofit?.userId;
+        if (initiativeNonprofitUserId) {
+          const initWallet = await this.getOrCreateWallet(initiativeNonprofitUserId, client);
+          const initNewBalance = initWallet.balance.add(transaction.discountAmount);
+          await client.wallet.update({ where: { id: initWallet.id }, data: { balance: initNewBalance } });
+          await client.ledgerEntry.create({
+            data: {
+              walletId: initWallet.id,
+              transactionId: transaction.id,
+              entryType: 'CREDIT',
+              amount: transaction.discountAmount,
+              balanceAfter: initNewBalance,
+              description: `Waived-discount contribution to initiative ${transaction.waivedToInitiativeId}`,
+            },
+          });
+        }
+        // NOTE: the pooled community-fund path (waivedToFundId) is the custodial model that is
+        // gated until money-transmitter / BaaS readiness; it is intentionally not settled here.
+      }
 
       // 4. Credit Platform Treasury (deterministic singleton — never an arbitrary admin user)
       await this.creditPlatformTreasury(

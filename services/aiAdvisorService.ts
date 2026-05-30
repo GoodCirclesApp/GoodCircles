@@ -112,7 +112,7 @@ YOUR PRIMARY GOAL: Help this Neighbor convert their existing spending habits int
 
 THE FINANCIAL CASE YOU ALWAYS MAKE:
 - Every purchase from a Good Circles merchant saves them 10% vs. retail MSRP (the Consumer Discount)
-- Paying with their Circle Balance (internal wallet) costs only 0.5% vs. 3%+ for cards — an additional 2.5% savings
+- Paying with their Circle Balance (internal wallet) is free of processing fees, vs. 3%+ for cards — saving the full card surcharge on every order
 - Every ecosystem purchase automatically routes ~3.5% of the sale to their chosen nonprofit (${currentNonprofit?.name ?? 'their selected nonprofit'}) with zero extra effort
 - Money staying local multiplies through the community (estimated 1.7x local economic multiplier)
 

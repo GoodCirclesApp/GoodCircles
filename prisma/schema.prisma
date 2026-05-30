@@ -426,7 +426,7 @@ model PlatformLedgerEntry {
   accountId     String
   account       PlatformAccount @relation(fields: [accountId], references: [id])
   entryType     String
-  // "PLATFORM_FEE" | "INTERNAL_FEE" | "CONVERSION_FEE"
+  // "PLATFORM_FEE" | "CONVERSION_FEE"
   amount        Decimal         @db.Decimal(18, 4)
   balanceAfter  Decimal         @db.Decimal(18, 4)
   transactionId String?

@@ -260,7 +260,6 @@ export const getListingDetail = async (req: Request, res: Response) => {
     const platformFee = netProfit * 0.01;
     const merchantNet = price - discountAmount - nonprofitShare - platformFee;
     const cardProcessingFee = memberPrice * 0.029 + 0.30;
-    const internalProcessingFee = memberPrice * 0.005;
 
     res.json({
       ...listing,
@@ -277,10 +276,10 @@ export const getListingDetail = async (req: Request, res: Response) => {
           total: Math.round((memberPrice + cardProcessingFee) * 100) / 100,
         },
         payWithBalance: {
-          processingFee: Math.round(internalProcessingFee * 100) / 100,
-          total: Math.round((memberPrice + internalProcessingFee) * 100) / 100,
+          processingFee: 0,
+          total: Math.round(memberPrice * 100) / 100,
         },
-        savingsWithBalance: Math.round((cardProcessingFee - internalProcessingFee) * 100) / 100,
+        savingsWithBalance: Math.round(cardProcessingFee * 100) / 100,
       }
     });
   } catch (err: any) {
@@ -416,7 +415,6 @@ export const checkout = async (req: AuthRequest, res: Response) => {
         subtotal:           Number(tx.grossAmount),
         tax:                0,
         cardFee:            0,
-        internalFee:        0,
         totalPaid:          Number(bd.neighborPays ?? tx.grossAmount),
         grossAmount:        Number(tx.grossAmount),
         status:             'COMPLETED',

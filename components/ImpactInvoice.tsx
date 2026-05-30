@@ -78,7 +78,6 @@ export const ImpactInvoice: React.FC<Props> = ({ order, nonprofit, onClose }) =>
             )}
             <SummaryRow label="Tax (8.25%)" value={`$${order.tax.toFixed(2)}`} />
             {order.cardFee > 0 && <SummaryRow label="Card Processing Surcharge (3%)" value={`$${order.cardFee.toFixed(2)}`} />}
-            {order.internalFee > 0 && <SummaryRow label="Internal Maintenance Fee (0.5%)" value={`$${order.internalFee.toFixed(2)}`} color="text-[#C2A76F]" />}
             <div className="flex justify-between items-center pt-6 mt-2 border-t-2 border-black">
                <p className="text-xl font-black uppercase tracking-widest italic">Net Amount Paid</p>
                <p className="text-4xl font-black tracking-tighter italic">${order.totalPaid.toFixed(2)}</p>

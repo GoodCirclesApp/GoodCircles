@@ -38,18 +38,17 @@ describe('Transaction Engine — Financial Calculations', () => {
       expect(Number(dist.neighborPays)).toBeCloseTo(40.50, 2);
     });
 
-    it('should produce zero net profit when discount is waived and COGS = price', () => {
-      // With PRICE_REDUCTION and price=COGS, the listing API rejects the listing
-      // (price × 0.9 < cogs). The zero-profit case is only reachable when the
-      // discount is waived, leaving effectiveRevenue = full MSRP = COGS.
-      const dist = calculateDistribution(50, 50, true, false, 'PRICE_REDUCTION', 0);
+    it('should produce zero net profit at the COGS = discounted-price boundary', () => {
+      // The split is ALWAYS computed on the discounted base (price × 0.9), regardless of
+      // waive/mode, so the zero-profit boundary is COGS == price × 0.9.
+      const dist = calculateDistribution(50, 45, false, false, 'PRICE_REDUCTION', 0);
 
-      // effectiveRevenue = $50 (no reduction), netProfit = $0
-      // Merchant net = $50 COGS + $0 profit = $50
+      // effectiveRevenue = $45, netProfit = $45 - $45 = $0
+      // Merchant net = $45 COGS + $0 profit = $45; neighbor pays $45
       expect(Number(dist.profit)).toBe(0);
       expect(Number(dist.nonprofitShare)).toBe(0);
-      expect(Number(dist.neighborPays)).toBe(50);
-      expect(Number(dist.merchantNet)).toBe(50);
+      expect(Number(dist.neighborPays)).toBe(45);
+      expect(Number(dist.merchantNet)).toBe(45);
     });
 
     it('should handle high-margin item ($200 price, $20 COGS)', () => {
@@ -69,61 +68,65 @@ describe('Transaction Engine — Financial Calculations', () => {
   // ─── Internal vs Card Payment ────────────────────────────────────────
 
   describe('Internal vs Card Payment', () => {
-    it('should add 0.5% internal fee for balance payments', () => {
-      const dist = calculateDistribution(100, 40, false, true, 'PRICE_REDUCTION', 0);
+    it('should charge the same platform fee (1% of net profit) regardless of payment method', () => {
+      const internal = calculateDistribution(100, 40, false, true, 'PRICE_REDUCTION', 0);
+      const card = calculateDistribution(100, 40, false, false, 'PRICE_REDUCTION', 0);
 
-      // Neighbor pays $90, internal fee = $90 * 0.005 = $0.45
-      expect(Number(dist.internalFee)).toBeCloseTo(0.45, 2);
-      // Platform fee = 1% of net profit ($50) + internal fee = $0.50 + $0.45 = $0.95
-      const basePlatformFee = 50 * 0.01; // $0.50 (net profit after discount)
-      expect(Number(dist.platformFee)).toBeCloseTo(basePlatformFee + 0.45, 2);
-    });
-
-    it('should have zero internal fee for card payments', () => {
-      const dist = calculateDistribution(100, 40, false, false, 'PRICE_REDUCTION', 0);
-      expect(Number(dist.internalFee)).toBe(0);
+      // No internal/balance processing fee exists anymore — platform fee is purely the 1% profit share.
+      expect(Number(internal.platformFee)).toBeCloseTo(50 * 0.01, 2);
+      expect(Number(card.platformFee)).toBeCloseTo(50 * 0.01, 2);
+      expect(Number(internal.platformFee)).toBeCloseTo(Number(card.platformFee), 2);
     });
   });
 
   // ─── Waived Discount ─────────────────────────────────────────────────
 
   describe('Waived Discount', () => {
-    it('should not apply discount when waived', () => {
+    it('should charge full price and route the 10% to the initiative when waived', () => {
       const dist = calculateDistribution(100, 40, true, false, 'PRICE_REDUCTION', 0);
 
-      // Discount = $10 but neighbor still pays full price ($100)
-      // The $10 goes to community initiative instead
+      // Discount = $10; neighbor pays full price ($100); the $10 becomes the waived contribution.
       expect(Number(dist.neighborDiscount)).toBe(10);
       expect(Number(dist.neighborPays)).toBe(100);
+      expect(Number(dist.waivedContribution)).toBe(10);
+      expect(Number(dist.creditIssued)).toBe(0);
     });
 
-    it('should calculate full merchant net when discount is waived', () => {
+    it('should NOT change the merchant/nonprofit/platform split when waived (conservation)', () => {
       const waived = calculateDistribution(100, 40, true, false, 'PRICE_REDUCTION', 0);
       const standard = calculateDistribution(100, 40, false, false, 'PRICE_REDUCTION', 0);
 
-      // Merchant net should be higher when discount is waived
-      // because the discount doesn't come out of their share
-      expect(Number(waived.merchantNet)).toBeGreaterThan(Number(standard.merchantNet));
+      // The split is always on the discounted base, so the three parties are unaffected by the
+      // neighbor's choice to waive. Only neighborPays and the waived contribution differ.
+      expect(Number(waived.merchantNet)).toBeCloseTo(Number(standard.merchantNet), 2);
+      expect(Number(waived.nonprofitShare)).toBeCloseTo(Number(standard.nonprofitShare), 2);
+      expect(Number(waived.platformFee)).toBeCloseTo(Number(standard.platformFee), 2);
+      // The extra the neighbor paid ($100 vs $90) is exactly the initiative contribution.
+      expect(Number(waived.neighborPays) - Number(standard.neighborPays)).toBeCloseTo(
+        Number(waived.waivedContribution), 2
+      );
     });
   });
 
   // ─── Platform Credits Mode ───────────────────────────────────────────
 
   describe('Platform Credits Mode', () => {
-    it('should charge full price in credit mode', () => {
+    it('should charge full price and issue the 10% as credit in credit mode', () => {
       const dist = calculateDistribution(100, 40, false, false, 'PLATFORM_CREDITS', 0);
 
-      // In credit mode, neighbor pays full MSRP
-      // Credits are issued separately (not deducted at POS)
+      // In credit mode the neighbor pays full MSRP and the 10% is returned as closed-loop credit.
       expect(Number(dist.neighborPays)).toBe(100);
+      expect(Number(dist.creditIssued)).toBe(10);
+      expect(Number(dist.waivedContribution)).toBe(0);
     });
 
-    it('should give merchant full revenue in credit mode', () => {
+    it('should NOT change the merchant/nonprofit/platform split in credit mode (conservation)', () => {
       const credit = calculateDistribution(100, 40, false, false, 'PLATFORM_CREDITS', 0);
       const reduction = calculateDistribution(100, 40, false, false, 'PRICE_REDUCTION', 0);
 
-      // Merchant should get more in credit mode
-      expect(Number(credit.merchantNet)).toBeGreaterThan(Number(reduction.merchantNet));
+      // Same split as price-reduction; the neighbor's extra $10 is returned to them as credit,
+      // it does not inflate the merchant's take.
+      expect(Number(credit.merchantNet)).toBeCloseTo(Number(reduction.merchantNet), 2);
     });
   });
 
@@ -169,10 +172,35 @@ describe('Transaction Engine — Financial Calculations', () => {
     it('should handle credits + internal payment', () => {
       const dist = calculateDistribution(100, 40, false, true, 'PRICE_REDUCTION', 10);
 
-      // Standard neighbor pays = $90, minus $10 credits = $80
-      // Internal fee on $80 = $0.40
+      // Standard neighbor pays = $90, minus $10 credits = $80 (no internal fee)
       expect(Number(dist.neighborPays)).toBe(80);
-      expect(Number(dist.internalFee)).toBeCloseTo(0.40, 2);
+    });
+  });
+
+  // ─── Conservation Invariant ──────────────────────────────────────────
+
+  describe('Conservation Invariant', () => {
+    // Card payment (no internal fee) and no applied credits, so everything distributed plus
+    // value returned to the neighbor must exactly equal what the neighbor pays.
+    const cases = [
+      { label: 'price reduction',     args: [100, 40, false, false, 'PRICE_REDUCTION', 0] as const },
+      { label: 'waived → initiative', args: [100, 40, true,  false, 'PRICE_REDUCTION', 0] as const },
+      { label: 'platform credits',    args: [100, 40, false, false, 'PLATFORM_CREDITS', 0] as const },
+      { label: 'high margin waived',  args: [200, 20, true,  false, 'PRICE_REDUCTION', 0] as const },
+      { label: 'odd amounts waived',  args: [33.33, 15.17, true, false, 'PRICE_REDUCTION', 0] as const },
+    ];
+
+    cases.forEach(({ label, args }) => {
+      it(`distributed value equals what the neighbor pays (${label})`, () => {
+        const dist = calculateDistribution(args[0], args[1], args[2], args[3], args[4], args[5]);
+        const distributed =
+          Number(dist.merchantNet) +
+          Number(dist.nonprofitShare) +
+          Number(dist.platformFee) +
+          Number(dist.waivedContribution) +
+          Number(dist.creditIssued);
+        expect(distributed).toBeCloseTo(Number(dist.neighborPays), 2);
+      });
     });
   });
 

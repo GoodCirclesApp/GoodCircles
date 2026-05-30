@@ -413,7 +413,8 @@ export class ComplianceService {
 
     const grossAmount = Number(agg._sum.grossAmount ?? 0);
     const nonprofitShare = Number(agg._sum.nonprofitShare ?? 0);
-    // platformFee in the Transaction model = 1% profit share + 0.5% internal processing fee.
+    // platformFee in the Transaction model = the 1% profit share. (Historical rows may also
+    // include a since-removed 0.5% internal processing fee; the derivation below tolerates that.)
     // The L3C mission ratio must only compare the PROFIT DISTRIBUTION (10% nonprofit vs 1%
     // platform), not processing fees. By definition platformProfitShare = nonprofitShare / 10,
     // so we derive it directly to guarantee the ratio reflects the model accurately.

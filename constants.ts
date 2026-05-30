@@ -5,8 +5,7 @@ export const GC_DISCOUNT_RATE = 0.10;
 export const DONATION_RATE = 0.10;
 export const PLATFORM_FEE_RATE = 0.01;
 export const CARD_PROCESSING_FEE = 0.03;
-export const INTERNAL_BANKING_FEE = 0.005; 
-export const TAX_RATE = 0.0825; 
+export const TAX_RATE = 0.0825;
 export const PLATFORM_LAUNCH_DATE = '2024-01-01';
 
 const DEFAULT_POLICY: FiscalPolicy = {
@@ -946,7 +945,6 @@ export const MOCK_ORDERS: Order[] = [
     subtotal: 1665.00,
     tax: 137.36,
     cardFee: 0,
-    internalFee: 8.33,
     totalPaid: 1810.69,
     grossAmount: 1850.00,
     status: 'COMPLETED',
@@ -978,7 +976,6 @@ export const MOCK_ORDERS: Order[] = [
     subtotal: 166.50,
     tax: 13.74,
     cardFee: 5.41,
-    internalFee: 0,
     totalPaid: 185.65,
     grossAmount: 185.00,
     status: 'COMPLETED',
@@ -1010,7 +1007,6 @@ export const MOCK_ORDERS: Order[] = [
     subtotal: 1665000.00,
     tax: 137362.50,
     cardFee: 0,
-    internalFee: 8325.00,
     totalPaid: 1810687.50,
     grossAmount: 1850000.00,
     status: 'COMPLETED',
@@ -1042,7 +1038,6 @@ export const MOCK_ORDERS: Order[] = [
     subtotal: 1199979.00,
     tax: 98998.27,
     cardFee: 0,
-    internalFee: 5999.90,
     totalPaid: 1304977.17,
     grossAmount: 1333310.00,
     status: 'COMPLETED',
@@ -1074,7 +1069,6 @@ export const MOCK_ORDERS: Order[] = [
     subtotal: 133354.51, 
     tax: 11001.75,
     cardFee: 0,
-    internalFee: 666.77,
     totalPaid: 145023.03,
     grossAmount: 135000.00,
     status: 'COMPLETED',
