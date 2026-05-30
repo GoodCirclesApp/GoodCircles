@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { Resend } from 'resend';
 import { sendEmail } from '../services/emailService';
 import { handleDeliveryEvent } from '../services/emailCampaignService';
-import { wrap } from '../services/emailLayoutService';
+import { wrap, FROM_ADDRESSES } from '../services/emailLayoutService';
 import * as ec from '../controllers/emailCampaignController';
 import { authenticateToken, blockViewOnly } from '../middleware/authMiddleware';
 
@@ -96,7 +96,9 @@ router.post('/send', blockViewOnly, async (req, res) => {
     toName: toName || '',
     subject,
     html: finalHtml,
-    meta: { type: 'INDIVIDUAL', triggerSource: 'ADMIN_COMPOSE', layoutVariant: 'MARKETING' },
+    from: FROM_ADDRESSES.support,            // admin compose goes out as support@…
+    replyTo: 'support@goodcircles.org',      // …so replies return to the support inbox
+    meta: { type: 'INDIVIDUAL', triggerSource: 'ADMIN_COMPOSE', layoutVariant: 'TRANSACTIONAL' },
   });
 
   if (success) {
