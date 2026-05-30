@@ -1,21 +1,19 @@
-import fs from 'fs';
-import path from 'path';
-
 /**
  * emailLayoutService — single source of truth for Good Circles email brand rendering.
  *
  * Locked aesthetic: the waitlist look (formerly waitlistEmailService) as the base —
  * gradient header, 180px logo, white body card, role accents, heavy headlines,
  * pill CTA, branded footer. All outbound email (transactional, waitlist, admin
- * compose, future mass campaigns) renders through this module so every send is
- * visually identical and on-brand.
+ * compose, mass campaigns) renders through this module so every send is visually
+ * identical and on-brand.
  *
- * Logo: embedded as a CID inline attachment so it renders even when mail clients
- * (Gmail/Outlook) block remote images — the root cause of the previously "broken"
- * logo. Falls back to alt text if a client strips CID.
+ * Logo: a hosted HTTPS image (EMAIL_LOGO_URL or APP_URL/logos) — renders inline in
+ * all clients and never appears as an attachment.
  */
 
-const APP_URL = process.env.APP_URL || 'https://goodcircles.org';
+// APP_URL must be an origin that serves /logos (the Railway app), not the Netlify
+// landing domain. Default to the Railway production URL where /logos is served.
+const APP_URL = process.env.APP_URL || 'https://goodcircles-production.up.railway.app';
 
 // ── Brand tokens (single source of truth) ───────────────────────────────────
 export const BRAND = {
@@ -57,37 +55,14 @@ export const FROM_ADDRESSES = {
   founder:       'Good Circles <founder@goodcircles.org>',
 } as const;
 
-// ── CID logo attachment ──────────────────────────────────────────────────────
-// Read the high-res white logo from disk once and cache it as base64 for inline
-// (CID) embedding. dist/logos is the deployed location; public/logos is the dev
-// source. Either resolves relative to process.cwd().
-export const LOGO_CID = 'gc-logo';
-
-let cachedLogo: { filename: string; content: string; contentId: string } | null | undefined;
-
-export function getLogoAttachment(): { filename: string; content: string; contentId: string } | null {
-  if (cachedLogo !== undefined) return cachedLogo;
-  const candidates = [
-    path.join(process.cwd(), 'dist', 'logos', 'logo-white.png'),
-    path.join(process.cwd(), 'public', 'logos', 'logo-white.png'),
-  ];
-  for (const p of candidates) {
-    try {
-      const buf = fs.readFileSync(p);
-      cachedLogo = { filename: 'good-circles-logo.png', content: buf.toString('base64'), contentId: LOGO_CID };
-      return cachedLogo;
-    } catch { /* try next */ }
-  }
-  console.warn('[emailLayout] logo asset not found in dist/logos or public/logos — falling back to hosted URL');
-  cachedLogo = null;
-  return cachedLogo;
-}
-
-// Logo markup: prefer CID (renders with images blocked); fall back to hosted URL.
+// Logo markup: a HOSTED HTTPS URL (renders inline in all clients, never appears as an
+// attachment). Override with EMAIL_LOGO_URL; otherwise served from the app's /logos.
+// NOTE: APP_URL must be an origin that actually serves /logos (the Railway app), not the
+// Netlify landing domain — otherwise the image 404s. Set EMAIL_LOGO_URL to be safe.
+const LOGO_URL = process.env.EMAIL_LOGO_URL || `${APP_URL}/logos/logo-white.png`;
 function logoImg(): string {
-  const src = getLogoAttachment() ? `cid:${LOGO_CID}` : `${APP_URL}/logos/logo-white.png`;
   // 832x445 source displayed at 180px wide (≈96px tall) — crisp on retina.
-  return `<img src="${src}" alt="Good Circles" width="180" height="96"
+  return `<img src="${LOGO_URL}" alt="Good Circles" width="180" height="96"
     style="display:block;margin:0 auto 12px;max-width:180px;height:auto;border:0;outline:none;text-decoration:none;" />`;
 }
 

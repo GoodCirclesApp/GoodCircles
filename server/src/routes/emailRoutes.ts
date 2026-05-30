@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { Resend } from 'resend';
 import { sendEmail } from '../services/emailService';
 import { handleDeliveryEvent } from '../services/emailCampaignService';
+import { wrap } from '../services/emailLayoutService';
 import * as ec from '../controllers/emailCampaignController';
 import { authenticateToken, blockViewOnly } from '../middleware/authMiddleware';
 
@@ -83,11 +84,18 @@ router.post('/send', blockViewOnly, async (req, res) => {
     return res.status(400).json({ error: 'Missing required fields: to, subject, html' });
   }
 
+  // Wrap the composed body in the branded layout unless the caller already sent a full
+  // document. This is what makes the legacy admin compose on-brand (gradient header,
+  // body card, footer, hosted logo) instead of bare paragraphs.
+  const finalHtml = /<html[\s>]/i.test(html)
+    ? html
+    : wrap({ body: html, footerVariant: 'TRANSACTIONAL' });
+
   const success = await sendEmail({
     to,
     toName: toName || '',
     subject,
-    html,
+    html: finalHtml,
     meta: { type: 'INDIVIDUAL', triggerSource: 'ADMIN_COMPOSE', layoutVariant: 'MARKETING' },
   });
 

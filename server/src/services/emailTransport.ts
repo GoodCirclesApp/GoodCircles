@@ -1,10 +1,9 @@
 import { Resend } from 'resend';
-import { getLogoAttachment } from './emailLayoutService';
 
 /**
  * emailTransport — the low-level Resend send, shared by emailService (single sends)
- * and emailCampaignService (mass sends) without an import cycle. Always inline-embeds
- * the brand logo as a CID attachment so it renders with remote images blocked.
+ * and emailCampaignService (mass sends) without an import cycle. The brand logo is a
+ * hosted HTTPS image rendered by emailLayoutService, NOT an attachment.
  */
 
 export interface EmailAttachment {
@@ -14,13 +13,13 @@ export interface EmailAttachment {
   contentId?: string;     // set for inline (CID) images
 }
 
-/** Prepend the CID brand logo to any caller-supplied attachments. */
+/**
+ * Pass-through for caller-supplied attachments. (The logo is no longer attached —
+ * it is a hosted inline image — so this just normalizes to an array. Kept as the
+ * single chokepoint where real document attachments will be added.)
+ */
 export function withLogo(attachments?: EmailAttachment[]): EmailAttachment[] {
-  const logo = getLogoAttachment();
-  const all: EmailAttachment[] = [];
-  if (logo) all.push({ filename: logo.filename, content: logo.content, contentType: 'image/png', contentId: logo.contentId });
-  if (attachments?.length) all.push(...attachments);
-  return all;
+  return attachments?.length ? [...attachments] : [];
 }
 
 export async function transport(
