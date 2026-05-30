@@ -127,24 +127,41 @@ const EVENT_MAP: Record<string, { status: string; at: string; counter: string }>
   'email.complained': { status: 'COMPLAINED', at: 'complainedAt', counter: 'complainedCount' },
 };
 
+const STATUS_RANK: Record<string, number> = { PENDING: 0, SENT: 1, DELIVERED: 2, OPENED: 3, CLICKED: 4 };
+
 export async function handleDeliveryEvent(parsed: any): Promise<void> {
   const type: string = parsed?.type;
-  const resendId: string | undefined = parsed?.data?.email_id;
+  // Most events use data.email_id; fall back to data.id defensively.
+  const resendId: string | undefined = parsed?.data?.email_id ?? parsed?.data?.id;
   const mapping = EVENT_MAP[type];
+
+  // Diagnostic: surfaces exactly what Resend sends (event type, id, and — when the id
+  // is missing — the data keys, so a differing field name is immediately visible).
+  console.log(`[EmailWebhook] received type=${type ?? 'NONE'} email_id=${resendId ?? 'NONE'} mapped=${!!mapping}`);
+  if (!resendId) console.warn('[EmailWebhook] no id in payload; data keys:', Object.keys(parsed?.data ?? {}));
   if (!mapping || !resendId) return;
 
   const recipient = await prisma.emailRecipient.findFirst({ where: { resendId } });
-  if (!recipient) return;
-  if (recipient.status === mapping.status) return; // idempotent
+  if (!recipient) { console.warn(`[EmailWebhook] no recipient matched resendId=${resendId}`); return; }
+
+  // Per-event idempotency: each event type is counted at most once (its timestamp field
+  // is null until first seen). Prevents double-counting on Resend retries/replays.
+  if ((recipient as any)[mapping.at]) { console.log(`[EmailWebhook] ${type} already recorded for ${recipient.id}`); return; }
+
+  // Status only moves forward (sent→delivered→opened→clicked); bounce/complaint always win.
+  let newStatus = recipient.status;
+  if (type === 'email.bounced' || type === 'email.complained') newStatus = mapping.status;
+  else if ((STATUS_RANK[mapping.status] ?? 0) > (STATUS_RANK[recipient.status] ?? 0)) newStatus = mapping.status;
 
   await prisma.emailRecipient.update({
     where: { id: recipient.id },
-    data: { status: mapping.status, [mapping.at]: new Date() } as any,
+    data: { status: newStatus, [mapping.at]: new Date() } as any,
   });
   await prisma.emailCampaign.update({
     where: { id: recipient.campaignId },
     data: { [mapping.counter]: { increment: 1 } } as any,
   });
+  console.log(`[EmailWebhook] applied ${type} → recipient=${recipient.id} status=${newStatus}`);
 
   if (type === 'email.bounced') {
     await prisma.emailSuppression.upsert({
