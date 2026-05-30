@@ -151,7 +151,8 @@ export const searchMarketplace = async (req: Request, res: Response) => {
       const discountAmount = price * 0.10;
       const memberPrice = price - discountAmount;
       const cogs = Number(listing.cogs);
-      const netProfit = price - cogs;
+      // Net profit is on the discounted (member) price, not gross — matches calculateDistribution.
+      const netProfit = memberPrice - cogs;
       const nonprofitShare = netProfit * 0.10;
 
       return {
@@ -255,7 +256,8 @@ export const getListingDetail = async (req: Request, res: Response) => {
     const cogs = Number(listing.cogs);
     const discountAmount = price * 0.10;
     const memberPrice = price - discountAmount;
-    const netProfit = price - cogs;
+    // Net profit is on the discounted (member) price, not gross — matches calculateDistribution.
+    const netProfit = memberPrice - cogs;
     const nonprofitShare = netProfit * 0.10;
     const platformFee = netProfit * 0.01;
     const merchantNet = price - discountAmount - nonprofitShare - platformFee;

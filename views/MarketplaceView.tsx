@@ -139,7 +139,11 @@ export const MarketplaceView: React.FC<Props> = ({
             {products.map(p => {
               const rates = getEffectiveRates(p.category, policy);
               const cartItem = cart.find(item => item.product.id === p.id);
-              const donationAmt = p.price * (1 - rates.discountRate) * rates.donationRate;
+              // Donation is 10% of NET PROFIT (discounted revenue − COGS), matching the canonical
+              // split in calculateDistribution / ProductDetailModal — not 10% of revenue.
+              const discountedPrice = p.price * (1 - rates.discountRate);
+              const netProfit = Math.max(0, discountedPrice - (p.cogs ?? 0));
+              const donationAmt = netProfit * rates.donationRate;
               const isWishlisted = wishlistIds.includes(p.id);
               const justAdded = recentlyAdded === p.id;
 

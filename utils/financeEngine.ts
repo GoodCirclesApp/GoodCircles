@@ -56,9 +56,10 @@ export const calculateOrderTotals = (
   let totalPlatformFee = 0;
   let totalCogs = 0;
 
-  // Discount reduces the profit basis only when applied as a price reduction.
-  const applyDiscount = !isDiscountWaived && discountMode !== 'PLATFORM_CREDITS';
-
+  // The merchant/nonprofit/platform split is ALWAYS computed on the discounted (effective)
+  // revenue, mirroring the canonical calculateDistribution: the three shares are identical
+  // whether the neighbor keeps the discount, waives it, or takes it as credit. Only what the
+  // neighbor PAYS (subtotal, below) and the destination of the 10% differ between modes.
   cart.forEach(item => {
     const acc = calculateItemAccounting(
       item.product.price,
@@ -66,7 +67,7 @@ export const calculateOrderTotals = (
       item.quantity,
       policy,
       item.product.cogs,
-      applyDiscount
+      true // split basis is always the discounted revenue
     );
     totalMsrp += item.product.price * item.quantity;
 
@@ -96,7 +97,11 @@ export const calculateOrderTotals = (
 
   const accounting: OrderAccounting = {
     grossProfit: totalGrossProfit,
-    donationAmount: isDiscountWaived ? totalDonation + totalDiscount : totalDonation,
+    // The 10% nonprofit donation is always 10% of net profit (computed per-item on the correct
+    // effective revenue for the mode). When the discount is waived, the foregone 10% does NOT
+    // add to this nonprofit donation — it is a separate contribution to the elected initiative,
+    // tracked in waivedDiscountAmount and routed to the initiative's nonprofit at settlement.
+    donationAmount: totalDonation,
     platformFee: totalPlatformFee,
     // merchantNet = COGS + 89% of net profit. Using totalCogs + totalGrossProfit * 0.89
     // is correct in all discount modes (PRICE_REDUCTION, PLATFORM_CREDITS, waived) because
