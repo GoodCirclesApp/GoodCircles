@@ -88,14 +88,20 @@ export async function finalizeSend(
   result: { ok: boolean; resendId?: string | null; error?: string },
 ): Promise<void> {
   try {
+    // Always record the provider id + timestamp so delivery webhooks can correlate.
     await prisma.emailRecipient.update({
       where: { id: ids.recipientId },
       data: {
-        status: result.ok ? 'SENT' : 'FAILED',
         resendId: result.resendId ?? undefined,
         errorMessage: result.error,
         sentAt: result.ok ? new Date() : undefined,
       },
+    });
+    // Advance to SENT/FAILED ONLY if a delivery webhook hasn't already moved it past
+    // PENDING (a fast delivered/opened can land before this runs — don't clobber it).
+    await prisma.emailRecipient.updateMany({
+      where: { id: ids.recipientId, status: 'PENDING' },
+      data: { status: result.ok ? 'SENT' : 'FAILED' },
     });
     await prisma.emailCampaign.update({
       where: { id: ids.campaignId },
@@ -392,15 +398,20 @@ export async function sendCampaign(campaignId: string): Promise<{ ok: boolean; s
       const html = renderFor(campaign, r);
       const subject = personalize(campaign.subject, r);
       const result = await transport(fromFull, { to: r.email, subject, html, replyTo: campaign.replyTo ?? undefined }, withLogo(attachments));
+      // Record provider id + metadata always; advance status only if a webhook hasn't
+      // already moved it past PENDING (forward-only — avoids clobbering a fast delivered).
       await prisma.emailRecipient.update({
         where: { id: rec.id },
         data: {
-          status: result.ok ? 'SENT' : 'FAILED',
           resendId: result.id,
           errorMessage: result.error,
           sentAt: result.ok ? new Date() : undefined,
           personalizationJson: { firstName: r.firstName, businessName: r.businessName, orgName: r.orgName } as any,
         },
+      });
+      await prisma.emailRecipient.updateMany({
+        where: { id: rec.id, status: 'PENDING' },
+        data: { status: result.ok ? 'SENT' : 'FAILED' },
       });
       if (result.ok) sent++;
     }));
