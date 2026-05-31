@@ -70,6 +70,16 @@ const EmailCampaignsManager = ({ isViewer }: { isViewer?: boolean }) => {
 
   useEffect(() => { loadCampaigns(); loadTemplates(); }, []);
 
+  // Delivery/open/bounce stats arrive via webhook seconds-to-minutes after sending, so
+  // auto-refresh the list (and any open detail) while the Campaigns tab is showing.
+  useEffect(() => {
+    if (tab !== 'campaigns') return;
+    const t = setInterval(() => { loadCampaigns(); if (detail?.id) openDetail(detail.id); }, 15000);
+    return () => clearInterval(t);
+  }, [tab, detail?.id]);
+
+  async function refreshCampaigns() { await loadCampaigns(); if (detail?.id) await openDetail(detail.id); }
+
   async function sendTest() {
     if (isViewer) return;
     setBusy(true); setMsg(null);
@@ -214,6 +224,11 @@ const EmailCampaignsManager = ({ isViewer }: { isViewer?: boolean }) => {
 
       {/* ── CAMPAIGNS ── */}
       {tab === 'campaigns' && (
+        <div className="space-y-3">
+        <div className="flex justify-between items-center">
+          <span className="text-[11px] font-bold text-slate-400 uppercase">Auto-refreshing every 15s</span>
+          <button onClick={refreshCampaigns} className="text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 text-white">↻ Refresh now</button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-2">
             {campaigns.length === 0 && <p className="text-slate-400 text-sm italic">No campaigns yet.</p>}
@@ -245,6 +260,7 @@ const EmailCampaignsManager = ({ isViewer }: { isViewer?: boolean }) => {
               </div>
             )}
           </div>
+        </div>
         </div>
       )}
 
