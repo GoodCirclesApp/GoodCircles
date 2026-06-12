@@ -1,8 +1,12 @@
+# Production marketing site = marketing/ (Astro, static multi-page).
+# The build command includes the SEO regression gate (scripts/check-seo.mjs) —
+# a deploy fails rather than shipping a page that breaks the SEO invariants.
+# No SPA catch-all: Astro emits one HTML file per route, and Netlify serves
+# dist/404.html with a real 404 status for unknown paths. The www->bare 301
+# lives in marketing/public/_redirects.
 [build]
-  command   = "cd landing && npm install && npm run build"
-  publish   = "landing/dist"
+  command   = "cd marketing && npm install && npm run build"
+  publish   = "marketing/dist"
 
-[[redirects]]
-  from   = "/*"
-  to     = "/index.html"
-  status = 200
+[build.environment]
+  NODE_VERSION = "22"

@@ -13,7 +13,8 @@ export const SITE_NAME = 'Good Circles';
 export const ORG_DESCRIPTION =
   'A community marketplace where shopping local saves you about 10% and a share of every sale funds a nonprofit you choose.';
 
-// TODO(owner input): add real social profile URLs as `sameAs` once provided.
+// Founder name + Facebook confirmed by owner 2026-06-12. Add Instagram/TikTok
+// to sameAs when those profiles exist.
 export const ORGANIZATION_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -21,10 +22,11 @@ export const ORGANIZATION_JSONLD = {
   url: SITE_URL,
   logo: `${SITE_URL}/og.png`,
   description: ORG_DESCRIPTION,
-  founder: { '@type': 'Person', name: 'Tim Franklin' },
+  founder: { '@type': 'Person', name: 'Timothy Franklin' },
   foundingDate: '2026',
   areaServed: { '@type': 'State', name: 'Mississippi' },
   email: 'hello@goodcircles.org',
+  sameAs: ['https://www.facebook.com/goodcirclesorg'],
 } as const;
 
 export const WEBSITE_JSONLD = {
