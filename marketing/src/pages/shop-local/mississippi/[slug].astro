@@ -1,0 +1,227 @@
+---
+// Programmatic city pages, driven by src/data/cities.ts (generated from the
+// canonical mockups in SEO&GEO/city-pages/). Design follows the mockups.
+//
+// Thin-content guardrails (CityPages.md):
+//  - noindex,follow until a city has >=6 REAL seeded entries (isCityIndexable);
+//    illustrative business tiles never count and never emit LocalBusiness schema.
+//  - Non-indexable cities are also excluded from the sitemap (astro.config.mjs).
+import Base from '../../../layouts/Base.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import FaqList from '../../../components/FaqList.astro';
+import { faqJsonLd, breadcrumbJsonLd } from '../../../lib/faq';
+import { SITE_URL } from '../../../data/site';
+import { CITIES, STATE, isCityIndexable, type City } from '../../../data/cities';
+
+export function getStaticPaths() {
+  return CITIES.map((city) => ({ params: { slug: city.slug }, props: { city } }));
+}
+
+interface Props {
+  city: City;
+}
+const { city } = Astro.props;
+const path = `/shop-local/${STATE.slug}/${city.slug}/`;
+const indexable = isCityIndexable(city);
+
+const TILE_GRADIENTS = [
+  'linear-gradient(135deg,#7851A9,#CA9CE1)',
+  'linear-gradient(135deg,#2E1B4E,#7851A9)',
+  'linear-gradient(135deg,#C2A76F,#FADC9C)',
+  'linear-gradient(135deg,#5B3D8F,#CA9CE1)',
+  'linear-gradient(135deg,#8A6A2E,#C2A76F)',
+  'linear-gradient(135deg,#241247,#5B3D8F)',
+];
+---
+
+<Base
+  title={city.title}
+  description={city.description}
+  path={path}
+  noindex={!indexable}
+  jsonLd={[
+    faqJsonLd(city.faqs),
+    breadcrumbJsonLd([
+      { name: 'Shop Local', url: `${SITE_URL}/shop-local/` },
+      { name: STATE.name, url: `${SITE_URL}/shop-local/${STATE.slug}/` },
+      { name: city.name, url: `${SITE_URL}${path}` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <header class="px-6 pt-12 pb-16" style="background:linear-gradient(150deg,#241247 0%,#4B2E84 58%,#7851A9 100%)">
+      <div class="max-w-3xl mx-auto">
+        <nav class="text-sm mb-6" style="color:#cdb9ee;font-family:'Fira Sans',sans-serif" aria-label="Breadcrumb">
+          <a href="/shop-local/" class="underline hover:text-white" style="color:#cdb9ee">Shop Local</a>
+          <span> › </span>
+          <a href={`/shop-local/${STATE.slug}/`} class="underline hover:text-white" style="color:#cdb9ee">{STATE.name}</a>
+          <span> › </span>
+          <span class="text-white">{city.name}</span>
+        </nav>
+        <p
+          class="inline-block px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest text-white mb-6"
+          style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25)"
+        >
+          {city.badge}
+        </p>
+        <h1 class="font-black text-white mb-6" style="font-size:clamp(2rem,5.5vw,3.2rem);letter-spacing:-0.02em;line-height:1.05">
+          {city.h1}
+        </h1>
+        <div
+          class="text-white/90 text-lg leading-relaxed rounded-2xl p-6"
+          style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);font-family:'Fira Sans',sans-serif"
+          set:html={city.answerHtml}
+        />
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a
+            href="/#mirror-section"
+            data-cta-audience="NEIGHBOR"
+            class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+            style="background:#C2A76F;color:#241247"
+          >
+            Join free as a Founding Neighbor
+          </a>
+          <a
+            href="/how-it-works"
+            class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
+            style="border:1px solid rgba(255,255,255,0.35)"
+          >
+            See how it works
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <section class="py-14 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-lg text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif" set:html={city.introHtml} />
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="text-3xl font-black mb-1" style="color:#7851A9">~10%</p>
+            <p class="font-black text-slate-900 mb-1">You save</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">Automatic at checkout on local purchases. No coupons, no codes.</p>
+          </div>
+          <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="text-3xl font-black mb-1" style="color:#C2A76F">10%</p>
+            <p class="font-black text-slate-900 mb-1">Funds your cause</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">10% of the business's profit goes to the {city.name} nonprofit you choose.</p>
+          </div>
+          <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="text-3xl font-black mb-1" style="color:#241247">89%</p>
+            <p class="font-black text-slate-900 mb-1">Stays with the shop</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">Local businesses keep 89% of their profit instead of losing 15–30%.</p>
+          </div>
+        </div>
+        <p class="mt-6 text-sm" style="font-family:'Fira Sans',sans-serif">
+          <a href="/how-it-works" class="font-bold underline" style="color:#7851A9">How it works »</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="py-14 px-6" style="background:#FBF7FE">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">
+          {city.name} businesses on Good Circles
+        </p>
+        <h2 class="text-3xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">Where your dollars will stay</h2>
+        <p class="text-slate-500 mb-8" style="font-family:'Fira Sans',sans-serif">
+          Founding {city.name} merchants will appear here at launch.
+          <span class="text-slate-400">(Illustrative — live listings populate from the merchant directory.)</span>
+        </p>
+        <div class="grid sm:grid-cols-3 gap-4">
+          {city.businesses.map((biz, i) => (
+            <div class="rounded-2xl overflow-hidden bg-white" style="border:1px solid #E7DCF2">
+              <div style={`height:64px;background:${TILE_GRADIENTS[i % TILE_GRADIENTS.length]}`}></div>
+              <div class="p-4">
+                <p class="font-black text-slate-900 text-sm">{biz.name}</p>
+                <p class="text-xs text-slate-400 mb-2" style="font-family:'Fira Sans',sans-serif">{biz.cat}</p>
+                <p class="text-[10px] font-black uppercase tracking-wider" style="color:#7851A9">Save ~10% · Funds your cause</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-14 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">
+          {city.name} nonprofits you can fund
+        </p>
+        <h2 class="text-3xl font-black text-slate-900 mb-8" style="letter-spacing:-0.02em">
+          Pick the cause your shopping supports
+        </h2>
+        <div class="grid sm:grid-cols-3 gap-4">
+          {city.nonprofits.map((np) => (
+            <div class="p-6 rounded-2xl" style="background:#FBF7FE;border:1px solid #E7DCF2">
+              <p class="text-2xl mb-3" aria-hidden="true">{np.icon}</p>
+              <p class="font-black text-slate-900 mb-1">{np.name}</p>
+              <p class="text-sm text-slate-500 mb-3" style="font-family:'Fira Sans',sans-serif">{np.blurb}</p>
+              <a href="/#mirror-section" data-cta-audience="NEIGHBOR" class="text-[11px] font-black uppercase tracking-wider underline" style="color:#7851A9">
+                Select as my nonprofit ›
+              </a>
+            </div>
+          ))}
+        </div>
+        <p class="mt-6 text-slate-600" style="font-family:'Fira Sans',sans-serif">
+          …or choose <strong>any IRS-verified 501(c)(3)</strong> in the {city.name} area you love.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-14 px-6" style="background:#FBF7FE">
+      <div class="max-w-3xl mx-auto grid sm:grid-cols-2 gap-4">
+        <div class="p-8 rounded-3xl text-white" style="background:linear-gradient(135deg,#7851A9,#5B3D8F)">
+          <h2 class="text-xl font-black mb-2">Own a {city.name} business?</h2>
+          <p class="text-white/80 text-sm leading-relaxed mb-5" style="font-family:'Fira Sans',sans-serif">
+            Keep 89% of your profit on a 1% fee, reach customers who save and give, and be one of
+            the first 200 Founding Merchants in Mississippi.
+          </p>
+          <a href="/for-business" data-cta-audience="MERCHANT" class="inline-block px-6 py-3 rounded-full font-black text-xs uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+            Become a Founding Merchant
+          </a>
+        </div>
+        <div class="p-8 rounded-3xl text-white" style="background:#241247">
+          <h2 class="text-xl font-black mb-2">Run a {city.name} nonprofit?</h2>
+          <p class="text-white/80 text-sm leading-relaxed mb-5" style="font-family:'Fira Sans',sans-serif">
+            Get recurring, no-cost funding every time supporters shop. Only the first 50 nonprofits
+            become Founding Nonprofits.
+          </p>
+          <a href="/for-nonprofits" data-cta-audience="NONPROFIT" class="inline-block px-6 py-3 rounded-full font-black text-xs uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+            Claim your Founding spot
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-14 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">Nearby</p>
+        <h2 class="text-2xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">More Mississippi cities</h2>
+        <div class="flex flex-wrap gap-3" style="font-family:'Fira Sans',sans-serif">
+          {city.nearby.map((nb) => (
+            <a
+              href={`/shop-local/${STATE.slug}/${nb.slug}/`}
+              class="px-4 py-2 rounded-full text-sm font-bold"
+              style="background:#FBF7FE;border:1px solid #E7DCF2;color:#52407e"
+            >
+              {nb.name}
+            </a>
+          ))}
+          <a
+            href={`/shop-local/${STATE.slug}/`}
+            class="px-4 py-2 rounded-full text-sm font-black"
+            style="background:#7851A9;color:#fff"
+          >
+            Shop Local in Mississippi ›
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <FaqList faqs={city.faqs} heading={`${city.name} FAQ`} />
+  </main>
+  <Footer />
+</Base>

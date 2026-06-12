@@ -1,0 +1,63 @@
+---
+// Homepage FAQ as a zero-JS <details> accordion. The FAQPage JSON-LD is
+// generated from the SAME array, so visible question text matches the schema
+// `name` field character-for-character (the highest-weighted AEO signal).
+// Copy corrected to the accuracy contract: "~"/"about" on the 10%, Jackson MS
+// metro first, "Good Circles" (two words) for entity consistency.
+export const FAQS = [
+  {
+    q: 'When does Good Circles launch?',
+    a: 'Good Circles launches in September 2026, starting in the Jackson, Mississippi metro and expanding node-by-node to the cities that request it most. Waitlist members receive an early-access email with their personal invite link the week before the public launch.',
+  },
+  {
+    q: 'Does it cost anything to join?',
+    a: 'No. Joining is free for shoppers and nonprofits — no membership, subscription, or hidden fees. You actually save about 10% on local purchases. Local businesses pay only a 1% fee on profit, so if they don’t sell, they don’t pay.',
+  },
+  {
+    q: 'How does Good Circles work?',
+    a: 'You shop local businesses through Good Circles, save about 10% automatically, and 10% of the merchant’s profit funds a nonprofit you chose at signup. The business keeps 89% of its profit instead of losing 15–30% to a big platform.',
+  },
+  {
+    q: 'Is my email shared with anyone?',
+    a: 'Good Circles will never sell your data or share it outside the platform. Within the circle, relevant information is shared with the nonprofit you elect and the merchants you shop with — that’s how the community works. No data leaves Good Circles.',
+  },
+  {
+    q: 'What if my nonprofit isn’t on the platform yet?',
+    a: 'Nonprofits need a free Good Circles account to be elected and receive funding. If your favorite organization isn’t on yet, invite them — joining is completely free, and the first 50 nonprofits become Founding Nonprofits with permanent recognition.',
+  },
+  {
+    q: 'Is Good Circles available in my city?',
+    a: 'Good Circles launches in the Jackson, Mississippi metro in September 2026, then expands to the cities that request it most. Joining the waitlist with your ZIP code counts as a request and helps us prioritize your area.',
+  },
+];
+
+export const FAQ_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<section id="faq" class="py-24 px-6 bg-white">
+  <div class="max-w-2xl mx-auto">
+    <p class="text-center text-xs font-black uppercase tracking-widest mb-3" style="color:#ccc">
+      Questions
+    </p>
+    <h2 class="text-4xl font-black text-center text-slate-900 mb-12" style="letter-spacing:-0.02em">
+      Good answers.
+    </h2>
+
+    <div class="gc-faq flex flex-col gap-2">
+      {FAQS.map((faq) => (
+        <details>
+          <summary>{faq.q}</summary>
+          <p class="gc-faq-a">{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

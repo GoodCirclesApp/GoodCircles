@@ -1,0 +1,33 @@
+---
+// Shared layout for Privacy / Terms / Cookies pages.
+import Base from './Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  heading: string;
+  updated: string;
+}
+const { title, description, path, heading, updated } = Astro.props;
+---
+
+<Base title={title} description={description} path={path}>
+  <Nav solid />
+  <main id="main" class="bg-white">
+    <div class="max-w-3xl mx-auto px-6 py-16">
+      <h1 class="font-black text-slate-900 mb-2" style="font-size:clamp(2rem,5vw,2.75rem);letter-spacing:-0.02em">
+        {heading}
+      </h1>
+      <p class="text-sm text-slate-400 mb-10" style="font-family:'Fira Sans',sans-serif">
+        Last updated {updated}
+      </p>
+      <div class="gc-prose">
+        <slot />
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Base>

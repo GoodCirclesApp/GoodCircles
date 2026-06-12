@@ -1,0 +1,16 @@
+{
+  "name": "Good Circles",
+  "short_name": "Good Circles",
+  "description": "The community marketplace — shop local, save about 10%, and fund a nonprofit you choose.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#7851A9",
+  "theme_color": "#7851A9",
+  "icons": [
+    {
+      "src": "/logos/submark-gold-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    }
+  ]
+}

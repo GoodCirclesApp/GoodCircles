@@ -1,0 +1,163 @@
+---
+// Mississippi state hub. Copy/design: SEO&GEO/city-pages/index.html (canonical).
+import Base from '../../../layouts/Base.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import FaqList from '../../../components/FaqList.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../../lib/faq';
+import { SITE_URL } from '../../../data/site';
+import { CITIES, STATE } from '../../../data/cities';
+
+const TITLE = 'Shop Local in Mississippi — Support Local Businesses & Give Back · Good Circles';
+const DESCRIPTION =
+  'Shop local across Mississippi, save ~10%, and fund a Mississippi nonprofit you choose. Good Circles launches in the Jackson metro in September 2026. Join free.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'Where is Good Circles launching in Mississippi?',
+    a: 'Good Circles launches in the Jackson metro first in September 2026, then expands to the Gulf Coast, north Mississippi (DeSoto, Oxford, Tupelo, the Golden Triangle), and beyond.',
+  },
+  {
+    q: 'How do I support local Mississippi businesses and give back?',
+    a: 'Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds a Mississippi nonprofit you choose — at no extra cost.',
+  },
+  {
+    q: 'Is Good Circles free?',
+    a: 'Yes — free for shoppers and nonprofits. Local businesses pay a 1% fee on profit.',
+  },
+];
+
+// Group cities by region in the mockup's order.
+const REGION_ORDER = [
+  'Central Mississippi',
+  'South Mississippi',
+  'North Mississippi',
+  'East Mississippi',
+  'Mississippi Delta',
+  'West-Central Mississippi',
+];
+const grouped = REGION_ORDER.map((region) => ({
+  region,
+  cities: CITIES.filter((c) => c.region === region),
+})).filter((g) => g.cities.length > 0);
+
+function article(name: string) {
+  return /^[AEIOU]/.test(name) ? 'an' : 'a';
+}
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path={`/shop-local/${STATE.slug}/`}
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: 'Shop Local', url: `${SITE_URL}/shop-local/` },
+      { name: STATE.name, url: `${SITE_URL}/shop-local/${STATE.slug}/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <header class="px-6 pt-12 pb-16" style="background:linear-gradient(150deg,#241247 0%,#4B2E84 58%,#7851A9 100%)">
+      <div class="max-w-3xl mx-auto">
+        <nav class="text-sm mb-6" style="color:#cdb9ee;font-family:'Fira Sans',sans-serif" aria-label="Breadcrumb">
+          <a href="/shop-local/" class="underline hover:text-white" style="color:#cdb9ee">Shop Local</a>
+          <span> › </span>
+          <span class="text-white">Mississippi</span>
+        </nav>
+        <p
+          class="inline-block px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest text-white mb-6"
+          style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25)"
+        >
+          Mississippi · Launching September 2026
+        </p>
+        <h1 class="font-black text-white mb-6" style="font-size:clamp(2rem,5.5vw,3.2rem);letter-spacing:-0.02em;line-height:1.05">
+          Shop local in Mississippi — and fund a Mississippi nonprofit
+        </h1>
+        <div
+          class="text-white/90 text-lg leading-relaxed rounded-2xl p-6"
+          style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);font-family:'Fira Sans',sans-serif"
+        >
+          Good Circles lets you shop local businesses across Mississippi, <strong>save about
+          10%</strong>, and send a share of every purchase to a <strong>Mississippi nonprofit you
+          choose</strong> — at no extra cost. Launching in the Jackson metro in September 2026,
+          then statewide. Join free.
+        </div>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a
+            href="/#mirror-section"
+            data-cta-audience="NEIGHBOR"
+            class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+            style="background:#C2A76F;color:#241247"
+          >
+            Join free as a Founding Neighbor
+          </a>
+          <a
+            href="/request-your-city"
+            class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
+            style="border:1px solid rgba(255,255,255,0.35)"
+          >
+            Request your city
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <section class="py-14 px-6 bg-white">
+      <div class="max-w-3xl mx-auto grid sm:grid-cols-3 gap-4">
+        <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+          <p class="text-3xl font-black mb-1" style="color:#7851A9">~10%</p>
+          <p class="font-black text-slate-900 mb-1">You save</p>
+          <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">Automatic at checkout on local purchases.</p>
+        </div>
+        <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+          <p class="text-3xl font-black mb-1" style="color:#C2A76F">10%</p>
+          <p class="font-black text-slate-900 mb-1">Funds your cause</p>
+          <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">10% of the business's profit funds the nonprofit you choose.</p>
+        </div>
+        <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+          <p class="text-3xl font-black mb-1" style="color:#241247">89%</p>
+          <p class="font-black text-slate-900 mb-1">Stays local</p>
+          <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">Local businesses keep 89% of their profit.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-14 px-6" style="background:#FBF7FE">
+      <div class="max-w-4xl mx-auto">
+        <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">Choose your city</p>
+        <h2 class="text-3xl font-black text-slate-900 mb-8" style="letter-spacing:-0.02em">
+          Mississippi cities on Good Circles
+        </h2>
+        {grouped.map((group) => (
+          <div class="mb-8">
+            <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">{group.region}</p>
+            <div class="grid sm:grid-cols-3 gap-4">
+              {group.cities.map((city) => (
+                <a
+                  href={`/shop-local/${STATE.slug}/${city.slug}/`}
+                  class="block p-5 rounded-2xl bg-white transition-shadow hover:shadow-lg"
+                  style="border:1px solid #E7DCF2"
+                >
+                  <p class="font-black text-slate-900 text-lg mb-1">{city.name}</p>
+                  <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">
+                    Shop local in {city.name} & fund {article(city.name)} {city.name} nonprofit ›
+                  </p>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+        <p class="text-slate-600 mt-2" style="font-family:'Fira Sans',sans-serif">
+          Don't see your city?
+          <a href="/request-your-city" class="font-bold underline" style="color:#7851A9">Request it »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Mississippi FAQ" />
+  </main>
+  <Footer />
+</Base>

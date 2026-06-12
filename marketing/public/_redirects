@@ -1,0 +1,2 @@
+# Canonical host: bare domain. 301 www -> bare for every path.
+https://www.goodcircles.org/* https://goodcircles.org/:splat 301!

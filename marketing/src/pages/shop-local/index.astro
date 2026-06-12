@@ -1,0 +1,110 @@
+---
+// National shop-local hub: the top of the city/state hierarchy.
+// Grows a state card per launched/seeded state; Mississippi is first.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import FaqList from '../../components/FaqList.astro';
+import { faqJsonLd, type Faq } from '../../lib/faq';
+import { CITIES, STATE } from '../../data/cities';
+
+const TITLE = 'Shop Local & Give Back — Find Your City · Good Circles';
+const DESCRIPTION =
+  'Shop local businesses, save ~10%, and fund a nonprofit you choose. Good Circles launches in Mississippi in September 2026 — find your city or request it next.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'Where is Good Circles available?',
+    a: 'Good Circles launches in the Jackson, Mississippi metro in September 2026, expands across Mississippi node-by-node, and then to the cities that request it most. Requesting your city is free and counts as a vote.',
+  },
+  {
+    q: 'How does shopping local through Good Circles give back?',
+    a: 'You save about 10% on local purchases, and 10% of the merchant’s profit funds a nonprofit you choose — automatically, at no extra cost. Local businesses keep 89% of their profit.',
+  },
+  {
+    q: 'How do I bring Good Circles to my city?',
+    a: 'Add your name and city on the request page. The cities with the most requests launch first, and requesters get early founding access when their city goes live.',
+  },
+];
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/shop-local/" jsonLd={[faqJsonLd(FAQS)]}>
+  <Nav solid />
+  <main id="main">
+    <header class="px-6 pt-12 pb-16" style="background:linear-gradient(150deg,#241247 0%,#4B2E84 58%,#7851A9 100%)">
+      <div class="max-w-3xl mx-auto">
+        <p
+          class="inline-block px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest text-white mb-6"
+          style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25)"
+        >
+          Mississippi first · Then the cities that ask
+        </p>
+        <h1 class="font-black text-white mb-6" style="font-size:clamp(2rem,5.5vw,3.2rem);letter-spacing:-0.02em;line-height:1.05">
+          Shop local — and give back — where you live
+        </h1>
+        <div
+          class="text-white/90 text-lg leading-relaxed rounded-2xl p-6"
+          style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);font-family:'Fira Sans',sans-serif"
+        >
+          Good Circles is the community marketplace where you shop local businesses,
+          <strong>save about 10%</strong>, and <strong>10% of the merchant's profit</strong> funds
+          a nonprofit you choose. It launches in Mississippi in September 2026 and expands to the
+          cities that request it most. Find your city below — or put it on the map.
+        </div>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a
+            href={`/shop-local/${STATE.slug}/`}
+            class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+            style="background:#C2A76F;color:#241247"
+          >
+            Shop Local in Mississippi →
+          </a>
+          <a
+            href="/request-your-city"
+            class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
+            style="border:1px solid rgba(255,255,255,0.35)"
+          >
+            Request your city
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <section class="py-14 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">States</p>
+        <h2 class="text-3xl font-black text-slate-900 mb-8" style="letter-spacing:-0.02em">Where Good Circles is building</h2>
+        <a
+          href={`/shop-local/${STATE.slug}/`}
+          class="block p-8 rounded-3xl transition-shadow hover:shadow-lg"
+          style="background:#FBF7FE;border:1px solid #E7DCF2"
+        >
+          <p class="text-xs font-black uppercase tracking-widest mb-1" style="color:#7851A9">Launching September 2026</p>
+          <p class="text-2xl font-black text-slate-900 mb-2">Mississippi</p>
+          <p class="text-slate-500" style="font-family:'Fira Sans',sans-serif">
+            {CITIES.length} cities, Jackson metro first — then the Coast, DeSoto, Oxford, Tupelo,
+            the Golden Triangle, and beyond. See every Mississippi city ›
+          </p>
+        </a>
+        <div class="mt-6 p-8 rounded-3xl" style="border:2px dashed #E7DCF2">
+          <p class="text-2xl font-black text-slate-900 mb-2">Your state?</p>
+          <p class="text-slate-500 mb-4" style="font-family:'Fira Sans',sans-serif">
+            Good Circles expands to the places that ask for it. Add your city to the map — it takes
+            20 seconds, and requesters get early founding access.
+          </p>
+          <a
+            href="/request-your-city"
+            data-cta-audience="REQUEST_CITY"
+            class="inline-block px-6 py-3 rounded-full font-black text-xs uppercase tracking-wider text-white"
+            style="background:#7851A9"
+          >
+            Request your city →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Shop-local FAQ" />
+  </main>
+  <Footer />
+</Base>

@@ -1,0 +1,46 @@
+---
+// Audience-tagged primary CTA band. data-cta-audience is picked up by the
+// global click listener in Base.astro for GA4 cta_click events.
+interface Props {
+  heading: string;
+  text?: string;
+  label: string;
+  href: string;
+  audience: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+}
+const { heading, text, label, href, audience, secondaryLabel, secondaryHref } = Astro.props;
+---
+
+<section class="py-16 px-6" style="background:linear-gradient(135deg,#7851A9,#5B3D8F)">
+  <div class="max-w-2xl mx-auto text-center">
+    <h2 class="font-black text-white mb-3" style="font-size:clamp(1.5rem,4vw,2.25rem);letter-spacing:-0.02em">
+      {heading}
+    </h2>
+    {text && (
+      <p class="text-white/75 mb-8 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+        {text}
+      </p>
+    )}
+    <div class="flex flex-wrap justify-center gap-4">
+      <a
+        href={href}
+        data-cta-audience={audience}
+        class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider transition-transform hover:scale-[1.02]"
+        style="background:#C2A76F;color:#241247"
+      >
+        {label}
+      </a>
+      {secondaryLabel && secondaryHref && (
+        <a
+          href={secondaryHref}
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
+          style="border:1px solid rgba(255,255,255,0.35)"
+        >
+          {secondaryLabel}
+        </a>
+      )}
+    </div>
+  </div>
+</section>

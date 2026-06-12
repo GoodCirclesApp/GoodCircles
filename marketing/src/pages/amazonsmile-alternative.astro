@@ -1,0 +1,211 @@
+---
+// Flagship SEO page. Copy: GoodCircles_SEO_PageCopy.md PAGE 1 (verbatim).
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqList from '../components/FaqList.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../lib/faq';
+import { SITE_URL } from '../data/site';
+
+const TITLE = 'The Best AmazonSmile Alternative (2026) — Shop Local & Give Back';
+const DESCRIPTION =
+  'Looking for an AmazonSmile replacement? Good Circles lets you shop local, save ~10%, and fund a nonprofit you choose — at no extra cost. Free to join.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'Is there a replacement for AmazonSmile?',
+    a: 'Yes. Good Circles is a local-first AmazonSmile alternative: you shop local businesses, save about 10%, and a share of every sale funds a nonprofit you choose — from the merchant’s profit, at no extra cost to you.',
+  },
+  {
+    q: 'How is Good Circles different from AmazonSmile?',
+    a: 'AmazonSmile gave 0.5% from Amazon purchases. Good Circles is local-first: you save about 10%, the nonprofit you choose gets a share of every sale, and local businesses keep 89% of their profit.',
+  },
+  {
+    q: 'Does it cost anything to join?',
+    a: 'No. Joining is free for shoppers and nonprofits. Local businesses pay only a 1% fee on profit. There are no membership or subscription fees.',
+  },
+  {
+    q: 'When does Good Circles launch?',
+    a: 'Good Circles launches in September 2026, starting in the Jackson, Mississippi metro and expanding from there. You can claim a founding spot now.',
+  },
+];
+
+const ARTICLE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'The local AmazonSmile alternative — shop local, save ~10%, and give',
+  description: DESCRIPTION,
+  datePublished: '2026-06-12',
+  dateModified: '2026-06-12',
+  author: { '@type': 'Organization', name: 'Good Circles' },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Good Circles',
+    logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` },
+  },
+  mainEntityOfPage: `${SITE_URL}/amazonsmile-alternative/`,
+};
+
+const COMPARISON = [
+  { label: 'Where you shop', smile: 'Amazon only', gc: 'Local businesses near you' },
+  { label: 'You save', smile: 'Nothing', gc: '~10% automatically' },
+  { label: 'Who gets funded', smile: 'A charity you set', gc: 'A nonprofit you choose' },
+  { label: 'How much', smile: '0.5% of price', gc: "10% of the merchant's profit" },
+  { label: 'Cost to you', smile: 'None', gc: 'None' },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/amazonsmile-alternative"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    ARTICLE_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: "AmazonSmile alternative", url: `${SITE_URL}/amazonsmile-alternative/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="Updated June 2026"
+      badge="Launching September 2026 · Jackson, MS first"
+      h1="The local AmazonSmile alternative — shop local, save ~10%, and give"
+    >
+      <p slot="answer">
+        Good Circles is a local-first AmazonSmile alternative. Instead of 0.5% on Amazon
+        purchases, you shop the local businesses near you, <strong>save about 10%
+        automatically</strong>, and a share of every sale funds <strong>a nonprofit you
+        choose</strong> — from the merchant's profit, at no extra cost to you. It's free to join,
+        launching September 2026.
+      </p>
+      <Fragment slot="ctas">
+        <a
+          href="/#mirror-section"
+          data-cta-audience="NEIGHBOR"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+          style="background:#C2A76F;color:#241247"
+        >
+          Pick your nonprofit and join free →
+        </a>
+        <a
+          href="/how-it-works"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
+          style="border:1px solid rgba(255,255,255,0.35)"
+        >
+          See how it works
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          What happened to AmazonSmile?
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-12" style="font-family:'Fira Sans',sans-serif">
+          Amazon shut down AmazonSmile in February 2023. Over a decade it sent about
+          <strong>$500 million</strong> to charity and enrolled <strong>more than a million
+          nonprofits</strong> — but only at a <strong>0.5%</strong> rate, only on Amazon, with no
+          relationship between you and the cause. When it ended, millions of shoppers and
+          nonprofits lost the easiest way they had to give. The habit didn't disappear. The tool
+          did.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Why Good Circles is the better replacement
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          AmazonSmile asked you to give a tiny slice of an Amazon purchase. Good Circles changes
+          the whole equation: you shop <strong>local</strong>, you <strong>come out ahead</strong>,
+          and the giving is bigger and closer to home.
+        </p>
+        <div class="overflow-x-auto mb-12">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider"></th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">AmazonSmile (ended 2023)</th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON.map((row) => (
+                <tr style="border-bottom:1px solid #E7DCF2">
+                  <td class="p-3 font-bold text-slate-900">{row.label}</td>
+                  <td class="p-3 text-slate-500" style="font-family:'Fira Sans',sans-serif">{row.smile}</td>
+                  <td class="p-3 font-bold" style="color:#241247;font-family:'Fira Sans',sans-serif">{row.gc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          How it works (3 steps, ~3 minutes)
+        </h2>
+        <ol class="mb-12 space-y-4" style="font-family:'Fira Sans',sans-serif">
+          <li class="flex gap-4">
+            <span class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-black text-white" style="background:#7851A9">1</span>
+            <p class="text-slate-600 leading-relaxed"><strong>Sign up free</strong> at goodcircles.org — no app to download.</p>
+          </li>
+          <li class="flex gap-4">
+            <span class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-black text-white" style="background:#7851A9">2</span>
+            <p class="text-slate-600 leading-relaxed"><strong>Pick your nonprofit</strong> — any IRS-verified 501(c)(3). Change it anytime.</p>
+          </li>
+          <li class="flex gap-4">
+            <span class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-black text-white" style="background:#7851A9">3</span>
+            <p class="text-slate-600 leading-relaxed"><strong>Shop local.</strong> Prices already show ~10% lower, and a share of every sale funds your cause — automatically.</p>
+          </li>
+        </ol>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Save <em>and</em> give — not just give
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-12" style="font-family:'Fira Sans',sans-serif">
+          This is the part no cash-back-for-charity tool can match: you're not donating a fraction
+          of a purchase, you're <strong>paying about 10% less</strong> <em>and</em> funding a cause
+          <em>and</em> keeping money in your own community. Same money, better math.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Lost AmazonSmile for your nonprofit?
+        </h2>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          If your organization relied on AmazonSmile, Good Circles replaces it with
+          <strong>recurring, no-cost funding</strong> — and supporters who actually save money. See
+          <a href="/for-nonprofits" class="font-bold underline" style="color:#7851A9">Good Circles for Nonprofits »</a>.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="AmazonSmile alternative FAQ" />
+
+    <CtaBand
+      heading="Pick your nonprofit and join free"
+      text="Free for shoppers and nonprofits, launching September 2026. Founding spots are limited."
+      label="Join free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="See how it works"
+      secondaryHref="/how-it-works"
+    />
+
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto text-sm" style="font-family:'Fira Sans',sans-serif">
+        <strong class="text-slate-900">Related:</strong>
+        <a href="/shoppers" class="ml-3 underline" style="color:#7851A9">For shoppers</a>
+        <a href="/for-nonprofits" class="ml-3 underline" style="color:#7851A9">For nonprofits</a>
+        <a href="/how-it-works" class="ml-3 underline" style="color:#7851A9">How it works</a>
+        <a href="/compare/best-amazonsmile-alternatives" class="ml-3 underline" style="color:#7851A9">Compare alternatives</a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>

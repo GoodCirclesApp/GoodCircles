@@ -1,0 +1,45 @@
+---
+// Learn hub. Copy/design: SEO&GEO/learn/index.html (canonical).
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { LEARN_ARTICLES } from '../../data/learn';
+
+const TITLE = 'Learn — Shopping Local, Giving Back & AmazonSmile Alternatives · Good Circles';
+const DESCRIPTION =
+  'Guides on shopping local, giving back, passive fundraising, and AmazonSmile alternatives — from Good Circles.';
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/learn/" ogType="article">
+  <Nav solid />
+  <main id="main" style="background:#FBF7FE">
+    <div class="max-w-4xl mx-auto px-6 py-10">
+      <nav class="text-sm mb-4" style="color:#6B6577;font-family:'Montserrat',sans-serif;font-weight:600" aria-label="Breadcrumb">
+        <a href="/" class="no-underline" style="color:#8A6A2E">Good Circles</a>
+        <span> › </span>
+        <span>Learn</span>
+      </nav>
+      <h1 class="font-black mb-2" style="color:#2E1B4E;font-size:clamp(1.9rem,4vw,2.7rem);letter-spacing:-1px;line-height:1.15">
+        Learn: shop local, give back, raise more
+      </h1>
+      <p class="text-sm mb-8" style="color:#6B6577;font-family:'Montserrat',sans-serif;font-weight:600">
+        Guides for shoppers, nonprofits, and local businesses
+      </p>
+      <div class="grid sm:grid-cols-2 gap-4 pb-12">
+        {LEARN_ARTICLES.map((article) => (
+          <a
+            href={`/learn/${article.slug}/`}
+            class="block p-5 rounded-2xl bg-white transition-shadow hover:shadow-lg no-underline"
+            style="border:1px solid #E7DCF2"
+          >
+            <h2 class="font-black mb-2" style="color:#2E1B4E;font-size:1.05rem;font-family:'Montserrat',sans-serif;line-height:1.3">
+              {article.cardTitle}
+            </h2>
+            <p class="text-sm" style="color:#4a4360;font-family:'Fira Sans',sans-serif" set:html={article.blurb} />
+          </a>
+        ))}
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Base>

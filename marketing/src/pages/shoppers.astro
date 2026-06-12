@@ -1,0 +1,133 @@
+---
+// Shopper pillar. Copy: GoodCircles_SEO_PageCopy.md PAGE 2 (verbatim).
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqList from '../components/FaqList.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { faqJsonLd, type Faq } from '../lib/faq';
+
+const TITLE = 'Shop Local & Give Back — Save ~10% on Every Purchase · Good Circles';
+const DESCRIPTION =
+  'Support local businesses, save about 10%, and fund the cause you love automatically. No coupons, no extra cost. See how Good Circles works.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'Do I have to pay more to give?',
+    a: 'No — the opposite. You pay about 10% less, and the giving comes out of the merchant’s profit, not your pocket.',
+  },
+  {
+    q: 'How much goes to my nonprofit?',
+    a: 'A share of every sale — 10% of the merchant’s profit. It’s a few dollars per purchase, but across a whole community it adds up to tens of thousands a year for local causes.',
+  },
+  {
+    q: 'Is it free?',
+    a: 'Yes, free for shoppers — no membership fees, ever.',
+  },
+];
+
+const WINS = [
+  {
+    title: 'Save ~10%',
+    body: 'Automatically — the local price you’d pay anyway, lower at checkout. No coupons, no codes.',
+  },
+  {
+    title: 'Fund your cause',
+    body: 'Pick one local nonprofit at signup; a share of every sale you make funds it, from the merchant’s profit.',
+  },
+  {
+    title: 'Keep money home',
+    body: 'Up to 52.9¢ of every local dollar stays in your community, versus 13.6¢ at a chain.',
+  },
+];
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/shoppers" jsonLd={[faqJsonLd(FAQS)]}>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="For shoppers"
+      h1="Shop local. Save ~10%. Fund the cause you love."
+    >
+      <p slot="answer">
+        Good Circles lets you shop the local businesses you already love, <strong>save about
+        10%</strong> automatically at checkout, and send a share of every purchase to <strong>a
+        nonprofit you pick</strong> — at no extra cost. Same stores, same stuff, different math.
+        It's free to join.
+      </p>
+      <Fragment slot="ctas">
+        <a
+          href="/#mirror-section"
+          data-cta-audience="NEIGHBOR"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+          style="background:#C2A76F;color:#241247"
+        >
+          Sign up free as a Neighbor →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Here's the problem with how you shop now
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-12" style="font-family:'Fira Sans',sans-serif">
+          Most of every dollar you spend at a national chain or big app leaves your community the
+          moment you tap "pay." You want to support local — you just keep clicking the convenient
+          option. You're not the problem. The model is.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">
+          How Good Circles works
+        </h2>
+        <div class="grid sm:grid-cols-3 gap-4 mb-12">
+          {WINS.map((win) => (
+            <div class="p-6 rounded-2xl" style="background:#FBF7FE;border:1px solid #E7DCF2">
+              <p class="font-black text-slate-900 mb-2">{win.title}</p>
+              <p class="text-sm text-slate-500 leading-relaxed" style="font-family:'Fira Sans',sans-serif">{win.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          What it adds up to
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-12" style="font-family:'Fira Sans',sans-serif">
+          A household that spends about <strong>$400/month</strong> locally keeps roughly
+          <strong>$480 a year</strong> — while steadily funding a cause it believes in. No budget
+          change. No extra steps.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Same stores, different math
+        </h2>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          You don't change <em>what</em> you buy or <em>where</em> — Good Circles changes the rails
+          underneath the sale so you save and your community gains. See the full breakdown on
+          <a href="/how-it-works" class="font-bold underline" style="color:#7851A9">how it works »</a>.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Shopper FAQ" />
+
+    <CtaBand
+      heading="Claim your founding spot"
+      text="Free for shoppers, forever. Launching September 2026 in the Jackson, MS metro."
+      label="Sign up free as a Neighbor →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+    />
+
+    <section class="py-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto text-sm" style="font-family:'Fira Sans',sans-serif">
+        <strong class="text-slate-900">Related:</strong>
+        <a href="/amazonsmile-alternative" class="ml-3 underline" style="color:#7851A9">AmazonSmile alternative</a>
+        <a href="/how-it-works" class="ml-3 underline" style="color:#7851A9">How it works</a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>

@@ -1,0 +1,45 @@
+---
+// Static nav (zero-JS). `solid` renders a brand-purple bar for pages whose
+// content starts on a light background (legal, 404); default is the glass bar
+// over a hero gradient.
+interface Props {
+  solid?: boolean;
+}
+const { solid = false } = Astro.props;
+const background = solid ? '#7851A9' : 'rgba(255,255,255,0.08)';
+const links = [
+  { label: 'How it works', href: '/how-it-works' },
+  { label: 'Shoppers', href: '/shoppers' },
+  { label: 'Nonprofits', href: '/for-nonprofits' },
+  { label: 'Business', href: '/for-business' },
+];
+---
+
+<nav
+  class:list={['top-0 left-0 right-0 z-50 px-6 py-4', solid ? 'relative' : 'fixed']}
+  style={`background:${background};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)`}
+  data-hide-on-confirm={solid ? undefined : true}
+>
+  <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <a href="/" aria-label="Good Circles home">
+      <img src="/brand/gc-main-white.svg" alt="Good Circles" style="height:36px;width:auto" width="135" height="36" />
+    </a>
+    <div class="flex items-center gap-5">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class="text-white/70 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors hidden md:block"
+        >
+          {link.label}
+        </a>
+      ))}
+      <a
+        href="/#mirror-section"
+        class="px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all text-white hover:bg-white/25"
+        style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25)"
+      >
+        Join the Circle
+      </a>
+    </div>
+  </div>
+</nav>
