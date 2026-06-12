@@ -1,14 +1,18 @@
 ---
 // Static nav (zero-JS). `solid` renders a brand-purple bar for pages whose
 // content starts on a light background (legal, 404); default is the glass bar
-// over the hero gradient.
+// over a hero gradient.
 interface Props {
   solid?: boolean;
 }
 const { solid = false } = Astro.props;
-const background = solid
-  ? '#7851A9'
-  : 'rgba(255,255,255,0.08)';
+const background = solid ? '#7851A9' : 'rgba(255,255,255,0.08)';
+const links = [
+  { label: 'How it works', href: '/how-it-works' },
+  { label: 'Shoppers', href: '/shoppers' },
+  { label: 'Nonprofits', href: '/for-nonprofits' },
+  { label: 'Business', href: '/for-business' },
+];
 ---
 
 <nav
@@ -20,13 +24,15 @@ const background = solid
     <a href="/" aria-label="Good Circles home">
       <img src="/brand/gc-main-white.svg" alt="Good Circles" style="height:36px;width:auto" width="135" height="36" />
     </a>
-    <div class="flex items-center gap-6">
-      <a
-        href="/#faq"
-        class="text-white/70 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors hidden sm:block"
-      >
-        FAQ
-      </a>
+    <div class="flex items-center gap-5">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class="text-white/70 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors hidden md:block"
+        >
+          {link.label}
+        </a>
+      ))}
       <a
         href="/#mirror-section"
         class="px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all text-white hover:bg-white/25"

@@ -34,6 +34,12 @@ export const WEBSITE_JSONLD = {
   url: SITE_URL,
 } as const;
 
+// Canonical URL form is trailing-slash (matches the sitemap and Netlify's
+// directory-style URLs), except for file paths like /og.png.
 export function absoluteUrl(path: string): string {
-  return new URL(path, SITE_URL).href;
+  const url = new URL(path, SITE_URL);
+  if (!/\.[a-z0-9]+$/i.test(url.pathname) && !url.pathname.endsWith('/')) {
+    url.pathname += '/';
+  }
+  return url.href;
 }

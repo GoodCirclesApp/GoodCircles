@@ -1,0 +1,31 @@
+---
+// Zero-JS FAQ accordion. Pass the SAME array you passed through faqJsonLd()
+// to Base's jsonLd prop, so visible text === schema text verbatim.
+import type { Faq } from '../lib/faq';
+
+interface Props {
+  faqs: Faq[];
+  heading?: string;
+  eyebrow?: string;
+}
+const { faqs, heading = 'Frequently asked questions', eyebrow = 'Questions' } = Astro.props;
+---
+
+<section class="py-20 px-6 bg-white">
+  <div class="max-w-2xl mx-auto">
+    <p class="text-center text-xs font-black uppercase tracking-widest mb-3" style="color:#C2A76F">
+      {eyebrow}
+    </p>
+    <h2 class="text-3xl font-black text-center text-slate-900 mb-10" style="letter-spacing:-0.02em">
+      {heading}
+    </h2>
+    <div class="gc-faq flex flex-col gap-2">
+      {faqs.map((faq) => (
+        <details>
+          <summary>{faq.q}</summary>
+          <p class="gc-faq-a">{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

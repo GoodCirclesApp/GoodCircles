@@ -6,10 +6,18 @@ const legal = [
   { label: 'Terms of Service', href: '/terms' },
   { label: 'Cookie Policy', href: '/cookies' },
 ];
+const explore = [
+  { label: 'How it works', href: '/how-it-works' },
+  { label: 'AmazonSmile alternative', href: '/amazonsmile-alternative' },
+  { label: 'For shoppers', href: '/shoppers' },
+  { label: 'For nonprofits', href: '/for-nonprofits' },
+  { label: 'For local business', href: '/for-business' },
+  { label: 'Compare alternatives', href: '/compare/best-amazonsmile-alternatives' },
+];
 ---
 
 <footer style="background:#1a1a1a">
-  <div class="max-w-6xl mx-auto px-6 py-16 grid sm:grid-cols-3 gap-10 text-sm">
+  <div class="max-w-6xl mx-auto px-6 py-16 grid sm:grid-cols-4 gap-10 text-sm">
     <div>
       <img
         src="/brand/gc-main-white.svg"
@@ -26,6 +34,23 @@ const legal = [
       <p style="color:rgba(255,255,255,0.25);font-size:11px;margin-top:16px;font-family:'Fira Sans',sans-serif">
         Launching September 2026 — Jackson, MS metro first
       </p>
+    </div>
+
+    <div>
+      <p style="color:rgba(255,255,255,0.25);font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">
+        Explore
+      </p>
+      <div class="flex flex-col gap-3">
+        {explore.map((link) => (
+          <a
+            href={link.href}
+            class="hover:text-white/80"
+            style="color:rgba(255,255,255,0.5);text-decoration:none;font-family:'Fira Sans',sans-serif"
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
     </div>
 
     <div>
