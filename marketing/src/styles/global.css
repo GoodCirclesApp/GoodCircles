@@ -131,6 +131,100 @@ body.gc-confirmed [data-hide-on-confirm] {
   line-height: 1.625;
 }
 
+/* Learn-article scope — replicates the canonical learn.css from the
+   SEO&GEO deliverables so extracted article HTML renders as designed. */
+.gc-learn {
+  font-family: "Fira Sans", Arial, sans-serif;
+  color: #2b2536;
+  line-height: 1.65;
+}
+.gc-learn .answer {
+  background: #fff;
+  border-left: 5px solid #C2A76F;
+  border-radius: 0 14px 14px 0;
+  padding: 18px 22px;
+  margin: 0 0 26px;
+  font-size: 1.14rem;
+  color: #33294a;
+  box-shadow: 0 8px 24px rgba(46, 27, 78, 0.08);
+}
+.gc-learn .answer b { color: #2E1B4E; }
+.gc-learn h2 {
+  font-family: "Montserrat", Arial, sans-serif;
+  color: #2E1B4E;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 30px 0 8px;
+  line-height: 1.15;
+}
+.gc-learn h3 {
+  font-family: "Montserrat", Arial, sans-serif;
+  color: #2E1B4E;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 18px 0 6px;
+}
+.gc-learn p { margin: 0 0 14px; font-size: 1.04rem; color: #2f2940; }
+.gc-learn ul { margin: 0 0 16px 4px; padding-left: 20px; list-style: disc; }
+.gc-learn ol { margin: 0 0 16px 4px; padding-left: 20px; list-style: decimal; }
+.gc-learn li { margin-bottom: 7px; }
+.gc-learn a { color: #8A6A2E; text-decoration: underline; }
+.gc-learn .ctabox {
+  background: linear-gradient(135deg, #2E1B4E, #7851A9);
+  color: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 28px 0;
+}
+.gc-learn .ctabox h3 { color: #fff; }
+.gc-learn .ctabox p { color: #e7daf5; margin: 6px 0 14px; }
+.gc-learn .btn {
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 11px 20px;
+  border-radius: 999px;
+  text-decoration: none;
+  display: inline-block;
+}
+.gc-learn .btn-gold {
+  background: linear-gradient(135deg, #B8924B, #FADC9C 60%, #C2A76F);
+  color: #2E1B4E;
+}
+.gc-learn .faq {
+  background: #fff;
+  border: 1px solid #E7DCF2;
+  border-radius: 12px;
+  padding: 15px 18px;
+  margin-bottom: 9px;
+}
+.gc-learn .faq h4 {
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 800;
+  color: #2E1B4E;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.gc-learn .faq p { font-size: 0.93rem; margin: 0; color: #46405c; }
+.gc-learn .related {
+  border-top: 1px solid #E7DCF2;
+  margin-top: 24px;
+  padding-top: 18px;
+}
+.gc-learn .related a {
+  display: inline-block;
+  background: #fff;
+  border: 1px solid #E7DCF2;
+  border-radius: 999px;
+  padding: 7px 14px;
+  margin: 4px 6px 4px 0;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #2E1B4E;
+  text-decoration: none;
+}
+
 /* Simple prose styling for legal pages */
 .gc-prose h2 {
   font-weight: 900;

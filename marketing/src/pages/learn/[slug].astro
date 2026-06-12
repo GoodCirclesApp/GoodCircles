@@ -1,0 +1,45 @@
+---
+// Answer/PAA pages, driven by src/data/learn.ts (generated from the canonical
+// SEO&GEO/learn mockups). Article + FAQPage JSON-LD come straight from the
+// deliverables; article body renders verbatim inside the .gc-learn scope.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { LEARN_ARTICLES, type LearnArticle } from '../../data/learn';
+
+export function getStaticPaths() {
+  return LEARN_ARTICLES.map((article) => ({ params: { slug: article.slug }, props: { article } }));
+}
+
+interface Props {
+  article: LearnArticle;
+}
+const { article } = Astro.props;
+---
+
+<Base
+  title={article.title}
+  description={article.description}
+  path={`/learn/${article.slug}/`}
+  ogType="article"
+  jsonLd={[article.articleJsonLd, article.faqJsonLd]}
+>
+  <Nav solid />
+  <main id="main" style="background:#FBF7FE">
+    <div class="max-w-3xl mx-auto px-6 py-10">
+      <nav class="text-sm mb-4" style="color:#6B6577;font-family:'Montserrat',sans-serif;font-weight:600" aria-label="Breadcrumb">
+        <a href="/learn/" class="no-underline" style="color:#8A6A2E">Learn</a>
+        <span> › </span>
+        <span>{article.h1}</span>
+      </nav>
+      <h1 class="font-black mb-2" style="color:#2E1B4E;font-size:clamp(1.9rem,4vw,2.7rem);letter-spacing:-1px;line-height:1.15">
+        {article.h1}
+      </h1>
+      <p class="text-sm mb-6" style="color:#6B6577;font-family:'Montserrat',sans-serif;font-weight:600">
+        {article.dateline}
+      </p>
+      <article class="gc-learn pb-10" set:html={article.articleHtml} />
+    </div>
+  </main>
+  <Footer />
+</Base>
