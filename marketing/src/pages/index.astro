@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import FaqSection, { FAQ_JSONLD } from '../components/FaqSection.astro';
+import Footer from '../components/Footer.astro';
+import ImpactDemo from '../components/react/ImpactDemo';
+import RoleFlow from '../components/react/RoleFlow';
+
+// Title/description per the SEO Implementation Pack (home row).
+const TITLE = 'Good Circles — Shop Local, Save ~10% & Fund a Nonprofit You Love';
+const DESCRIPTION =
+  'Shop the local businesses you love, save about 10%, and a share of every sale funds a nonprofit you pick. The community marketplace. Join free.';
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/" jsonLd={[FAQ_JSONLD]}>
+  <Nav />
+
+  <main id="main">
+    <div data-hide-on-confirm>
+      <Hero />
+
+      <!-- Answer-first, keyworded intro: static HTML so it's the first body copy
+           crawlers and AI assistants read (the hero H1 keeps the brand hook). -->
+      <section class="py-20 px-6 bg-white">
+        <div class="max-w-3xl mx-auto text-center">
+          <p class="text-xs font-black uppercase tracking-widest mb-3" style="color:#C2A76F">
+            The community marketplace
+          </p>
+          <h2
+            class="font-black text-slate-900 mb-6"
+            style="font-size:clamp(1.75rem, 4vw, 2.5rem);letter-spacing:-0.02em;line-height:1.1"
+          >
+            Good Circles — shop local, save ~10%, and fund a nonprofit you choose
+          </h2>
+          <p
+            class="text-lg text-slate-600 leading-relaxed"
+            style="font-family:'Fira Sans',sans-serif"
+          >
+            Good Circles is a community marketplace where one purchase does three things: you
+            <strong>save about 10%</strong> shopping local, <strong>10% of the merchant's
+            profit</strong> funds a nonprofit you choose, and the local business
+            <strong>keeps 89% of its profit</strong>. It launches September 2026 in the Jackson,
+            Mississippi metro — and it's free to join.
+          </p>
+        </div>
+      </section>
+
+      <ImpactDemo client:visible />
+    </div>
+
+    <div id="mirror-section">
+      <RoleFlow client:visible />
+    </div>
+
+    <div data-hide-on-confirm>
+      <FaqSection />
+    </div>
+  </main>
+
+  <Footer />
+</Base>

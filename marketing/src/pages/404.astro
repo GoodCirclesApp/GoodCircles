@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base
+  title="Page Not Found · Good Circles"
+  description="That page doesn't exist. Head back to Good Circles — the community marketplace where you shop local, save about 10%, and fund a nonprofit you choose."
+  path="/404"
+  noindex
+>
+  <Nav solid />
+  <main id="main" class="bg-white">
+    <div class="max-w-2xl mx-auto px-6 py-32 text-center">
+      <p class="text-xs font-black uppercase tracking-widest mb-4" style="color:#C2A76F">404</p>
+      <h1 class="font-black text-slate-900 mb-4" style="font-size:clamp(2rem,5vw,3rem);letter-spacing:-0.02em">
+        This page doesn't exist.
+      </h1>
+      <p class="text-slate-500 mb-10 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+        The link may be old or mistyped. The good stuff is still here: shop local, save about 10%,
+        and fund a nonprofit you love.
+      </p>
+      <a
+        href="/"
+        class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
+        style="background:linear-gradient(135deg,#7851A9,#5B3D8F)"
+      >
+        Back to the homepage →
+      </a>
+    </div>
+  </main>
+  <Footer />
+</Base>

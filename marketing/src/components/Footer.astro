@@ -1,0 +1,84 @@
+---
+// Static footer with real legal links (the SPA's were href="#").
+const year = new Date().getFullYear();
+const legal = [
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Service', href: '/terms' },
+  { label: 'Cookie Policy', href: '/cookies' },
+];
+---
+
+<footer style="background:#1a1a1a">
+  <div class="max-w-6xl mx-auto px-6 py-16 grid sm:grid-cols-3 gap-10 text-sm">
+    <div>
+      <img
+        src="/brand/gc-main-white.svg"
+        alt="Good Circles"
+        style="height:32px;width:auto;margin-bottom:16px"
+        width="120"
+        height="32"
+        loading="lazy"
+      />
+      <p style="color:rgba(255,255,255,0.45);font-family:'Fira Sans',sans-serif;line-height:1.6">
+        A community marketplace where shopping local saves you money, funds nonprofits, and
+        strengthens the place you live.
+      </p>
+      <p style="color:rgba(255,255,255,0.25);font-size:11px;margin-top:16px;font-family:'Fira Sans',sans-serif">
+        Launching September 2026 — Jackson, MS metro first
+      </p>
+    </div>
+
+    <div>
+      <p style="color:rgba(255,255,255,0.25);font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">
+        Legal
+      </p>
+      <div class="flex flex-col gap-3">
+        {legal.map((link) => (
+          <a
+            href={link.href}
+            class="hover:text-white/80"
+            style="color:rgba(255,255,255,0.5);text-decoration:none;font-family:'Fira Sans',sans-serif"
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <p style="color:rgba(255,255,255,0.25);font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">
+        Get in touch
+      </p>
+      <div class="flex flex-col gap-3">
+        <a
+          href="mailto:hello@goodcircles.org"
+          class="hover:text-[#C2A76F]"
+          style="color:rgba(255,255,255,0.5);text-decoration:none;font-family:'Fira Sans',sans-serif"
+        >
+          hello@goodcircles.org
+        </a>
+        <a
+          href="mailto:press@goodcircles.org"
+          class="hover:text-[#C2A76F]"
+          style="color:rgba(255,255,255,0.5);text-decoration:none;font-family:'Fira Sans',sans-serif"
+        >
+          press@goodcircles.org
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t px-6 py-6 text-center" style="border-color:rgba(255,255,255,0.06)">
+    <p style="color:rgba(255,255,255,0.2);font-size:11px;font-family:'Fira Sans',sans-serif">
+      &copy; {year} Good Circles. All rights reserved. Brand design by{' '}
+      <a
+        href="https://powerupmedia.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="color:rgba(255,255,255,0.35);text-decoration:none"
+      >
+        Powerup Media
+      </a>.
+    </p>
+  </div>
+</footer>

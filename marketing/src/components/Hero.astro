@@ -1,0 +1,99 @@
+---
+// Hero ported from the SPA, zero-JS: framer-motion entrances replaced with CSS
+// keyframes so the H1 + copy are in the static HTML and paint immediately.
+---
+
+<section
+  class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+  style="background:linear-gradient(135deg, #7851A9 0%, #CA9CE1 60%, #C2A76F 100%)"
+>
+  <!-- Floating orbs (decorative) -->
+  <div
+    class="absolute rounded-full pointer-events-none gc-anim-drift-a"
+    style="width:700px;height:700px;background:#059669;filter:blur(140px);opacity:0.06;top:-10%;right:-10%"
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="absolute rounded-full pointer-events-none gc-anim-drift-b"
+    style="width:500px;height:500px;background:#A20021;filter:blur(120px);opacity:0.05;bottom:5%;left:-5%"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative z-10 text-center px-6 max-w-5xl mx-auto pt-20">
+    <!-- Logo -->
+    <div class="flex justify-center mb-10 gc-anim-fade-in">
+      <img
+        src="/brand/gc-main-white.svg"
+        alt="Good Circles"
+        style="height:64px;width:auto"
+        width="240"
+        height="64"
+        fetchpriority="high"
+      />
+    </div>
+
+    <!-- Founding badge -->
+    <div
+      class="inline-flex items-center gap-2 px-5 py-2 rounded-full mb-8 gc-anim-fade-up gc-anim-delay-1"
+      style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);backdrop-filter:blur(8px)"
+    >
+      <span class="w-2 h-2 rounded-full flex-shrink-0 gc-anim-pulse-dot" style="background:#4ade80"></span>
+      <span class="text-white text-[11px] font-black uppercase tracking-widest whitespace-nowrap">
+        Founding Circle — Spots Are Limited
+      </span>
+    </div>
+
+    <!-- The hook H1 (keyworded H2 follows in the intro section below the hero) -->
+    <h1
+      class="font-black text-white leading-none mb-6 gc-anim-fade-up gc-anim-delay-2"
+      style="font-size:clamp(2.5rem, 7vw, 5rem);letter-spacing:-0.02em;line-height:0.95"
+    >
+      What if every dollar
+      <br class="hidden sm:block" />
+      you spent built the
+      <span style="color:#fff;text-shadow:0 0 18px #C2A76F, 0 0 40px #C2A76F99, 0 0 70px #C2A76F55">community</span>
+      you live in?
+    </h1>
+
+    <p
+      class="text-white/75 text-lg sm:text-xl max-w-2xl mx-auto mb-12 leading-relaxed gc-anim-fade-up gc-anim-delay-3"
+      style="font-family:'Fira Sans',sans-serif;font-weight:500"
+    >
+      Good Circles is the community marketplace launching
+      <strong class="text-white/90">September 2026.</strong>
+      Shop local. Save about 10% on every local purchase. Fund the nonprofit you love —
+      automatically. Founding spots are filling now.
+    </p>
+
+    <!-- Scroll CTA -->
+    <a
+      href="#mirror-section"
+      class="inline-flex flex-col items-center gap-2 text-white/60 hover:text-white/90 transition-colors cursor-pointer gc-anim-fade-in gc-anim-delay-4"
+    >
+      <span class="text-xs font-black uppercase tracking-widest">Join the founding circle</span>
+      <svg
+        class="gc-anim-bounce-y"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m6 9 6 6 6-6"></path>
+      </svg>
+    </a>
+  </div>
+
+  <div
+    class="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+    style="background:linear-gradient(to bottom, transparent, rgba(255,255,255,0.08))"
+    aria-hidden="true"
+  >
+  </div>
+</section>
