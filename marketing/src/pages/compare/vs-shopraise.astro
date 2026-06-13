@@ -1,0 +1,124 @@
+---
+// Competitor terms re-verified 2026-06-12 against shopraise.com (free to
+// donors and orgs, a percentage of purchases at national retailers, app +
+// 1,300+ orgs). Kept fair; rates qualitative where they vary.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Good Circles vs ShopRaise — Compared (2026)';
+const DESCRIPTION =
+  'Good Circles vs ShopRaise: both fund nonprofits when you shop, but only Good Circles is local-first and saves you ~10%. An even-handed 2026 comparison.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What is the difference between Good Circles and ShopRaise?',
+    a: 'ShopRaise routes a percentage of your purchases at major national retailers to a nonprofit you choose. Good Circles is local-first: you shop local businesses, save about 10%, and 10% of the merchant’s profit funds your chosen nonprofit.',
+  },
+  {
+    q: 'Does ShopRaise or Good Circles save me money?',
+    a: 'ShopRaise donates a percentage of your purchase without lowering your price. Good Circles lowers your price by about 10% on local purchases and still funds a nonprofit — you come out ahead.',
+  },
+  {
+    q: 'Are both free?',
+    a: 'Yes. ShopRaise is free to shoppers and nonprofits, and Good Circles is free to shoppers and nonprofits too — Good Circles is funded by a 1% fee local businesses pay on profit.',
+  },
+];
+
+const ROWS = [
+  { label: 'Where you shop', gc: 'Local businesses near you', other: 'Major national retailers' },
+  { label: 'You save money', gc: 'Yes, ~10% on local purchases', other: 'No — price is unchanged' },
+  { label: 'Who gets funded', gc: 'A nonprofit you choose', other: 'A nonprofit you choose' },
+  { label: 'How it’s funded', gc: "10% of the merchant's profit", other: '% of eligible purchases (varies)' },
+  { label: 'Local focus', gc: 'Local-first', other: 'National retailers' },
+  { label: 'Cost', gc: 'Free (shoppers & nonprofits)', other: 'Free' },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/compare/vs-shopraise"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Compare', url: `${SITE_URL}/compare/best-amazonsmile-alternatives/` },
+      { name: 'Good Circles vs ShopRaise', url: `${SITE_URL}/compare/vs-shopraise/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Comparison · Updated June 2026" h1="Good Circles vs ShopRaise, compared">
+      <p slot="answer">
+        Both Good Circles and ShopRaise let you fund a nonprofit when you shop — but they're built
+        differently. <strong>ShopRaise</strong> routes a percentage of your purchases at major
+        national retailers to your cause. <strong>Good Circles</strong> is local-first: you shop
+        local businesses, <strong>save about 10%</strong>, and 10% of the merchant's profit funds a
+        nonprofit you choose. Here's an even-handed look.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <div class="overflow-x-auto mb-10">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider"></th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">ShopRaise</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              {ROWS.map((row) => (
+                <tr style="border-bottom:1px solid #E7DCF2">
+                  <td class="p-3 font-bold text-slate-900">{row.label}</td>
+                  <td class="p-3 font-bold" style="color:#241247">{row.gc}</td>
+                  <td class="p-3 text-slate-500">{row.other}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Where ShopRaise shines</h2>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          ShopRaise is a well-built, nonprofit-friendly platform with a polished app and a long
+          list of national retailers. If your organization wants a turnkey "shopping fundraiser"
+          across big national stores your supporters already use, it's a strong, proven choice —
+          and there's no reason it can't run alongside Good Circles.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Where Good Circles is different</h2>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          The big difference is <strong>local + savings</strong>. ShopRaise sends a slice of a
+          national-retailer purchase to your cause; Good Circles lowers your price by about 10% on
+          <em>local</em> purchases <em>and</em> funds your cause <em>and</em> keeps the money in
+          your community. It's "save and give," not just "give." See the
+          <a href="/compare/best-amazonsmile-alternatives" class="font-bold underline" style="color:#7851A9">full field of AmazonSmile alternatives »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Good Circles vs ShopRaise FAQ" />
+
+    <CtaBand
+      heading="Shop local, save, and give"
+      text="The only option that lowers your price while funding a local cause."
+      label="Try Good Circles — free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="Compare all alternatives"
+      secondaryHref="/compare/best-amazonsmile-alternatives"
+    />
+  </main>
+  <Footer />
+</Base>

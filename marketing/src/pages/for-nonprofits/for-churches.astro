@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, type Faq } from '../../lib/faq';
+
+const TITLE = 'Free Fundraising for Churches · Good Circles';
+const DESCRIPTION =
+  'A no-cost way for your congregation to fund ministry: members shop local, your church gets a share of every sale. No events, no asks. Join free.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How does Good Circles raise money for a church?',
+    a: 'Members select your church once. From then on, 10% of the merchant’s profit on every local purchase they make is routed to your church automatically each month — no events, no asks, no fees.',
+  },
+  {
+    q: 'Is it really free for churches and ministries?',
+    a: 'Yes. There’s no cost to join and no fee on what your church receives. Good Circles is funded by a 1% fee local businesses pay on profit.',
+  },
+  {
+    q: 'Does our church need to be a 501(c)(3)?',
+    a: 'Most churches qualify as 501(c)(3) organizations automatically. If your church or ministry has an EIN and tax-exempt status, you can sign up free and start receiving recurring support.',
+  },
+];
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/for-nonprofits/for-churches" jsonLd={[faqJsonLd(FAQS)]}>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="For churches & ministries" h1="Fund your ministry every time members shop">
+      <p slot="answer">
+        Good Circles is free, recurring fundraising for your church — no events and no asks.
+        Members shop local the way they already do, and <strong>10% of the merchant's
+        profit</strong> on every purchase is routed to your church automatically each month, at no
+        cost to members or the church.
+      </p>
+      <Fragment slot="ctas">
+        <a href="/#mirror-section" data-cta-audience="NONPROFIT" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Sign up your church free →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Funding that doesn't ask for more</h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          Bake sales and special offerings take real time and energy, and they ask members to give
+          again. Good Circles funds ministry from spending members already do: they shop local
+          businesses, <strong>save about 10%</strong>, and your church receives a share of every
+          sale — supporting outreach, missions, and the work of the congregation without another
+          ask from the pulpit.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Sign up free with your church's tax-exempt details, members select your church as their
+          cause, and the support arrives monthly — automatically. See the full picture for
+          organizations on <a href="/for-nonprofits" class="font-bold underline" style="color:#7851A9">Good Circles for nonprofits »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Church fundraising FAQ" />
+
+    <CtaBand
+      heading="Support your ministry, no asks required"
+      text="Free to join. Only the first 50 nonprofits become Founding Nonprofits."
+      label="Sign up your church free →"
+      href="/#mirror-section"
+      audience="NONPROFIT"
+      secondaryLabel="For nonprofits"
+      secondaryHref="/for-nonprofits"
+    />
+  </main>
+  <Footer />
+</Base>

@@ -1,0 +1,77 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, type Faq } from '../../lib/faq';
+
+const TITLE = 'Free Fundraising for Clubs & Groups · Good Circles';
+const DESCRIPTION =
+  'Scouts, bands, civic clubs and community groups: members shop local, your group gets a share of every sale. No events, no fees. Join free.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How does Good Circles raise money for a club?',
+    a: 'Members pick your club once. From then on, 10% of the merchant’s profit on every local purchase they make is routed to your group automatically each month — no events, no selling, no fees.',
+  },
+  {
+    q: 'What kinds of clubs and groups can join?',
+    a: 'Any registered 501(c)(3) — scout troops, bands and arts groups, civic clubs, community associations, hobby and service groups. If your group has tax-exempt status, it can join free.',
+  },
+  {
+    q: 'Is there any cost to the club or its members?',
+    a: 'No. Joining is free, there’s no fee on what your group receives, and members actually save about 10% on local purchases. Good Circles is funded by a 1% fee businesses pay on profit.',
+  },
+];
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/for-nonprofits/for-clubs" jsonLd={[faqJsonLd(FAQS)]}>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="For clubs & community groups" h1="Fund your group every time members shop">
+      <p slot="answer">
+        Good Circles is free, recurring fundraising for your club — no events and no selling.
+        Members shop local the way they already do, and <strong>10% of the merchant's
+        profit</strong> on every purchase is routed to your group automatically each month, at no
+        cost to members or the club.
+      </p>
+      <Fragment slot="ctas">
+        <a href="/#mirror-section" data-cta-audience="NONPROFIT" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Sign up your club free →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Funding without the fundraiser</h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          Scout troops, bands, civic and service clubs all run on small budgets and volunteer
+          energy — and the usual fundraisers eat that energy. Good Circles funds your group from
+          spending members already do: they shop local, <strong>save about 10%</strong>, and your
+          club receives a share of every sale. No products to sell, no events to plan.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Sign up free with your group's 501(c)(3) details, members pick your club as their cause,
+          and the funding arrives monthly — automatically. See the full picture for organizations on
+          <a href="/for-nonprofits" class="font-bold underline" style="color:#7851A9">Good Circles for nonprofits »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Club fundraising FAQ" />
+
+    <CtaBand
+      heading="A fundraiser that runs in the background"
+      text="Free to join. Only the first 50 nonprofits become Founding Nonprofits."
+      label="Sign up your club free →"
+      href="/#mirror-section"
+      audience="NONPROFIT"
+      secondaryLabel="For nonprofits"
+      secondaryHref="/for-nonprofits"
+    />
+  </main>
+  <Footer />
+</Base>

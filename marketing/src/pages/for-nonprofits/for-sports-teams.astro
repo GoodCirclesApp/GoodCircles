@@ -1,0 +1,77 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, type Faq } from '../../lib/faq';
+
+const TITLE = 'No-Cost Fundraising for Sports Teams · Good Circles';
+const DESCRIPTION =
+  'Fund uniforms, travel and gear without another car wash. Families shop local, your team gets a share of every sale. No selling. Join free.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How does Good Circles fundraise for a sports team?',
+    a: 'Team families pick your team or club once. From then on, 10% of the merchant’s profit on every local purchase they make is routed to your team automatically each month — no car washes, no selling, no fees.',
+  },
+  {
+    q: 'Is it free for teams, leagues and booster clubs?',
+    a: 'Yes. There’s no cost to join and no fee on what your team receives, as long as your team or booster club is a registered 501(c)(3). Good Circles is funded by a 1% fee businesses pay on profit.',
+  },
+  {
+    q: 'What can the money be used for?',
+    a: 'Whatever your team needs — uniforms, equipment, travel, tournament fees, facilities. The funding is recurring and unrestricted, arriving monthly with no campaign to run.',
+  },
+];
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/for-nonprofits/for-sports-teams" jsonLd={[faqJsonLd(FAQS)]}>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="For teams, leagues & booster clubs" h1="Fund the team every time families shop">
+      <p slot="answer">
+        Good Circles is free, recurring fundraising for your team — no car washes and no selling.
+        Team families shop local the way they already do, and <strong>10% of the merchant's
+        profit</strong> on every purchase is routed to your team automatically each month, at no
+        cost to families or the team.
+      </p>
+      <Fragment slot="ctas">
+        <a href="/#mirror-section" data-cta-audience="NONPROFIT" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Sign up your team free →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Retire the car wash</h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          Uniforms, travel, tournament fees — youth sports add up, and the usual fundraisers ask
+          families to sell things or give up a Saturday. Good Circles funds the team from spending
+          families already do: they shop local, <strong>save about 10%</strong>, and your team gets
+          a share of every sale. No products to push, no events to staff.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Sign up free with your team or booster club's 501(c)(3) details, families pick your team
+          as their cause, and the funding arrives monthly — automatically. See the full picture for
+          organizations on <a href="/for-nonprofits" class="font-bold underline" style="color:#7851A9">Good Circles for nonprofits »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Team fundraising FAQ" />
+
+    <CtaBand
+      heading="Fund the season without the hustle"
+      text="Free to join. Only the first 50 nonprofits become Founding Nonprofits."
+      label="Sign up your team free →"
+      href="/#mirror-section"
+      audience="NONPROFIT"
+      secondaryLabel="For nonprofits"
+      secondaryHref="/for-nonprofits"
+    />
+  </main>
+  <Footer />
+</Base>

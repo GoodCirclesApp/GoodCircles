@@ -1,0 +1,73 @@
+---
+// Standalone FAQ page — a navigational/trust hub that also targets broad
+// question queries. Shares the homepage FAQ array plus a few more.
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqList from '../components/FaqList.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { faqJsonLd, type Faq } from '../lib/faq';
+
+const TITLE = 'Good Circles FAQ — How It Works, Costs & Launch';
+const DESCRIPTION =
+  'Answers about Good Circles: how it works, what it costs, when it launches, how nonprofits get funded, and how it compares to AmazonSmile. Free to join.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How does Good Circles work?',
+    a: 'You shop local businesses through Good Circles, save about 10% automatically, and 10% of the merchant’s profit funds a nonprofit you chose at signup. The business keeps 89% of its profit. It’s free for shoppers and nonprofits.',
+  },
+  {
+    q: 'Does it cost anything to join?',
+    a: 'No. Joining is free for shoppers and nonprofits — no membership, subscription, or hidden fees. You actually save about 10% on local purchases. Local businesses pay only a 1% fee on profit.',
+  },
+  {
+    q: 'How much goes to my nonprofit?',
+    a: 'A share of every sale — 10% of the merchant’s profit. It’s a few dollars per purchase, but across a community it adds up to tens of thousands a year. About $72 per supporter per year, so 500 supporters is roughly $36,000.',
+  },
+  {
+    q: 'How is Good Circles different from AmazonSmile?',
+    a: 'AmazonSmile gave 0.5% from Amazon purchases and shut down in 2023. Good Circles is local-first: you save about 10%, the nonprofit you choose gets a share of every local sale, and local businesses keep 89% of their profit.',
+  },
+  {
+    q: 'When and where does Good Circles launch?',
+    a: 'Good Circles launches in September 2026 in the Jackson, Mississippi metro, then expands across Mississippi and to the cities that request it most. You can claim a founding spot now.',
+  },
+  {
+    q: 'What can I buy on Good Circles?',
+    a: 'Groceries, prepared food, retail, repair and the trades, professional services, appointments, and more. When no local merchant carries something, you’ll see a clearly labeled external option that doesn’t carry the 10% discount.',
+  },
+  {
+    q: 'Is my data sold or shared?',
+    a: 'No. Good Circles never sells your data or shares it outside the platform. Within the circle, relevant information is shared with the nonprofit you elect and the merchants you shop with — that’s how the community works.',
+  },
+];
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/faq" jsonLd={[faqJsonLd(FAQS)]}>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Questions" h1="Good Circles — frequently asked questions">
+      <p slot="answer">
+        Good Circles is a community marketplace where you shop local, <strong>save about
+        10%</strong>, and <strong>10% of the merchant's profit</strong> funds a nonprofit you
+        choose — at no extra cost. It's free for shoppers and nonprofits and launches September
+        2026 in the Jackson, MS metro. Here are the most common questions, answered.
+      </p>
+    </PageHero>
+
+    <FaqList faqs={FAQS} heading="Everything you might want to know" eyebrow="FAQ" />
+
+    <CtaBand
+      heading="Still have a question?"
+      text="Email hello@goodcircles.org — or just claim your founding spot."
+      label="Join free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="How it works"
+      secondaryHref="/how-it-works"
+    />
+  </main>
+  <Footer />
+</Base>

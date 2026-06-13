@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, type Faq } from '../../lib/faq';
+
+const TITLE = 'No-Cost Fundraising for Schools · Good Circles';
+const DESCRIPTION =
+  'A free, ongoing school fundraiser: families shop local, your school gets a share of every sale. No selling, no order forms. Sign up free.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How does Good Circles fundraise for a school?',
+    a: 'Families pick your school once. From then on, 10% of the merchant’s profit on every local purchase they make is routed to your school automatically each month — no order forms, no selling, no fees.',
+  },
+  {
+    q: 'Is it free for schools and PTAs?',
+    a: 'Yes. There’s no cost to join and no fee on what your school receives. Good Circles is funded by a 1% fee businesses pay on profit, not by schools or families.',
+  },
+  {
+    q: 'How much can a school raise?',
+    a: 'About $72 per supporting family per year. A school with 500 participating families can raise roughly $36,000 a year — recurring, with no campaign to run and no extra spending by families.',
+  },
+];
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/for-nonprofits/for-schools" jsonLd={[faqJsonLd(FAQS)]}>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="For schools & PTAs" h1="Fund your school every time families shop">
+      <p slot="answer">
+        Good Circles is a free, ongoing school fundraiser with no selling and no order forms.
+        Families shop local the way they already do, and <strong>10% of the merchant's
+        profit</strong> on every purchase is routed to your school automatically — recurring, every
+        month, at no cost to families or the school.
+      </p>
+      <Fragment slot="ctas">
+        <a href="/#mirror-section" data-cta-audience="NONPROFIT" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Sign up your school free →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">No more order forms</h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          Wrapping paper, cookie dough, catalog drives — traditional school fundraisers ask
+          families to buy things they don't want so a sliver reaches the school. Good Circles flips
+          it: families shop the local businesses they'd use anyway, <strong>save about 10%</strong>,
+          and your school gets a share of every sale. No products to push, no envelopes to collect.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Sign up free with your school or PTA's 501(c)(3) details, families select your school as
+          their cause inside Good Circles, and the funding arrives monthly — automatically. It's
+          the kind of recurring, no-effort fundraising every school wishes it had. See the full
+          picture for organizations on <a href="/for-nonprofits" class="font-bold underline" style="color:#7851A9">Good Circles for nonprofits »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="School fundraising FAQ" />
+
+    <CtaBand
+      heading="Start a fundraiser that runs itself"
+      text="Free to join. Only the first 50 nonprofits and schools become Founding Nonprofits."
+      label="Sign up your school free →"
+      href="/#mirror-section"
+      audience="NONPROFIT"
+      secondaryLabel="For nonprofits"
+      secondaryHref="/for-nonprofits"
+    />
+  </main>
+  <Footer />
+</Base>

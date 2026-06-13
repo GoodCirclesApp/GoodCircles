@@ -1,0 +1,123 @@
+---
+// Goodshop terms kept qualitative/fair (coupons + cash-back paired with
+// donations at major retailers); rates vary by retailer — re-verify on updates.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Good Circles vs Goodshop — Compared (2026)';
+const DESCRIPTION =
+  'Good Circles vs Goodshop: both help you give back while you shop, but only Good Circles is local-first and saves you ~10%. An even-handed 2026 comparison.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What is the difference between Good Circles and Goodshop?',
+    a: 'Goodshop pairs coupons and cash-back with donations at major national retailers. Good Circles is local-first: you shop local businesses, save about 10%, and 10% of the merchant’s profit funds a nonprofit you choose.',
+  },
+  {
+    q: 'Which one saves me more money?',
+    a: 'Goodshop saves you money through coupons, which vary by store and offer. Good Circles lowers your price by about 10% automatically on local purchases — no coupon hunting — and still funds a cause.',
+  },
+  {
+    q: 'Are both free to use?',
+    a: 'Yes. Goodshop is free, and Good Circles is free for shoppers and nonprofits — Good Circles is funded by a 1% fee local businesses pay on profit.',
+  },
+];
+
+const ROWS = [
+  { label: 'Where you shop', gc: 'Local businesses near you', other: 'Major national retailers' },
+  { label: 'You save money', gc: 'Yes, ~10% automatically', other: 'Via coupons (varies)' },
+  { label: 'Who gets funded', gc: 'A nonprofit you choose', other: 'A cause you choose' },
+  { label: 'How it’s funded', gc: "10% of the merchant's profit", other: 'Share of commission (varies)' },
+  { label: 'Local focus', gc: 'Local-first', other: 'National retailers' },
+  { label: 'Cost', gc: 'Free (shoppers & nonprofits)', other: 'Free' },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/compare/vs-goodshop"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Compare', url: `${SITE_URL}/compare/best-amazonsmile-alternatives/` },
+      { name: 'Good Circles vs Goodshop', url: `${SITE_URL}/compare/vs-goodshop/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Comparison · Updated June 2026" h1="Good Circles vs Goodshop, compared">
+      <p slot="answer">
+        Both Good Circles and Goodshop help you give back while you shop — differently.
+        <strong>Goodshop</strong> pairs coupons and cash-back with donations at major national
+        retailers. <strong>Good Circles</strong> is local-first: you shop local businesses,
+        <strong>save about 10%</strong> automatically, and 10% of the merchant's profit funds a
+        nonprofit you choose. Here's an even-handed look.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <div class="overflow-x-auto mb-10">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider"></th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Goodshop</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              {ROWS.map((row) => (
+                <tr style="border-bottom:1px solid #E7DCF2">
+                  <td class="p-3 font-bold text-slate-900">{row.label}</td>
+                  <td class="p-3 font-bold" style="color:#241247">{row.gc}</td>
+                  <td class="p-3 text-slate-500">{row.other}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Where Goodshop shines</h2>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Goodshop has been in the give-back space a long time and combines everyday coupons and
+          cash-back with a donation component at a wide range of national retailers. If your main
+          goal is coupon savings on big-store online shopping with a little giving attached, it's a
+          reasonable, established option.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Where Good Circles is different</h2>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Goodshop's savings depend on finding the right coupon at a national chain. Good Circles
+          lowers your price by about 10% automatically on <em>local</em> purchases — no coupon
+          hunting — keeps the money in your community, and funds a nonprofit you choose. It's local,
+          automatic, and "save and give" at once. See the
+          <a href="/compare/best-amazonsmile-alternatives" class="font-bold underline" style="color:#7851A9">full field of AmazonSmile alternatives »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Good Circles vs Goodshop FAQ" />
+
+    <CtaBand
+      heading="Save automatically, and give locally"
+      text="No coupon hunting — about 10% off local purchases, and a local cause funded."
+      label="Try Good Circles — free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="Compare all alternatives"
+      secondaryHref="/compare/best-amazonsmile-alternatives"
+    />
+  </main>
+  <Footer />
+</Base>
