@@ -18,8 +18,13 @@
 - [Compare alternatives](https://goodcircles.org/compare/best-amazonsmile-alternatives): Good Circles vs ShopRaise, Goodshop, iGive, Bookshop.org.
 - [Shop local by city](https://goodcircles.org/shop-local): Mississippi cities (live first) plus national "request your city".
 - [Browse causes](https://goodcircles.org/causes): food security, education, animal rescue, and more.
-- [Learn](https://goodcircles.org/learn): guides on shopping local, giving back, and passive fundraising.
-- [About](https://goodcircles.org/about) · [FAQ](https://goodcircles.org/faq)
+- [Learn](https://goodcircles.org/learn): guides on shopping local, giving back, passive fundraising, and starting a local business.
+- [Start a local business](https://goodcircles.org/learn/start-a-local-business): the full idea-to-local-sales path for community-rooted founders.
+- [Best marketplaces for local businesses](https://goodcircles.org/answers/best-marketplaces-for-local-businesses) · [What is a community marketplace](https://goodcircles.org/answers/what-is-a-community-marketplace)
+- [Recommended partners](https://goodcircles.org/partners/no-more-9-to-5-club) · [About](https://goodcircles.org/about) · [FAQ](https://goodcircles.org/faq)
+
+## Partnership
+- Good Circles partners with **The No More 9 to 5 Club** (https://thenomore9to5club.org), a growth ecosystem founded by Jason McNamara that trains entrepreneurs at every stage. The fit is sequential: No More 9 to 5 trains the people who become local-business owners; Good Circles gives those owners a marketplace that lets them keep 89% of their profit. The two sit end-to-end in the same buyer journey, with a secondary fit between the No More 9 to 5 Foundation and Good Circles' nonprofit constituency.
 
 ## Notes
 - Brand name is two words: "Good Circles".

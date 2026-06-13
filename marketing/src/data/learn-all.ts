@@ -3,6 +3,7 @@
 // template render them identically.
 import { LEARN_ARTICLES, type LearnArticle } from './learn';
 import { EXTRA_LEARN } from './learn-extra';
+import { PARTNER_LEARN } from './learn-partner';
 
 export type { LearnArticle };
-export const ALL_LEARN: LearnArticle[] = [...LEARN_ARTICLES, ...EXTRA_LEARN];
+export const ALL_LEARN: LearnArticle[] = [...LEARN_ARTICLES, ...EXTRA_LEARN, ...PARTNER_LEARN];

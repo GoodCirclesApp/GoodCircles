@@ -1,0 +1,109 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import { faqJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL, partnerMentionJsonLd } from '../../data/site';
+import { nm9t5Link, nm9t5FoundationLink, AFFILIATE_REL } from '../../lib/affiliates';
+
+const TITLE = 'No More 9 to 5 Club — A Good Circles Recommended Partner';
+const DESCRIPTION =
+  'The No More 9 to 5 Club trains entrepreneurs at every stage; Good Circles gives them a marketplace that keeps 89% of their profit. Why we recommend them.';
+const path = '/partners/no-more-9-to-5-club';
+
+const FAQS: Faq[] = [
+  {
+    q: 'Why does Good Circles recommend the No More 9 to 5 Club?',
+    a: 'Because the two fit end-to-end: the No More 9 to 5 Club trains people to become local-business owners, and Good Circles gives those owners a marketplace that lets them keep 89% of their profit. One builds the entrepreneur; the other gives them a place to sell that is on their side.',
+  },
+  {
+    q: 'Is the No More 9 to 5 Club free to try?',
+    a: 'Yes. It offers a free membership tier and a free Roadmap to Success survey. Paid tiers are $28 (Basic) and $97 (Professional), adding coaching, courses, and masterminds.',
+  },
+  {
+    q: 'Do I have to use the No More 9 to 5 Club to join Good Circles?',
+    a: 'No. They are independent. Good Circles is free for any local business to join. We recommend the No More 9 to 5 Club because it is a strong fit for people who are still building the skills to launch.',
+  },
+];
+
+const linkRoadmap = nm9t5Link('/', { medium: 'cta', campaign: 'partners-page', content: 'hero' });
+const linkMemberships = nm9t5Link('/memberships', { medium: 'cta', campaign: 'partners-page', content: 'memberships' });
+const linkVeterans = nm9t5Link('/veterans-and-military-spouses', { medium: 'cta', campaign: 'partners-page', content: 'veterans' });
+const linkFoundation = nm9t5FoundationLink({ medium: 'link', campaign: 'partners-page', content: 'foundation' });
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path={path}
+  jsonLd={[faqJsonLd(FAQS), partnerMentionJsonLd(`${SITE_URL}${path}/`)]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Recommended partner" h1="The No More 9 to 5 Club">
+      <p slot="answer">
+        The No More 9 to 5 Club is a growth ecosystem founded by Jason McNamara that trains
+        entrepreneurs at every stage. We recommend it because the fit is precise:
+        <strong>they train the people who become local-business owners; Good Circles gives those
+        owners a marketplace that keeps 89% of their profit.</strong>
+      </p>
+      <Fragment slot="ctas">
+        <a href={linkRoadmap} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Get a free roadmap →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Why the two fit end-to-end</h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          Starting a local business is a journey: you decide to leave the 9-to-5, build skills and
+          pick an offer, find your first customers, then sell and scale. The No More 9 to 5 Club
+          owns the early stages and the scale stage — clarity, training, coaching, and systems.
+          Good Circles owns the middle: a marketplace where you list free, keep 89% of your profit,
+          and your customers save about 10% while funding a local cause.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-12" style="font-family:'Fira Sans',sans-serif">
+          See the full path on <a href="/learn/start-a-local-business" class="font-bold underline" style="color:#7851A9">start a local business</a>.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">Where to start with the Club</h2>
+        <div class="grid sm:grid-cols-3 gap-4 mb-12">
+          <div class="p-6 rounded-2xl" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="font-black text-slate-900 mb-2">Free roadmap</p>
+            <p class="text-sm text-slate-500 mb-4" style="font-family:'Fira Sans',sans-serif">A 5-minute survey that identifies your stage and next move. No credit card.</p>
+            <a href={linkRoadmap} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="text-[11px] font-black uppercase tracking-wider underline" style="color:#7851A9">Get the roadmap ›</a>
+          </div>
+          <div class="p-6 rounded-2xl" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="font-black text-slate-900 mb-2">Memberships</p>
+            <p class="text-sm text-slate-500 mb-4" style="font-family:'Fira Sans',sans-serif">Free, $28 Basic, or $97 Professional — coaching, courses, and masterminds.</p>
+            <a href={linkMemberships} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="text-[11px] font-black uppercase tracking-wider underline" style="color:#7851A9">Compare tiers ›</a>
+          </div>
+          <div class="p-6 rounded-2xl" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="font-black text-slate-900 mb-2">Veterans & spouses</p>
+            <p class="text-sm text-slate-500 mb-4" style="font-family:'Fira Sans',sans-serif">Free training and mentorship tailored to veterans and military spouses.</p>
+            <a href={linkVeterans} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="text-[11px] font-black uppercase tracking-wider underline" style="color:#7851A9">Access training ›</a>
+          </div>
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">A shared mission</h2>
+        <p class="text-slate-600 leading-relaxed mb-2" style="font-family:'Fira Sans',sans-serif">
+          The Club also runs a mission-driven Foundation supporting veterans and entrepreneurs —
+          the kind of cause-focused organization Good Circles is built to fund. If you run a
+          nonprofit, see <a href="/for-nonprofits" class="font-bold underline" style="color:#7851A9">Good Circles for nonprofits</a>.
+          You can learn about the Foundation
+          <a href={linkFoundation} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="font-bold underline" style="color:#7851A9">here</a>.
+        </p>
+        <p class="text-xs text-slate-400 mt-6" style="font-family:'Fira Sans',sans-serif">
+          Good Circles may earn a referral commission if you join the No More 9 to 5 Club through links on this page, at no extra cost to you. We recommend them on the merits of the fit, not the commission.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="About this partnership" />
+  </main>
+  <Footer />
+</Base>

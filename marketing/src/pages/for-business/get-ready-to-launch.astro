@@ -1,0 +1,117 @@
+---
+// Pre-marketplace nurture page for soon-to-be sellers (buyer-journey stages 2–3):
+// people not yet ready to list, who need to build skills/an offer first. Bridges
+// NM9t5 training → the Good Circles Founding Circle.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL, partnerMentionJsonLd } from '../../data/site';
+import { nm9t5Link, AFFILIATE_REL } from '../../lib/affiliates';
+
+const TITLE = 'Get Ready to Launch — Become a Good Circles Seller';
+const DESCRIPTION =
+  'Not quite ready to sell yet? Build the skills and an offer first, then launch on Good Circles and keep 89% of your profit. The pre-launch path for new founders.';
+const path = '/for-business/get-ready-to-launch';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What if I’m not ready to sell on Good Circles yet?',
+    a: 'That’s normal. Build a focused offer and your first customers first — a free roadmap from the No More 9 to 5 Club can identify your stage and next move. Then claim a Founding Merchant spot when you’re ready to sell locally.',
+  },
+  {
+    q: 'How do I prepare to launch a local business?',
+    a: 'Pick one problem you can solve locally, validate that a few customers will pay, set simple pricing and fulfillment, and line up where you’ll sell. Then list on a low-fee marketplace so you keep your margin from day one.',
+  },
+  {
+    q: 'Does it cost anything to get on the Good Circles waitlist?',
+    a: 'No. Joining the founding circle is free, and selling later costs just a 1% fee on profit — no setup, monthly, or listing fees.',
+  },
+];
+
+const linkRoadmap = nm9t5Link('/', { medium: 'cta', campaign: 'get-ready-to-launch', content: 'roadmap' });
+const linkLadder = nm9t5Link('/ascend-the-ladder', { medium: 'cta', campaign: 'get-ready-to-launch', content: 'ladder' });
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path={path}
+  jsonLd={[faqJsonLd(FAQS), partnerMentionJsonLd(`${SITE_URL}${path}/`)]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="For future sellers"
+      badge="Founding Merchant spots open · Jackson, MS · Sept 2026"
+      h1="Get ready to launch your local business"
+    >
+      <p slot="answer">
+        Not quite ready to sell yet? That's the right place to start. Build a focused offer and your
+        first customers first, then launch on Good Circles and <strong>keep 89% of your
+        profit</strong>. Here's the short path from "thinking about it" to your first local sale.
+      </p>
+      <Fragment slot="ctas">
+        <a href={linkRoadmap} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Get a free roadmap →
+        </a>
+        <a href="/for-business" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white" style="border:1px solid rgba(255,255,255,0.35)">
+          See the Founding Circle
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">Three steps before you list</h2>
+        <ol class="mb-12 space-y-4" style="font-family:'Fira Sans',sans-serif">
+          <li class="flex gap-4">
+            <span class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-black text-white" style="background:#7851A9">1</span>
+            <p class="text-slate-600 leading-relaxed"><strong>Pick your offer.</strong> Choose one problem you can solve for people near you. Don’t build a website yet — pick the thing you’ll sell.</p>
+          </li>
+          <li class="flex gap-4">
+            <span class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-black text-white" style="background:#7851A9">2</span>
+            <p class="text-slate-600 leading-relaxed"><strong>Validate it.</strong> Get a few real customers to pay before you invest. If you want a structured plan for your stage, the No More 9 to 5 Club’s free roadmap is built for this.</p>
+          </li>
+          <li class="flex gap-4">
+            <span class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-black text-white" style="background:#7851A9">3</span>
+            <p class="text-slate-600 leading-relaxed"><strong>Line up where you’ll sell.</strong> Choose a low-fee marketplace so you keep your margin from your first sale. Good Circles charges 1% of profit — you keep about 89%.</p>
+          </li>
+        </ol>
+
+        <div class="p-8 rounded-3xl mb-12" style="background:#FBF7FE;border:1px solid #E7DCF2">
+          <h2 class="text-2xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">Need to build the skills first?</h2>
+          <p class="text-slate-600 leading-relaxed mb-5" style="font-family:'Fira Sans',sans-serif">
+            The No More 9 to 5 Club trains entrepreneurs at every stage — from "escape the system" to
+            scaling. Start with a free roadmap, or explore the stage-by-stage path.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href={linkRoadmap} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="inline-block px-6 py-3 rounded-full font-black text-xs uppercase tracking-wider" style="background:#C2A76F;color:#241247">Free roadmap</a>
+            <a href={linkLadder} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="inline-block px-6 py-3 rounded-full font-black text-xs uppercase tracking-wider text-white" style="background:#7851A9">Ascend the Ladder</a>
+          </div>
+        </div>
+
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          When you’re ready to sell, the full picture is on <a href="/for-business" class="font-bold underline" style="color:#7851A9">Good Circles for business</a>,
+          and the complete journey is mapped on <a href="/learn/start-a-local-business" class="font-bold underline" style="color:#7851A9">start a local business</a>.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Getting ready FAQ" />
+
+    <CtaBand
+      heading="Claim your Founding Merchant spot"
+      text="Free to join, 1% fee on profit, keep 89%. The first 200 Mississippi businesses become Founding Merchants."
+      label="Become a Founding Merchant (free) →"
+      href="/for-business"
+      audience="MERCHANT"
+      secondaryLabel="Start a local business"
+      secondaryHref="/learn/start-a-local-business"
+    />
+  </main>
+  <Footer />
+</Base>

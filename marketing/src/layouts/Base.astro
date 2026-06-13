@@ -72,7 +72,7 @@ const GA4_ID = (import.meta.env.PUBLIC_GA4_ID as string | undefined) ?? GA4_MEAS
       <>
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}></script>
         <script
-          set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4_ID}');document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-cta-audience]');if(a)gtag('event','cta_click',{audience:a.getAttribute('data-cta-audience'),page:location.pathname});});`}
+          set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4_ID}');document.addEventListener('click',function(e){if(!(e.target&&e.target.closest))return;var c=e.target.closest('[data-cta-audience]');if(c)gtag('event','cta_click',{audience:c.getAttribute('data-cta-audience'),page:location.pathname});var p=e.target.closest('[data-affiliate]');if(p)gtag('event','partner_click',{partner:p.getAttribute('data-affiliate'),page:location.pathname});});`}
         />
       </>
     )}

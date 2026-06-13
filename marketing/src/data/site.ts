@@ -15,11 +15,18 @@ export const SITE_NAME = 'Good Circles';
 // environment with the PUBLIC_GA4_ID env var if ever needed.
 export const GA4_MEASUREMENT_ID = 'G-GL2EMC1F1X';
 
+// NM9t5 affiliate ID — env-driven, never hardcoded (so it stays out of git and
+// is replaceable). Set PUBLIC_NM9T5_AFFILIATE_ID in the Netlify build env to
+// earn commission; until set, NM9t5 links go out without the am_id tag.
+export const NM9T5_AFFILIATE_ID =
+  (import.meta.env.PUBLIC_NM9T5_AFFILIATE_ID as string | undefined) ?? '';
+
 export const ORG_DESCRIPTION =
-  'A community marketplace where shopping local saves you about 10% and a share of every sale funds a nonprofit you choose.';
+  'A community marketplace where shopping local saves you money, funds nonprofits, and strengthens the place you live.';
 
 // Founder name + Facebook confirmed by owner 2026-06-12. Add Instagram/TikTok
-// to sameAs when those profiles exist.
+// to sameAs when those profiles exist. knowsAbout strengthens the entity for
+// AI/Generative-Engine Optimization.
 export const ORGANIZATION_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -32,7 +39,34 @@ export const ORGANIZATION_JSONLD = {
   areaServed: { '@type': 'State', name: 'Mississippi' },
   email: 'hello@goodcircles.org',
   sameAs: ['https://www.facebook.com/goodcirclesorg'],
+  knowsAbout: [
+    'community marketplace',
+    'shop local',
+    'small business',
+    'nonprofit funding',
+    'Jackson, Mississippi',
+    'AmazonSmile alternative',
+  ],
 } as const;
+
+// Reusable "Mention" JSON-LD for pages that reference the NM9t5 partner — helps
+// search and AI crawlers understand the brand relationship (Phase 5).
+export const NM9T5_URL = 'https://thenomore9to5club.org';
+export function partnerMentionJsonLd(pageUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    url: pageUrl,
+    isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL },
+    mentions: {
+      '@type': 'Organization',
+      name: 'The No More 9 to 5 Club',
+      url: NM9T5_URL,
+      description:
+        'A growth ecosystem that trains entrepreneurs at every stage, founded by Jason McNamara. A Good Circles recommended partner.',
+    },
+  };
+}
 
 export const WEBSITE_JSONLD = {
   '@context': 'https://schema.org',
