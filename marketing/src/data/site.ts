@@ -15,11 +15,16 @@ export const SITE_NAME = 'Good Circles';
 // environment with the PUBLIC_GA4_ID env var if ever needed.
 export const GA4_MEASUREMENT_ID = 'G-GL2EMC1F1X';
 
-// NM9t5 affiliate ID — env-driven, never hardcoded (so it stays out of git and
-// is replaceable). Set PUBLIC_NM9T5_AFFILIATE_ID in the Netlify build env to
-// earn commission; until set, NM9t5 links go out without the am_id tag.
+// NM9t5 affiliate ID. A PUBLIC identifier (it ships in every outbound link by
+// design), so it's safe to keep as a default; override per environment with the
+// PUBLIC_NM9T5_AFFILIATE_ID env var. Owner's ID confirmed 2026-06-13 = GoodCircles.
 export const NM9T5_AFFILIATE_ID =
-  (import.meta.env.PUBLIC_NM9T5_AFFILIATE_ID as string | undefined) ?? '';
+  (import.meta.env.PUBLIC_NM9T5_AFFILIATE_ID as string | undefined) ?? 'GoodCircles';
+
+// High-intent conversion target: the 30-day membership trial checkout
+// (owner-provided 2026-06-13). Use for "start trial" CTAs; keep the free
+// Roadmap survey ("/") as the no-friction top-of-funnel entry.
+export const NM9T5_TRIAL_PATH = '/b-m-checkout-30days-trial';
 
 export const ORG_DESCRIPTION =
   'A community marketplace where shopping local saves you money, funds nonprofits, and strengthens the place you live.';

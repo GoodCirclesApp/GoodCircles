@@ -7,7 +7,7 @@
 // research in _research/nm9t5/ — nothing invented.
 import type { LearnArticle } from './learn';
 import { SITE_URL, NM9T5_URL } from './site';
-import { nm9t5Link, AFFILIATE_REL } from '../lib/affiliates';
+import { nm9t5Link, nm9t5TrialLink, AFFILIATE_REL } from '../lib/affiliates';
 
 const PUBLISHED = '2026-06-13';
 const DATELINE = 'Updated June 13, 2026 · Good Circles';
@@ -15,6 +15,11 @@ const DATELINE = 'Updated June 13, 2026 · Good Circles';
 // Affiliate CTA button (sponsored, tracked).
 function aff(label: string, path: string, campaign: string, content: string): string {
   const href = nm9t5Link(path, { medium: 'cta', campaign, content });
+  return `<a class="btn btn-gold" href="${href}" rel="${AFFILIATE_REL}" data-affiliate="nm9t5" target="_blank">${label}</a>`;
+}
+// 30-day trial conversion CTA (sponsored, tracked).
+function trial(label: string, campaign: string, content: string): string {
+  const href = nm9t5TrialLink({ medium: 'cta', campaign, content });
   return `<a class="btn btn-gold" href="${href}" rel="${AFFILIATE_REL}" data-affiliate="nm9t5" target="_blank">${label}</a>`;
 }
 // Good Circles CTA button (internal).
@@ -124,7 +129,7 @@ const DEFS: PartnerDef[] = [
         h2: 'Stage 3 — Build skills, pick an offer, find first customers',
         html:
           `<p>This is the stage where most people stall, because it's where real work happens: choosing a focused offer, pricing it, and getting your first paying customers. Skills compound here — sales, simple operations, and the discipline to ship consistently matter more than any single tactic.</p>` +
-          `<p>Coaching and a builder community pay for themselves at this stage by keeping you accountable and unstuck. The Club's Basic and Professional memberships add weekly coaching, courses, and masterminds. ${aff('Compare membership options', '/memberships', 'start-a-local-business', 'stage3')}</p>`,
+          `<p>Coaching and a builder community pay for themselves at this stage by keeping you accountable and unstuck. The Club's Basic and Professional memberships add weekly coaching, courses, and masterminds — and you can try it with a 30-day trial. ${trial('Start a 30-day trial', 'start-a-local-business', 'stage3')}</p>`,
       },
       {
         h2: 'Stage 4 — Join the Good Circles Founding Circle',
@@ -395,7 +400,7 @@ const DEFS: PartnerDef[] = [
       {
         h2: 'The community-ecosystem model',
         html:
-          `<p>The No More 9 to 5 Club packages coaching, courses, masterminds, and community into membership tiers (Free, $28 Basic, $97 Professional). You trade one-to-one customization for affordability, peer accountability, and a structured progression ("Ascend the Ladder"). It fits earlier-stage founders who want momentum without a premium price tag. ${aff('See how the Club works', '/memberships', 'no-more-9-to-5-club-vs-traditional-business-coaching', 'mid')}</p>`,
+          `<p>The No More 9 to 5 Club packages coaching, courses, masterminds, and community into membership tiers (Free, $28 Basic, $97 Professional). You trade one-to-one customization for affordability, peer accountability, and a structured progression ("Ascend the Ladder"). It fits earlier-stage founders who want momentum without a premium price tag. ${trial('Try the Club — 30-day trial', 'no-more-9-to-5-club-vs-traditional-business-coaching', 'mid')}</p>`,
       },
       {
         h2: 'How to choose',

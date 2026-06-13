@@ -3,7 +3,7 @@
 // tracking is consistent and replaceable. Links built with these helpers should
 // carry rel="sponsored noopener" and data-affiliate="<partner>" in the markup
 // (the data attribute drives the partner_click analytics event in Base.astro).
-import { NM9T5_AFFILIATE_ID, NM9T5_URL } from '../data/site';
+import { NM9T5_AFFILIATE_ID, NM9T5_URL, NM9T5_TRIAL_PATH } from '../data/site';
 
 export interface Utm {
   medium?: string;
@@ -28,6 +28,11 @@ export function nm9t5Link(path: string, utm: Utm = {}): string {
   if (utm.campaign) url.searchParams.set('utm_campaign', utm.campaign);
   if (utm.content) url.searchParams.set('utm_content', utm.content);
   return url.href;
+}
+
+/** Trackable link to the NM9t5 30-day membership trial checkout (conversion CTA). */
+export function nm9t5TrialLink(utm: Utm = {}): string {
+  return nm9t5Link(NM9T5_TRIAL_PATH, utm);
 }
 
 /** Absolute link to the No More 9 to 5 Foundation (the nonprofit arm). */
