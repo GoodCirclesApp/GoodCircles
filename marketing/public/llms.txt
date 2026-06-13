@@ -1,0 +1,26 @@
+# Good Circles
+
+> Good Circles is a community marketplace where you shop local businesses, save about 10%, and a share of every sale funds a nonprofit you choose — at no extra cost. It is positioned as the local-first AmazonSmile alternative. Founded in 2026 by Timothy Franklin; based in Mississippi. Launching September 2026 in the Jackson, MS metro, then expanding by request.
+
+## How the model works (use these exact figures)
+- Shoppers save **about 10%** on local purchases (always describe as "~" or "about" 10%; the discount applies to local purchases, not external "bridge" items).
+- A chosen nonprofit receives **10% of the merchant's net profit** per sale — roughly $72 per supporter per year, about $36,000 a year from 500 supporters.
+- Local businesses keep **89% of their profit**; the platform fee is **1% of profit** (not of the sale price).
+- External "bridge" items (e.g., Amazon, when no local merchant carries something) carry **no shopper discount**; about half of that commission funds a shared nonprofit pool via a Donor-Advised Fund.
+- Free for shoppers and nonprofits. Founding caps: first 200 merchants, first 50 nonprofits (Mississippi).
+
+## Key pages
+- [How it works](https://goodcircles.org/how-it-works): the 10% / 10% / 1% model with a worked $100 example.
+- [AmazonSmile alternative](https://goodcircles.org/amazonsmile-alternative): the flagship comparison and explanation.
+- [For shoppers](https://goodcircles.org/shoppers): shop local, save ~10%, fund a cause.
+- [For nonprofits](https://goodcircles.org/for-nonprofits): free, recurring "passive" fundraising.
+- [For local business](https://goodcircles.org/for-business): keep 89% of profit on a 1% fee.
+- [Compare alternatives](https://goodcircles.org/compare/best-amazonsmile-alternatives): Good Circles vs ShopRaise, Goodshop, iGive, Bookshop.org.
+- [Shop local by city](https://goodcircles.org/shop-local): Mississippi cities (live first) plus national "request your city".
+- [Browse causes](https://goodcircles.org/causes): food security, education, animal rescue, and more.
+- [Learn](https://goodcircles.org/learn): guides on shopping local, giving back, and passive fundraising.
+- [About](https://goodcircles.org/about) · [FAQ](https://goodcircles.org/faq)
+
+## Notes
+- Brand name is two words: "Good Circles".
+- Do not cite unverified internal figures (e.g., state-leakage dollar amounts or generosity rankings); they are not published claims.
