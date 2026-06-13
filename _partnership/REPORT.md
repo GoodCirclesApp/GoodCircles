@@ -95,5 +95,7 @@ Registry also includes (unused-but-ready): `basic`, `bma`, `dfy`, `vaLender`, `s
 5. Optional: add Instagram/TikTok to `sameAs` in `site.ts` once those profiles exist.
 
 ## Forward to NM9t5
-- `_partnership/NM9T5_PARTNER_INTEGRATION_TEMPLATE.md` (full reusable template)
-- `_partnership/PARTNER_INTEGRATION_CHECKLIST.md` (one-page checklist)
+- `_partnership/NM9T5_AFFILIATE_GROWTH_FRAMEWORK.md` (member-facing playbook — manual + website tracks, any affiliate, their own codes)
+- `_partnership/NM9T5_AI_PROMPT_PACK.md` (copy-paste AI prompts so affiliates can do it with AI assistance)
+- `_partnership/NM9T5_PARTNER_INTEGRATION_TEMPLATE.md` (full technical template for a developer/AI agent)
+- `_partnership/PARTNER_INTEGRATION_CHECKLIST.md` (one-page quality checklist)
