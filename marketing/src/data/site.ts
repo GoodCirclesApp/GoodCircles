@@ -10,6 +10,11 @@
 export const SITE_URL = 'https://goodcircles.org';
 export const SITE_NAME = 'Good Circles';
 
+// Google Analytics 4 Measurement ID. This is a PUBLIC identifier (it ships in
+// every page's HTML by design), not a secret — safe to commit. Override per
+// environment with the PUBLIC_GA4_ID env var if ever needed.
+export const GA4_MEASUREMENT_ID = 'G-GL2EMC1F1X';
+
 export const ORG_DESCRIPTION =
   'A community marketplace where shopping local saves you about 10% and a share of every sale funds a nonprofit you choose.';
 
