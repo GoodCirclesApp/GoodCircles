@@ -7,6 +7,7 @@ import PageHero from '../components/PageHero.astro';
 import FaqList from '../components/FaqList.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { faqJsonLd, type Faq } from '../lib/faq';
+import { SITE_URL } from '../data/site';
 
 const TITLE = 'How Good Circles Works — Save ~10%, Give & Keep Money Local';
 const DESCRIPTION =
@@ -31,6 +32,39 @@ const FAQS: Faq[] = [
   },
 ];
 
+// HowTo schema mirrors the visible "Join in 3 minutes" steps.
+const HOWTO_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to shop local and give back with Good Circles',
+  description:
+    'Join Good Circles in about 3 minutes: sign up free, pick your nonprofit, and shop local to save ~10% while a share of every sale funds your cause.',
+  totalTime: 'PT3M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: 'Sign up free',
+      text: 'Sign up free at goodcircles.org — no app to download.',
+      url: `${SITE_URL}/how-it-works/#join`,
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: 'Pick your nonprofit',
+      text: 'Pick your nonprofit — any IRS-verified 501(c)(3). Change it anytime.',
+      url: `${SITE_URL}/how-it-works/#join`,
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: 'Shop local',
+      text: 'Shop local. Prices already show about 10% lower, and a share of every sale funds your cause automatically.',
+      url: `${SITE_URL}/how-it-works/#join`,
+    },
+  ],
+};
+
 // Worked example fixed by the accuracy contract: $100 item, $40 cost.
 const MATH = [
   { label: 'You pay', amount: '$90', who: 'a 10% discount, automatic at checkout' },
@@ -40,7 +74,7 @@ const MATH = [
 ];
 ---
 
-<Base title={TITLE} description={DESCRIPTION} path="/how-it-works" jsonLd={[faqJsonLd(FAQS)]}>
+<Base title={TITLE} description={DESCRIPTION} path="/how-it-works" jsonLd={[faqJsonLd(FAQS), HOWTO_JSONLD]}>
   <Nav solid />
   <main id="main">
     <PageHero eyebrow="The model" h1="How Good Circles works">
@@ -106,7 +140,7 @@ const MATH = [
           </p>
         </div>
 
-        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">
+        <h2 id="join" class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">
           Join in 3 minutes
         </h2>
         <ol class="mb-12 space-y-4" style="font-family:'Fira Sans',sans-serif">

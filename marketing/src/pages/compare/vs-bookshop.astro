@@ -1,0 +1,125 @@
+---
+// Bookshop.org terms verified 2026-06-12: ethical online bookstore; ~10% of
+// regular sales pooled and split among independent bookstores every 6 months,
+// affiliates earn 30% of cover price; 3,400+ indie stores. It's a books-only
+// store, not a charity-shopping tool — kept fair and clearly framed.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Good Circles vs Bookshop.org — Compared (2026)';
+const DESCRIPTION =
+  'Good Circles vs Bookshop.org: both support local, but Bookshop.org sells books for indie bookstores while Good Circles funds any nonprofit and saves you ~10%.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What is the difference between Good Circles and Bookshop.org?',
+    a: 'Bookshop.org is an online bookstore that channels a share of sales to independent bookstores. Good Circles is a local marketplace across all categories where you save about 10% and a share of every sale funds a nonprofit you choose.',
+  },
+  {
+    q: 'Does Bookshop.org support charities like AmazonSmile did?',
+    a: 'Not directly — Bookshop.org supports independent bookstores, not a charity you pick. Good Circles lets you fund any IRS-verified 501(c)(3) you choose with every local purchase.',
+  },
+  {
+    q: 'Which one saves me money?',
+    a: 'Bookshop.org sells books at standard prices. Good Circles lowers your price by about 10% on local purchases and still funds a nonprofit you choose.',
+  },
+];
+
+const ROWS = [
+  { label: 'What you shop', gc: 'All local categories', other: 'Books' },
+  { label: 'You save money', gc: 'Yes, ~10% on local purchases', other: 'No — standard book prices' },
+  { label: 'Who benefits', gc: 'A nonprofit you choose', other: 'Independent bookstores' },
+  { label: 'How it works', gc: "10% of the merchant's profit to your cause", other: 'Share of book sales pooled to indie stores' },
+  { label: 'Local focus', gc: 'Local-first marketplace', other: 'Indie bookstores (online)' },
+  { label: 'Cost', gc: 'Free (shoppers & nonprofits)', other: 'Standard book pricing' },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/compare/vs-bookshop"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Compare', url: `${SITE_URL}/compare/best-amazonsmile-alternatives/` },
+      { name: 'Good Circles vs Bookshop.org', url: `${SITE_URL}/compare/vs-bookshop/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Comparison · Updated June 2026" h1="Good Circles vs Bookshop.org, compared">
+      <p slot="answer">
+        Good Circles and Bookshop.org are kindred spirits with different jobs.
+        <strong>Bookshop.org</strong> is an ethical online bookstore that channels a share of sales
+        to independent bookstores. <strong>Good Circles</strong> is a local marketplace across all
+        categories where you <strong>save about 10%</strong> and a share of every sale funds a
+        nonprofit you choose. Here's an even-handed look.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <div class="overflow-x-auto mb-10">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider"></th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Bookshop.org</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              {ROWS.map((row) => (
+                <tr style="border-bottom:1px solid #E7DCF2">
+                  <td class="p-3 font-bold text-slate-900">{row.label}</td>
+                  <td class="p-3 font-bold" style="color:#241247">{row.gc}</td>
+                  <td class="p-3 text-slate-500">{row.other}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Where Bookshop.org shines</h2>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Bookshop.org is a genuinely great model: an ethical alternative to Amazon for books that
+          has sent millions to independent bookstores, with most of its profit margin going to indie
+          stores. If you mainly want to buy books without Amazon and support bookshops, it's the
+          obvious pick — and a clear inspiration for the give-back marketplace idea.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Where Good Circles is different</h2>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Bookshop.org focuses on books and supports bookstores. Good Circles applies the same
+          local-first spirit to <em>all</em> local commerce, lets you fund <em>any</em> nonprofit
+          you choose, and actually lowers your price by about 10%. Think of it as Bookshop.org's
+          ethic extended across your whole community. See the
+          <a href="/compare/best-amazonsmile-alternatives" class="font-bold underline" style="color:#7851A9">full field of AmazonSmile alternatives »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Good Circles vs Bookshop.org FAQ" />
+
+    <CtaBand
+      heading="The give-back model, for everything local"
+      text="Shop all local categories, save about 10%, and fund any nonprofit you choose."
+      label="Try Good Circles — free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="Compare all alternatives"
+      secondaryHref="/compare/best-amazonsmile-alternatives"
+    />
+  </main>
+  <Footer />
+</Base>
