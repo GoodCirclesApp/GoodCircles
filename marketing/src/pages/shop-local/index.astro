@@ -7,6 +7,7 @@ import Footer from '../../components/Footer.astro';
 import FaqList from '../../components/FaqList.astro';
 import { faqJsonLd, type Faq } from '../../lib/faq';
 import { CITIES, STATE } from '../../data/cities';
+import { NATIONAL_STATES } from '../../data/national-cities';
 
 const TITLE = 'Shop Local & Give Back — Find Your City · Good Circles';
 const DESCRIPTION =
@@ -86,8 +87,23 @@ const FAQS: Faq[] = [
             the Golden Triangle, and beyond. See every Mississippi city ›
           </p>
         </a>
-        <div class="mt-6 p-8 rounded-3xl" style="border:2px dashed #E7DCF2">
-          <p class="text-2xl font-black text-slate-900 mb-2">Your state?</p>
+        <div class="mt-10">
+          <p class="text-xs font-black uppercase tracking-widest mb-3" style="color:#C2A76F">Coming soon — by request</p>
+          <p class="text-slate-500 mb-5" style="font-family:'Fira Sans',sans-serif">
+            We're already taking requests across the South and beyond. Find your state, pick your
+            city, and add your name — the cities with the most requests launch first.
+          </p>
+          <div class="flex flex-wrap gap-3" style="font-family:'Fira Sans',sans-serif">
+            {NATIONAL_STATES.map((s) => (
+              <a href={`/shop-local/${s.slug}/`} class="px-4 py-2 rounded-full text-sm font-bold" style="background:#FBF7FE;border:1px solid #E7DCF2;color:#52407e">
+                {s.name}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div class="mt-8 p-8 rounded-3xl" style="border:2px dashed #E7DCF2">
+          <p class="text-2xl font-black text-slate-900 mb-2">Don't see your state?</p>
           <p class="text-slate-500 mb-4" style="font-family:'Fira Sans',sans-serif">
             Good Circles expands to the places that ask for it. Add your city to the map — it takes
             20 seconds, and requesters get early founding access.

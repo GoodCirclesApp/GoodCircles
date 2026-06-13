@@ -1,0 +1,153 @@
+---
+// National "coming soon" city pages (CityPages.md §5). Indexable — they exist
+// to rank for "shop local in [city]" and convert intent into expansion votes.
+// Static /shop-local/mississippi/ files take routing priority, and this
+// dynamic route only emits non-MS metros, so there's no collision.
+import Base from '../../../layouts/Base.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import FaqList from '../../../components/FaqList.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../../lib/faq';
+import { SITE_URL } from '../../../data/site';
+import { NATIONAL_CITIES, nearbyNationalCities, type NationalCity } from '../../../data/national-cities';
+import RequestCityForm from '../../../components/react/RequestCityForm';
+
+export function getStaticPaths() {
+  return NATIONAL_CITIES.map((city) => ({
+    params: { state: city.stateSlug, city: city.slug },
+    props: { city },
+  }));
+}
+
+interface Props {
+  city: NationalCity;
+}
+const { city } = Astro.props;
+const path = `/shop-local/${city.stateSlug}/${city.slug}/`;
+const TITLE = `Shop Local in ${city.city}, ${city.st} — Support Local Businesses & Give Back`;
+const DESCRIPTION = `Shop local in ${city.city}, save ~10%, and fund a ${city.city} nonprofit you choose. Good Circles is coming to ${city.city} — add your name to be first in. Join free.`;
+const nearby = nearbyNationalCities(city);
+
+const FAQS: Faq[] = [
+  {
+    q: `When is Good Circles coming to ${city.city}?`,
+    a: `Good Circles is launching in Mississippi first, in 2026, and expanding to the cities with the most requests. Add your name to move ${city.city} up the list — requesters get early founding access when ${city.city} goes live.`,
+  },
+  {
+    q: `How will Good Circles work in ${city.city}?`,
+    a: `When Good Circles launches in ${city.city}, you'll shop local ${city.city} businesses, save about 10%, and 10% of the merchant's profit will fund a ${city.city} nonprofit you choose — automatically, at no extra cost.`,
+  },
+  {
+    q: 'Is it free to request my city?',
+    a: 'Yes. Requesting is free, and there’s never a cost for shoppers or nonprofits to join Good Circles.',
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path={path}
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: 'Shop Local', url: `${SITE_URL}/shop-local/` },
+      { name: city.state, url: `${SITE_URL}/shop-local/${city.stateSlug}/` },
+      { name: city.city, url: `${SITE_URL}${path}` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <header class="px-6 pt-12 pb-16" style="background:linear-gradient(150deg,#241247 0%,#4B2E84 58%,#7851A9 100%)">
+      <div class="max-w-3xl mx-auto">
+        <nav class="text-sm mb-6" style="color:#cdb9ee;font-family:'Fira Sans',sans-serif" aria-label="Breadcrumb">
+          <a href="/shop-local/" class="underline hover:text-white" style="color:#cdb9ee">Shop Local</a>
+          <span> › </span>
+          <a href={`/shop-local/${city.stateSlug}/`} class="underline hover:text-white" style="color:#cdb9ee">{city.state}</a>
+          <span> › </span>
+          <span class="text-white">{city.city}</span>
+        </nav>
+        <p class="inline-block px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest text-white mb-6" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25)">
+          {city.city}, {city.st} · Coming soon — by request
+        </p>
+        <h1 class="font-black text-white mb-6" style="font-size:clamp(2rem,5.5vw,3.2rem);letter-spacing:-0.02em;line-height:1.05">
+          Shop local in {city.city} — and fund a {city.city} nonprofit
+        </h1>
+        <div class="text-white/90 text-lg leading-relaxed rounded-2xl p-6" style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);font-family:'Fira Sans',sans-serif">
+          Good Circles is a local-first way to shop {city.city}, {city.st} businesses, <strong>save
+          about 10%</strong>, and fund a {city.city} nonprofit you choose — at no extra cost. We're
+          not live in {city.city} yet. <strong>Add your name and you'll be first in when we launch —
+          and help us get there sooner.</strong>
+        </div>
+      </div>
+    </header>
+
+    <section class="py-14 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-lg text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Good Circles keeps your spending — and your giving — in {city.city}: from {city.hook}, the
+          city's independents are what make it {city.city}. But most of every dollar spent at a
+          national chain leaves the moment it's spent. Good Circles changes the rails so it stays
+          right here.
+        </p>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="text-3xl font-black mb-1" style="color:#7851A9">~10%</p>
+            <p class="font-black text-slate-900 mb-1">You save</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">Automatic at checkout on local purchases.</p>
+          </div>
+          <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="text-3xl font-black mb-1" style="color:#C2A76F">10%</p>
+            <p class="font-black text-slate-900 mb-1">Funds your cause</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">10% of the business's profit funds the {city.city} nonprofit you choose.</p>
+          </div>
+          <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="text-3xl font-black mb-1" style="color:#241247">89%</p>
+            <p class="font-black text-slate-900 mb-1">Stays local</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">{city.city} businesses keep 89% of their profit.</p>
+          </div>
+        </div>
+        <p class="mt-6 text-sm" style="font-family:'Fira Sans',sans-serif">
+          <a href="/how-it-works" class="font-bold underline" style="color:#7851A9">How it works »</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="py-14 px-6" style="background:#FBF7FE">
+      <div class="max-w-2xl mx-auto">
+        <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">Be the reason Good Circles comes to {city.city}</p>
+        <h2 class="text-3xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">Request Good Circles in {city.city}</h2>
+        <p class="text-slate-500 mb-6" style="font-family:'Fira Sans',sans-serif">
+          Every request is a vote. The more {city.city} neighbors who ask, the sooner we launch —
+          and requesters get early founding access.
+        </p>
+        <div class="p-6 rounded-3xl bg-white" style="box-shadow:0 4px 40px rgba(120,81,169,0.12)">
+          <RequestCityForm client:load defaultCity={city.city} defaultState={city.st} />
+        </div>
+      </div>
+    </section>
+
+    {nearby.length > 0 && (
+      <section class="py-14 px-6 bg-white">
+        <div class="max-w-3xl mx-auto">
+          <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">Nearby</p>
+          <h2 class="text-2xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">More {city.state} cities</h2>
+          <div class="flex flex-wrap gap-3" style="font-family:'Fira Sans',sans-serif">
+            {nearby.map((nb) => (
+              <a href={`/shop-local/${nb.stateSlug}/${nb.slug}/`} class="px-4 py-2 rounded-full text-sm font-bold" style="background:#FBF7FE;border:1px solid #E7DCF2;color:#52407e">
+                {nb.city}
+              </a>
+            ))}
+            <a href="/shop-local/" class="px-4 py-2 rounded-full text-sm font-black" style="background:#7851A9;color:#fff">
+              All cities ›
+            </a>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <FaqList faqs={FAQS} heading={`${city.city} FAQ`} />
+  </main>
+  <Footer />
+</Base>

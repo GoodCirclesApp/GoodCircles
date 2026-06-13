@@ -1,0 +1,95 @@
+---
+// National "coming soon" state hubs (e.g. /shop-local/tennessee/). Lists that
+// state's requestable cities. Mississippi is excluded (it has its own seeded
+// hub at /shop-local/mississippi/), so no routing collision.
+import Base from '../../../layouts/Base.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import FaqList from '../../../components/FaqList.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../../lib/faq';
+import { SITE_URL } from '../../../data/site';
+import { NATIONAL_STATES, citiesInState, type NationalState } from '../../../data/national-cities';
+
+export function getStaticPaths() {
+  return NATIONAL_STATES.map((state) => ({ params: { state: state.slug }, props: { state } }));
+}
+
+interface Props {
+  state: NationalState;
+}
+const { state } = Astro.props;
+const path = `/shop-local/${state.slug}/`;
+const cities = citiesInState(state.slug);
+const TITLE = `Shop Local in ${state.name} — Support Local Businesses & Give Back`;
+const DESCRIPTION = `Shop local in ${state.name}, save ~10%, and fund a ${state.name} nonprofit you choose. Good Circles is coming to ${state.name} — request your city to be first in.`;
+
+const FAQS: Faq[] = [
+  {
+    q: `Is Good Circles available in ${state.name}?`,
+    a: `Not yet — Good Circles launches in Mississippi first, in 2026, then expands to the cities that request it most. Request your ${state.name} city to move it up the list and get early founding access.`,
+  },
+  {
+    q: `How does Good Circles work in ${state.name}?`,
+    a: `When Good Circles launches in a ${state.name} city, you'll shop local businesses, save about 10%, and 10% of the merchant's profit will fund a nonprofit you choose — automatically, at no extra cost.`,
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path={path}
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: 'Shop Local', url: `${SITE_URL}/shop-local/` },
+      { name: state.name, url: `${SITE_URL}${path}` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <header class="px-6 pt-12 pb-16" style="background:linear-gradient(150deg,#241247 0%,#4B2E84 58%,#7851A9 100%)">
+      <div class="max-w-3xl mx-auto">
+        <nav class="text-sm mb-6" style="color:#cdb9ee;font-family:'Fira Sans',sans-serif" aria-label="Breadcrumb">
+          <a href="/shop-local/" class="underline hover:text-white" style="color:#cdb9ee">Shop Local</a>
+          <span> › </span>
+          <span class="text-white">{state.name}</span>
+        </nav>
+        <p class="inline-block px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest text-white mb-6" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25)">
+          {state.name} · Coming soon — by request
+        </p>
+        <h1 class="font-black text-white mb-6" style="font-size:clamp(2rem,5.5vw,3.2rem);letter-spacing:-0.02em;line-height:1.05">
+          Shop local in {state.name} — and fund a {state.name} nonprofit
+        </h1>
+        <div class="text-white/90 text-lg leading-relaxed rounded-2xl p-6" style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);font-family:'Fira Sans',sans-serif">
+          Good Circles is a local-first way to shop {state.name} businesses, <strong>save about
+          10%</strong>, and fund a nonprofit you choose — at no extra cost. We're launching in
+          Mississippi first, then expanding by request. <strong>Pick your {state.name} city and add
+          your name to bring Good Circles there sooner.</strong>
+        </div>
+      </div>
+    </header>
+
+    <section class="py-14 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">Choose your city</p>
+        <h2 class="text-3xl font-black text-slate-900 mb-8" style="letter-spacing:-0.02em">{state.name} cities</h2>
+        <div class="grid sm:grid-cols-2 gap-4">
+          {cities.map((c) => (
+            <a href={`/shop-local/${c.stateSlug}/${c.slug}/`} class="block p-5 rounded-2xl no-underline transition-shadow hover:shadow-lg" style="background:#FBF7FE;border:1px solid #E7DCF2">
+              <p class="font-black text-slate-900 text-lg mb-1">{c.city}</p>
+              <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">Request Good Circles in {c.city} ›</p>
+            </a>
+          ))}
+        </div>
+        <p class="text-slate-600 mt-6" style="font-family:'Fira Sans',sans-serif">
+          Don't see your city? <a href="/request-your-city" class="font-bold underline" style="color:#7851A9">Request any city »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading={`${state.name} FAQ`} />
+  </main>
+  <Footer />
+</Base>

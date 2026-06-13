@@ -5,10 +5,15 @@ import { trackSignup } from '../../lib/analytics';
 // "Request Good Circles in [City]" capture. Posts to the existing waitlist API
 // (which already accepts city/state) — no backend changes. Each submission is
 // a weighted vote for where to expand.
-export default function RequestCityForm() {
+interface Props {
+  defaultCity?: string;
+  defaultState?: string;
+}
+
+export default function RequestCityForm({ defaultCity = '', defaultState = '' }: Props) {
   const [email, setEmail] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
+  const [city, setCity] = useState(defaultCity);
+  const [state, setState] = useState(defaultState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [done, setDone] = useState(false);
