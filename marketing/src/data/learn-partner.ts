@@ -7,20 +7,25 @@
 // research in _research/nm9t5/ — nothing invented.
 import type { LearnArticle } from './learn';
 import { SITE_URL, NM9T5_URL } from './site';
-import { nm9t5Link, nm9t5TrialLink, AFFILIATE_REL } from '../lib/affiliates';
+import { nm9t5Link, nm9t5PlainLink, AFFILIATE_REL, type CampaignKey } from '../lib/affiliates';
 
 const PUBLISHED = '2026-06-13';
 const DATELINE = 'Updated June 13, 2026 · Good Circles';
 
-// Affiliate CTA button (sponsored, tracked).
-function aff(label: string, path: string, campaign: string, content: string): string {
-  const href = nm9t5Link(path, { medium: 'cta', campaign, content });
+// Affiliate CTA → a specific real NM9t5 campaign (sponsored, tracked).
+function aff(label: string, key: CampaignKey, campaign: string, content: string): string {
+  const href = nm9t5Link(key, { medium: 'cta', campaign, content });
   return `<a class="btn btn-gold" href="${href}" rel="${AFFILIATE_REL}" data-affiliate="nm9t5" target="_blank">${label}</a>`;
 }
-// 30-day trial conversion CTA (sponsored, tracked).
+// Convenience: the 30-day trial campaign.
 function trial(label: string, campaign: string, content: string): string {
-  const href = nm9t5TrialLink({ medium: 'cta', campaign, content });
-  return `<a class="btn btn-gold" href="${href}" rel="${AFFILIATE_REL}" data-affiliate="nm9t5" target="_blank">${label}</a>`;
+  return aff(label, 'trial', campaign, content);
+}
+// Plain (non-commission) link to a NM9t5 page that has no campaign — e.g. the
+// free Roadmap survey or the free veteran-training landing. No am_id, by design.
+function plain(label: string, path: string, campaign: string, content: string): string {
+  const href = nm9t5PlainLink(path, { medium: 'link', campaign, content });
+  return `<a class="btn btn-gold" href="${href}" rel="noopener" data-affiliate="nm9t5" target="_blank">${label}</a>`;
 }
 // Good Circles CTA button (internal).
 function gc(label: string, href: string): string {
@@ -51,7 +56,7 @@ function build(def: PartnerDef): LearnArticle {
     def.faqs.map((f) => `<div class="faq"><h4>${f.q}</h4><p>${f.a}</p></div>`).join('') +
     `<div class="related"><b>Related:</b><br>` +
     def.related.map((r) => `<a href="${r.href}">${r.label}</a>`).join('') +
-    `<a href="${nm9t5Link('/', { medium: 'related', campaign: def.slug, content: 'related' })}" rel="${AFFILIATE_REL}" data-affiliate="nm9t5" target="_blank">No More 9 to 5 Club</a>` +
+    `<a href="${nm9t5Link('trial', { medium: 'related', campaign: def.slug, content: 'related' })}" rel="${AFFILIATE_REL}" data-affiliate="nm9t5" target="_blank">No More 9 to 5 Club</a>` +
     `</div>`;
 
   const articleJsonLd = {
@@ -117,13 +122,13 @@ const DEFS: PartnerDef[] = [
         h2: 'Stage 1 — You want out of the 9-to-5',
         html:
           `<p>Most local businesses start with a feeling: you want control over how you spend your time, not just a bigger paycheck. That instinct is the right one — but acting on it well means preparing, not just quitting. The cleanest first step is to get an honest read on where you actually are and what the next move should be.</p>` +
-          `<p>This is exactly what the No More 9 to 5 Club's free Roadmap to Success survey is for — five minutes, no credit card, just clarity on your stage and your next step. ${aff('Get a free, no-pressure roadmap', '/', 'start-a-local-business', 'stage1')}</p>`,
+          `<p>This is exactly what the No More 9 to 5 Club's free Roadmap to Success survey is for — five minutes, no credit card, just clarity on your stage and your next step. ${plain('Get a free, no-pressure roadmap', '/', 'start-a-local-business', 'stage1')}</p>`,
       },
       {
         h2: 'Stage 2 — You decide to start a business',
         html:
           `<p>Deciding is its own milestone. The risk here is jumping straight to a logo and a website before you know what you're selling and to whom. A better sequence: pick a problem you can solve for people near you, validate that a few of them will actually pay, then build from there.</p>` +
-          `<p>If you're at the very beginning, structured guidance shortens this stage dramatically. The Club's "Escape the System" track is built for people who haven't started yet — frameworks, side hustles, and the mindset to move. ${aff('See the Aspiring Entrepreneur path', '/ascend-the-ladder', 'start-a-local-business', 'stage2')}</p>`,
+          `<p>If you're at the very beginning, structured guidance shortens this stage dramatically. The Club's Launchpad is built for people who haven't started yet — frameworks, side hustles, and the mindset to move. ${aff('Explore the NM9t5 Launchpad', 'launchpad', 'start-a-local-business', 'stage2')}</p>`,
       },
       {
         h2: 'Stage 3 — Build skills, pick an offer, find first customers',
@@ -147,7 +152,7 @@ const DEFS: PartnerDef[] = [
         h2: 'Stage 6 — Scale to multiple locations or product lines',
         html:
           `<p>Scaling is a different skill set: systems, delegation, and strategy rather than hustle. This is where advanced mentorship earns its keep — the Club's "Scale" level is built for established owners adding locations, products, or a team.</p>` +
-          `<p>${aff('Explore the Scale track for established owners', '/ascend-the-ladder', 'start-a-local-business', 'stage6')}</p>`,
+          `<p>${aff('Explore Delegation & Scaling', 'scaling', 'start-a-local-business', 'stage6')}</p>`,
       },
       {
         h2: 'How the two fit together',
@@ -189,7 +194,7 @@ const DEFS: PartnerDef[] = [
       {
         h2: 'Where to get veteran-focused training',
         html:
-          `<p>Several reputable programs serve veteran founders. The No More 9 to 5 Club — founded by Navy veteran Jason McNamara — offers free training tailored to veterans and military spouses, mentorship for the transition, and a tight community. ${aff('Access free veteran training', '/veterans-and-military-spouses', 'veterans-starting-a-local-business', 'mid')}</p>` +
+          `<p>Several reputable programs serve veteran founders. The No More 9 to 5 Club — founded by Navy veteran Jason McNamara — offers free training tailored to veterans and military spouses, mentorship for the transition, and a tight community. ${plain('Access free veteran training', '/veterans-and-military-spouses', 'veterans-starting-a-local-business', 'mid')}</p>` +
           `<p>For a fuller landscape, see our honest roundup of <a href="/learn/best-resources-for-veteran-entrepreneurs-2026">the best resources for veteran entrepreneurs in 2026</a>, which compares several organizations side by side.</p>`,
       },
       {
@@ -232,7 +237,7 @@ const DEFS: PartnerDef[] = [
       {
         h2: 'Build the offer and the operator skills',
         html:
-          `<p>Turning a creator into a business owner is a specific skill set — packaging, pricing, and fulfillment. The Club's content-creator track and free Roadmap survey help you find the offer that fits your audience. ${aff('Get your free creator roadmap', '/', 'content-creators-selling-locally', 'mid')}</p>`,
+          `<p>Turning a creator into a business owner is a specific skill set — packaging, pricing, and fulfillment. The Club helps creators find the offer that fits their audience, and you can try it with a 30-day trial. ${trial('Try the No More 9 to 5 Club (30-day trial)', 'content-creators-selling-locally', 'mid')}</p>`,
       },
       {
         h2: 'Sell locally and keep what you earn',
@@ -273,7 +278,7 @@ const DEFS: PartnerDef[] = [
       {
         h2: 'Find your stage and your next move',
         html:
-          `<p>The fastest way to avoid wasted months is to map your stage honestly. The Club’s "Ascend the Ladder" model and free Roadmap survey identify whether you should be escaping, starting, or scaling. ${aff('Map your next move (free)', '/ascend-the-ladder', 'corporate-pros-going-independent', 'mid')}</p>`,
+          `<p>The fastest way to avoid wasted months is structured guidance built for professionals. The Club’s Professional membership adds weekly coaching, expert access, and masterminds for the transition. ${aff('See the Professional membership', 'pro', 'corporate-pros-going-independent', 'mid')}</p>`,
       },
       {
         h2: 'Sell on rails built for your margin',
@@ -314,7 +319,7 @@ const DEFS: PartnerDef[] = [
       {
         h2: 'Get a plan that respects your time',
         html:
-          `<p>Time is the scarce resource. The Club’s free Roadmap survey and parent-focused track help you find an offer that fits your hours rather than a generic "hustle harder" plan. ${aff('Get your free roadmap', '/', 'parents-building-financial-freedom', 'mid')}</p>`,
+          `<p>Time is the scarce resource. The Club helps you find an offer that fits your hours rather than a generic "hustle harder" plan — and you can try it with a 30-day trial. ${trial('Try the No More 9 to 5 Club (30-day trial)', 'parents-building-financial-freedom', 'mid')}</p>`,
       },
       {
         h2: 'Keep more of every sale',
@@ -359,7 +364,7 @@ const DEFS: PartnerDef[] = [
       {
         h2: 'Find your stage before you decide',
         html:
-          `<p>The honest answer depends on your specific stage — and that’s hard to judge from the inside. The No More 9 to 5 Club’s free Roadmap to Success survey is built exactly for this moment: a five-minute, no-pressure read on whether you should be escaping, starting, or scaling. ${aff('Take the free roadmap survey', '/', 'should-you-quit-your-job-to-start-a-business', 'mid')}</p>`,
+          `<p>The honest answer depends on your specific stage — and that’s hard to judge from the inside. The No More 9 to 5 Club’s free Roadmap to Success survey is built exactly for this moment: a five-minute, no-pressure read on whether you should be escaping, starting, or scaling. ${plain('Take the free roadmap survey', '/', 'should-you-quit-your-job-to-start-a-business', 'mid')}</p>`,
       },
       {
         h2: 'When you do go, sell where you keep your margin',
@@ -437,7 +442,7 @@ const DEFS: PartnerDef[] = [
       {
         h2: 'No More 9 to 5 Club',
         html:
-          `<p>Founded by Navy veteran Jason McNamara, the Club offers free training tailored to veterans and military spouses, mentorship for the transition, and an affordable community with coaching and masterminds (Free / $28 / $97). Best if you want an ongoing community and a clear stage-by-stage path rather than a one-time program. ${aff('Access free veteran training', '/veterans-and-military-spouses', 'best-resources-for-veteran-entrepreneurs-2026', 'mid')}</p>`,
+          `<p>Founded by Navy veteran Jason McNamara, the Club offers free training tailored to veterans and military spouses, mentorship for the transition, and an affordable community with coaching and masterminds (Free / $28 / $97). Best if you want an ongoing community and a clear stage-by-stage path rather than a one-time program. ${plain('Access free veteran training', '/veterans-and-military-spouses', 'best-resources-for-veteran-entrepreneurs-2026', 'mid')}</p>`,
       },
       {
         h2: 'Bunker Labs',
@@ -490,7 +495,7 @@ const DEFS: PartnerDef[] = [
       {
         h2: 'Community ecosystems',
         html:
-          `<p>Membership communities bundle coaching, courses, masterminds, and peers at a low monthly price. They’re ideal for first-timers who need structure and accountability without a big spend. The No More 9 to 5 Club is a clear example, with a free tier and a stage-based "Ascend the Ladder" path. ${aff('Start with a free roadmap', '/', 'best-coaching-programs-for-aspiring-entrepreneurs', 'mid')}</p>`,
+          `<p>Membership communities bundle coaching, courses, masterminds, and peers at a low monthly price. They’re ideal for first-timers who need structure and accountability without a big spend. The No More 9 to 5 Club is a clear example, with a free tier and a stage-based path — and you can try it with a 30-day trial. ${trial('Try the No More 9 to 5 Club (30-day trial)', 'best-coaching-programs-for-aspiring-entrepreneurs', 'mid')}</p>`,
       },
       {
         h2: 'Accelerators and incubators',

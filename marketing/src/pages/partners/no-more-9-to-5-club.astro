@@ -6,7 +6,7 @@ import PageHero from '../../components/PageHero.astro';
 import FaqList from '../../components/FaqList.astro';
 import { faqJsonLd, type Faq } from '../../lib/faq';
 import { SITE_URL, partnerMentionJsonLd } from '../../data/site';
-import { nm9t5Link, nm9t5TrialLink, nm9t5FoundationLink, AFFILIATE_REL } from '../../lib/affiliates';
+import { nm9t5TrialLink, nm9t5PlainLink, nm9t5FoundationLink, AFFILIATE_REL } from '../../lib/affiliates';
 
 const TITLE = 'No More 9 to 5 Club — A Good Circles Recommended Partner';
 const DESCRIPTION =
@@ -28,10 +28,10 @@ const FAQS: Faq[] = [
   },
 ];
 
-const linkRoadmap = nm9t5Link('/', { medium: 'cta', campaign: 'partners-page', content: 'hero' });
-const linkMemberships = nm9t5Link('/memberships', { medium: 'cta', campaign: 'partners-page', content: 'memberships' });
+// Free Roadmap survey + veteran-training landing have no affiliate campaign → plain links.
+const linkRoadmap = nm9t5PlainLink('/', { medium: 'link', campaign: 'partners-page', content: 'hero' });
 const linkTrial = nm9t5TrialLink({ medium: 'cta', campaign: 'partners-page', content: 'trial' });
-const linkVeterans = nm9t5Link('/veterans-and-military-spouses', { medium: 'cta', campaign: 'partners-page', content: 'veterans' });
+const linkVeterans = nm9t5PlainLink('/veterans-and-military-spouses', { medium: 'link', campaign: 'partners-page', content: 'veterans' });
 const linkFoundation = nm9t5FoundationLink({ medium: 'link', campaign: 'partners-page', content: 'foundation' });
 ---
 

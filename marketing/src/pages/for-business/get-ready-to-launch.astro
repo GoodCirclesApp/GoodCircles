@@ -10,7 +10,7 @@ import FaqList from '../../components/FaqList.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { faqJsonLd, type Faq } from '../../lib/faq';
 import { SITE_URL, partnerMentionJsonLd } from '../../data/site';
-import { nm9t5Link, AFFILIATE_REL } from '../../lib/affiliates';
+import { nm9t5Link, nm9t5PlainLink, AFFILIATE_REL } from '../../lib/affiliates';
 
 const TITLE = 'Get Ready to Launch — Become a Good Circles Seller';
 const DESCRIPTION =
@@ -32,8 +32,9 @@ const FAQS: Faq[] = [
   },
 ];
 
-const linkRoadmap = nm9t5Link('/', { medium: 'cta', campaign: 'get-ready-to-launch', content: 'roadmap' });
-const linkLadder = nm9t5Link('/ascend-the-ladder', { medium: 'cta', campaign: 'get-ready-to-launch', content: 'ladder' });
+// Free Roadmap survey has no campaign → plain link. Launchpad is a real campaign.
+const linkRoadmap = nm9t5PlainLink('/', { medium: 'link', campaign: 'get-ready-to-launch', content: 'roadmap' });
+const linkLaunchpad = nm9t5Link('launchpad', { medium: 'cta', campaign: 'get-ready-to-launch', content: 'launchpad' });
 ---
 
 <Base
@@ -90,7 +91,7 @@ const linkLadder = nm9t5Link('/ascend-the-ladder', { medium: 'cta', campaign: 'g
           </p>
           <div class="flex flex-wrap gap-3">
             <a href={linkRoadmap} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="inline-block px-6 py-3 rounded-full font-black text-xs uppercase tracking-wider" style="background:#C2A76F;color:#241247">Free roadmap</a>
-            <a href={linkLadder} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="inline-block px-6 py-3 rounded-full font-black text-xs uppercase tracking-wider text-white" style="background:#7851A9">Ascend the Ladder</a>
+            <a href={linkLaunchpad} rel={AFFILIATE_REL} data-affiliate="nm9t5" target="_blank" class="inline-block px-6 py-3 rounded-full font-black text-xs uppercase tracking-wider text-white" style="background:#7851A9">Explore the NM9t5 Launchpad</a>
           </div>
         </div>
 

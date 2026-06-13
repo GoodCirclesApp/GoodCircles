@@ -1,9 +1,33 @@
-// Affiliate-link infrastructure for partner brands. Every outbound partner URL
-// is produced here so the affiliate ID is env-driven (never hardcoded) and the
-// tracking is consistent and replaceable. Links built with these helpers should
-// carry rel="sponsored noopener" and data-affiliate="<partner>" in the markup
-// (the data attribute drives the partner_click analytics event in Base.astro).
-import { NM9T5_AFFILIATE_ID, NM9T5_URL, NM9T5_TRIAL_PATH } from '../data/site';
+// Affiliate-link infrastructure for The No More 9 to 5 Club.
+//
+// IMPORTANT: NM9t5's affiliate platform issues a UNIQUE link per campaign — each
+// has its own path AND its own am_id. There is NO single universal affiliate ID.
+// So links may only be built from the campaign registry below (verbatim from the
+// owner's affiliate dashboard, 2026-06-13). Never append an am_id to an arbitrary
+// page — that would mis-attribute or not credit the referral at all.
+//
+// Pages NM9t5 does NOT have a campaign for (e.g. the free Roadmap survey on "/",
+// /ascend-the-ladder, the veterans page, the Foundation) must be linked PLAINLY
+// via nm9t5PlainLink()/nm9t5FoundationLink() — no am_id, no commission, honest.
+import { NM9T5_URL } from '../data/site';
+
+// Campaign → exact dashboard URL (includes that campaign's own am_id).
+// Comment shows the default commission shown in the dashboard.
+export const NM9T5_CAMPAIGNS = {
+  trial: 'https://thenomore9to5club.org/b-m-checkout-30days-trial?am_id=GoodCircles', // 33% — Basic Membership 30-Day Trial
+  basic: 'https://thenomore9to5club.org/b-m-checkout?am_id=timothy7305', // 10% — Basic Membership (non-members)
+  pro: 'https://thenomore9to5club.org/pro-membership?am_id=timothy7599', // 10% — Professional Membership (non-members)
+  launchpad: 'https://www.thenomore9to5club.org/launchpad?am_id=timothy3898', // 33% — NM9T5 Launchpad
+  scaling: 'https://thenomore9to5club.org/ds-pro?am_id=timothy5319', // 10% — Delegation and Scaling
+  bma: 'https://thenomore9to5club.org/bma-checkout?am_id=timothy710', // 33% — Business Marketing Audit (pro members)
+  dfy: 'https://thenomore9to5club.org/dfy-2500?am_id=timothy3101', // 33% — Done For You Service (pro members)
+  vaLender: 'https://thenomore9to5club.org/va-lender-pro?am_id=timothy5435', // 10% — VA Lender Service
+  summit: 'https://www.thenomore9to5club.org/lifestyle-summit?am_id=timothy2019', // 50% — Lifestyle Summit 2026 Q2
+  proEvent: 'https://thenomore9to5club.org/professionalmeeting?am_id=timothy3508', // Professional Event
+  basicEvent: 'https://thenomore9to5club.org/basic-membership-event?am_id=timothy4573', // Basic Membership Event
+} as const;
+
+export type CampaignKey = keyof typeof NM9T5_CAMPAIGNS;
 
 export interface Utm {
   medium?: string;
@@ -12,17 +36,14 @@ export interface Utm {
 }
 
 /**
- * Build a trackable, affiliate-tagged link to The No More 9 to 5 Club.
- * Always sets utm_source=goodcircles; adds am_id when PUBLIC_NM9T5_AFFILIATE_ID
- * is configured; adds utm_medium / utm_campaign / utm_content when provided.
- * Uses URLSearchParams so there is never a double "?" or "&".
+ * Build a trackable affiliate link for a specific NM9t5 campaign. The campaign's
+ * own am_id is preserved from the registry; utm params are added for our own
+ * analytics. Uses URL() so there's never a double "?"/"&".
  *
- *   nm9t5Link('/memberships', { medium: 'cta', campaign: 'veteran-landing' })
- *   → https://thenomore9to5club.org/memberships?am_id=<id>&utm_source=goodcircles&utm_medium=cta&utm_campaign=veteran-landing
+ *   nm9t5Link('trial', { medium: 'cta', campaign: 'veterans-landing' })
  */
-export function nm9t5Link(path: string, utm: Utm = {}): string {
-  const url = new URL(path, NM9T5_URL);
-  if (NM9T5_AFFILIATE_ID) url.searchParams.set('am_id', NM9T5_AFFILIATE_ID);
+export function nm9t5Link(campaign: CampaignKey, utm: Utm = {}): string {
+  const url = new URL(NM9T5_CAMPAIGNS[campaign]);
   url.searchParams.set('utm_source', 'goodcircles');
   if (utm.medium) url.searchParams.set('utm_medium', utm.medium);
   if (utm.campaign) url.searchParams.set('utm_campaign', utm.campaign);
@@ -30,19 +51,29 @@ export function nm9t5Link(path: string, utm: Utm = {}): string {
   return url.href;
 }
 
-/** Trackable link to the NM9t5 30-day membership trial checkout (conversion CTA). */
+/** Convenience: the 30-day trial (the owner's primary, 33% commission). */
 export function nm9t5TrialLink(utm: Utm = {}): string {
-  return nm9t5Link(NM9T5_TRIAL_PATH, utm);
+  return nm9t5Link('trial', utm);
 }
 
-/** Absolute link to the No More 9 to 5 Foundation (the nonprofit arm). */
-export function nm9t5FoundationLink(utm: Utm = {}): string {
-  const url = new URL('https://thenomore9to5foundation.org/');
-  if (NM9T5_AFFILIATE_ID) url.searchParams.set('am_id', NM9T5_AFFILIATE_ID);
+/**
+ * Plain (non-affiliate, non-commission) link to a NM9t5 page that has no
+ * campaign — e.g. the free Roadmap survey on "/". No am_id is added, by design.
+ */
+export function nm9t5PlainLink(path = '/', utm: Utm = {}): string {
+  const url = new URL(path, NM9T5_URL);
   url.searchParams.set('utm_source', 'goodcircles');
   if (utm.medium) url.searchParams.set('utm_medium', utm.medium);
   if (utm.campaign) url.searchParams.set('utm_campaign', utm.campaign);
-  if (utm.content) url.searchParams.set('utm_content', utm.content);
+  return url.href;
+}
+
+/** Plain link to the No More 9 to 5 Foundation (no campaign exists for it). */
+export function nm9t5FoundationLink(utm: Utm = {}): string {
+  const url = new URL('https://thenomore9to5foundation.org/');
+  url.searchParams.set('utm_source', 'goodcircles');
+  if (utm.medium) url.searchParams.set('utm_medium', utm.medium);
+  if (utm.campaign) url.searchParams.set('utm_campaign', utm.campaign);
   return url.href;
 }
 

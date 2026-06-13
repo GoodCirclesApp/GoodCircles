@@ -80,13 +80,21 @@ Offer | CTA copy | Affiliate URL. NM9t5 typically owns the "decide / build skill
 you own the conversion stage. Propose a pre-conversion nurture page if one is missing.
 
 **Phase 3 — Affiliate infrastructure.**
-- Create `lib/affiliates.<ext>` exporting `nm9t5Link(path, utm = {})` →
-  `https://thenomore9to5club.org<path>?am_id=<AFFILIATE_ID>&utm_source=<partner>&utm_medium=<medium>&utm_campaign=<campaign>&utm_content=<content>`
-  using URLSearchParams (never a manual `?`/`&`).
-- Drive `AFFILIATE_ID` from an **environment variable** (e.g. `PUBLIC_NM9T5_AFFILIATE_ID`) so it
-  never lands in git.
+- ⚠️ **NM9t5 issues a UNIQUE link per campaign** — each campaign has its own path AND its own
+  `am_id` (e.g. the 30-day trial, Basic, Pro, Launchpad, Delegation & Scaling, summits each differ).
+  There is **no single universal affiliate ID**. Copy every campaign link verbatim from your
+  affiliate dashboard (`…clientclub.net/affiliate/campaign`) into a **campaign registry**.
+- Create `lib/affiliates.<ext>` with `NM9T5_CAMPAIGNS = { trial: '<full dashboard url>', pro: '…', … }`
+  and `nm9t5Link(campaignKey, utm = {})` that loads the registry URL (preserving its `am_id`) and
+  appends UTMs with URLSearchParams (never a manual `?`/`&`). Build links **only** from registry keys
+  so an invalid/mis-attributed link is impossible.
+- For NM9t5 pages with **no campaign** (e.g. a free survey/landing or the Foundation), use a separate
+  `plainLink()` that adds **no `am_id`** — don't fake one onto a non-campaign page (it won't credit
+  and can mis-attribute).
+- The `am_id` values are public (they ship in every link), so the registry can live in code; keep it
+  in one file so it's easy to update.
 - Mark every affiliate `<a>` with `rel="sponsored noopener"`, `target="_blank"`, and
-  `data-affiliate="nm9t5"`.
+  `data-affiliate="nm9t5"` (plain non-campaign links: `rel="noopener"`).
 - Fire a `partner_click` analytics event when any `[data-affiliate]` link is clicked.
 
 **Phase 4 — Content (SEO + GEO).** Create text-extractable HTML (never image-only). Recommended set:

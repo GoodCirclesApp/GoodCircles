@@ -15,16 +15,8 @@ export const SITE_NAME = 'Good Circles';
 // environment with the PUBLIC_GA4_ID env var if ever needed.
 export const GA4_MEASUREMENT_ID = 'G-GL2EMC1F1X';
 
-// NM9t5 affiliate ID. A PUBLIC identifier (it ships in every outbound link by
-// design), so it's safe to keep as a default; override per environment with the
-// PUBLIC_NM9T5_AFFILIATE_ID env var. Owner's ID confirmed 2026-06-13 = GoodCircles.
-export const NM9T5_AFFILIATE_ID =
-  (import.meta.env.PUBLIC_NM9T5_AFFILIATE_ID as string | undefined) ?? 'GoodCircles';
-
-// High-intent conversion target: the 30-day membership trial checkout
-// (owner-provided 2026-06-13). Use for "start trial" CTAs; keep the free
-// Roadmap survey ("/") as the no-friction top-of-funnel entry.
-export const NM9T5_TRIAL_PATH = '/b-m-checkout-30days-trial';
+// NM9t5 affiliate links live in marketing/src/lib/affiliates.ts — each campaign
+// has its OWN unique link + am_id (no single universal ID). See that file.
 
 export const ORG_DESCRIPTION =
   'A community marketplace where shopping local saves you money, funds nonprofits, and strengthens the place you live.';

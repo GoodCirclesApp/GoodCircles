@@ -49,12 +49,24 @@
 - https://goodcircles.org/partners/no-more-9-to-5-club
 - https://goodcircles.org/for-business/get-ready-to-launch
 
-## Affiliate URL pattern
-```
-https://thenomore9to5club.org<path>?am_id=<PUBLIC_NM9T5_AFFILIATE_ID>&utm_source=goodcircles&utm_medium=<medium>&utm_campaign=<campaign>&utm_content=<content>
-```
-Built only via `nm9t5Link()`. `am_id` is emitted only when `PUBLIC_NM9T5_AFFILIATE_ID` is set
-(env-driven, never hardcoded). All affiliate anchors carry `rel="sponsored noopener"` +
+## Affiliate URL pattern — per-campaign (corrected 2026-06-13)
+NM9t5 issues a **unique link per campaign** (each has its own path AND its own `am_id`) — there is
+no single universal ID. Links are built only from the campaign registry in
+`marketing/src/lib/affiliates.ts` via `nm9t5Link('<campaignKey>', utm)`, which preserves that
+campaign's `am_id` and adds UTMs. Pages with no campaign (free Roadmap survey `/`, the veterans
+training page, the Foundation) use `nm9t5PlainLink()`/`nm9t5FoundationLink()` — **no `am_id`**, by
+design. Campaign→page mapping currently live:
+
+| Campaign (am_id) | Commission | Used on |
+|---|---|---|
+| 30-day trial (`GoodCircles`) | 33% | default primary CTA across most pages |
+| Launchpad (`timothy3898`) | 33% | cornerstone stage 2, get-ready-to-launch |
+| Professional membership (`timothy7599`) | 10% | corporate-pros page |
+| Delegation & Scaling (`timothy5319`) | 10% | cornerstone stage 6 |
+| *plain (no am_id)* | — | free roadmap, veterans training, Foundation |
+
+Registry also includes (unused-but-ready): `basic`, `bma`, `dfy`, `vaLender`, `summit` (50%),
+`proEvent`, `basicEvent`. All affiliate anchors carry `rel="sponsored noopener"` +
 `data-affiliate="nm9t5"`; clicks fire a GA4 `partner_click` event.
 
 ## GEO improvements
@@ -71,9 +83,10 @@ Built only via `nm9t5Link()`. `am_id` is emitted only when `PUBLIC_NM9T5_AFFILIA
 - JSON-LD parsed cleanly across all pages; manual validator.schema.org spot-check recommended post-deploy.
 
 ## Open items / next steps (manual)
-1. **Set `PUBLIC_NM9T5_AFFILIATE_ID`** in the Netlify build environment to **your** affiliate ID
-   (from `nomore9to5club.app.clientclub.net/affiliate/campaign`). Until then, NM9t5 links ship
-   without `am_id` and won't earn commission. (Built/tested locally with `nm9t5club` as a placeholder.)
+1. **Affiliate links are live and earning** — each campaign uses its own real `am_id` from your
+   dashboard; nothing to set. Optional: if you want specific campaigns featured on specific pages
+   (e.g. the 50% Lifestyle Summit, or VA Lender on veteran content, or BMA/DFY on scaling content),
+   tell me and I'll remap — the registry in `affiliates.ts` makes it a one-line change per spot.
 2. **Submit the updated sitemap** (`https://goodcircles.org/sitemap-index.xml`) in Google Search
    Console + Bing so the 15 new pages get crawled.
 3. **Send the reciprocal pitch** to NM9t5: `_partnership/reciprocal-pitch.md`.
