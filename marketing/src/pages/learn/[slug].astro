@@ -6,6 +6,8 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { ALL_LEARN, type LearnArticle } from '../../data/learn-all';
+import { breadcrumbJsonLd } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
 
 export function getStaticPaths() {
   return ALL_LEARN.map((article) => ({ params: { slug: article.slug }, props: { article } }));
@@ -15,6 +17,11 @@ interface Props {
   article: LearnArticle;
 }
 const { article } = Astro.props;
+const crumb = breadcrumbJsonLd([
+  { name: 'Home', url: `${SITE_URL}/` },
+  { name: 'Learn', url: `${SITE_URL}/learn/` },
+  { name: article.h1, url: `${SITE_URL}/learn/${article.slug}/` },
+]);
 ---
 
 <Base
@@ -22,7 +29,7 @@ const { article } = Astro.props;
   description={article.description}
   path={`/learn/${article.slug}/`}
   ogType="article"
-  jsonLd={[article.articleJsonLd, article.faqJsonLd]}
+  jsonLd={[article.articleJsonLd, article.faqJsonLd, crumb]}
 >
   <Nav solid />
   <main id="main" style="background:#FBF7FE">

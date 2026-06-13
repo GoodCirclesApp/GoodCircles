@@ -1,0 +1,55 @@
+---
+// Answers hub — crawlable index of the short answer pages (improves discovery
+// and topical authority; AI engines favor clean Q&A hubs).
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import { breadcrumbJsonLd } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+import { ANSWERS } from '../../data/answers';
+
+const TITLE = 'Answers — Quick, Clear Answers on Local Business & Giving Back';
+const DESCRIPTION =
+  'Short, direct answers about starting a local business, community marketplaces, and giving back while you shop — from Good Circles.';
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/answers/"
+  ogType="article"
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Answers', url: `${SITE_URL}/answers/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Answers" h1="Quick answers on local business and giving back">
+      <p slot="answer">
+        Short, direct answers to the questions people ask about starting a local business,
+        community marketplaces, and giving back while they shop — each one expands into the detail,
+        with links to go deeper.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto grid sm:grid-cols-2 gap-4">
+        {ANSWERS.map((a) => (
+          <a
+            href={`/answers/${a.slug}/`}
+            class="block p-6 rounded-2xl no-underline transition-shadow hover:shadow-lg"
+            style="background:#FBF7FE;border:1px solid #E7DCF2"
+          >
+            <p class="font-black text-slate-900 mb-1">{a.question}</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">{a.description}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>

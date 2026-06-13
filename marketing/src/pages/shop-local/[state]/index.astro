@@ -7,8 +7,9 @@ import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import FaqList from '../../../components/FaqList.astro';
 import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../../lib/faq';
-import { SITE_URL } from '../../../data/site';
+import { SITE_URL, partnerMentionJsonLd } from '../../../data/site';
 import { NATIONAL_STATES, citiesInState, type NationalState } from '../../../data/national-cities';
+import StartBusinessCta from '../../../components/StartBusinessCta.astro';
 
 export function getStaticPaths() {
   return NATIONAL_STATES.map((state) => ({ params: { state: state.slug }, props: { state } }));
@@ -41,6 +42,7 @@ const FAQS: Faq[] = [
   path={path}
   jsonLd={[
     faqJsonLd(FAQS),
+    partnerMentionJsonLd(`${SITE_URL}${path}`),
     breadcrumbJsonLd([
       { name: 'Shop Local', url: `${SITE_URL}/shop-local/` },
       { name: state.name, url: `${SITE_URL}${path}` },
@@ -88,6 +90,8 @@ const FAQS: Faq[] = [
         </p>
       </div>
     </section>
+
+    <StartBusinessCta place={state.name} utmContent={state.slug} />
 
     <FaqList faqs={FAQS} heading={`${state.name} FAQ`} />
   </main>

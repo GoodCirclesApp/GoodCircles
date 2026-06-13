@@ -1,0 +1,57 @@
+---
+// Reusable "thinking of starting a business?" block for shop-local pages.
+// Routes the local-business audience into the Good Circles seller cluster
+// (internal links) AND the NM9t5 partnership (affiliate CTA). The page that
+// includes this must also add partnerMentionJsonLd() to its Base jsonLd.
+import { nm9t5Link, AFFILIATE_REL } from '../lib/affiliates';
+
+interface Props {
+  place: string; // city or state name
+  utmContent?: string;
+}
+const { place, utmContent = 'shop-local' } = Astro.props;
+const trial = nm9t5Link('trial', { medium: 'cta', campaign: 'shop-local', content: utmContent });
+---
+
+<section class="py-14 px-6" style="background:#FBF7FE">
+  <div class="max-w-3xl mx-auto">
+    <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">
+      Starting a business?
+    </p>
+    <h2 class="text-2xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">
+      Thinking of starting a business in {place}?
+    </h2>
+    <p class="text-slate-600 leading-relaxed mb-5" style="font-family:'Fira Sans',sans-serif">
+      Good Circles is where {place} businesses will sell and keep <strong>89% of their profit</strong>.
+      If you're still building toward your first sale, learn the full path from idea to local sales —
+      and get the training to launch. Good Circles' partner, the No More 9 to 5 Club, trains
+      entrepreneurs at every stage.
+    </p>
+    <div class="flex flex-wrap gap-3" style="font-family:'Fira Sans',sans-serif">
+      <a
+        href="/learn/start-a-local-business"
+        class="px-5 py-2.5 rounded-full text-sm font-black no-underline"
+        style="background:#7851A9;color:#fff"
+      >
+        Idea to local sales ›
+      </a>
+      <a
+        href="/for-business/get-ready-to-launch"
+        class="px-5 py-2.5 rounded-full text-sm font-bold no-underline"
+        style="background:#fff;border:1px solid #E7DCF2;color:#52407e"
+      >
+        Get ready to launch ›
+      </a>
+      <a
+        href={trial}
+        rel={AFFILIATE_REL}
+        data-affiliate="nm9t5"
+        target="_blank"
+        class="px-5 py-2.5 rounded-full text-sm font-black no-underline"
+        style="background:#C2A76F;color:#241247"
+      >
+        Try the No More 9 to 5 Club ›
+      </a>
+    </div>
+  </div>
+</section>

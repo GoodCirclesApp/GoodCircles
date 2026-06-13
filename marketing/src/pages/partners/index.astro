@@ -1,0 +1,65 @@
+---
+// Partners hub — recommended partners across the Good Circles buyer journey.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import { breadcrumbJsonLd } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Recommended Partners · Good Circles';
+const DESCRIPTION =
+  'Partners we recommend across the journey of building a local business — starting with the No More 9 to 5 Club, which trains entrepreneurs at every stage.';
+
+const PARTNERS = [
+  {
+    name: 'The No More 9 to 5 Club',
+    href: '/partners/no-more-9-to-5-club',
+    blurb:
+      'A growth ecosystem founded by Jason McNamara that trains entrepreneurs at every stage. They train the people who become local-business owners; Good Circles gives those owners a marketplace that keeps 89% of their profit.',
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/partners/"
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Partners', url: `${SITE_URL}/partners/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Partners" h1="Partners we recommend">
+      <p slot="answer">
+        Building a local business is a journey. These are the partners we recommend along the way —
+        chosen because they genuinely fit the path our merchants and neighbors are on, not because
+        of any commission.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto space-y-4">
+        {PARTNERS.map((p) => (
+          <a
+            href={p.href}
+            class="block p-6 rounded-2xl no-underline transition-shadow hover:shadow-lg"
+            style="background:#FBF7FE;border:1px solid #E7DCF2"
+          >
+            <p class="font-black text-slate-900 mb-1">{p.name} ›</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">{p.blurb}</p>
+          </a>
+        ))}
+        <p class="text-xs text-slate-400 pt-2" style="font-family:'Fira Sans',sans-serif">
+          Good Circles may earn a referral commission from some partners, at no extra cost to you.
+          We only recommend partners that fit our community's journey.
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>

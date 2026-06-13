@@ -8,9 +8,10 @@ import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import FaqList from '../../../components/FaqList.astro';
 import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../../lib/faq';
-import { SITE_URL } from '../../../data/site';
+import { SITE_URL, partnerMentionJsonLd } from '../../../data/site';
 import { NATIONAL_CITIES, nearbyNationalCities, type NationalCity } from '../../../data/national-cities';
 import RequestCityForm from '../../../components/react/RequestCityForm';
+import StartBusinessCta from '../../../components/StartBusinessCta.astro';
 
 export function getStaticPaths() {
   return NATIONAL_CITIES.map((city) => ({
@@ -50,6 +51,7 @@ const FAQS: Faq[] = [
   path={path}
   jsonLd={[
     faqJsonLd(FAQS),
+    partnerMentionJsonLd(`${SITE_URL}${path}`),
     breadcrumbJsonLd([
       { name: 'Shop Local', url: `${SITE_URL}/shop-local/` },
       { name: city.state, url: `${SITE_URL}/shop-local/${city.stateSlug}/` },
@@ -163,6 +165,8 @@ const FAQS: Faq[] = [
         </div>
       </section>
     )}
+
+    <StartBusinessCta place={city.city} utmContent={city.slug} />
 
     <FaqList faqs={FAQS} heading={`${city.city} FAQ`} />
   </main>

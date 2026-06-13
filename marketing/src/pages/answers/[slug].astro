@@ -4,7 +4,8 @@ import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
 import FaqList from '../../components/FaqList.astro';
-import { faqJsonLd } from '../../lib/faq';
+import { faqJsonLd, breadcrumbJsonLd } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
 import { ANSWERS, answerArticleJsonLd, type Answer } from '../../data/answers';
 
 export function getStaticPaths() {
@@ -15,6 +16,11 @@ interface Props {
   a: Answer;
 }
 const { a } = Astro.props;
+const crumb = breadcrumbJsonLd([
+  { name: 'Home', url: `${SITE_URL}/` },
+  { name: 'Answers', url: `${SITE_URL}/answers/` },
+  { name: a.question, url: `${SITE_URL}/answers/${a.slug}/` },
+]);
 ---
 
 <Base
@@ -22,7 +28,7 @@ const { a } = Astro.props;
   description={a.description}
   path={`/answers/${a.slug}/`}
   ogType="article"
-  jsonLd={[answerArticleJsonLd(a), faqJsonLd(a.faqs)]}
+  jsonLd={[answerArticleJsonLd(a), faqJsonLd(a.faqs), crumb]}
 >
   <Nav solid />
   <main id="main">
