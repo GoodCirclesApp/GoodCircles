@@ -3,7 +3,7 @@
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import { LEARN_ARTICLES } from '../../data/learn';
+import { ALL_LEARN } from '../../data/learn-all';
 
 const TITLE = 'Learn — Shopping Local, Giving Back & AmazonSmile Alternatives · Good Circles';
 const DESCRIPTION =
@@ -26,7 +26,7 @@ const DESCRIPTION =
         Guides for shoppers, nonprofits, and local businesses
       </p>
       <div class="grid sm:grid-cols-2 gap-4 pb-12">
-        {LEARN_ARTICLES.map((article) => (
+        {ALL_LEARN.map((article) => (
           <a
             href={`/learn/${article.slug}/`}
             class="block p-5 rounded-2xl bg-white transition-shadow hover:shadow-lg no-underline"
