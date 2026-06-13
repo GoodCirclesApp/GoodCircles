@@ -1,0 +1,69 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, type Faq } from '../../lib/faq';
+import { CAUSES } from '../../data/causes';
+
+const TITLE = 'Causes You Can Fund by Shopping Local · Good Circles';
+const DESCRIPTION =
+  'Browse the causes you can fund with Good Circles — food security, education, animal rescue and more. Shop local, save ~10%, and fund the cause you choose.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What causes can I support with Good Circles?',
+    a: 'Any IRS-verified 501(c)(3) — across food security, education, animal rescue, health, housing, youth, veterans, environment, arts, and more. You pick one cause and a share of every local purchase funds it.',
+  },
+  {
+    q: 'Can I change which cause I support?',
+    a: 'Yes. You choose your nonprofit at signup and can change it anytime. A share of every local purchase you make funds whichever cause you currently have selected.',
+  },
+];
+---
+
+<Base title={TITLE} description={DESCRIPTION} path="/causes/" jsonLd={[faqJsonLd(FAQS)]}>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Causes" h1="Choose the cause your shopping supports">
+      <p slot="answer">
+        With Good Circles, every local purchase can fund a cause you care about. You <strong>save
+        about 10%</strong>, and 10% of the merchant's profit goes to the nonprofit you choose — any
+        IRS-verified 501(c)(3), across food security, education, animal rescue, and more. Browse
+        the causes below and pick yours.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-4xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {CAUSES.map((cause) => (
+          <a
+            href={`/causes/${cause.slug}/`}
+            class="block p-6 rounded-2xl no-underline transition-shadow hover:shadow-lg"
+            style="background:#FBF7FE;border:1px solid #E7DCF2"
+          >
+            <p class="font-black text-slate-900 mb-1">{cause.name}</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">
+              Fund {cause.name.toLowerCase()} when you shop local ›
+            </p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Causes FAQ" />
+
+    <CtaBand
+      heading="Pick a cause. Fund it every time you shop."
+      text="Free for shoppers and nonprofits, launching September 2026."
+      label="Join free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="How it works"
+      secondaryHref="/how-it-works"
+    />
+  </main>
+  <Footer />
+</Base>
