@@ -7,15 +7,15 @@
 > consult / business+service registration — do not block other work on these).
 
 ## P0 — Surgical security & correctness (buildable now, do first)
-- ☐ Remove JWT/HMAC `default_secret` fallbacks; fail-fast on missing/weak secrets (`utils/tokenUtils.ts`, unsubscribe HMAC)
-- ☐ Verify the **catalog** Stripe webhook signature (`routes/catalogRoutes.ts`); hard-reject Resend webhooks on bad/missing signature (`inboundEmailController.ts`, `routes/emailRoutes.ts`)
-- ☐ Authorize the **refund** route (ownership/role gate) — closes the IDOR (`routes/refundRoutes.ts`, `services/refundService.ts`)
-- ☐ Gate merchant **PII (Tax IDs)/COGS** behind owner/admin DTOs (compliance/netting/credit + marketplace endpoints)
-- ☐ SSRF egress filter on the nonprofit CRM webhook URL (`dmsController.saveWebhook`/`crmWebhookService`)
-- ☐ Repair/mount the central Express error handler; safe error envelope; no `error.message` leak in prod
-- ☐ Remove the Tailwind v3 CDN dev `<script>` from the production app build (double-load)
-- ☐ App accuracy/brand fixes: "GoodCircles"→"Good Circles" in app copy; fix in-app role-page donation example + "10% of your purchase"→"10% of the merchant's profit"
-- ☐ Marketing: add FTC affiliate disclosure to all affiliate-bearing pages (learn/answers/city/county CTAs)
+- ☑ Authorize the **refund** route (ownership/role gate) — closes the IDOR (`routes/refundRoutes.ts`, `services/refundService.ts`). _Done 2026-06-15 (commit 57b579a): only buyer/owning-merchant/PLATFORM admin may refund; others 403. tsc clean._
+- ☑ SSRF egress filter on the nonprofit CRM webhook URL (`dmsController.saveWebhook`/`crmWebhookService`). _Done 2026-06-15 (commit 57b579a): new `utils/safeUrl.ts` (`isPublicHttpsUrl`) — requires public https, blocks loopback/private/link-local/CGNAT/cloud-metadata; enforced at save (zod refine→400) + fire (defense-in-depth skip). Residual: DNS-rebinding (noted in file; pin resolved IP later)._
+- ☑ Marketing: add FTC affiliate disclosure to all affiliate-bearing pages (learn/answers/city/county CTAs). _Done 2026-06-15 (checkpoint 1, pushed): `AFFILIATE_DISCLOSURE` on 223 affiliate pages, 0 on non-affiliate, SEO gate green at 314 pages._
+- ☐ Verify the **catalog** Stripe webhook signature (`routes/catalogRoutes.ts`); hard-reject Resend webhooks on bad/missing signature (`inboundEmailController.ts`, `routes/emailRoutes.ts`). _RESUME-NEXT. Needs `STRIPE_WEBHOOK_SECRET` (and Resend secret) confirmed present in Railway env — verify before enforcing or the catalog endpoint hard-fails in prod. Mirror the verified primary webhook's pattern (raw body + `stripe.webhooks.constructEvent`)._
+- ☐ Gate merchant **PII (Tax IDs)/COGS** behind owner/admin DTOs (compliance/netting/credit + marketplace endpoints). _Needs a DTO/serializer pass + check of which app views read these fields (avoid breaking the merchant dashboard)._
+- ☐ Repair/mount the central Express error handler; safe error envelope; no `error.message` leak in prod (`server.ts`). _Moderate risk — touches the root app wiring; verify route order + that the SSRF/refund `err.status` envelope still surfaces correctly._
+- ☐ Remove the Tailwind v3 CDN dev `<script>` from the production app build (double-load). _Needs visual styling verification after removal (don't ship a broken-looking app)._
+- ☐ App accuracy/brand fixes: "GoodCircles"→"Good Circles" in app copy; fix in-app role-page donation example + "10% of your purchase"→"10% of the merchant's profit". _Safe copy sweep; grep the client for the wordmark + the donation-example string._
+- ☐ Remove JWT/HMAC `default_secret` fallbacks; fail-fast on missing/weak secrets (`utils/tokenUtils.ts`, unsubscribe HMAC). _DEPLOY-DANGEROUS — do LAST and only after confirming `JWT_SECRET`/refresh/HMAC secrets are set in Railway env; fail-fast on a missing var will crash prod boot. Stage behind env verification._
 
 ## P1 — Data integrity & money correctness (buildable now)
 - ☐ Prisma **migration baseline** + switch start to `prisma migrate deploy`; remove `db push --accept-data-loss`
