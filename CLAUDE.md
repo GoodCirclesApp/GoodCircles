@@ -357,3 +357,32 @@ The codebase is **far larger than the "beta" framing** in Sections 14–15. Ther
 `.claude/active_priorities.md` and `done.md` track **marketing only** (CapCut, carousel, partner pipeline). There is **no engineering launch track**. Recommend a parallel `.claude/engineering_priorities.md` mirroring P0–P1 above so technical launch readiness is visible alongside marketing.
 
 > **Pre-launch blockers in Section 14 are understated** — they list env vars only. The real blocker is the unbuilt disbursement layer (#1) and migration safety (#3). Treat Section 14's "Intentionally Deferred: Wallet Withdraw / Stripe Connect" as a P0, not a deferral, for a live-money launch.
+
+---
+
+## 17. ENTERPRISE AUDIT & ARCHITECTURE (2026-06-15)
+
+A read-only, 53-agent enterprise-quality audit (adversarially verified) was run across 9 dimensions:
+cybersecurity, payments/money-path, data model, backend architecture, frontend UX, UI/branding,
+compliance, cross-surface consistency, and the marketing/public surface.
+
+- **Audit (verified findings + grades):** `docs/ENTERPRISE_AUDIT_2026-06.md` — overall **Grade C
+  (maturity ~2.5/5)**; marketing surface **B/4**. After removing refuted + prerequisite-gated items:
+  **6 critical / 39 high** confirmed and buildable now.
+- **Target architecture + phased roadmap (to/beyond Sept launch):** `docs/ENTERPRISE_ARCHITECTURE.md`.
+- **Engineering track (now exists — resolves the §16 process gap):**
+  `.claude/engineering_priorities.md` (P0 surgical security → P5 money-out go-live).
+
+**Top P0 (buildable now, NOT prerequisite-gated):** remove JWT/HMAC `default_secret` fallback; verify
+the catalog Stripe webhook; authorize the refund route (IDOR); gate merchant PII (Tax IDs/COGS); SSRF
+egress filter on the CRM webhook; repair the central error handler (stops `error.message` leak);
+remove the dev Tailwind v3 CDN from the prod build; add FTC affiliate disclosure across marketing
+affiliate pages; fix in-app wordmark ("GoodCircles"→"Good Circles") and the in-app donation-math copy
+("10% of your purchase"→"10% of the merchant's profit").
+
+**Prerequisite-gated (noted, NOT counted):** Stripe Connect disbursement, refund execution, live
+keys/webhook secret — gated on the SALT consult + business/service registration + Connect onboarding.
+
+**Scale (current):** 43 services · 35 controllers · 97 Prisma models · 17 views · 98 components · the
+Astro marketing site (`marketing/`, live on goodcircles.org) · SEO/GEO docs in `docs/seo/` · NM9t5
+partnership assets in `_partnership/`.
