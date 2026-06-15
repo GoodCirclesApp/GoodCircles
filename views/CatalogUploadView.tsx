@@ -133,7 +133,7 @@ function PublishStep({
       </h2>
       <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-md mx-auto">
         {publishedCount} product{publishedCount !== 1 ? 's' : ''} from{' '}
-        {platform || 'your store'} have been published to your GoodCircles
+        {platform || 'your store'} have been published to your Good Circles
         storefront and are now visible to your community.
       </p>
 

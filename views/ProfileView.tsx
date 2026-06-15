@@ -229,7 +229,7 @@ export function ProfileView({ user, onUpdate }: ProfileViewProps) {
             <h2 className="text-xl font-semibold mb-4">Your Cause</h2>
             <p className="text-gray-600 mb-4">
               {selectedNonprofit
-                ? '10% of your savings will support your elected nonprofit'
+                ? '10% of merchant net profit will support your elected nonprofit'
                 : 'Select a nonprofit to support with your purchases'}
             </p>
             <button

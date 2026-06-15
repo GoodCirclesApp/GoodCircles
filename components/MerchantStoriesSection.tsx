@@ -27,7 +27,7 @@ const MERCHANT_STORIES: MerchantStory[] = [
     quote: 'Every meal we serve funds something bigger than our bottom line.',
     joinReason: 'I wanted commerce that gave back to the community I grew up in.',
     fullStory:
-      'I opened The Harvest Table to prove that local food can be both affordable and community-driven. Running a restaurant in Central Mississippi means you live and die by your neighborhood. When the neighborhood thrives, you thrive.\n\nWhen I discovered GoodCircles, I saw a platform that shared that same belief—every transaction could fund something bigger. In our first six months on the platform, we contributed over $4,200 to the Community Food Bank. That\'s not charity. That\'s commerce with a conscience.\n\nThe 10/10/1 model changed how I think about pricing. I used to compete on price alone. Now I compete on values, and my customers respect that. They come back not just for the food, but because they know their meal does something.',
+      'I opened The Harvest Table to prove that local food can be both affordable and community-driven. Running a restaurant in Central Mississippi means you live and die by your neighborhood. When the neighborhood thrives, you thrive.\n\nWhen I discovered Good Circles, I saw a platform that shared that same belief—every transaction could fund something bigger. In our first six months on the platform, we contributed over $4,200 to the Community Food Bank. That\'s not charity. That\'s commerce with a conscience.\n\nThe 10/10/1 model changed how I think about pricing. I used to compete on price alone. Now I compete on values, and my customers respect that. They come back not just for the food, but because they know their meal does something.',
     impact: '$4,200+ contributed to Community Food Bank',
     imageUrl: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=500&fit=crop',
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&facepad=2&faces=1',
@@ -42,7 +42,7 @@ const MERCHANT_STORIES: MerchantStory[] = [
     quote: 'I don\'t just get customers — I get neighbors who care where their money goes.',
     joinReason: 'I needed a way to compete with national chains while staying community-rooted.',
     fullStory:
-      'Running a small plumbing business in Central Mississippi means competing against national chains with massive marketing budgets and zero local loyalty. For years, I felt like I was fighting with one hand tied behind my back.\n\nGoodCircles leveled the playing field in a way I didn\'t expect. Customers don\'t just choose me because I\'m local anymore—they choose me because every job I complete sends a donation to causes they care about. That\'s a story national chains can\'t tell.\n\nKnowing that every drain I unclog, every pipe I fix, generates funding for Youth Scholars Alliance—that keeps me going on the hard days. My work has meaning beyond the invoice. That\'s not something I ever thought I\'d say about plumbing.',
+      'Running a small plumbing business in Central Mississippi means competing against national chains with massive marketing budgets and zero local loyalty. For years, I felt like I was fighting with one hand tied behind my back.\n\nGood Circles leveled the playing field in a way I didn\'t expect. Customers don\'t just choose me because I\'m local anymore—they choose me because every job I complete sends a donation to causes they care about. That\'s a story national chains can\'t tell.\n\nKnowing that every drain I unclog, every pipe I fix, generates funding for Youth Scholars Alliance—that keeps me going on the hard days. My work has meaning beyond the invoice. That\'s not something I ever thought I\'d say about plumbing.',
     impact: '$2,800+ directed to Youth Scholars Alliance',
     imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=500&fit=crop',
     avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&facepad=2&faces=1',
@@ -57,7 +57,7 @@ const MERCHANT_STORIES: MerchantStory[] = [
     quote: 'Legal access shouldn\'t be a privilege. Neither should community impact.',
     joinReason: 'I wanted my business to extend my social justice mission beyond the courtroom.',
     fullStory:
-      'I built Justice Partners because I watched too many people navigate the legal system alone—not because their case wasn\'t valid, but because they couldn\'t afford representation. Access to legal help shouldn\'t depend on your zip code or your income.\n\nGoodCircles gave us a way to extend that mission into every transaction. Every consultation we bill generates a donation to Green Cleanup Initiative. We\'re not just practicing law. We\'re practicing community.\n\nThe platform has also changed the conversation with clients. When I explain that their legal fee partly funds local environmental projects, it reframes the entire relationship. We\'re not just lawyer and client—we\'re partners in building something better together.',
+      'I built Justice Partners because I watched too many people navigate the legal system alone—not because their case wasn\'t valid, but because they couldn\'t afford representation. Access to legal help shouldn\'t depend on your zip code or your income.\n\nGood Circles gave us a way to extend that mission into every transaction. Every consultation we bill generates a donation to Green Cleanup Initiative. We\'re not just practicing law. We\'re practicing community.\n\nThe platform has also changed the conversation with clients. When I explain that their legal fee partly funds local environmental projects, it reframes the entire relationship. We\'re not just lawyer and client—we\'re partners in building something better together.',
     impact: '$3,500+ directed to Green Cleanup Initiative',
     imageUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&h=500&fit=crop',
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&facepad=2&faces=1',
@@ -69,10 +69,10 @@ const MERCHANT_STORIES: MerchantStory[] = [
     ownerName: 'Sarah',
     category: 'Groceries',
     tagline: 'Eleven family farms. One community table.',
-    quote: 'Local dollars keep family farms alive. GoodCircles gets that.',
+    quote: 'Local dollars keep family farms alive. Good Circles gets that.',
     joinReason: 'The co-op model aligned perfectly with how our farming collective already operated.',
     fullStory:
-      'Farm Fresh Collective represents eleven family farms across Central Mississippi. We\'ve operated as a cooperative for twelve years because we learned early that individual farms competing against each other made us all weaker. Pooling resources, sharing distribution, and presenting a unified brand made us stronger.\n\nWhen we found GoodCircles, we recognized ourselves in the platform. The co-op purchasing model, the shared economics, the community-first orientation—it\'s built from the same DNA as how we already operate.\n\nOur member farms have collectively generated over $6,800 in nonprofit contributions, just by selling the produce they\'d sell anyway. That\'s the power of aligned incentives. Every dollar that stays local is a dollar that keeps a farm family in business, and GoodCircles makes that tangible in a way we could never communicate before.',
+      'Farm Fresh Collective represents eleven family farms across Central Mississippi. We\'ve operated as a cooperative for twelve years because we learned early that individual farms competing against each other made us all weaker. Pooling resources, sharing distribution, and presenting a unified brand made us stronger.\n\nWhen we found Good Circles, we recognized ourselves in the platform. The co-op purchasing model, the shared economics, the community-first orientation—it\'s built from the same DNA as how we already operate.\n\nOur member farms have collectively generated over $6,800 in nonprofit contributions, just by selling the produce they\'d sell anyway. That\'s the power of aligned incentives. Every dollar that stays local is a dollar that keeps a farm family in business, and GoodCircles makes that tangible in a way we could never communicate before.',
     impact: '$6,800+ generated across 11 member farms',
     imageUrl: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&h=500&fit=crop',
     avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&facepad=2&faces=1',
@@ -87,7 +87,7 @@ const MERCHANT_STORIES: MerchantStory[] = [
     quote: 'Every lesson I deliver now funds something greater than the grade.',
     joinReason: 'I wanted to amplify my social impact beyond the whiteboard.',
     fullStory:
-      'I\'ve been a tutor for fifteen years. I got into education because I believe it\'s the most direct path to changing someone\'s life trajectory. A student who understands math doesn\'t just pass a test—they unlock opportunities that compound for decades.\n\nBut I never imagined that my tutoring sessions could also fund community nonprofits. With GoodCircles, every lesson I deliver generates 10% for a local cause. My students learn, the community benefits, and I get to run a business that fully reflects my values.\n\nParents often ask me why I chose GoodCircles over other platforms. I tell them: because I want my business to mean something beyond the invoice. When a student I tutored gets into college, I know our sessions didn\'t just help them—they helped the community that will welcome them back.',
+      'I\'ve been a tutor for fifteen years. I got into education because I believe it\'s the most direct path to changing someone\'s life trajectory. A student who understands math doesn\'t just pass a test—they unlock opportunities that compound for decades.\n\nBut I never imagined that my tutoring sessions could also fund community nonprofits. With Good Circles, every lesson I deliver generates 10% for a local cause. My students learn, the community benefits, and I get to run a business that fully reflects my values.\n\nParents often ask me why I chose Good Circles over other platforms. I tell them: because I want my business to mean something beyond the invoice. When a student I tutored gets into college, I know our sessions didn\'t just help them—they helped the community that will welcome them back.',
     impact: '$1,900+ directed to local nonprofits',
     imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=500&fit=crop',
     avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&facepad=2&faces=1',
@@ -152,7 +152,7 @@ const StoryModal: React.FC<StoryModalProps> = ({ story, onClose }) => (
 
           {/* Why I joined */}
           <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Why I Joined GoodCircles</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Why I Joined Good Circles</p>
             <p className="text-sm font-medium text-slate-700 italic">"{story.joinReason}"</p>
           </div>
 

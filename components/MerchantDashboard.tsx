@@ -43,7 +43,7 @@ const COPILOT_INSIGHTS = [
     label: 'Repeat Customer Opportunity',
     headline: '3 customers have purchased from you 3+ times',
     detail: 'You have loyal regulars building. A loyalty recognition or bundle offer could convert them into monthly anchors.',
-    query: 'I have repeat customers buying 3+ times. How should I reward loyalty within the GoodCircles model without undercutting my margin?',
+    query: 'I have repeat customers buying 3+ times. How should I reward loyalty within the Good Circles model without undercutting my margin?',
   },
   {
     icon: Target,

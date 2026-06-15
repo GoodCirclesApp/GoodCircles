@@ -1,6 +1,6 @@
 {
   "name": "Good Circles",
-  "short_name": "GoodCircles",
+  "short_name": "Good Circles",
   "description": "A community-powered marketplace to buy, sell, and connect.",
   "start_url": "/",
   "display": "standalone",

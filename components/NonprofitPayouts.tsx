@@ -38,7 +38,7 @@ export const NonprofitPayouts: React.FC = () => {
               <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Total Paid Out</p>
                 <p className="text-4xl font-black tracking-tighter">$38,450.00</p>
-                <p className="text-[10px] font-medium text-slate-400 mt-4 italic">Since joining GoodCircles</p>
+                <p className="text-[10px] font-medium text-slate-400 mt-4 italic">Since joining Good Circles</p>
               </div>
             </div>
           </div>

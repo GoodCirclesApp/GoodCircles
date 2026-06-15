@@ -299,7 +299,7 @@ export function CatalogPlatformConnect({ onConnected }: CatalogPlatformConnectPr
 
       {/* Security note */}
       <p className="text-center text-xs text-gray-400 mt-8 max-w-md mx-auto">
-        Your credentials are encrypted and stored securely. GoodCircles only
+        Your credentials are encrypted and stored securely. Good Circles only
         requests read access to your product catalog — we never modify your
         existing store.
       </p>

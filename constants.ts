@@ -464,7 +464,7 @@ const FAQ_IMPACT_MAP: FAQItem[] = [
     id: 'impact-2',
     category: 'CORE',
     question: 'What is Demo Mode vs. Live Mode on the Impact Map?',
-    answer: 'The map has two data modes, switchable from the button at the top right:\n\n• Demo Mode — shows deterministic simulation data scaled to real US state population distributions. The same state always shows the same projected numbers, making it consistent for presentations and demos. This mode gives a realistic picture of what the platform will look like at scale.\n\n• Live Mode — shows only real GoodCircles transaction data pulled directly from the platform\'s database. During early beta, this data will be sparse. As the merchant and member base grows, Live Mode becomes the primary view.\n\nBoth modes can be used at any time.',
+    answer: 'The map has two data modes, switchable from the button at the top right:\n\n• Demo Mode — shows deterministic simulation data scaled to real US state population distributions. The same state always shows the same projected numbers, making it consistent for presentations and demos. This mode gives a realistic picture of what the platform will look like at scale.\n\n• Live Mode — shows only real Good Circles transaction data pulled directly from the platform\'s database. During early beta, this data will be sparse. As the merchant and member base grows, Live Mode becomes the primary view.\n\nBoth modes can be used at any time.',
   },
   {
     id: 'impact-3',

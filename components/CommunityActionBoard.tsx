@@ -67,7 +67,7 @@ const SEED_ACTIONS: CommunityAction[] = [
     id: 'a5',
     title: 'Merchant Block Discount Week',
     type: 'GROUP_PURCHASE',
-    description: 'Organize a community shopping week where 5+ merchants offer stacked GoodCircles discounts. Coordinated through the platform to maximize nonprofit impact.',
+    description: 'Organize a community shopping week where 5+ merchants offer stacked Good Circles discounts. Coordinated through the platform to maximize nonprofit impact.',
     proposedBy: 'Marco V.',
     supporters: 22,
     goal: '30 participating merchants',

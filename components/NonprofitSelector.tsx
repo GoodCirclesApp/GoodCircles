@@ -77,7 +77,7 @@ export const NonprofitSelector: React.FC<NonprofitSelectorProps> = ({
       <div className={styles.header}>
         <h2 className={styles.title}>Choose Your Cause</h2>
         <p className={styles.subtitle}>
-          Select a nonprofit to receive 10% of your purchase
+          Select a nonprofit to receive 10% of the merchant's net profit
         </p>
       </div>
 

@@ -114,7 +114,7 @@ export const CartDrawer: React.FC<Props> = ({
                    <div className="w-full bg-[#7851A9]/5 px-5 py-4 rounded-2xl border border-[#7851A9]/10">
                      <p className="text-[10px] font-black text-[#7851A9] uppercase tracking-widest mb-1">Your purchase supports</p>
                      <p className="text-sm font-black text-black">{selectedNonprofit.name}</p>
-                     <p className="text-[10px] text-slate-500 italic mt-1">10% of merchant savings go to this cause</p>
+                     <p className="text-[10px] text-slate-500 italic mt-1">10% of merchant net profit goes to this cause</p>
                    </div>
                  )}
 

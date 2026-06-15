@@ -190,7 +190,7 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
         <div>
           <p className="text-xl font-black italic uppercase tracking-tighter text-blue-700">Application Received</p>
           <p className="text-sm text-slate-500 font-medium mt-3 leading-relaxed">
-            Your CDFI partner application has been submitted. A GoodCircles admin will review your certification and activate your account within 1–2 business days.
+            Your CDFI partner application has been submitted. A Good Circles admin will review your certification and activate your account within 1–2 business days.
           </p>
           <p className="text-xs text-slate-400 font-bold mt-4 uppercase tracking-widest">
             You'll receive an email at {email} once your account is activated.
@@ -207,7 +207,7 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
         <div>
           <h3 className="text-sm font-black text-[#7851A9] uppercase tracking-wider mb-2">Choose Your Cause</h3>
           <p className="text-xs text-slate-600 font-medium mb-6">
-            Select a nonprofit to receive 10% of your purchases. You can change this anytime in your profile.
+            Select a nonprofit to receive 10% of the merchant's net profit on your purchases. You can change this anytime in your profile.
           </p>
         </div>
         <NonprofitSelector onSelect={setSelectedNonprofit} currentNonprofitId={selectedNonprofit} />

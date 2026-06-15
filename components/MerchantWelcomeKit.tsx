@@ -15,7 +15,7 @@ const FIRST_STEPS = [
   { label: 'Complete your merchant profile', detail: 'Add your business description, hours, and contact info in Node Settings' },
   { label: 'Set up In-Person QR Pay', detail: 'Generate your QR code in the QR Pay tab for in-store transactions' },
   { label: 'Elect your nonprofit cause', detail: 'Choose which nonprofit receives 10% of your profits in Node Settings' },
-  { label: 'Share your GoodCircles membership', detail: 'Post your digital badge and tell your customers what it means' },
+  { label: 'Share your Good Circles membership', detail: 'Post your digital badge and tell your customers what it means' },
 ];
 
 export const MerchantWelcomeKit: React.FC<Props> = ({ merchantName, onClose }) => {
@@ -102,7 +102,7 @@ export const MerchantWelcomeKit: React.FC<Props> = ({ merchantName, onClose }) =
                       <Sparkles size={32} className="text-[#C2A76F]" />
                     </motion.div>
                     <h4 className="text-2xl font-black italic uppercase tracking-tighter text-black">
-                      {merchantName ? `Welcome, ${merchantName}.` : 'Welcome to GoodCircles.'}
+                      {merchantName ? `Welcome, ${merchantName}.` : 'Welcome to Good Circles.'}
                     </h4>
                     <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-sm mx-auto">
                       You've just joined a community of merchants who believe commerce can do more — for customers, for nonprofits, and for the neighborhood you call home.
@@ -196,10 +196,10 @@ export const MerchantWelcomeKit: React.FC<Props> = ({ merchantName, onClose }) =
                     <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 flex items-center gap-5">
                       <div className="w-20 h-20 bg-[#7851A9]/10 border-2 border-[#7851A9]/30 border-dashed rounded-2xl flex flex-col items-center justify-center gap-1 flex-shrink-0">
                         <BrandSubmark size={28} color="#7851A9" />
-                        <p className="text-[6px] font-black text-[#7851A9] uppercase tracking-wider text-center leading-tight">GoodCircles<br/>Member</p>
+                        <p className="text-[6px] font-black text-[#7851A9] uppercase tracking-wider text-center leading-tight">Good Circles<br/>Member</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-black text-black">"Proud GoodCircles Merchant" Decal</p>
+                        <p className="text-sm font-black text-black">"Proud Good Circles Merchant" Decal</p>
                         <p className="text-xs text-slate-500 font-medium leading-relaxed">3" × 3" vinyl decal for your storefront window. Lets customers know every purchase creates community impact.</p>
                         <button className="mt-2 px-4 py-1.5 border border-slate-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-400 hover:border-[#7851A9]/30 hover:text-[#7851A9] transition-all">
                           Request Decal →
@@ -215,11 +215,11 @@ export const MerchantWelcomeKit: React.FC<Props> = ({ merchantName, onClose }) =
                       <div className="w-20 h-24 bg-black rounded-xl flex flex-col items-center justify-center gap-2 flex-shrink-0 p-2">
                         <QrCode size={28} className="text-white" />
                         <div className="w-full h-px bg-white/20" />
-                        <p className="text-[6px] font-black text-[#C2A76F] uppercase tracking-wider text-center leading-tight">Scan to Pay<br/>GoodCircles</p>
+                        <p className="text-[6px] font-black text-[#C2A76F] uppercase tracking-wider text-center leading-tight">Scan to Pay<br/>Good Circles</p>
                       </div>
                       <div className="space-y-1">
                         <p className="text-sm font-black text-black">QR Code Tent Card</p>
-                        <p className="text-xs text-slate-500 font-medium leading-relaxed">4" × 6" folded card with your unique QR code for in-store payments via the GoodCircles wallet.</p>
+                        <p className="text-xs text-slate-500 font-medium leading-relaxed">4" × 6" folded card with your unique QR code for in-store payments via the Good Circles wallet.</p>
                         <button className="mt-2 px-4 py-1.5 border border-slate-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-400 hover:border-[#7851A9]/30 hover:text-[#7851A9] transition-all">
                           Generate QR Card →
                         </button>
@@ -271,7 +271,7 @@ export const MerchantWelcomeKit: React.FC<Props> = ({ merchantName, onClose }) =
                     >
                       <Sparkles size={20} className="text-[#C2A76F] mx-auto" />
                       <p className="text-sm font-black italic uppercase tracking-tighter text-white">Your node is fully active.</p>
-                      <p className="text-[10px] text-white/60 font-medium">Welcome to the GoodCircles ecosystem.</p>
+                      <p className="text-[10px] text-white/60 font-medium">Welcome to the Good Circles ecosystem.</p>
                     </motion.div>
                   )}
 

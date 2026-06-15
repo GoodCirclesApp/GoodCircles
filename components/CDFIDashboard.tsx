@@ -615,7 +615,7 @@ export const CDFIDashboard: React.FC = () => {
 
             <SettingsField
               label="TLR Column Mapping (JSON)"
-              hint="Optional. Maps GoodCircles fields to your CDFI's TLR column headers. E.g. {&quot;merchantId&quot;: &quot;Borrower_ID&quot;}"
+              hint="Optional. Maps Good Circles fields to your CDFI's TLR column headers. E.g. {&quot;merchantId&quot;: &quot;Borrower_ID&quot;}"
             >
               <textarea
                 rows={5}

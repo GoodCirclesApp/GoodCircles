@@ -299,7 +299,7 @@ export function CatalogPaymentStep({
       {/* Security footer */}
       <div className="flex items-center justify-center gap-2 mt-6 text-xs text-gray-400">
         <ShieldCheck className="w-4 h-4" />
-        Secure payment processed by Stripe. GoodCircles never sees your card details.
+        Secure payment processed by Stripe. Good Circles never sees your card details.
       </div>
     </div>
   );
