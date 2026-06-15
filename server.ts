@@ -201,11 +201,29 @@ async function startServer() {
   // Error handler (MUST be last middleware)
   // ══════════════════════════════════════════════════════════════
   app.use((err: any, req: any, res: any, next: any) => {
-    console.error('[Server] Unhandled error:', err.message || err);
-    const status = err.status || err.statusCode || 500;
-    res.status(status).json({
-      error: isProd ? 'Internal server error' : err.message,
-    });
+    // Always log full detail server-side (stack included) for diagnostics.
+    console.error(`[Server] Error on ${req.method} ${req.originalUrl}:`, err && err.stack ? err.stack : (err && err.message) || err);
+
+    // If the response has already started streaming, we cannot send a body —
+    // hand off to Express's default handler to close the connection.
+    if (res.headersSent) return next(err);
+
+    const status = Number(err && (err.status || err.statusCode)) || 500;
+    const isClientError = status >= 400 && status < 500;
+
+    // Client errors (4xx) carry a safe, intentional message (e.g. the 403 from
+    // refundService and the 400 from crmWebhookService) — surface it with the
+    // correct code. Server errors (5xx) are genericized in production to avoid
+    // leaking internals; in non-prod we return the message for debugging.
+    const message = isClientError
+      ? (err && err.message) || 'Bad Request'
+      : (isProd ? 'Internal Server Error' : (err && err.message) || 'Internal Server Error');
+
+    const body: any = { error: message };
+    // Include the stack only outside production to aid local debugging.
+    if (!isProd && err && err.stack) body.stack = err.stack;
+
+    res.status(status).json(body);
   });
 
   // ══════════════════════════════════════════════════════════════

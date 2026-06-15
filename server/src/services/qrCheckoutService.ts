@@ -1,7 +1,13 @@
 import { prisma } from '../lib/prisma';
 import { createHmac, randomBytes } from 'crypto';
+import { requireSecret } from '../utils/secrets';
 
-const QR_SECRET = process.env.QR_HMAC_SECRET ?? 'gc-qr-dev-secret';
+// Falls back to JWT_SECRET when QR_HMAC_SECRET is unset, so only JWT_SECRET must be
+// confirmed in the production host. requireSecret fails fast in production if neither
+// is set.
+const QR_SECRET = process.env.QR_HMAC_SECRET
+  ? requireSecret('QR_HMAC_SECRET', 'gc-qr-dev-secret')
+  : requireSecret('JWT_SECRET', 'gc-qr-dev-secret');
 const TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 function signPayload(userId: string, expiresAt: number): string {

@@ -8,6 +8,7 @@ import {
   getMockBillingData,
   createMockImportRecord,
 } from '../mocks/catalogMockData';
+import { getStripe } from '../services/stripeService';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -481,10 +482,32 @@ router.get('/billing/history', ...requireMerchant, async (req: AuthRequest, res:
  * Stripe webhook for payment confirmation (raw body required — registered in server.ts)
  */
 router.post('/webhook/stripe', async (req: Request, res: Response) => {
-  try {
-    const payload = req.body;
-    const event = typeof payload === 'string' ? JSON.parse(payload) : payload;
+  // Verify the Stripe signature against the raw body (raw parser registered in server.ts).
+  // Mirrors the primary webhook in paymentController.ts. Reuses STRIPE_WEBHOOK_SECRET —
+  // the catalog flow uses the same Stripe account today.
+  // TODO(go-live): if catalog billing gets its OWN Stripe webhook endpoint, give it a
+  // dedicated signing secret (e.g. CATALOG_STRIPE_WEBHOOK_SECRET) — otherwise
+  // constructEvent will reject events signed by that separate endpoint.
+  const sig = req.headers['stripe-signature'];
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  // Fail CLOSED when the secret is absent: do NOT process unverified payloads.
+  // 503 (not 400) so Stripe retries once the secret is configured in the environment.
+  if (!endpointSecret) {
+    console.error('[Catalog] STRIPE_WEBHOOK_SECRET not set — rejecting webhook (cannot verify signature).');
+    return res.status(503).json({ error: 'Webhook signature verification not configured.' });
+  }
+
+  let event: any;
+  try {
+    const stripe = getStripe();
+    event = stripe.webhooks.constructEvent(req.body, sig as string, endpointSecret);
+  } catch (err: any) {
+    console.error('[Catalog] Stripe webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  try {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
       const importId = session.metadata?.importId;

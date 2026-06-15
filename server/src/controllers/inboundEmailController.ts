@@ -19,21 +19,27 @@ export async function receiveWebhook(req: Request, res: Response) {
     // req.body is a Buffer from express.raw()
     const rawBody = Buffer.isBuffer(req.body) ? req.body.toString() : JSON.stringify(req.body);
 
-    // Verify Svix signature (non-blocking — log but never drop the email)
+    // Verify Svix signature. When RESEND_WEBHOOK_SECRET is configured we HARD-REJECT
+    // unsigned/forged requests (401) so the inbound store cannot be poisoned. When the
+    // secret is unset we preserve prior behavior so a not-yet-provisioned prod inbox
+    // keeps working (verification activates as soon as the secret is set).
     if (WEBHOOK_SECRET) {
+      const svixId        = req.headers['svix-id'] as string;
+      const svixTimestamp = req.headers['svix-timestamp'] as string;
+      const svixSignature = req.headers['svix-signature'] as string;
+      if (!svixId || !svixTimestamp || !svixSignature) {
+        console.warn('[InboundEmail] rejected: missing Svix signature headers');
+        return res.status(401).json({ error: 'Missing signature' });
+      }
       try {
-        const svixId        = req.headers['svix-id'] as string;
-        const svixTimestamp = req.headers['svix-timestamp'] as string;
-        const svixSignature = req.headers['svix-signature'] as string;
-        if (svixId && svixTimestamp && svixSignature) {
-          resend.webhooks.verify({
-            payload:       rawBody,
-            headers:       { id: svixId, timestamp: svixTimestamp, signature: svixSignature },
-            webhookSecret: WEBHOOK_SECRET,
-          });
-        }
+        resend.webhooks.verify({
+          payload:       rawBody,
+          headers:       { id: svixId, timestamp: svixTimestamp, signature: svixSignature },
+          webhookSecret: WEBHOOK_SECRET,
+        });
       } catch (verifyErr) {
-        console.warn('[InboundEmail] signature verification failed (continuing):', verifyErr);
+        console.warn('[InboundEmail] rejected: signature verification failed:', verifyErr);
+        return res.status(401).json({ error: 'Invalid signature' });
       }
     }
 

@@ -154,7 +154,8 @@ export const saveWebhook = async (req: AuthRequest, res: Response) => {
     res.json({ ...hook, secret: `${hook.secret.slice(0, 8)}${'•'.repeat(24)}` });
   } catch (err: any) {
     if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
-    res.status(500).json({ error: err.message });
+    // Respect an explicit status (e.g. the SSRF guard's 400) instead of masking as 500.
+    res.status(err.status ?? 500).json({ error: err.message });
   }
 };
 

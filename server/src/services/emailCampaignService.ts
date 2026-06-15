@@ -2,9 +2,10 @@ import crypto from 'crypto';
 import { prisma } from '../lib/prisma';
 import { transport, withLogo, type EmailAttachment } from './emailTransport';
 import { wrap, FROM_ADDRESSES } from './emailLayoutService';
+import { requireSecret } from '../utils/secrets';
 
 const APP_URL = process.env.APP_URL || 'https://goodcircles.org';
-const UNSUB_SECRET = process.env.JWT_SECRET || 'dev-unsub-secret';
+const UNSUB_SECRET = requireSecret('JWT_SECRET', 'dev-unsub-secret');
 const DAILY_CEILING = Number(process.env.EMAIL_DAILY_CEILING || 100);
 const SEND_BATCH = 10; // recipients per throttle batch
 
