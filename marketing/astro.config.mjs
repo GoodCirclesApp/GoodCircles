@@ -4,6 +4,7 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import { CITIES, STATE, isCityIndexable } from './src/data/cities';
+import { COUNTIES, COUNTY_ENGINE_ENABLED, isCountyIndexable } from './src/data/counties';
 
 const SITE = 'https://goodcircles.org';
 
@@ -15,6 +16,16 @@ const EXCLUDED_CITY_URLS = new Set(
   )
 );
 
+// Same guardrail for the county engine (no-op while COUNTY_ENGINE_ENABLED=false,
+// since no county pages are generated): keep noindex counties out of the sitemap.
+const EXCLUDED_COUNTY_URLS = new Set(
+  COUNTY_ENGINE_ENABLED
+    ? COUNTIES.filter((c) => !isCountyIndexable(c)).map(
+        (c) => `${SITE}/shop-local/${c.stateSlug}/county/${c.slug}/`
+      )
+    : []
+);
+
 // Canonical host is the bare domain (www 301s to it — see public/_redirects).
 export default defineConfig({
   site: SITE,
@@ -22,7 +33,7 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      filter: (page) => !EXCLUDED_CITY_URLS.has(page),
+      filter: (page) => !EXCLUDED_CITY_URLS.has(page) && !EXCLUDED_COUNTY_URLS.has(page),
       // Legal pages don't need crawl priority; everything else defaults.
       serialize(item) {
         if (/\/(privacy|terms|cookies)\/?$/.test(item.url)) {
