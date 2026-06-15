@@ -17,7 +17,8 @@
 - ☑ App accuracy/brand fixes: "GoodCircles"→"Good Circles" in app copy; fix in-app donation example "10% of your purchase/savings"→"10% of merchant net profit". _Done 2026-06-15 (commit a33cfd7): 37 verified string edits across components/views/constants/manifest; live wire header `X-GoodCircles-Signature` deliberately untouched._
 - ☑ Remove JWT/HMAC `default_secret` fallbacks; fail-fast on missing/weak secrets. _Done 2026-06-15 (commit 8158095): new `utils/secrets.ts` `requireSecret()` — JWT access+refresh, unsubscribe HMAC, QR HMAC fail boot in production on missing/weak secret; refresh+QR derive from `JWT_SECRET` when own vars unset. Shipped after owner confirmed `JWT_SECRET` is set & strong in Railway. ⚠️ if `JWT_REFRESH_SECRET` was unset, active refresh sessions re-login once._
 
-## P1 — Data integrity & money correctness (buildable now)
+## P1 — Data integrity & money correctness (buildable now) — 📋 SEQUENCED PLAN: [`docs/ENTERPRISE_P1_PLAN.md`](../docs/ENTERPRISE_P1_PLAN.md)
+> Recommended order: **P1-0** (split single-source + cent-quantize, pure code, do first) → **P1-A** (migration baseline, the linchpin — gates all schema work) → additive items (Stripe charge ids, idempotency table, indexes) → **P1-B2** type changes/enums last. ⚠️ Real prod boot is `Dockerfile:18` `prisma db push --accept-data-loss` (NOT package.json) + zero migration history. 🔴 Owner decision first: is prod DB empty/pre-launch? (collapses most risk). Awaiting owner approval before any P1 code.
 - ☐ Prisma **migration baseline** + switch start to `prisma migrate deploy`; remove `db push --accept-data-loss`
 - ☐ Money columns → `Decimal` w/ explicit precision/scale; remove `Float` money (catalog/analytics); real Prisma enums; hot-path indexes
 - ☐ Single-source the 89/10/1 split; delete dead 79/10/11 code in `stripeService`; cent-quantize; add Σ-conservation test
