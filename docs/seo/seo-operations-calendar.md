@@ -1,6 +1,7 @@
 # Good Circles — SEO/GEO Operations Calendar (recurring tasks + safe sequencing)
 
-*Companion to [120-day-growth-calendar.md](./120-day-growth-calendar.md) (strategy + projections).
+*Companion to [120-day-growth-calendar.md](./120-day-growth-calendar.md) (strategy + projections)
+and [county-expansion-plan.md](./county-expansion-plan.md) (the 3,143-county national rollout).
 This doc integrates a recommended agency task list into our actual stack, marks what's already done,
 and sequences the rest so nothing harms a young domain. Prepared 2026-06-15.*
 
@@ -121,12 +122,25 @@ Rules we follow:
 - **[Both]** **Seed MS city pages** with real merchants/nonprofits → flip `noindex→index` (the launch flywheel).
 - **[Me]** Add `ItemList`/`LocalBusiness` schema to seeded city pages; **launch press push**.
 - **[Me]** **Measured programmatic expansion** *only if* the current pages are indexing well (cause×city in batches).
+- **[Both/Me]** **County engine — Phase A** (per `county-expansion-plan.md`): *after* you source the
+  Census dataset **and** the existing 312 pages are indexing healthily, generate all 3,143 county
+  pages **`noindex`, sitemap-excluded**, state-by-state (functional + NM9t5 CTAs everywhere, zero
+  index-competition risk). Not before both gates are met.
 - **[Both]** **SEO re-audit**; **GBP competitor audit**; verify conversion tracking through the launch.
 
 ### Month 4 (Days 91–120) — Compound & convert
 - **[Me]** **CRO** on top-traffic pages (data-driven); expand winning clusters; prune losers.
 - **[Both]** Scale citations + local backlinks (founding merchants/nonprofits, chambers) now you have launch clips.
+- **[Me]** **County engine — Wave 0:** flip the **Mississippi counties (~82)** to `index` and confirm
+  clean indexing in GSC before any further states. This proves the model on the smallest, most
+  relevant wave.
 - **[Me]** **Quarterly re-audit + keyword refresh + silo + schema review**; set the months-5–12 cadence.
+
+### Beyond 120 days — county national rollout (months 4–18)
+- **[Me]** Flip counties to `index` in **waves of ~3–6 states/month**, prioritized by where Good
+  Circles operates, population/demand, and `request-your-area` signals; monitor GSC each wave and
+  **pause on any quality dip**. Full safe indexed coverage ≈ **12–18 months** (see
+  `county-expansion-plan.md` §9). Generation is fast; indexing is deliberately paced.
 
 ---
 
@@ -136,6 +150,8 @@ Rules we follow:
 - **Business NAP/address** (virtual mailbox/PO box) → unblocks **GBP, citations, NAP checks**, and marketing email.
 - **GBP creation** (your Google account) → unblocks all GBP tasks.
 - **GSC request-indexing** (your login) → biweekly.
+- **County dataset** → approve sourcing the U.S. Census county/place data (or provide a preferred set)
+  before the county engine (Phase A) can be built. See `county-expansion-plan.md` §2.
 - **Tool budget decision**: Ahrefs / SurferSEO are optional; the gate + GSC cover the essentials free.
 
 **I can execute in-code now (safe, no churn) — just say go:**
@@ -147,4 +163,6 @@ Rules we follow:
 **What we deliberately are NOT doing yet (and why):**
 - Speculative title/keyword rewrites (no data yet → volatility).
 - Bulk new pages / combinatorial city sets (doorway risk until indexed).
+- **Bulk-indexing the 3,143 county pages** — they generate as `noindex` and flip to `index` only in
+  paced, GSC-monitored waves after the base is proven (see `county-expansion-plan.md`).
 - High-volume citation blasts (unnatural velocity).
