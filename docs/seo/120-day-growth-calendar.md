@@ -3,6 +3,10 @@
 *Prepared 2026-06-12. Directional planning estimates, not guarantees — organic outcomes
 depend on execution (especially off-page/PR, which require the founder) and external factors.*
 
+> **Companion:** recurring task cadence, the agency-checklist task map, tool translations
+> (RankMath/Ahrefs/Surfer → our stack), and the "do no harm" sequencing guardrails are in
+> [seo-operations-calendar.md](./seo-operations-calendar.md).
+
 ---
 
 ## 1. Where we are — progress review & effectiveness rating
