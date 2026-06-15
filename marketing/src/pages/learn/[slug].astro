@@ -8,6 +8,7 @@ import Footer from '../../components/Footer.astro';
 import { ALL_LEARN, type LearnArticle } from '../../data/learn-all';
 import { breadcrumbJsonLd } from '../../lib/faq';
 import { SITE_URL } from '../../data/site';
+import { AFFILIATE_DISCLOSURE } from '../../lib/affiliates';
 
 export function getStaticPaths() {
   return ALL_LEARN.map((article) => ({ params: { slug: article.slug }, props: { article } }));
@@ -45,7 +46,10 @@ const crumb = breadcrumbJsonLd([
       <p class="text-sm mb-6" style="color:#6B6577;font-family:'Montserrat',sans-serif;font-weight:600">
         {article.dateline}
       </p>
-      <article class="gc-learn pb-10" set:html={article.articleHtml} />
+      <article class="gc-learn pb-4" set:html={article.articleHtml} />
+      {article.articleHtml.includes('data-affiliate') && (
+        <p class="text-xs text-slate-400 pb-10" style="font-family:'Fira Sans',sans-serif">{AFFILIATE_DISCLOSURE}</p>
+      )}
     </div>
   </main>
   <Footer />

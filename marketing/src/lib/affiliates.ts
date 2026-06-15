@@ -79,3 +79,7 @@ export function nm9t5FoundationLink(utm: Utm = {}): string {
 
 /** Standard attributes for an affiliate anchor (FTC/Google-compliant). */
 export const AFFILIATE_REL = 'sponsored noopener';
+
+/** FTC affiliate-disclosure text — render on every page that carries an affiliate link. */
+export const AFFILIATE_DISCLOSURE =
+  'Disclosure: Good Circles may earn a commission if you join the No More 9 to 5 Club through links on this page, at no extra cost to you. We recommend partners on the merits of the fit, not the commission.';

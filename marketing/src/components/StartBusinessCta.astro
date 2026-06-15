@@ -3,7 +3,7 @@
 // Routes the local-business audience into the Good Circles seller cluster
 // (internal links) AND the NM9t5 partnership (affiliate CTA). The page that
 // includes this must also add partnerMentionJsonLd() to its Base jsonLd.
-import { nm9t5Link, AFFILIATE_REL } from '../lib/affiliates';
+import { nm9t5Link, AFFILIATE_REL, AFFILIATE_DISCLOSURE } from '../lib/affiliates';
 
 interface Props {
   place: string; // city or state name
@@ -53,5 +53,6 @@ const trial = nm9t5Link('trial', { medium: 'cta', campaign: 'shop-local', conten
         Try the No More 9 to 5 Club ›
       </a>
     </div>
+    <p class="text-xs text-slate-400 mt-4" style="font-family:'Fira Sans',sans-serif">{AFFILIATE_DISCLOSURE}</p>
   </div>
 </section>
