@@ -7,6 +7,15 @@ import PageHero from '../components/PageHero.astro';
 import FaqList from '../components/FaqList.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { faqJsonLd, type Faq } from '../lib/faq';
+import { serviceJsonLd } from '../data/site';
+
+const SERVICE = serviceJsonLd({
+  name: 'Free passive fundraising for nonprofits',
+  serviceType: 'Nonprofit fundraising',
+  description:
+    'Free, recurring fundraising: supporters pick your nonprofit once, and 10% of the merchant’s profit on every local purchase they make is routed to you automatically each month. No fees, no campaigns.',
+  free: true,
+});
 
 const TITLE = 'Free Passive Fundraising for Nonprofits — AmazonSmile Alternative';
 const DESCRIPTION =
@@ -28,7 +37,7 @@ const FAQS: Faq[] = [
 ];
 ---
 
-<Base title={TITLE} description={DESCRIPTION} path="/for-nonprofits" jsonLd={[faqJsonLd(FAQS)]}>
+<Base title={TITLE} description={DESCRIPTION} path="/for-nonprofits" jsonLd={[faqJsonLd(FAQS), SERVICE]}>
   <Nav solid />
   <main id="main">
     <PageHero

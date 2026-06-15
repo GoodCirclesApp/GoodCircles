@@ -7,6 +7,15 @@ import PageHero from '../components/PageHero.astro';
 import FaqList from '../components/FaqList.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { faqJsonLd, type Faq } from '../lib/faq';
+import { serviceJsonLd } from '../data/site';
+
+const SERVICE = serviceJsonLd({
+  name: 'Shop local and give back with Good Circles',
+  serviceType: 'Community marketplace for shoppers',
+  description:
+    'Shop local businesses, save about 10% automatically, and send a share of every purchase to a nonprofit you choose — at no extra cost. Free to join.',
+  free: true,
+});
 
 const TITLE = 'Shop Local & Give Back — Save ~10% on Every Purchase · Good Circles';
 const DESCRIPTION =
@@ -43,7 +52,7 @@ const WINS = [
 ];
 ---
 
-<Base title={TITLE} description={DESCRIPTION} path="/shoppers" jsonLd={[faqJsonLd(FAQS)]}>
+<Base title={TITLE} description={DESCRIPTION} path="/shoppers" jsonLd={[faqJsonLd(FAQS), SERVICE]}>
   <Nav solid />
   <main id="main">
     <PageHero

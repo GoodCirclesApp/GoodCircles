@@ -46,6 +46,32 @@ export const ORGANIZATION_JSONLD = {
   ],
 } as const;
 
+// Service JSON-LD for the audience "service" pages (the pillars). Helps search +
+// AI engines understand each offering and who provides it. `free: true` adds a
+// $0 Offer (joining is free for shoppers/nonprofits); business is omitted since
+// it carries a 1% fee on profit (described in the service text instead).
+interface ServiceArgs { name: string; serviceType: string; description: string; free?: boolean }
+export function serviceJsonLd({ name, serviceType, description, free }: ServiceArgs) {
+  const s: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name,
+    serviceType,
+    description,
+    provider: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    areaServed: { '@type': 'State', name: 'Mississippi' },
+  };
+  if (free) {
+    s.offers = {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+    };
+  }
+  return s;
+}
+
 // Reusable "Mention" JSON-LD for pages that reference the NM9t5 partner — helps
 // search and AI crawlers understand the brand relationship (Phase 5).
 export const NM9T5_URL = 'https://thenomore9to5club.org';

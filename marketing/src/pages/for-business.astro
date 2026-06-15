@@ -7,6 +7,14 @@ import PageHero from '../components/PageHero.astro';
 import FaqList from '../components/FaqList.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { faqJsonLd, type Faq } from '../lib/faq';
+import { serviceJsonLd } from '../data/site';
+
+const SERVICE = serviceJsonLd({
+  name: 'Low-fee local marketplace for businesses',
+  serviceType: 'Online marketplace for local businesses',
+  description:
+    'Sell to local customers and keep 89% of your profit — a 1% fee on profit instead of the 15–30% national platforms take. Free to join; Good Circles collects and remits sales tax as the marketplace facilitator.',
+});
 
 const TITLE = 'Sell Local, Keep 89% — The Low-Fee Marketplace That Gives Back';
 const DESCRIPTION =
@@ -43,7 +51,7 @@ const HOW = [
 ];
 ---
 
-<Base title={TITLE} description={DESCRIPTION} path="/for-business" jsonLd={[faqJsonLd(FAQS)]}>
+<Base title={TITLE} description={DESCRIPTION} path="/for-business" jsonLd={[faqJsonLd(FAQS), SERVICE]}>
   <Nav solid />
   <main id="main">
     <PageHero
