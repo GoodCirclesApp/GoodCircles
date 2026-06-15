@@ -1,2 +1,5 @@
 # Canonical host: bare domain. 301 www -> bare for every path.
 https://www.goodcircles.org/* https://goodcircles.org/:splat 301!
+
+# Resolve stray references to /sitemap.xml (Astro emits the index file).
+/sitemap.xml /sitemap-index.xml 301
