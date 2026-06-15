@@ -6,6 +6,7 @@ import { DonorProfileService } from '../services/donorProfileService';
 import { ImpactUpdateService } from '../services/impactUpdateService';
 import { DmsExportService } from '../services/dmsExportService';
 import { CrmWebhookService } from '../services/crmWebhookService';
+import { isPublicHttpsUrl } from '../utils/safeUrl';
 
 // ── Helper: resolve nonprofitId from the authenticated NONPROFIT user ─────────
 
@@ -139,7 +140,7 @@ export const getExportJobs = async (req: AuthRequest, res: Response) => {
 // ══════════════════════════════════════════════════════════════════════════════
 
 const webhookSchema = z.object({
-  url:    z.string().url(),
+  url:    z.string().url().refine(isPublicHttpsUrl, 'Webhook URL must be a public https:// URL (private/loopback/metadata hosts are not allowed)'),
   events: z.array(z.enum(['donation.received', 'export.complete', 'milestone.reached'])).min(1),
 });
 

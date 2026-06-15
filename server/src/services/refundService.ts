@@ -9,7 +9,7 @@ export class RefundService {
   // The platform treasury is debited the platform fee.
   // The nonprofit wallet is never touched on refund — they retain the donation and the
   // merchant retains the associated tax deduction incentive.
-  static async refundTransaction(transactionId: string, initiatedBy: string, reason?: string) {
+  static async refundTransaction(transactionId: string, initiatedBy: string, requesterRole: string, reason?: string) {
     const tx = await prisma.transaction.findUnique({
       where: { id: transactionId },
       include: {
@@ -20,6 +20,18 @@ export class RefundService {
     });
 
     if (!tx) throw new Error('Transaction not found');
+
+    // Authorization: only the buyer, the owning merchant, or a platform admin may
+    // refund a transaction. (Prevents IDOR refunds via guessed transaction IDs.)
+    const isNeighbor = tx.neighborId === initiatedBy;
+    const isMerchant = tx.merchant?.userId === initiatedBy;
+    const isAdmin = requesterRole === 'PLATFORM';
+    if (!isNeighbor && !isMerchant && !isAdmin) {
+      const err: any = new Error('Forbidden: you are not authorized to refund this transaction');
+      err.status = 403;
+      throw err;
+    }
+
     if (tx.refund) throw new Error('Transaction has already been refunded');
 
     // The refund amount = what the neighbor paid minus the non-refundable donation.

@@ -16,12 +16,13 @@ router.post('/:transactionId/refund', async (req: AuthRequest, res: Response) =>
     const refund = await RefundService.refundTransaction(
       req.params.transactionId as string,
       req.user.id,
+      req.user.role,
       reason
     );
     res.status(201).json(refund);
   } catch (err: any) {
     if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
-    res.status(400).json({ error: err.message });
+    res.status(err.status === 403 ? 403 : 400).json({ error: err.message });
   }
 });
 

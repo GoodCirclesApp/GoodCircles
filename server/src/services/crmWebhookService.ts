@@ -1,8 +1,14 @@
 import { prisma } from '../lib/prisma';
 import crypto from 'crypto';
+import { isPublicHttpsUrl } from '../utils/safeUrl';
 
 export class CrmWebhookService {
   static async save(nonprofitId: string, url: string, events: string[]) {
+    if (!isPublicHttpsUrl(url)) {
+      const err: any = new Error('Webhook URL must be a public https:// URL (private/loopback/metadata hosts are not allowed).');
+      err.status = 400;
+      throw err;
+    }
     const secret = crypto.randomBytes(32).toString('hex');
     return prisma.crmWebhook.upsert({
       where: { nonprofitId },
@@ -23,6 +29,12 @@ export class CrmWebhookService {
   static async fire(nonprofitId: string, event: string, payload: Record<string, unknown>) {
     const hook = await prisma.crmWebhook.findUnique({ where: { nonprofitId } });
     if (!hook || !hook.isActive || !hook.events.includes(event)) return;
+    // SSRF defense-in-depth: never fetch a non-public/non-https destination,
+    // even if one was stored before validation existed.
+    if (!isPublicHttpsUrl(hook.url)) {
+      console.warn(`[CRM Webhook] Skipping disallowed URL for nonprofit ${nonprofitId}`);
+      return;
+    }
 
     const body = JSON.stringify({ event, payload, timestamp: new Date().toISOString() });
     const sig = crypto.createHmac('sha256', hook.secret).update(body).digest('hex');
