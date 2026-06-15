@@ -220,9 +220,39 @@ export const listOrders = async (req: AuthRequest, res: Response) => {
       skip: (page - 1) * limit,
       take: limit,
       include: {
-        merchant: true,
-        nonprofit: true,
-        productService: true,
+        // Narrowed to drop merchant PII (taxId/EIN, stripeAccountId) and product COGS,
+        // which were being leaked to the buyer. The client (Order type / OrderHistoryView)
+        // reads none of these; nonprofit.orgName is the only related field consumed.
+        merchant: {
+          select: {
+            id: true,
+            businessName: true,
+            businessType: true,
+            isVerified: true,
+            physicalCity: true,
+            physicalState: true,
+            regionId: true,
+          },
+        },
+        nonprofit: {
+          select: {
+            id: true,
+            orgName: true,
+            isVerified: true,
+          },
+        },
+        productService: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            price: true,
+            type: true,
+            category: true,
+            isActive: true,
+            merchantId: true,
+          },
+        },
       }
     });
     const total = await prisma.transaction.count({ where: { neighborId: req.user.id } });
