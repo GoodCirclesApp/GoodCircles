@@ -35,3 +35,39 @@
 ## Notes
 - Brand name is two words: "Good Circles".
 - Do not cite unverified internal figures (e.g., state-leakage dollar amounts or generosity rankings); they are not published claims.
+
+---
+
+## Nonprofit Resource Center (/resources/)
+
+> The Nonprofit Resource Center is a free, comprehensive library (60+ guides, 11 templates, 2 interactive tools) that helps nonprofits start, structure, win grants, design programs, market for free, develop donors, run operations, and build a recurring funding base. Figures below are estimates, not guarantees.
+
+### Start & structure
+- [How to Start a Nonprofit](https://goodcircles.org/resources/start-a-nonprofit/how-to-start-a-nonprofit/) · [How to Get 501(c)(3) Status](https://goodcircles.org/resources/start-a-nonprofit/how-to-get-501c3-status/) · [Nonprofit Bylaws](https://goodcircles.org/resources/start-a-nonprofit/nonprofit-bylaws/) · [Build a Board](https://goodcircles.org/resources/start-a-nonprofit/how-to-build-a-board-of-directors/) · [Fiscal Sponsorship](https://goodcircles.org/resources/start-a-nonprofit/fiscal-sponsorship-explained/) · [Choosing a Structure](https://goodcircles.org/resources/start-a-nonprofit/choosing-a-nonprofit-structure/) · [State Charitable Registration](https://goodcircles.org/resources/start-a-nonprofit/state-charitable-registration/)
+
+### Governance & compliance
+- [Board Governance](https://goodcircles.org/resources/governance-compliance/nonprofit-board-governance/) · [Form 990 Explained](https://goodcircles.org/resources/governance-compliance/form-990-explained/) · [Annual Compliance Checklist](https://goodcircles.org/resources/governance-compliance/annual-compliance-checklist/) · [Conflict-of-Interest Policy](https://goodcircles.org/resources/governance-compliance/conflict-of-interest-policy/) · [Charitable Solicitation Registration](https://goodcircles.org/resources/governance-compliance/charitable-solicitation-registration/) · [Document Retention](https://goodcircles.org/resources/governance-compliance/document-retention-policy/)
+
+### Grants
+- [How to Get Grant-Ready](https://goodcircles.org/resources/grants/how-to-get-grant-ready/) · [How to Find Grants](https://goodcircles.org/resources/grants/how-to-find-grants/) · [How to Write a Grant Proposal](https://goodcircles.org/resources/grants/how-to-write-a-grant-proposal/) · [Letter of Inquiry](https://goodcircles.org/resources/grants/how-to-write-a-letter-of-inquiry/) · [Grant Budget Guide](https://goodcircles.org/resources/grants/grant-budget-guide/) · [Grant Management & Reporting](https://goodcircles.org/resources/grants/grant-management-and-reporting/) · [Federal Grants](https://goodcircles.org/resources/grants/federal-grants-guide/) · [Why Diversified Nonprofits Win Grants](https://goodcircles.org/resources/grants/why-diversified-nonprofits-win-grants/)
+
+### Program design & impact
+- [Designing Grant-Ready Programs](https://goodcircles.org/resources/program-design/designing-grant-ready-programs/) · [Logic Model Guide](https://goodcircles.org/resources/program-design/logic-model-guide/) · [Theory of Change](https://goodcircles.org/resources/program-design/theory-of-change/) · [How to Measure Outcomes](https://goodcircles.org/resources/program-design/how-to-measure-outcomes/) · [Program Evaluation Basics](https://goodcircles.org/resources/program-design/program-evaluation-basics/) · [Impact Reporting](https://goodcircles.org/resources/program-design/impact-reporting/)
+
+### Fundraising
+- [The Funding Mix](https://goodcircles.org/resources/fundraising/the-funding-mix/) · [Individual Giving](https://goodcircles.org/resources/fundraising/individual-giving-basics/) · [Monthly Recurring Giving](https://goodcircles.org/resources/fundraising/monthly-recurring-giving/) · [Major Gifts](https://goodcircles.org/resources/fundraising/major-gifts/) · [Corporate Partnerships](https://goodcircles.org/resources/fundraising/corporate-partnerships/) · [Events Guide](https://goodcircles.org/resources/fundraising/fundraising-events-guide/) · [Earned Revenue](https://goodcircles.org/resources/fundraising/earned-revenue-for-nonprofits/)
+
+### Passive & recurring funding
+- [Build a Recurring Funding Base](https://goodcircles.org/resources/passive-funding/build-a-recurring-funding-base/) · [Supporter Enrollment Playbook](https://goodcircles.org/resources/passive-funding/supporter-enrollment-playbook/) · [Passive Fundraising Explained](https://goodcircles.org/resources/passive-funding/passive-fundraising-explained/) · [AmazonSmile Alternative for Nonprofits](https://goodcircles.org/resources/passive-funding/amazonsmile-alternative-for-nonprofits/) · [Passive Funding Math](https://goodcircles.org/resources/passive-funding/passive-funding-math/) · [Good Circles for Nonprofits](https://goodcircles.org/resources/passive-funding/good-circles-for-nonprofits/) · [Onboarding Checklist](https://goodcircles.org/resources/passive-funding/good-circles-onboarding-checklist/)
+
+### Marketing & communications
+- [Google Ad Grant Guide ($10k/mo free)](https://goodcircles.org/resources/marketing/google-ad-grant-guide/) · [Free Marketing Channels](https://goodcircles.org/resources/marketing/free-marketing-channels/) · [Nonprofit Storytelling](https://goodcircles.org/resources/marketing/nonprofit-storytelling/) · [Email Marketing](https://goodcircles.org/resources/marketing/nonprofit-email-marketing/) · [Social Media](https://goodcircles.org/resources/marketing/nonprofit-social-media/) · [Website Essentials](https://goodcircles.org/resources/marketing/nonprofit-website-essentials/) · [SEO for Nonprofits](https://goodcircles.org/resources/marketing/seo-for-nonprofits/) · [Earned Media & PR](https://goodcircles.org/resources/marketing/earned-media-and-pr/)
+
+### Donor development
+- [Donor Acquisition](https://goodcircles.org/resources/donor-development/donor-acquisition/) · [Retention & Stewardship](https://goodcircles.org/resources/donor-development/donor-retention-and-stewardship/) · [Segmentation](https://goodcircles.org/resources/donor-development/donor-segmentation/) · [Choosing a CRM](https://goodcircles.org/resources/donor-development/choosing-a-nonprofit-crm/) · [Building a Donor Journey](https://goodcircles.org/resources/donor-development/building-a-donor-journey/)
+
+### Operations & finance
+- [Budgeting](https://goodcircles.org/resources/operations/nonprofit-budgeting/) · [Financial Management](https://goodcircles.org/resources/operations/financial-management-basics/) · [Operating Reserves](https://goodcircles.org/resources/operations/operating-reserves/) · [Volunteer Management](https://goodcircles.org/resources/operations/volunteer-management/) · [Tech Stack](https://goodcircles.org/resources/operations/nonprofit-tech-stack/) · [Insurance](https://goodcircles.org/resources/operations/insurance-for-nonprofits/) · [Strategic Planning](https://goodcircles.org/resources/operations/strategic-planning/) · [AI for Nonprofits](https://goodcircles.org/resources/operations/ai-for-nonprofits/)
+
+### Free tools & templates
+- [Grant-Readiness Assessment](https://goodcircles.org/resources/tools/grant-readiness-assessment/) · [Passive Funding Calculator](https://goodcircles.org/resources/tools/passive-funding-calculator/) · [Templates & Toolkits](https://goodcircles.org/resources/templates/) (editable bylaws, budgets, grant proposal, case for support, logic model, board minutes, donor thank-you scripts, communications calendar, conflict-of-interest policy).

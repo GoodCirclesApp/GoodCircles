@@ -3,10 +3,32 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import { readdirSync, statSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { CITIES, STATE, isCityIndexable } from './src/data/cities';
 import { COUNTIES, COUNTY_ENGINE_ENABLED, isCountyIndexable } from './src/data/counties';
 
 const SITE = 'https://goodcircles.org';
+
+// The /resources/ hub is a static bundle in public/, so Astro doesn't auto-add it to
+// the sitemap. Walk public/resources for every index.html and emit its pretty URL, so
+// each resource page is in the sitemap (the SEO gate requires indexable pages to be).
+function collectResourceUrls() {
+  const base = fileURLToPath(new URL('./public/resources/', import.meta.url));
+  if (!existsSync(base)) return [];
+  const urls = [];
+  const walk = (dir, urlPath) => {
+    for (const name of readdirSync(dir)) {
+      const p = join(dir, name);
+      if (statSync(p).isDirectory()) walk(p, `${urlPath}${name}/`);
+      else if (name === 'index.html') urls.push(`${SITE}${urlPath}`);
+    }
+  };
+  walk(base, '/resources/');
+  return urls;
+}
+const RESOURCE_URLS = collectResourceUrls();
 
 // Thin-content guardrail: city pages are noindex until they have >=6 real
 // seeded entries (CityPages.md) — keep noindex pages out of the sitemap too.
@@ -33,6 +55,7 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
+      customPages: RESOURCE_URLS,
       filter: (page) => !EXCLUDED_CITY_URLS.has(page) && !EXCLUDED_COUNTY_URLS.has(page),
       // Legal pages don't need crawl priority; everything else defaults.
       serialize(item) {

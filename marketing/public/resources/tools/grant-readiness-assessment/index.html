@@ -1,0 +1,239 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grant-Readiness Assessment (Free Interactive Scorecard) · Good Circles</title>
+<meta name="description" content="A free 12-question grant-readiness scorecard. Answer yes / partial / no and get an instant percentage, a readiness band, a per-category breakdown, and tailored next steps. Runs entirely in your browser.">
+<link rel="canonical" href="https://goodcircles.org/resources/tools/grant-readiness-assessment/">
+<meta property="og:title" content="Grant-Readiness Assessment (Free Interactive Scorecard) · Good Circles">
+<meta property="og:description" content="Answer 12 questions and get an instant score, a readiness band, and tailored next steps toward your next grant.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://goodcircles.org/resources/tools/grant-readiness-assessment/"><meta property="og:image" content="https://goodcircles.org/resources/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#7851A9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/resources.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Grant-Readiness Assessment","description":"A free interactive scorecard that scores a nonprofit's readiness to apply for grants across six categories and returns tailored next steps. Runs entirely in the browser; no data is collected.","applicationCategory":"BusinessApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://goodcircles.org/resources/tools/grant-readiness-assessment/","publisher":{"@type":"Organization","name":"Good Circles","url":"https://goodcircles.org","logo":{"@type":"ImageObject","url":"https://goodcircles.org/resources/og.png"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a grant-readiness assessment?","acceptedAnswer":{"@type":"Answer","text":"It's a structured self-check of whether your nonprofit has the legal, governance, program, outcome, financial, and revenue foundations funders look for before they award a grant. This tool scores 12 questions across six categories and returns a percentage, a readiness band, and tailored next steps."}},{"@type":"Question","name":"What score means I'm ready to apply for grants?","acceptedAnswer":{"@type":"Answer","text":"As a rough guide: 75% and above means you're grant-ready and can apply with confidence; 90%+ means you're highly competitive. Below 75% you can still apply to the right funders, but closing the gaps first will materially improve your odds. Treat the band as a directional estimate, not a guarantee."}},{"@type":"Question","name":"Is my data saved or sent anywhere?","acceptedAnswer":{"@type":"Answer","text":"No. The entire assessment runs in your browser with plain JavaScript. Nothing you select is stored, saved, or transmitted — reload the page and it's gone. There is no account, no tracking, and no submission."}},{"@type":"Question","name":"Which category do most small nonprofits score lowest on?","acceptedAnswer":{"@type":"Answer","text":"Revenue diversification. Many capable organizations rely on one or two restricted sources and have little recurring, unrestricted income — which is exactly the durability funders reward in a sustainability section. Building a passive recurring base is one of the fastest ways to raise that score."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Good Circles","item":"https://goodcircles.org"},{"@type":"ListItem","position":2,"name":"Resources","item":"https://goodcircles.org/resources/"},{"@type":"ListItem","position":3,"name":"Grant-Readiness Assessment","item":"https://goodcircles.org/resources/tools/grant-readiness-assessment/"}]}</script>
+</head><body>
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/grants/">Grants</a><a href="/resources/passive-funding/">Passive funding</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>
+<div class="wrap"><header class="hero">
+  <div class="crumb"><a href="/resources/">Resources</a> › Tools › Grant-Readiness Assessment</div>
+  <div class="eyebrow">Free Tools</div>
+  <h1>Grant-Readiness Assessment</h1>
+  <div class="dateline">Updated June 16, 2026 · Good Circles · interactive scorecard</div>
+</header>
+<article>
+  <div class="answer">Grant reviewers don't fund the organization that needs money most — they fund the one most likely to deliver and survive. This free <b>12-question scorecard</b> checks the six foundations funders actually screen for: <b>legal structure, governance, program design, outcomes, financial health, and revenue diversification</b>. Answer each as <b>yes, partial, or no</b>, and you'll get an instant readiness percentage, a band, a per-category breakdown, and tailored next steps. It all runs in your browser — nothing you select is saved or sent anywhere.</div>
+
+  <style>
+    .gr-cat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 12px}
+    .gr-cat>.h{font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.86rem;letter-spacing:.5px;text-transform:uppercase;color:var(--gold-deep);margin-bottom:8px}
+    .gr-q{padding:9px 0;border-top:1px solid var(--line2)}
+    .gr-q:first-of-type{border-top:none}
+    .gr-q .qt{font-size:.99rem;color:#2f2940;margin-bottom:7px}
+    .gr-opts{display:flex;flex-wrap:wrap;gap:6px}
+    .gr-opts label{font-family:'Montserrat';font-weight:700;font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:5px 13px;cursor:pointer;color:#46405c;user-select:none}
+    .gr-opts input{position:absolute;opacity:0;pointer-events:none}
+    .gr-opts label:hover{border-color:var(--gold)}
+    .gr-opts input:checked+span{}
+    .gr-opts label.sel-y{background:#edf8f2;border-color:var(--emerald);color:#1d6b48}
+    .gr-opts label.sel-p{background:#fbf6ec;border-color:var(--gold);color:var(--gold-deep)}
+    .gr-opts label.sel-n{background:#fbeff1;border-color:var(--crimson);color:var(--crimson)}
+    .gr-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 4px}
+    .gr-note{font-size:.84rem;color:var(--ash)}
+    #gr-result{display:none;margin-top:8px}
+    .gr-band{font-family:'Montserrat';font-weight:900;font-size:1.05rem;letter-spacing:.3px}
+    .gr-bar{height:14px;border-radius:999px;background:#eee3f6;overflow:hidden;margin:10px 0 4px}
+    .gr-bar>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#7851A9,#C2A76F);width:0;transition:width .5s ease}
+    .gr-catbar{height:8px;border-radius:999px;background:#eee3f6;overflow:hidden;margin-top:5px}
+    .gr-catbar>span{display:block;height:100%;background:var(--purple);width:0}
+    .gr-next li{margin-bottom:8px}
+  </style>
+
+  <div class="card" style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);margin:6px 0 4px">
+    <form id="gr-form" aria-label="Grant-readiness questions"></form>
+    <div class="gr-actions">
+      <button type="button" class="btn btn-purple" id="gr-calc">Calculate my score</button>
+      <button type="button" class="btn" id="gr-reset" style="background:#fff;border:1px solid var(--line);color:var(--ink)">Reset</button>
+      <span class="gr-note" id="gr-count">0 of 12 answered</span>
+    </div>
+    <p class="gr-note" style="margin-top:4px">Private by design: this runs entirely in your browser. Nothing you select is stored, saved, or sent anywhere.</p>
+
+    <div id="gr-result">
+      <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
+      <div class="stats" style="grid-template-columns:repeat(2,1fr)">
+        <div class="stat"><div class="n" id="gr-pct">0%</div><div class="l">Readiness score</div></div>
+        <div class="stat"><div class="n g" id="gr-raw">0 / 24</div><div class="l">Points (yes=2, partial=1, no=0)</div></div>
+      </div>
+      <div class="gr-bar"><span id="gr-barfill"></span></div>
+      <p class="gr-band" id="gr-bandtxt"></p>
+      <p id="gr-bandsub" style="font-size:.96rem;color:#46405c"></p>
+
+      <h3 style="margin-top:18px">Category breakdown</h3>
+      <table class="tbl"><thead><tr><th>Category</th><th>Score</th><th style="width:34%">&nbsp;</th></tr></thead><tbody id="gr-cattable"></tbody></table>
+
+      <h3 style="margin-top:14px">Your tailored next steps</h3>
+      <ul class="gr-next" id="gr-steps"></ul>
+    </div>
+  </div>
+
+  <div class="callout"><h4>How the score works</h4><p>Each question scores <b>yes = 2, partial = 1, no = 0</b>, for a maximum of 24 points (2 questions × 6 categories). Your percentage is points ÷ 24. Bands: <b>0–49% Foundation-building · 50–74% Developing · 75–89% Grant-ready · 90–100% Highly competitive.</b> These are directional estimates to guide your prep, not a prediction of any specific funder's decision.</p></div>
+
+  <div class="gcbox">
+    <span class="tagpill">The category most orgs lose points on</span>
+    <h3>Revenue diversification is where small nonprofits score lowest — and the fastest fix is a passive base</h3>
+    <p>Most capable organizations check every box except recurring, unrestricted income. That's exactly the durability funders reward in a sustainability section. Good Circles gives your nonprofit a recurring base with almost no staff time: supporters pick your cause once, then a share of their everyday local spending funds you automatically — conservatively about <b>$72 per active supporter per year</b> (≈ $36,000/year from 500 supporters), free to join. It directly raises your weakest category. <em>Figures are estimates, not guarantees.</em></p>
+    <a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a>
+  </div>
+
+  <div class="sharebar">
+    <span class="lbl">Share</span>
+    <a href="javascript:void(0)" onclick="gcShare('facebook')" aria-label="Share on Facebook"><svg viewBox="0 0 24 24"><path d="M13 22v-8h3l1-4h-4V8c0-1 .5-2 2-2h2V2h-3c-3 0-5 2-5 5v3H6v4h3v8z"/></svg>Facebook</a>
+    <a href="javascript:void(0)" onclick="gcShare('x')" aria-label="Share on X"><svg viewBox="0 0 24 24"><path d="M18 2h3l-7 8 8 12h-6l-5-7-6 7H2l8-9L2 2h6l4 6zm-1 18h2L8 4H6z"/></svg>X</a>
+    <a href="javascript:void(0)" onclick="gcShare('linkedin')" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M4 4a2 2 0 110 4 2 2 0 010-4zM3 9h3v12H3zM9 9h3v2c.5-1 2-2 4-2 3 0 4 2 4 5v7h-3v-6c0-2-1-3-2-3s-2 1-2 3v6H9z"/></svg>LinkedIn</a>
+    <a href="javascript:void(0)" onclick="gcShare('email')" aria-label="Share by email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg>Email</a>
+    <button onclick="gcCopy(this)" aria-label="Copy link"><svg viewBox="0 0 24 24"><path d="M9 7h9v12H9zM5 3h9v2H7v10H5z"/></svg><span class="t">Copy link</span></button>
+  </div>
+
+  <h2 id="faq">FAQ</h2>
+  <div class="faq"><h4>What is a grant-readiness assessment?</h4><p>It's a structured self-check of whether your nonprofit has the legal, governance, program, outcome, financial, and revenue foundations funders look for before they award a grant. This tool scores 12 questions across six categories and returns a percentage, a readiness band, and tailored next steps.</p></div>
+  <div class="faq"><h4>What score means I'm ready to apply for grants?</h4><p>As a rough guide: 75% and above means you're grant-ready and can apply with confidence; 90%+ means you're highly competitive. Below 75% you can still apply to the right funders, but closing the gaps first will materially improve your odds. Treat the band as a directional estimate, not a guarantee.</p></div>
+  <div class="faq"><h4>Is my data saved or sent anywhere?</h4><p>No. The entire assessment runs in your browser with plain JavaScript. Nothing you select is stored, saved, or transmitted — reload the page and it's gone. There is no account, no tracking, and no submission.</p></div>
+  <div class="faq"><h4>Which category do most small nonprofits score lowest on?</h4><p>Revenue diversification. Many capable organizations rely on one or two restricted sources and have little recurring, unrestricted income — which is exactly the durability funders reward in a sustainability section. Building a passive recurring base is one of the fastest ways to raise that score.</p></div>
+
+  <div class="related"><b>Related guides:</b><br>
+    <a href="/resources/grants/how-to-get-grant-ready/">How to get grant-ready</a>
+    <a href="/resources/grants/how-to-write-a-grant-proposal/">How to write a grant proposal</a>
+    <a href="/resources/program-design/">Program design &amp; logic models</a>
+    <a href="/resources/passive-funding/build-a-recurring-funding-base/">Build a recurring funding base</a>
+    <a href="/resources/tools/passive-funding-calculator/">Passive funding calculator</a>
+  </div>
+</article></div>
+<footer><div class="wrap">
+  <div class="ftag">Save. Give. Stay local.</div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/grants/">Grants</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
+</div></footer>
+
+<script>
+(function(){
+  var CATS=[
+    {name:"Legal & structure",qs:[
+      "Your 501(c)(3) tax-exempt status is confirmed and in good standing.",
+      "Your state and charitable-solicitation registrations are current and clean."]},
+    {name:"Governance",qs:[
+      "You have an active, independent board that meets regularly.",
+      "You have a conflict-of-interest policy and keep documented board minutes."]},
+    {name:"Program design",qs:[
+      "You have a written logic model or theory of change.",
+      "You have a clearly defined target population for your programs."]},
+    {name:"Outcomes",qs:[
+      "Your programs have specific, measurable objectives.",
+      "You actively collect outcome data (not just activity counts)."]},
+    {name:"Financial health",qs:[
+      "You have a clean operating budget and recent financial statements.",
+      "You hold an operating reserve of roughly three months or more."]},
+    {name:"Revenue diversification",qs:[
+      "You have multiple, independent revenue streams.",
+      "You have recurring, unrestricted income you control."]}
+  ];
+  var STEPS={
+    "Legal & structure":'Firm up the basics first — confirm your 501(c)(3) standing and renew any lapsed state or charitable-solicitation registration. See <a href="/resources/grants/how-to-get-grant-ready/">How to get grant-ready</a>.',
+    "Governance":'Strengthen governance: recruit independent board members, adopt a conflict-of-interest policy, and keep clean minutes. <a href="/resources/grants/how-to-get-grant-ready/">How to get grant-ready</a> covers the documents funders check.',
+    "Program design":'Put your program on paper with a logic model or theory of change and a defined target population. Start with our <a href="/resources/program-design/">program design &amp; logic model guides</a>.',
+    "Outcomes":'Move from activities to outcomes — set measurable, time-bound objectives and start collecting outcome data. See <a href="/resources/grants/how-to-write-a-grant-proposal/">How to write a grant proposal</a> for measurable objectives.',
+    "Financial health":'Tighten your finances: a clean line-item budget, recent statements, and a reserve toward three months. <a href="/resources/grants/how-to-get-grant-ready/">How to get grant-ready</a> walks through the financials funders want.',
+    "Revenue diversification":'Add recurring, unrestricted income so a grant looks like a safe bet, not a lifeline. See <a href="/resources/passive-funding/build-a-recurring-funding-base/">Build a recurring funding base</a>.'
+  };
+  var form=document.getElementById('gr-form');
+  var idx=0;
+  CATS.forEach(function(cat,ci){
+    var box=document.createElement('div');box.className='gr-cat';
+    var h=document.createElement('div');h.className='h';h.textContent=cat.name;box.appendChild(h);
+    cat.qs.forEach(function(q){
+      var qi=idx++;
+      var qd=document.createElement('div');qd.className='gr-q';
+      var qt=document.createElement('div');qt.className='qt';qt.textContent=q;qd.appendChild(qt);
+      var opts=document.createElement('div');opts.className='gr-opts';
+      [['yes','Yes',2,'sel-y'],['partial','Partial',1,'sel-p'],['no','No',0,'sel-n']].forEach(function(o){
+        var lab=document.createElement('label');lab.dataset.cls=o[3];
+        var inp=document.createElement('input');inp.type='radio';inp.name='q'+qi;inp.value=o[2];inp.dataset.cat=ci;
+        var sp=document.createElement('span');sp.textContent=o[1];
+        lab.appendChild(inp);lab.appendChild(sp);
+        inp.addEventListener('change',function(){
+          var sibs=opts.querySelectorAll('label');
+          sibs.forEach(function(s){s.classList.remove('sel-y','sel-p','sel-n');});
+          lab.classList.add(o[3]);
+          updateCount();
+        });
+        opts.appendChild(lab);
+      });
+      qd.appendChild(opts);box.appendChild(qd);
+    });
+    form.appendChild(box);
+  });
+
+  function answered(){return form.querySelectorAll('input:checked').length;}
+  function updateCount(){document.getElementById('gr-count').textContent=answered()+' of 12 answered';}
+
+  function band(p){
+    if(p>=90)return['Highly competitive','Your foundations are strong across the board. Pursue competitive funders with confidence, and keep your strongest sustainability story front and center.'];
+    if(p>=75)return['Grant-ready','You have the structure funders reward. Apply to well-matched funders now, and shore up your lowest category to push into highly competitive territory.'];
+    if(p>=50)return['Developing','You have real foundations but visible gaps. You can still apply to the right funders — closing the lowest categories first will materially improve your odds.'];
+    return['Foundation-building','Focus on the fundamentals before investing heavily in applications. The next steps below are ordered to build the base funders screen for.'];
+  }
+
+  document.getElementById('gr-calc').addEventListener('click',function(){
+    if(answered()<12){alert('Please answer all 12 questions to calculate your score.');return;}
+    var catScores=[0,0,0,0,0,0],total=0;
+    form.querySelectorAll('input:checked').forEach(function(inp){
+      var v=parseInt(inp.value,10);total+=v;catScores[parseInt(inp.dataset.cat,10)]+=v;
+    });
+    var pct=Math.round(total/24*100);
+    document.getElementById('gr-pct').textContent=pct+'%';
+    document.getElementById('gr-raw').textContent=total+' / 24';
+    var b=band(pct);
+    document.getElementById('gr-bandtxt').textContent=b[0];
+    document.getElementById('gr-bandsub').textContent=b[1];
+
+    var tbody=document.getElementById('gr-cattable');tbody.innerHTML='';
+    var weakest=[],minScore=99;
+    CATS.forEach(function(cat,ci){
+      var s=catScores[ci];
+      if(s<minScore){minScore=s;}
+      var tr=document.createElement('tr');
+      var w=Math.round(s/4*100);
+      tr.innerHTML='<td>'+cat.name+'</td><td><b>'+s+' / 4</b></td>'+
+        '<td><div class="gr-catbar"><span style="width:'+w+'%"></span></div></td>';
+      tbody.appendChild(tr);
+    });
+    CATS.forEach(function(cat,ci){if(catScores[ci]===minScore)weakest.push(cat.name);});
+
+    var stepsEl=document.getElementById('gr-steps');stepsEl.innerHTML='';
+    // tailored: surface weakest categories first, then any below-perfect
+    var ordered=[];
+    CATS.forEach(function(cat,ci){if(catScores[ci]===minScore)ordered.push(cat.name);});
+    CATS.forEach(function(cat,ci){if(catScores[ci]<4&&ordered.indexOf(cat.name)<0)ordered.push(cat.name);});
+    if(ordered.length===0){
+      var li=document.createElement('li');
+      li.innerHTML='Every category is maxed out — you’re highly competitive. Keep your sustainability story strong; a recurring base via <a href="/resources/passive-funding/build-a-recurring-funding-base/">a passive funding base</a> keeps it that way.';
+      stepsEl.appendChild(li);
+    } else {
+      ordered.forEach(function(name){
+        var li=document.createElement('li');li.innerHTML=STEPS[name];stepsEl.appendChild(li);
+      });
+    }
+
+    document.getElementById('gr-result').style.display='block';
+    document.getElementById('gr-barfill').style.width=pct+'%';
+    document.getElementById('gr-result').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
+  document.getElementById('gr-reset').addEventListener('click',function(){
+    form.querySelectorAll('input:checked').forEach(function(i){i.checked=false;});
+    form.querySelectorAll('label').forEach(function(l){l.classList.remove('sel-y','sel-p','sel-n');});
+    document.getElementById('gr-result').style.display='none';
+    updateCount();
+  });
+  updateCount();
+})();
+</script>
+<script src="/resources/share.js"></script>
+</body></html>

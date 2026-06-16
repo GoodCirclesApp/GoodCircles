@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Good Circles Nonprofit Resource Center — social share card (1200x630).
+       Rasterize to og.png for production (e.g. `rsvg-convert og.svg -o og.png` or a headless browser). -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#241247"/>
+      <stop offset="0.58" stop-color="#4B2E84"/>
+      <stop offset="1" stop-color="#7851A9"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.12" r="0.5">
+      <stop offset="0" stop-color="#FADC9C" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#FADC9C" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#B8924B"/>
+      <stop offset="0.6" stop-color="#FADC9C"/>
+      <stop offset="1" stop-color="#C2A76F"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="0" y="0" width="1200" height="8" fill="url(#gold)"/>
+
+  <!-- crown + infinity submark, simplified -->
+  <g transform="translate(92,150)" fill="none" stroke="#FADC9C" stroke-width="6">
+    <path d="M0 34 L14 6 L31 28 L48 6 L62 34 Z" stroke-linejoin="round"/>
+    <circle cx="20" cy="64" r="17"/><circle cx="44" cy="64" r="17"/>
+  </g>
+
+  <text x="92" y="300" font-family="Montserrat, Arial, sans-serif" font-weight="800" font-size="34" letter-spacing="2" fill="#FADC9C">NONPROFIT RESOURCE CENTER</text>
+  <text x="90" y="382" font-family="Montserrat, Arial, sans-serif" font-weight="900" font-size="76" letter-spacing="-2" fill="#FFFFFF">Start. Fund. Run. Grow.</text>
+  <text x="92" y="452" font-family="Fira Sans, Arial, sans-serif" font-weight="500" font-size="30" fill="#E9DEFF">Free guides, templates &amp; tools — and a recurring funding</text>
+  <text x="92" y="492" font-family="Fira Sans, Arial, sans-serif" font-weight="500" font-size="30" fill="#E9DEFF">base that grows while you work.</text>
+
+  <line x1="92" y1="545" x2="1108" y2="545" stroke="#FFFFFF" stroke-opacity="0.2" stroke-width="2"/>
+  <text x="92" y="588" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="26" letter-spacing="1" fill="#FFFFFF">Good Circles</text>
+  <text x="1108" y="588" text-anchor="end" font-family="Montserrat, Arial, sans-serif" font-weight="600" font-size="24" letter-spacing="1" fill="#CDB9EE">goodcircles.org/resources</text>
+</svg>

@@ -1,0 +1,166 @@
+/* ===========================================================================
+   Good Circles — Nonprofit Resource Center stylesheet
+   Extends the /learn aesthetic. Brand palette per official guidelines (Powerup Media):
+   purple #7851A9 · lavender #CA9CE1 · gold #C2A76F · burgundy #A20021
+   Headlines Montserrat ExtraBold · body Fira Sans
+   One self-contained stylesheet for every /resources page.
+   =========================================================================== */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#7851A9; --ink:#2E1B4E; --plum:#3E2A6B; --lav:#CA9CE1; --lav-soft:#F0E5F8;
+  --gold:#C2A76F; --gold-deep:#8A6A2E; --gold-soft:#FADC9C;
+  --emerald:#2f9e6f; --crimson:#A20021; --amber:#C9821E; --teal:#1f7d8c;
+  --cream:#FBF7FE; --paper:#fff; --ash:#6B6577; --line:#E7DCF2; --line2:#F1EAF8;
+  --shadow:0 10px 30px rgba(46,27,78,.12); --shadow-sm:0 4px 14px rgba(46,27,78,.08);
+}
+body{font-family:'Fira Sans',Arial,sans-serif;color:#2b2536;background:var(--cream);line-height:1.65}
+h1,h2,h3,h4{font-family:'Montserrat',Arial,sans-serif;color:var(--ink);line-height:1.15}
+.wrap{max-width:780px;margin:0 auto;padding:0 26px}
+.wide{max-width:1080px}
+
+/* ---- nav ---- */
+.nav{background:var(--ink);color:#fff;height:64px;display:flex;align-items:center;border-bottom:2px solid var(--gold)}
+.nav .wrap{display:flex;align-items:center;gap:20px;width:100%;max-width:1080px}
+.nav .brand{display:flex;align-items:center;gap:9px;text-decoration:none}
+.nav .brand img{height:30px}
+.nav .brand span{font-family:'Montserrat';font-weight:800;color:#fff;font-size:1.02rem;letter-spacing:-.3px}
+.nav .links{margin-left:auto;display:flex;gap:18px;align-items:center}
+.nav .links a{color:#e7daf5;text-decoration:none;font-family:'Montserrat';font-weight:600;font-size:.85rem}
+.nav .links a:hover{color:#fff}
+.btn{font-family:'Montserrat';font-weight:800;font-size:.9rem;padding:11px 20px;border-radius:999px;border:none;cursor:pointer;text-decoration:none;display:inline-block}
+.btn-gold{background:linear-gradient(135deg,#B8924B,#FADC9C 60%,#C2A76F);color:#2E1B4E}
+.btn-purple{background:linear-gradient(135deg,#2E1B4E,#7851A9);color:#fff}
+
+/* ---- header / hero ---- */
+.hero{padding:34px 0 8px}
+.crumb{font-size:.82rem;color:var(--ash);font-family:'Montserrat';font-weight:600;margin-bottom:12px}
+.crumb a{color:var(--gold-deep);text-decoration:none}
+.eyebrow{font-family:'Montserrat';font-weight:800;font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold-deep);margin-bottom:8px}
+h1{font-size:clamp(1.9rem,4vw,2.7rem);font-weight:900;letter-spacing:-1px;margin-bottom:8px}
+.dateline{font-size:.82rem;color:var(--ash);font-family:'Montserrat';font-weight:600;margin-bottom:14px}
+
+/* ---- article body ---- */
+article{padding:8px 0 40px}
+.answer{background:#fff;border-left:5px solid var(--gold);border-radius:0 14px 14px 0;padding:18px 22px;margin:0 0 26px;font-size:1.14rem;color:#33294a;box-shadow:0 8px 24px rgba(46,27,78,.08)}
+.answer b{color:var(--ink)}
+article h2{font-size:1.4rem;font-weight:800;margin:32px 0 8px}
+article h3{font-size:1.12rem;margin:20px 0 6px}
+article p{margin:0 0 14px;font-size:1.04rem;color:#2f2940}
+article ul,article ol{margin:0 0 16px 4px;padding-left:22px}article li{margin-bottom:7px}
+article a{color:var(--gold-deep)}
+article b,article strong{color:var(--ink)}
+
+/* ---- table of contents ---- */
+.toc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:0 0 24px}
+.toc b{font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.78rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-deep)}
+.toc ol{margin:8px 0 0 0;padding-left:20px}
+.toc li{margin-bottom:3px;font-size:.95rem}
+.toc a{color:#46405c;text-decoration:none}.toc a:hover{color:var(--gold-deep)}
+
+/* ---- callouts ---- */
+.callout{border-left:5px solid var(--gold);background:#fbf6ec;padding:14px 18px;border-radius:0 12px 12px 0;margin:18px 0}
+.callout.purple{border-color:var(--purple);background:#f4f0fb}
+.callout.red{border-color:var(--crimson);background:#fbeff1}
+.callout.grn{border-color:var(--emerald);background:#edf8f2}
+.callout h4{margin-bottom:4px}
+.callout p{margin:0;font-size:.98rem}
+
+/* ---- the Good Circles tie-in box (used on most resources) ---- */
+.gcbox{background:linear-gradient(135deg,#2E1B4E,#7851A9);color:#fff;border-radius:16px;padding:22px 24px;margin:26px 0}
+.gcbox .tagpill{display:inline-block;font-family:'Montserrat';font-weight:800;font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:rgba(250,220,156,.22);color:var(--gold-soft);margin-bottom:8px}
+.gcbox h3{color:#fff;font-size:1.18rem}
+.gcbox p{color:#e7daf5;margin:6px 0 14px;font-size:.98rem}
+.gcbox a.btn-gold{font-size:.86rem}
+
+/* ---- cta box ---- */
+.ctabox{background:linear-gradient(135deg,#2E1B4E,#7851A9);color:#fff;border-radius:16px;padding:24px;margin:28px 0}
+.ctabox h3{color:#fff}.ctabox p{color:#e7daf5;margin:6px 0 14px}
+
+/* ---- faq ---- */
+.faq{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 18px;margin-bottom:9px}
+.faq h4{font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:1rem;margin-bottom:4px}
+.faq p{font-size:.95rem;margin:0;color:#46405c}
+
+/* ---- tables ---- */
+.tbl{width:100%;border-collapse:collapse;font-size:.93rem;margin:10px 0 18px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl th{font-family:'Montserrat';font-size:.72rem;letter-spacing:.6px;text-transform:uppercase;color:var(--ash);background:#faf7fd}
+.tbl tr:last-child td{border-bottom:none}
+
+/* ---- step list ---- */
+.steps{counter-reset:step;list-style:none;padding:0;margin:14px 0}
+.steps>li{position:relative;padding:4px 0 16px 46px;margin:0}
+.steps>li:before{counter-increment:step;content:counter(step);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#2E1B4E,#7851A9);color:#fff;font-family:'Montserrat';font-weight:800;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+.steps>li b{display:block;font-family:'Montserrat';color:var(--ink);margin-bottom:2px}
+
+/* ---- checklist ---- */
+ul.check{list-style:none;padding:0;margin:12px 0}
+ul.check li{padding:6px 0 6px 28px;position:relative}
+ul.check li:before{content:"✓";color:var(--emerald);font-weight:800;position:absolute;left:4px;top:6px}
+
+/* ---- stat tiles ---- */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+.stat .n{font-family:'Montserrat';font-weight:900;font-size:1.7rem;color:var(--purple);line-height:1;letter-spacing:-1px}
+.stat .n.g{color:var(--gold-deep)}.stat .n.r{color:var(--crimson)}
+.stat .l{font-size:.8rem;color:var(--ash);margin-top:6px}
+
+/* ---- share bar ---- */
+.sharebar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0;margin:24px 0}
+.sharebar .lbl{font-family:'Montserrat';font-weight:800;font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--ash);margin-right:4px}
+.sharebar a,.sharebar button{display:inline-flex;align-items:center;gap:6px;font-family:'Montserrat';font-weight:700;font-size:.8rem;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer}
+.sharebar a:hover,.sharebar button:hover{border-color:var(--gold);color:var(--gold-deep)}
+.sharebar svg{width:15px;height:15px;fill:currentColor}
+
+/* ---- related pills ---- */
+.related{border-top:1px solid var(--line);margin-top:24px;padding-top:18px}
+.related b{font-family:'Montserrat';color:var(--ink)}
+.related a{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;margin:6px 6px 0 0;font-family:'Montserrat';font-weight:700;font-size:.82rem;color:var(--ink);text-decoration:none}
+.related a:hover{border-color:var(--gold);color:var(--gold-deep)}
+
+/* ---- hub: category + card grids ---- */
+.lead{font-size:1.12rem;color:#332b42;max-width:64ch;margin-bottom:8px}
+.catgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0}
+.catcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;text-decoration:none;display:block;border-top:4px solid var(--purple);transition:box-shadow .15s,transform .15s}
+.catcard:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.catcard .kicker{font-family:'Montserrat';font-weight:800;font-size:.66rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-deep)}
+.catcard h3{font-size:1.12rem;color:var(--ink);margin:5px 0 6px}
+.catcard p{font-size:.9rem;color:#4a4360}
+.catcard .count{font-family:'Montserrat';font-weight:700;font-size:.78rem;color:var(--purple);margin-top:9px;display:inline-block}
+/* category accent variants */
+.catcard.c-start{border-top-color:#7851A9}
+.catcard.c-gov{border-top-color:#1f7d8c}
+.catcard.c-grants{border-top-color:#8A6A2E}
+.catcard.c-program{border-top-color:#2f9e6f}
+.catcard.c-fund{border-top-color:#C9821E}
+.catcard.c-passive{border-top-color:#A20021}
+.catcard.c-mktg{border-top-color:#7851A9}
+.catcard.c-donor{border-top-color:#1f7d8c}
+.catcard.c-ops{border-top-color:#3E2A6B}
+.catcard.c-tools{border-top-color:#8A6A2E}
+
+.hubgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.hubcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;display:block}
+.hubcard:hover{box-shadow:var(--shadow-sm)}
+.hubcard h3{font-size:1.04rem;color:var(--ink)}.hubcard p{font-size:.88rem;color:#4a4360;margin-top:5px}
+.hubcard .tag{font-family:'Montserrat';font-weight:700;font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold-deep)}
+
+/* ---- download / template cards ---- */
+.dlcard{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:10px;text-decoration:none}
+.dlcard:hover{border-color:var(--gold)}
+.dlcard .ic{flex:0 0 38px;height:38px;border-radius:9px;background:var(--lav-soft);display:flex;align-items:center;justify-content:center;font-family:'Montserrat';font-weight:800;color:var(--purple);font-size:.7rem}
+.dlcard h4{font-size:1rem;color:var(--ink);margin-bottom:2px}.dlcard p{font-size:.86rem;color:#4a4360;margin:0}
+
+/* ---- footer ---- */
+footer{background:var(--ink);color:#cdbfe0;padding:30px 0;text-align:center;margin-top:20px}
+footer img{height:28px;margin-bottom:8px}
+footer .ftag{color:var(--gold-soft);font-family:'Montserrat';font-weight:700}
+footer .fnav{margin:12px 0 4px;font-size:.82rem}
+footer .fnav a{color:#cdbfe0;text-decoration:none;margin:0 8px;font-family:'Montserrat';font-weight:600}
+footer .muted{color:#9883b5;font-size:.8rem;margin-top:6px}
+
+@media(max-width:720px){
+  .catgrid,.hubgrid{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .nav .links a:not(.btn){display:none}
+}
