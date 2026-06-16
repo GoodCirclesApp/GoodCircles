@@ -21,7 +21,7 @@
 > Recommended order: **P1-0** (split single-source + cent-quantize, pure code, do first) → **P1-A** (migration baseline, the linchpin — gates all schema work) → additive items (Stripe charge ids, idempotency table, indexes) → **P1-B2** type changes/enums last. ⚠️ Real prod boot is `Dockerfile:18` `prisma db push --accept-data-loss` (NOT package.json) + zero migration history. 🔴 Owner decision first: is prod DB empty/pre-launch? (collapses most risk). Awaiting owner approval before any P1 code.
 - ☐ Prisma **migration baseline** + switch start to `prisma migrate deploy`; remove `db push --accept-data-loss`
 - ☐ Money columns → `Decimal` w/ explicit precision/scale; remove `Float` money (catalog/analytics); real Prisma enums; hot-path indexes
-- ☐ Single-source the 89/10/1 split; delete dead 79/10/11 code in `stripeService`; cent-quantize; add Σ-conservation test
+- ☑ Single-source the 89/10/1 split; delete dead 79/10/11 code in `stripeService`; cent-quantize; add Σ-conservation test. _Done 2026-06-16 (P1-0, commits 7e2b02d + 77483bb): new `server/src/lib/splitRates.ts` (shared rates + sum-to-1 assert + roundCents); calculateDistribution cent-quantizes with merchant as residual party (exact conservation); dead 79/10/11 removed; all split sites single-sourced; new exact-cent Σ test (30/30, incl. 5000-input fuzz). tsc + vite build green._
 - ☐ Webhook/ledger **idempotency** (Stripe event-id dedupe)
 - ☐ Persist Stripe charge/payment-intent id on `Transaction` (enables refunds/reconciliation)
 

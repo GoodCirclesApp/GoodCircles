@@ -1,6 +1,7 @@
 # Phase 1 (P1) Execution Plan — Data Integrity & Money Correctness
 
-> **Status:** PLAN ONLY — no code written yet. Awaiting owner approval of the sequence below.
+> **Status (2026-06-16):** **P1-0 is ✅ DONE & pushed** (commits `7e2b02d` + `77483bb`). The rest is plan-only, gated on **P1-A**, which needs production-DB access (owner step).
+> **Owner data decision (resolved):** no transaction records need to be kept (throwaway), **but the waitlist is real user data that must be preserved** → use the **conservative baseline-the-existing-DB path** in P1-A (touches no table data), **not** the reset path.
 > **Created:** 2026-06-15 · Derived from a read-only, evidence-backed investigation (5 parallel agents, every claim quoted to `file:line`).
 > **Companion docs:** [`ENTERPRISE_AUDIT_2026-06.md`](./ENTERPRISE_AUDIT_2026-06.md) · [`ENTERPRISE_ARCHITECTURE.md`](./ENTERPRISE_ARCHITECTURE.md) · [`../.claude/engineering_priorities.md`](../.claude/engineering_priorities.md) (P0 = ✅ complete).
 
@@ -28,9 +29,9 @@ The project is **pre-launch** (first market Sept 2026). If the live prod DB curr
 - The Float→Decimal and String→enum conversions in P1-B become trivial (no historical rows to back-fill or audit).
 - The whole phase compresses from weeks of careful staging to a couple of focused sessions.
 
-> **OWNER DECISION #1 (do this first):** confirm the prod row counts (esp. `Transaction`, `CreditLedger`, `LedgerEntry`, `Wallet`). If they're empty/throwaway test data, tell me — I'll plan the **reset path** (much faster, much safer). If there's real data to preserve, we use the **baseline-existing-DB path** documented in P1-A.
+> **✅ OWNER DECISION #1 — RESOLVED (2026-06-16):** transaction/ledger data is throwaway, **but the waitlist holds real signups that must be preserved.** Because real data exists (the waitlist), we use the **conservative baseline-the-existing-DB path** in P1-A — which alters **no** table data, so it protects the waitlist and the throwaway transaction tables alike. The "reset path" is **off the table**.
 
-The plan below is written for the **conservative, data-preserving path**. If prod is empty we delete most of the risk.
+The plan below is written for that **conservative, data-preserving path**.
 
 ---
 
@@ -63,8 +64,9 @@ P1-A  Migration baseline → switch prod boot to `prisma migrate deploy`        
 
 ## 4. Item detail
 
-### P1-0 — Single-source the 89/10/1 split, delete dead 79/10/11, cent-quantize, add Σ-conservation test
+### P1-0 — Single-source the 89/10/1 split, delete dead 79/10/11, cent-quantize, add Σ-conservation test — ✅ DONE (2026-06-16, commits `7e2b02d` + `77483bb`)
 **Risk: MEDIUM · Complexity: M · No schema change (pure code — `prisma db push` is a no-op for this).**
+> **Shipped:** new `server/src/lib/splitRates.ts` (single-sourced rates + load-time sum-to-1 assert + `roundCents` HALF_UP). `calculateDistribution` cent-quantizes with the **merchant as residual party** → parts sum exactly to the cent. Dead 79/10/11 deleted from `stripeService`. All split sites (mockDataController, catalogRoutes, financeEngine, accountingService) now import the shared constants. New `Σ-Conservation (exact cents)` test block (pins rates, whole-cent assertions, exact conservation, 5000-input fuzz, residual-party check). Verified: `tsc` exit 0; transaction suite **30/30**; `vite build` exit 0.
 
 **Current state.** The canonical split lives in `transactionService.ts:49-54` — `nonprofitShare = netProfit*0.10`, `platformFee = netProfit*0.01`, `merchantProfitShare = netProfit*0.89`, all as **inline `new Decimal(...)` literals** (not a shared constant). Problems found:
 - **Dead 79/10/11 code:** `stripeService.ts:54-61` computes `merchantAmount = amount*0.79` / `nonprofitAmount = amount*0.10` — both **unused** (the Checkout session charges the full amount). Contradicts the live ledger.
