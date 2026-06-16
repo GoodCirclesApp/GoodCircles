@@ -15,4 +15,7 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma db push --accept-data-loss --skip-generate; NODE_ENV=production node_modules/.bin/tsx server.ts"]
+# Apply pending migrations (non-destructive), then start. '&&' fails CLOSED: if a
+# migration fails, the server does NOT start on a half-changed schema. The baseline
+# (0_init) is already marked applied in prod, so this is a no-op until a real migration ships.
+CMD ["sh", "-c", "npx prisma migrate deploy && NODE_ENV=production node_modules/.bin/tsx server.ts"]
