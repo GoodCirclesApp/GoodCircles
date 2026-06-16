@@ -1,6 +1,6 @@
 # Phase 1 (P1) Execution Plan — Data Integrity & Money Correctness
 
-> **Status (2026-06-16):** **P1-0 is ✅ DONE & pushed** (commits `7e2b02d` + `77483bb`). The rest is plan-only, gated on **P1-A**, which needs production-DB access (owner step).
+> **Status (2026-06-16):** **P1-0 ✅ and P1-A ✅ DONE & pushed** (P1-0: `7e2b02d`+`77483bb`; P1-A baseline: `87c14de`). Prod now boots via non-destructive `migrate deploy`; the destructive `db push` is retired. **P1-B/C/D are now UNBLOCKED** (additive migrations ship the proper way). Remaining items below are plan-only pending the go-ahead.
 > **Owner data decision (resolved):** no transaction records need to be kept (throwaway), **but the waitlist is real user data that must be preserved** → use the **conservative baseline-the-existing-DB path** in P1-A (touches no table data), **not** the reset path.
 > **Created:** 2026-06-15 · Derived from a read-only, evidence-backed investigation (5 parallel agents, every claim quoted to `file:line`).
 > **Companion docs:** [`ENTERPRISE_AUDIT_2026-06.md`](./ENTERPRISE_AUDIT_2026-06.md) · [`ENTERPRISE_ARCHITECTURE.md`](./ENTERPRISE_ARCHITECTURE.md) · [`../.claude/engineering_priorities.md`](../.claude/engineering_priorities.md) (P0 = ✅ complete).
@@ -84,8 +84,9 @@ P1-A  Migration baseline → switch prod boot to `prisma migrate deploy`        
 
 ---
 
-### P1-A — Migration baseline → switch prod boot from `db push --accept-data-loss` to `migrate deploy`
-**Risk: HIGH · Complexity: M · The linchpin. Requires owner involvement (backup, env, ideally a low-traffic window).**
+### P1-A — Migration baseline → switch prod boot from `db push --accept-data-loss` to `migrate deploy` — ✅ DONE (2026-06-16, commit `87c14de`)
+**Risk: HIGH · Complexity: M · The linchpin.**
+> **Shipped via the conservative path:** prod had ZERO drift from `schema.prisma` (`migrate diff --from-url <prod>` returned empty), so `0_init` (97 tables / 6 enums / 164 indexes, 0 DROP/TRUNCATE) was generated and marked already-applied in prod with `migrate resolve --applied` (a bookkeeping-only write — no table data touched, waitlist preserved). `Dockerfile` + `package.json` now run `prisma migrate deploy` (fail-closed `&&`). Pre-flighted against prod: "No pending migrations to apply." Future schema changes ship as reviewed additive migrations.
 
 **Target.** Prod boots with `prisma migrate deploy` (apply-only, never destructive), driven by a committed `prisma/migrations/` whose first entry (`0_init`) reproduces the *current* live schema and is marked **already-applied** in prod. `--accept-data-loss` removed from every boot path.
 
