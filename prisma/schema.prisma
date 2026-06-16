@@ -383,6 +383,10 @@ model Transaction {
   // "PRICE_REDUCTION" | "PLATFORM_CREDITS"
   appliedCredits       Decimal              @default(0)
   consumerState        String?
+  // Stripe identifiers (nullable — only set for STRIPE/CARD payments). Enable real refunds + reconciliation.
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+  stripeChargeId          String?
   ledgerEntries        LedgerEntry[]
   creditLedgerEntries  CreditLedger[]
   merchantObligation   MerchantObligation?
@@ -395,6 +399,9 @@ model Transaction {
   @@index([merchantId])
   @@index([nonprofitId])
   @@index([consumerState])
+  @@index([createdAt])
+  @@index([merchantId, createdAt])
+  @@index([paymentMethod])
 }
 
 model Wallet {
@@ -467,6 +474,7 @@ model MerchantObligation {
   @@index([debtorMerchantId])
   @@index([creditorMerchantId])
   @@index([batchId])
+  @@index([isSettled])
 }
 
 model NettingBatch {

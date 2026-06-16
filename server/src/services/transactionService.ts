@@ -235,6 +235,11 @@ export class TransactionService {
             cancelUrl: `${process.env.APP_URL}/checkout/cancel`,
           });
           stripeUrl = session.url || undefined;
+          // Persist the Stripe session id for refunds + reconciliation (PI/charge set in the webhook).
+          await tx.transaction.update({
+            where: { id: transaction.id },
+            data: { stripeCheckoutSessionId: session.id },
+          });
         } else {
           // If neighbor pays 0 (due to credits), we can mark it as paid immediately
           console.log(`Transaction ${transaction.id} paid in full via credits.`);

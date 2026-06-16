@@ -100,6 +100,12 @@ export const createCheckout = async (req: AuthRequest, res: Response) => {
       cancelUrl: `${process.env.APP_URL}/checkout/cancel`,
     });
 
+    // Persist the Stripe session id for refunds + reconciliation (PI/charge set in the webhook).
+    await prisma.transaction.update({
+      where: { id: transaction.id },
+      data: { stripeCheckoutSessionId: session.id },
+    });
+
     res.json({ url: session.url });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -151,6 +157,18 @@ export const handleWebhook = async (req: Request, res: Response) => {
     });
 
     if (transaction) {
+      // Persist Stripe identifiers for refunds + reconciliation (PI id is the refund target).
+      if (session.payment_intent) {
+        await prisma.transaction.update({
+          where: { id: transaction.id },
+          data: {
+            stripePaymentIntentId:
+              typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent.id,
+            stripeCheckoutSessionId: session.id,
+          },
+        });
+      }
+
       // 1. Redeem credits if applied
       if (Number(transaction.appliedCredits) > 0) {
         await CreditService.redeemCredits(transaction.neighborId, Number(transaction.appliedCredits), transaction.id);
