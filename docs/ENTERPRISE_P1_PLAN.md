@@ -1,6 +1,7 @@
 # Phase 1 (P1) Execution Plan — Data Integrity & Money Correctness
 
-> **Status (2026-06-16):** **P1-0 ✅ and P1-A ✅ DONE & pushed** (P1-0: `7e2b02d`+`77483bb`; P1-A baseline: `87c14de`). Prod now boots via non-destructive `migrate deploy`; the destructive `db push` is retired. **P1-B/C/D are now UNBLOCKED** (additive migrations ship the proper way). Remaining items below are plan-only pending the go-ahead.
+> **Status (2026-06-16):** **All ADDITIVE P1 work is DONE & pushed** — P1-0 (`7e2b02d`+`77483bb`), P1-A baseline (`87c14de`), P1-C + P1-B1 (`3740bbd`), P1-D (`f0bbc64`). Prod boots via non-destructive `migrate deploy`; the destructive `db push` is retired; money math is exact-to-the-cent; Stripe IDs persisted; webhooks idempotent; hot-path indexes added.
+> **Only P1-B2 remains (DEFERRED by owner 2026-06-16 to a dedicated session):** the type-changing migrations — Float→Decimal on analytics/catalog money columns, and String→enum (reconcile the `paymentMethod`/`status` vocabularies first). Not blocking; polish-tier. Resume per §P1-B below.
 > **Owner data decision (resolved):** no transaction records need to be kept (throwaway), **but the waitlist is real user data that must be preserved** → use the **conservative baseline-the-existing-DB path** in P1-A (touches no table data), **not** the reset path.
 > **Created:** 2026-06-15 · Derived from a read-only, evidence-backed investigation (5 parallel agents, every claim quoted to `file:line`).
 > **Companion docs:** [`ENTERPRISE_AUDIT_2026-06.md`](./ENTERPRISE_AUDIT_2026-06.md) · [`ENTERPRISE_ARCHITECTURE.md`](./ENTERPRISE_ARCHITECTURE.md) · [`../.claude/engineering_priorities.md`](../.claude/engineering_priorities.md) (P0 = ✅ complete).
