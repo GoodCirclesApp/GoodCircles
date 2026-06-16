@@ -2,6 +2,7 @@ import { Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../lib/prisma';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { GC_DISCOUNT_RATE, NONPROFIT_RATE, PLATFORM_RATE, MERCHANT_PROFIT_RATE } from '../lib/splitRates';
 import {
   DEMO_MERCHANTS,
   DEMO_NONPROFITS,
@@ -167,12 +168,12 @@ export const loadMockData = async (req: AuthRequest, res: Response) => {
 
         const gross = product.price;
         const cogs = product.cogs;
-        const discountAmount = gross * 0.10;
+        const discountAmount = gross * GC_DISCOUNT_RATE;
         const effectiveRevenue = gross - discountAmount;
         const netProfit = effectiveRevenue - cogs;
-        const nonprofitShare = netProfit * 0.10;
-        const platformFee = netProfit * 0.01;
-        const merchantNet = cogs + netProfit * 0.89;
+        const nonprofitShare = netProfit * NONPROFIT_RATE;
+        const platformFee = netProfit * PLATFORM_RATE;
+        const merchantNet = cogs + netProfit * MERCHANT_PROFIT_RATE;
         const neighborPays = effectiveRevenue;
         const paymentMethod = Math.random() > 0.35 ? 'INTERNAL' : 'STRIPE';
 

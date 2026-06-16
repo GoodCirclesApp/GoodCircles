@@ -1,7 +1,8 @@
 
 import { CartItem, OrderAccounting, FiscalPolicy, User } from '../types';
 import {
-  CARD_PROCESSING_FEE
+  CARD_PROCESSING_FEE,
+  MERCHANT_PROFIT_RATE
 } from '../constants';
 
 // Added getEffectiveRates function to handle category-specific overrides
@@ -106,7 +107,7 @@ export const calculateOrderTotals = (
     // merchantNet = COGS + 89% of net profit. Using totalCogs + totalGrossProfit * 0.89
     // is correct in all discount modes (PRICE_REDUCTION, PLATFORM_CREDITS, waived) because
     // totalGrossProfit is already computed on the correct effective revenue for each mode.
-    merchantNet: totalCogs + totalGrossProfit * 0.89,
+    merchantNet: totalCogs + totalGrossProfit * MERCHANT_PROFIT_RATE,
     totalCogs: totalCogs,
     feesSaved: feesSaved,
     appliedCredits: appliedCredits,

@@ -1,5 +1,6 @@
 
 import { Order, PayoutBatch, OrderAccounting, Nonprofit } from '../types';
+import { DONATION_RATE, PLATFORM_FEE_RATE } from '../constants';
 
 /**
  * Good Circles General Ledger Service
@@ -54,8 +55,8 @@ export const AccountingService = {
   auditOrderMath(order: Order): boolean {
     const tolerance = 0.01;
     // 10/10/1 model: donation = 10% of net profit (grossProfit), platform fee = 1% of net profit
-    const expectedDonation = order.accounting.grossProfit * 0.10;
-    const expectedPlatformFee = order.accounting.grossProfit * 0.01;
+    const expectedDonation = order.accounting.grossProfit * DONATION_RATE;
+    const expectedPlatformFee = order.accounting.grossProfit * PLATFORM_FEE_RATE;
     return Math.abs(order.accounting.donationAmount - expectedDonation) < tolerance &&
            Math.abs(order.accounting.platformFee - expectedPlatformFee) < tolerance;
   }

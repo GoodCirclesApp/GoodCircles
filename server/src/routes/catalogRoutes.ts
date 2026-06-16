@@ -9,6 +9,7 @@ import {
   createMockImportRecord,
 } from '../mocks/catalogMockData';
 import { getStripe } from '../services/stripeService';
+import { GC_DISCOUNT_RATE, NONPROFIT_RATE, PLATFORM_RATE, MERCHANT_PROFIT_RATE } from '../lib/splitRates';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -32,12 +33,12 @@ const requireMerchant = [
 // Flow: MSRP × 0.90 = consumer price; net profit = consumer price − COGS
 // Nonprofit = 10% of net profit; Platform = 1% of net profit; Merchant = COGS + 89%
 function buildGCPricingBreakdown(msrp: number, cogs: number) {
-  const gcDiscount = msrp * 0.10;
+  const gcDiscount = msrp * GC_DISCOUNT_RATE;
   const consumerPrice = msrp - gcDiscount;
   const netProfit = consumerPrice - cogs;
-  const nonprofitContribution = netProfit * 0.10;
-  const platformFee = netProfit * 0.01;
-  const merchantProfit = netProfit * 0.89;
+  const nonprofitContribution = netProfit * NONPROFIT_RATE;
+  const platformFee = netProfit * PLATFORM_RATE;
+  const merchantProfit = netProfit * MERCHANT_PROFIT_RATE;
   const merchantMarginPercent = consumerPrice > 0
     ? (merchantProfit / consumerPrice) * 100
     : 0;

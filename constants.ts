@@ -4,6 +4,7 @@ import { Community, Nonprofit, Product, CommunityProject, FiscalPolicy, Order } 
 export const GC_DISCOUNT_RATE = 0.10;
 export const DONATION_RATE = 0.10;
 export const PLATFORM_FEE_RATE = 0.01;
+export const MERCHANT_PROFIT_RATE = 0.89;
 export const CARD_PROCESSING_FEE = 0.03;
 export const TAX_RATE = 0.0825;
 export const PLATFORM_LAUNCH_DATE = '2024-01-01';
