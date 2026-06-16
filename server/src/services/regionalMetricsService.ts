@@ -64,7 +64,7 @@ export class RegionalMetricsService {
     
     // total_local_spend_retained = sum of all internal transactions (using internal balance)
     const totalLocalSpendRetained = transactions
-      .filter(t => t.paymentMethod === 'INTERNAL_BALANCE')
+      .filter(t => t.paymentMethod === 'INTERNAL')
       .reduce((sum, t) => sum.add(t.grossAmount), new Decimal(0));
 
     const totalNonprofitFunding = transactions.reduce((sum, t) => sum.add(new Decimal(t.nonprofitShare.toString())), new Decimal(0));
@@ -91,7 +91,7 @@ export class RegionalMetricsService {
     const consumersActive = consumerIds.size;
 
     const internalPaymentPct = totalTransactions > 0 
-      ? (transactions.filter(t => t.paymentMethod === 'INTERNAL_BALANCE').length / totalTransactions) * 100 
+      ? (transactions.filter(t => t.paymentMethod === 'INTERNAL').length / totalTransactions) * 100 
       : 0;
 
     const avgTransactionValue = totalTransactions > 0 

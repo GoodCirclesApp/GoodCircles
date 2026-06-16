@@ -35,7 +35,7 @@ export const getStats = async (req: AuthRequest, res: Response) => {
     });
 
     const totalCount = totalTransactions._count.id;
-    const walletPaidCount = await prisma.transaction.count({ where: { paymentMethod: 'WALLET' } });
+    const walletPaidCount = await prisma.transaction.count({ where: { paymentMethod: 'INTERNAL' } });
     const internalBankingAdoption = totalCount > 0 ? walletPaidCount / totalCount : 0;
 
     res.json({
@@ -129,7 +129,7 @@ export const getFinancialOverview = async (req: AuthRequest, res: Response) => {
     const [feeAgg, totalCount, walletCount, walletBalanceAgg] = await Promise.all([
       prisma.transaction.aggregate({ _sum: { platformFee: true, grossAmount: true } }),
       prisma.transaction.count(),
-      prisma.transaction.count({ where: { paymentMethod: 'WALLET' } }),
+      prisma.transaction.count({ where: { paymentMethod: 'INTERNAL' } }),
       prisma.wallet.aggregate({ _sum: { balance: true } }),
     ]);
 
