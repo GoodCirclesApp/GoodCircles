@@ -125,6 +125,17 @@ export const handleWebhook = async (req: Request, res: Response) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  // Idempotency: if this event id was already processed, ack and skip. Stripe redelivers
+  // events on retry; a failed event is never marked (see the create at the end), so a
+  // retry reprocesses it cleanly rather than being silently dropped.
+  const alreadyProcessed = await prisma.processedWebhookEvent.findUnique({
+    where: { eventId_source: { eventId: event.id, source: 'payment' } },
+  });
+  if (alreadyProcessed) {
+    console.log(`[Payment] Webhook event ${event.id} already processed — skipping.`);
+    return res.json({ received: true });
+  }
+
   // Wallet top-up: card charged, credit wallet now
   if (event.type === 'payment_intent.succeeded') {
     const pi = event.data.object as any;
@@ -245,6 +256,11 @@ export const handleWebhook = async (req: Request, res: Response) => {
       }
     }
   }
+
+  // Mark processed LAST — a thrown error above leaves the event unmarked so Stripe retries.
+  await prisma.processedWebhookEvent.create({
+    data: { eventId: event.id, eventType: event.type, source: 'payment' },
+  }).catch((e) => console.error('[Payment] failed to record processed webhook event:', e));
 
   res.json({ received: true });
 };

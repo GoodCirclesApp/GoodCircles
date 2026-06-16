@@ -477,6 +477,21 @@ model MerchantObligation {
   @@index([isSettled])
 }
 
+// Idempotency ledger for inbound Stripe webhooks — dedupes redelivered events so a
+// retry cannot double-issue credits or double-write the ledger. Keyed on (eventId,
+// source) so separate handlers (payment vs catalog) can each process the same Stripe
+// event id without starving one another.
+model ProcessedWebhookEvent {
+  id         String   @id @default(uuid())
+  eventId    String
+  eventType  String
+  source     String
+  receivedAt DateTime @default(now())
+
+  @@unique([eventId, source])
+  @@index([receivedAt])
+}
+
 model NettingBatch {
   id               String               @id @default(uuid())
   batchDate        DateTime             @default(now())

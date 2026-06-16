@@ -508,6 +508,15 @@ router.post('/webhook/stripe', async (req: Request, res: Response) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  // Idempotency: skip an already-processed event id (Stripe redelivers on retry).
+  const alreadyProcessed = await prisma.processedWebhookEvent.findUnique({
+    where: { eventId_source: { eventId: event.id, source: 'catalog' } },
+  });
+  if (alreadyProcessed) {
+    console.log(`[Catalog] Webhook event ${event.id} already processed — skipping.`);
+    return res.json({ received: true });
+  }
+
   try {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
@@ -523,6 +532,11 @@ router.post('/webhook/stripe', async (req: Request, res: Response) => {
         });
       }
     }
+
+    // Mark processed LAST so a thrown error above leaves it unmarked and Stripe retries.
+    await prisma.processedWebhookEvent.create({
+      data: { eventId: event.id, eventType: event.type, source: 'catalog' },
+    }).catch((e) => console.error('[Catalog] failed to record processed webhook event:', e));
 
     res.json({ received: true });
   } catch (err: any) {
