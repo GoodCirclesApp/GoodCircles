@@ -50,16 +50,12 @@ export const createCheckoutSession = async (params: {
   cancelUrl: string;
 }) => {
   const stripe = getStripe();
-  
-  // 10/10/1 logic:
-  // Gross: 100%
-  // Merchant: 79%
-  // Nonprofit: 10%
-  // Platform: 11% (1% fee + 10% discount/waiver)
-  
-  const merchantAmount = Math.round(params.amount * 0.79);
-  const nonprofitAmount = Math.round(params.amount * 0.10);
 
+  // NOTE: the destination split (merchant/nonprofit/platform) is computed authoritatively
+  // in transactionService.calculateDistribution and recorded on the ledger. This Checkout
+  // session charges the full neighbor amount with a transfer_group; Connect destination
+  // transfers are wired at the disbursement (Stripe Connect) phase. Do NOT re-derive the
+  // split here. (Removed the dead legacy 79/10/11 computation that contradicted the ledger.)
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     payment_method_types: ['card'],

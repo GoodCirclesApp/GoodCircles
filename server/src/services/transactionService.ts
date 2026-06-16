@@ -1,5 +1,6 @@
 import { prisma } from '../lib/prisma';
 import { Decimal } from '@prisma/client/runtime/library';
+import { GC_DISCOUNT_RATE, NONPROFIT_RATE, PLATFORM_RATE, roundCents } from '../lib/splitRates';
 import { WalletService } from './walletService';
 import { CreditService } from './creditService';
 import { ReferralService } from './referralService';
@@ -26,11 +27,13 @@ export const calculateDistribution = (
   discountMode: 'PRICE_REDUCTION' | 'PLATFORM_CREDITS' = 'PRICE_REDUCTION',
   creditsToApply: number = 0
 ) => {
-  const msrp = new Decimal(grossAmount);
-  const cogs = new Decimal(cogsAmount);
+  // Quantize the inputs to whole cents up front so every derived amount is an exact
+  // cent value and the parts sum without penny leakage.
+  const msrp = roundCents(new Decimal(grossAmount));
+  const cogs = roundCents(new Decimal(cogsAmount));
 
-  // Consumer Discount (10% of MSRP)
-  const discountAmount = msrp.mul(new Decimal(0.10));
+  // Consumer Discount (10% of MSRP), to whole cents.
+  const discountAmount = roundCents(msrp.mul(new Decimal(GC_DISCOUNT_RATE)));
 
   // CONSERVATION MODEL:
   // The merchant / nonprofit / platform split is ALWAYS computed on the discounted
@@ -41,17 +44,20 @@ export const calculateDistribution = (
   //   - waived:                       neighbor pays full MSRP; the 10% funds a community initiative.
   //   - PLATFORM_CREDITS (not waived): neighbor pays full MSRP; the 10% is returned as closed-loop credit.
   // This guarantees: distributed (merchantNet + nonprofitShare + platformProfitShare
-  //   + waivedContribution + creditIssued) == the neighbor's pre-credit obligation.
-  const effectiveRevenue = msrp.sub(discountAmount);
+  //   + waivedContribution + creditIssued) == the neighbor's pre-credit obligation, EXACTLY to the cent.
+  const effectiveRevenue = msrp.sub(discountAmount); // exact cents
 
   // Net profit = effective revenue minus cost of goods sold. The 10/10/1 split is on net profit.
-  const netProfit = effectiveRevenue.sub(cogs);
-  const nonprofitShare = netProfit.mul(new Decimal(0.10));
-  const platformProfitShare = netProfit.mul(new Decimal(0.01));
-  const merchantProfitShare = netProfit.mul(new Decimal(0.89));
+  const netProfit = effectiveRevenue.sub(cogs); // exact cents
+  // Nonprofit and platform are each independently HALF_UP-rounded to the cent; the merchant
+  // is the documented RESIDUAL party and absorbs the sub-cent remainder, so the three profit
+  // shares sum EXACTLY to net profit (no penny created or lost).
+  const nonprofitShare = roundCents(netProfit.mul(new Decimal(NONPROFIT_RATE)));
+  const platformProfitShare = roundCents(netProfit.mul(new Decimal(PLATFORM_RATE)));
+  const merchantProfitShare = netProfit.sub(nonprofitShare).sub(platformProfitShare);
 
-  // merchantNet = COGS + merchant's 89% profit share (always on the discounted base).
-  const merchantNet = cogs.add(merchantProfitShare);
+  // merchantNet = COGS + merchant's residual profit share (always on the discounted base).
+  const merchantNet = cogs.add(merchantProfitShare); // exact cents
 
   // Destination of the 10% discount — exactly one of these is non-zero.
   const keepsAsPriceReduction = !discountWaived && discountMode === 'PRICE_REDUCTION';
@@ -63,8 +69,8 @@ export const calculateDistribution = (
   // otherwise they pay full MSRP and the 10% is routed (to an initiative or back as credit).
   let neighborPays = keepsAsPriceReduction ? effectiveRevenue : msrp;
 
-  // Apply credits if any
-  const appliedCredits = new Decimal(creditsToApply);
+  // Apply credits if any (to whole cents)
+  const appliedCredits = roundCents(new Decimal(creditsToApply));
   neighborPays = neighborPays.sub(appliedCredits);
   if (neighborPays.lessThan(0)) neighborPays = new Decimal(0);
 

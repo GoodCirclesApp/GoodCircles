@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { calculateDistribution } from '../services/transactionService';
 import { PricingService } from '../services/pricingService';
+import { GC_DISCOUNT_RATE, NONPROFIT_RATE, PLATFORM_RATE, MERCHANT_PROFIT_RATE } from '../lib/splitRates';
 
 describe('Transaction Engine — Financial Calculations', () => {
 
@@ -276,5 +277,91 @@ describe('PricingService — Cart Breakdown', () => {
     // Consumer total should be less than without credits
     const noCredits = PricingService.calculateBreakdown(sampleCart, 'INTERNAL', false, 'PRICE_REDUCTION', 0);
     expect(Number(breakdown.consumer_total)).toBeLessThan(Number(noCredits.consumer_total));
+  });
+});
+
+// ─── Σ-Conservation (EXACT cents) ───────────────────────────────────────
+// Tightens the legacy tolerance-based ('toBeCloseTo') conservation checks into
+// exact integer-cent equality, and pins the canonical rates so nobody can silently
+// re-introduce the old 79/10/11 model. Pure math — runs with no DB.
+
+describe('Σ-Conservation (exact cents)', () => {
+  const cents = (x: unknown) => Math.round(Number(x) * 100);
+  const isWholeCents = (x: unknown) => Math.abs(Number(x) * 100 - Math.round(Number(x) * 100)) < 1e-6;
+  const modes = ['PRICE_REDUCTION', 'PLATFORM_CREDITS'] as const;
+
+  // Deterministic PRNG (mulberry32) so any fuzz failure reproduces from the same seed.
+  function mulberry32(seed: number) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  it('pins the canonical rates and they sum to 1 (regression guard vs 79/10/11)', () => {
+    expect(GC_DISCOUNT_RATE).toBe(0.10);
+    expect(NONPROFIT_RATE).toBe(0.10);
+    expect(PLATFORM_RATE).toBe(0.01);
+    expect(MERCHANT_PROFIT_RATE).toBe(0.89);
+    expect(NONPROFIT_RATE + PLATFORM_RATE + MERCHANT_PROFIT_RATE).toBeCloseTo(1, 9);
+  });
+
+  it('every output field is a whole number of cents (all modes, waived & not)', () => {
+    for (const mode of modes) {
+      for (const waived of [false, true]) {
+        const d = calculateDistribution(45, 25, waived, false, mode, 0);
+        for (const f of [d.msrp, d.cogs, d.neighborDiscount, d.nonprofitShare, d.platformFee,
+                         d.merchantNet, d.neighborPays, d.waivedContribution, d.creditIssued, d.appliedCredits]) {
+          expect(isWholeCents(f)).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('parts sum EXACTLY to the neighbor pre-credit obligation (all modes)', () => {
+    const samples: Array<[number, number]> = [[45, 25], [33.33, 15.17], [100, 40], [9.99, 3.33], [199.95, 87.61]];
+    for (const [price, cogs] of samples) {
+      for (const mode of modes) {
+        for (const waived of [false, true]) {
+          // 0 credits → neighborPays IS the pre-credit obligation.
+          const d = calculateDistribution(price, cogs, waived, false, mode, 0);
+          const distributed = cents(d.merchantNet) + cents(d.nonprofitShare) + cents(d.platformFee)
+            + cents(d.waivedContribution) + cents(d.creditIssued);
+          expect(distributed).toBe(cents(d.neighborPays));
+        }
+      }
+    }
+  });
+
+  it('fuzz: no penny created or lost across 5000 deterministic inputs', () => {
+    const rand = mulberry32(0x600dc1ac);
+    for (let i = 0; i < 5000; i++) {
+      const price = Math.round((1 + rand() * 9999) * 100) / 100;       // $1 .. $10,000
+      const cogs = Math.round(rand() * price * 0.85 * 100) / 100;      // ≤ 85% of price → net profit stays positive
+      const mode = modes[Math.floor(rand() * modes.length)];
+      const waived = rand() < 0.5;
+      const d = calculateDistribution(price, cogs, waived, false, mode, 0);
+
+      const distributed = cents(d.merchantNet) + cents(d.nonprofitShare) + cents(d.platformFee)
+        + cents(d.waivedContribution) + cents(d.creditIssued);
+      expect(distributed).toBe(cents(d.neighborPays));            // exact conservation
+      expect(cents(d.nonprofitShare)).toBeGreaterThanOrEqual(0);
+      expect(cents(d.platformFee)).toBeGreaterThanOrEqual(0);
+      expect(cents(d.merchantNet)).toBeGreaterThanOrEqual(0);
+      expect(isWholeCents(d.merchantNet)).toBe(true);
+      expect(isWholeCents(d.nonprofitShare)).toBe(true);
+      expect(isWholeCents(d.platformFee)).toBe(true);
+    }
+  });
+
+  it('the sub-cent remainder lands on the merchant (documented residual party)', () => {
+    // 33.33 / 15.17 → netProfit 14.83 → nonprofit 1.483→1.48, platform 0.1483→0.15; merchant carries the rest.
+    const d = calculateDistribution(33.33, 15.17, false, false, 'PRICE_REDUCTION', 0);
+    expect(cents(d.nonprofitShare)).toBe(148);
+    expect(cents(d.platformFee)).toBe(15);
+    // merchant profit share (merchantNet − cogs) + nonprofit + platform === net profit, exactly.
+    expect(cents(d.merchantNet) - cents(d.cogs) + cents(d.nonprofitShare) + cents(d.platformFee)).toBe(cents(d.profit));
   });
 });
