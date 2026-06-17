@@ -164,3 +164,26 @@ footer .muted{color:#9883b5;font-size:.8rem;margin-top:6px}
   .stats{grid-template-columns:1fr 1fr}
   .nav .links a:not(.btn){display:none}
 }
+
+/* ---- Accessibility: visible keyboard focus + reduced motion ---- */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--purple);outline-offset:2px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+
+/* ---- "Was this helpful?" feedback widget (injected by share.js) ---- */
+.gcfb{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:24px 0 6px;padding:13px 18px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.gcfb-q{font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.92rem}
+.gcfb-b{font-family:'Montserrat';font-weight:700;font-size:.85rem;cursor:pointer;border:1px solid var(--line);background:var(--cream);color:var(--ink);border-radius:999px;padding:6px 18px}
+.gcfb-b:hover{background:var(--lav-soft);border-color:var(--lav)}
+.gcfb-missing{font-family:'Montserrat';font-weight:700;font-size:.85rem;color:var(--gold-deep)}
+
+/* ---- Print / save-as-PDF: a clean reading copy of any guide ---- */
+@media print{
+  .nav,.sharebar,.gcfb,.related,.gcbox,footer,.toc{display:none!important}
+  body{background:#fff}
+  .wrap{max-width:100%;margin:0;padding:0 6mm}
+  article a{color:#000;text-decoration:underline}
+  article a[href^="http"]::after{content:" (" attr(href) ")";font-size:.78em;color:#555;word-break:break-all}
+  .answer,.callout,.faq,.tbl,.gct{box-shadow:none!important;break-inside:avoid}
+  h1,h2,h3{break-after:avoid}
+  .hero{padding-top:0}
+}
