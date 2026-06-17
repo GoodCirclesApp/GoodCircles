@@ -38,6 +38,9 @@ for (const f of files) {
   const rel = relative(ROOT, f).replace(/\\/g, '/');
   const url = '/resources/' + rel.replace(/index\.html$/, '');
   if (url === '/resources/search/') continue; // don't index the search page itself
+  // Skip the 600+ individual funder PROFILE pages (they have a dedicated per-state
+  // filter); keep the funder hub + per-state index pages in search.
+  if (/^\/resources\/funders\/[^/]+\/[^/]+\/$/.test(url)) continue;
   const html = readFileSync(f, 'utf8');
   if (/name="robots" content="noindex/.test(html)) continue;
   const title = tags(grab(/<title>([\s\S]*?)<\/title>/, html)).replace(/\s*·\s*Good Circles\s*$/, '');
