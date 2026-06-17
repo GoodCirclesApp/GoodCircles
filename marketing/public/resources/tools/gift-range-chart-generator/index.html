@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gift Range Chart Generator · Good Circles</title>
+<meta name="description" content="Free gift range chart generator: enter your campaign goal and get a tiered gift pyramid — gift sizes, number of gifts, and prospects needed at each level.">
+<link rel="canonical" href="https://goodcircles.org/resources/tools/gift-range-chart-generator/">
+<meta property="og:title" content="Gift Range Chart Generator · Good Circles">
+<meta property="og:description" content="Turn a campaign goal into a real gift range chart: how many gifts at each size, and how many prospects you need. Generated live.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://goodcircles.org/resources/tools/gift-range-chart-generator/"><meta property="og:image" content="https://goodcircles.org/resources/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#7851A9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/resources.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Gift Range Chart (Gift Pyramid) Generator","description":"Generates a gift range chart for a campaign goal — the tiered structure of gift sizes, the number of gifts needed at each level, and the prospects required — using the standard gift-pyramid planning rule of thumb.","applicationCategory":"FinanceApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://goodcircles.org/resources/tools/gift-range-chart-generator/","publisher":{"@type":"Organization","name":"Good Circles","url":"https://goodcircles.org","logo":{"@type":"ImageObject","url":"https://goodcircles.org/resources/og.png"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a gift range chart?","acceptedAnswer":{"@type":"Answer","text":"A gift range chart, or gift pyramid, lays out the specific gifts a campaign needs to reach its goal: a few large lead gifts at the top, then increasing numbers of smaller gifts. It also estimates how many qualified prospects you need at each level."}},{"@type":"Question","name":"How many prospects do I need per gift?","acceptedAnswer":{"@type":"Answer","text":"A common rule of thumb is three to four qualified prospects for every gift you need to secure, with the ratio highest at the top of the chart where gifts are largest and hardest to close."}},{"@type":"Question","name":"How big should the top gift be?","acceptedAnswer":{"@type":"Answer","text":"In many campaigns the lead gift is roughly 10 to 20 percent of the total goal, and the top ten or so gifts together provide more than half of it. This tool uses about 15 percent for the lead gift as a planning default."}},{"@type":"Question","name":"Is the gift range chart a guarantee?","acceptedAnswer":{"@type":"Answer","text":"No. It is a planning rule of thumb that tests whether your goal is realistic against the gifts and prospects you would need. Your real chart should reflect your actual donor pipeline and giving capacity."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Good Circles","item":"https://goodcircles.org"},{"@type":"ListItem","position":2,"name":"Resources","item":"https://goodcircles.org/resources/"},{"@type":"ListItem","position":3,"name":"Tools","item":"https://goodcircles.org/resources/tools/"},{"@type":"ListItem","position":4,"name":"Gift Range Chart","item":"https://goodcircles.org/resources/tools/gift-range-chart-generator/"}]}</script>
+</head><body>
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/tools/">Tools</a><a href="/resources/templates/">Templates</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>
+<div class="wrap"><header class="hero">
+  <div class="crumb"><a href="/resources/">Resources</a> › <a href="/resources/tools/">Tools</a> › Gift Range Chart</div>
+  <div class="eyebrow">Fundraising &amp; Campaigns</div>
+  <h1>Gift Range Chart Generator</h1>
+  <div class="dateline">Updated June 17, 2026 · Good Circles · interactive tool · runs in your browser</div>
+</header>
+<article>
+  <div class="answer">Campaigns are won at the top. A <b>gift range chart</b> (or “gift pyramid”) translates your goal into the specific gifts you need — a few lead gifts do most of the work, supported by tiers of smaller gifts. Enter your goal and this tool builds a standard chart with the number of gifts and qualified prospects needed at each level. Use it to test whether your goal is realistic <em>before</em> you launch.</div>
+
+  <style>
+.gct{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow-sm);margin:8px 0 6px}
+.gct .fld{margin:12px 0 4px}
+.gct label{display:block;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.84rem;letter-spacing:.3px;margin-bottom:5px}
+.gct label .sub{font-weight:600;color:var(--ash);font-size:.78rem;letter-spacing:0;text-transform:none}
+.gct input[type=number],.gct input[type=text]{width:170px;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:1.02rem;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.gct input[type=range]{flex:1;min-width:170px;accent-color:#7851A9}
+.gct .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gct .num{font-family:'Montserrat';font-weight:900;color:var(--purple);font-size:1.15rem;min-width:84px;text-align:right}
+.gct .num.g{color:var(--gold-deep)}
+.gct hr{border:none;border-top:1px solid var(--line);margin:16px 0 12px}
+.gct .scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ash);font-family:'Montserrat';font-weight:700;margin-top:3px}
+.gct .out .stat .n{font-size:1.7rem}
+.gct .note{font-size:.84rem;color:var(--ash);margin-top:8px}
+.gct .mini{width:120px}
+.gct table.tbl input{width:108px}
+.gct .ck{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.gct .ck input{margin-top:3px;width:18px;height:18px;accent-color:#7851A9}
+.gct .pill{display:inline-block;font-family:'Montserrat';font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:999px;background:#f0e9f7;color:var(--purple)}
+.gct .pill.ok{background:#e6f5ec;color:#1f7a44}.gct .pill.warn{background:#fbf0e0;color:#9a6a16}.gct .pill.bad{background:#fdeaea;color:#a3232b}
+</style>
+
+  <div class="gct">
+  <div class="fld"><label for="gr-goal">Campaign goal</label><input type="number" id="gr-goal" min="1000" step="1000" value="500000"></div>
+  <div class="fld"><label for="gr-prospects">Prospects needed per gift <span class="sub">— a common rule of thumb is 3–4 qualified prospects per gift secured</span></label><div class="row"><input type="range" id="gr-prospects" min="2" max="5" step="1" value="4"><span class="num" id="gr-prospects-out">4</span></div></div>
+  <hr>
+  <p class="note" id="gr-summary"></p>
+  <table class="tbl"><thead><tr><th>Gift size</th><th># of gifts</th><th>Prospects needed</th><th>Subtotal</th><th>Cumulative</th></tr></thead><tbody id="gr-table"></tbody></table>
+  <p class="note">This uses a standard gift-pyramid structure (the top gift is ~15% of goal; each lower tier is smaller but more numerous, with a base of many gifts). It is a planning rule of thumb — your real chart should reflect your actual prospect pipeline. The 80/20 pattern (a small share of donors give most of the money) is why the top tiers matter most.</p>
+</div>
+
+  <div class="gcbox"><span class="tagpill">A funding base under the pyramid</span><h3>Recurring support that doesn’t depend on a campaign</h3><p>A gift chart shows how much campaigns lean on a few big gifts. <b>Good Circles</b> complements that with broad, <b>recurring, unrestricted</b> support from everyday local spending — about 10% of each merchant’s net profit, conservatively ~$72 per active supporter per year (an estimate), free for your nonprofit. It widens the base of the pyramid so you’re not betting everything on the top.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a></div>
+
+  <div class="callout"><h4>Sources &amp; tools</h4>
+<p style="font-weight:800;margin:6px 0 2px">Free first</p>
+<ul><li><a href="https://www.councilofnonprofits.org/" target="_blank" rel="noopener">National Council of Nonprofits — campaigns</a> — foundational guidance on capital and major-gift campaigns.</li><li><a href="https://afpglobal.org/" target="_blank" rel="noopener">CFRE / AFP fundraising resources</a> — professional standards and free learning on major-gift fundraising.</li><li><a href="https://learning.candid.org/" target="_blank" rel="noopener">Candid Learning</a> — free courses and articles on campaign planning and major gifts.</li></ul>
+<p style="font-weight:800;margin:10px 0 2px">Paid — optional labor-savers</p>
+<ul><li><a href="https://afpglobal.org/" target="_blank" rel="noopener">A campaign feasibility study / consultant</a> — tests your goal against real donor capacity before you launch. <i>Worth it when the campaign is large enough that a misjudged goal would be costly.</i></li></ul>
+<p class="muted" style="margin-top:8px">Last verified 2026-06-17. Figures and rules change — verify at the source before you act.</p></div>
+
+  <div class="sharebar"><span class="lbl">Share</span><a href="javascript:void(0)" onclick="gcShare('facebook')" aria-label="Share on Facebook"><svg viewBox="0 0 24 24"><path d="M13 22v-8h3l1-4h-4V8c0-1 .5-2 2-2h2V2h-3c-3 0-5 2-5 5v3H6v4h3v8z"/></svg>Facebook</a><a href="javascript:void(0)" onclick="gcShare('x')" aria-label="Share on X"><svg viewBox="0 0 24 24"><path d="M18 2h3l-7 8 8 12h-6l-5-7-6 7H2l8-9L2 2h6l4 6zm-1 18h2L8 4H6z"/></svg>X</a><a href="javascript:void(0)" onclick="gcShare('linkedin')" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M4 4a2 2 0 110 4 2 2 0 010-4zM3 9h3v12H3zM9 9h3v2c.5-1 2-2 4-2 3 0 4 2 4 5v7h-3v-6c0-2-1-3-2-3s-2 1-2 3v6H9z"/></svg>LinkedIn</a><a href="javascript:void(0)" onclick="gcShare('email')" aria-label="Share by email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg>Email</a><button onclick="gcCopy(this)" aria-label="Copy link"><svg viewBox="0 0 24 24"><path d="M9 7h9v12H9zM5 3h9v2H7v10H5z"/></svg><span class="t">Copy link</span></button></div>
+
+  <h2 id="faq">FAQ</h2>
+<div class="faq"><h4>What is a gift range chart?</h4><p>A gift range chart, or gift pyramid, lays out the specific gifts a campaign needs to reach its goal: a few large lead gifts at the top, then increasing numbers of smaller gifts. It also estimates how many qualified prospects you need at each level.</p></div>
+<div class="faq"><h4>How many prospects do I need per gift?</h4><p>A common rule of thumb is three to four qualified prospects for every gift you need to secure, with the ratio highest at the top of the chart where gifts are largest and hardest to close.</p></div>
+<div class="faq"><h4>How big should the top gift be?</h4><p>In many campaigns the lead gift is roughly 10 to 20 percent of the total goal, and the top ten or so gifts together provide more than half of it. This tool uses about 15 percent for the lead gift as a planning default.</p></div>
+<div class="faq"><h4>Is the gift range chart a guarantee?</h4><p>No. It is a planning rule of thumb that tests whether your goal is realistic against the gifts and prospects you would need. Your real chart should reflect your actual donor pipeline and giving capacity.</p></div>
+
+  <div class="related"><b>Related guides &amp; tools:</b><br>
+  <a href="/resources/fundraising/capital-campaigns/">Capital campaigns</a>
+  <a href="/resources/fundraising/major-gifts/">Major gifts</a>
+  <a href="/resources/donor-development/moves-management/">Moves management</a>
+  <a href="/resources/tools/donor-retention-ltv-calculator/">Donor LTV calculator</a>
+  <a href="/resources/tools/">All free tools</a>
+</div>
+</article></div>
+<footer><div class="wrap">
+  <div class="ftag">Save. Give. Stay local.</div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/tools/">Tools</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
+</div></footer>
+<script>(function(){
+  function $(id){return document.getElementById(id);}
+  function money(x){return '$'+Math.round(x).toLocaleString('en-US');}
+  function nice(x){
+    if(x>=100000)return Math.round(x/5000)*5000;
+    if(x>=10000)return Math.round(x/1000)*1000;
+    if(x>=1000)return Math.round(x/100)*100;
+    if(x>=100)return Math.round(x/10)*10;
+    return Math.max(5,Math.round(x/5)*5);
+  }
+  var TIERS=[[0.15,1],[0.10,2],[0.05,4],[0.025,8],[0.0125,12]];
+  function render(){
+    var goal=parseFloat($('gr-goal').value);if(isNaN(goal)||goal<0)goal=0;
+    var pp=parseInt($('gr-prospects').value,10);
+    $('gr-prospects-out').textContent=pp;
+    var tb=$('gr-table');tb.innerHTML='';
+    var cum=0,gifts=0,prospects=0;
+    TIERS.forEach(function(t){
+      var size=nice(goal*t[0]);var nGifts=t[1];var sub=size*nGifts;
+      cum+=sub;gifts+=nGifts;var pros=nGifts*pp;prospects+=pros;
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td><b>'+money(size)+'</b></td><td>'+nGifts+'</td><td>'+pros+'</td><td style="text-align:right">'+money(sub)+'</td><td style="text-align:right">'+money(cum)+'</td>';
+      tb.appendChild(tr);
+    });
+    var remainder=Math.max(0,goal-cum);
+    if(remainder>0){
+      var smallSize=nice(goal*0.005)||25;
+      var smallN=Math.max(1,Math.ceil(remainder/smallSize));
+      var pros=smallN*Math.max(2,pp-2);
+      gifts+=smallN;prospects+=pros;cum+=smallSize*smallN;
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td><b>'+money(smallSize)+'</b> &amp; under</td><td>'+smallN.toLocaleString('en-US')+'</td><td>'+pros.toLocaleString('en-US')+'</td><td style="text-align:right">'+money(remainder)+'</td><td style="text-align:right">'+money(goal)+'</td>';
+      tb.appendChild(tr);
+    }
+    $('gr-summary').innerHTML='To raise <b>'+money(goal)+'</b>, plan for roughly <b>'+gifts.toLocaleString('en-US')+' gifts</b> from about <b>'+prospects.toLocaleString('en-US')+' qualified prospects</b>. Notice the top handful of gifts carry most of the goal — secure those first.';
+  }
+  ['gr-goal','gr-prospects'].forEach(function(id){$(id).addEventListener('input',render);});
+  render();
+})();</script>
+<script src="/resources/share.js"></script>
+</body></html>

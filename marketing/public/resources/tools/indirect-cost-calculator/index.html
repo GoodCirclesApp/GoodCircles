@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Indirect Cost Calculator (15% de minimis) · Good Circles</title>
+<meta name="description" content="Free calculator for nonprofit indirect costs: enter direct costs and exclusions to get your MTDC base and indirect recovery at the 15% federal de minimis rate (2 CFR 200).">
+<link rel="canonical" href="https://goodcircles.org/resources/tools/indirect-cost-calculator/">
+<meta property="og:title" content="Indirect Cost Calculator (15% de minimis) · Good Circles">
+<meta property="og:description" content="Work out your MTDC base and indirect-cost recovery at the 15% de minimis rate — live, in your browser.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://goodcircles.org/resources/tools/indirect-cost-calculator/"><meta property="og:image" content="https://goodcircles.org/resources/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#7851A9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/resources.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Nonprofit Indirect Cost (de minimis) Calculator","description":"Calculates a grant budget’s Modified Total Direct Cost (MTDC) base and the indirect costs recoverable at the 15% federal de minimis rate (or a custom negotiated rate), per 2 CFR 200.","applicationCategory":"FinanceApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://goodcircles.org/resources/tools/indirect-cost-calculator/","publisher":{"@type":"Organization","name":"Good Circles","url":"https://goodcircles.org","logo":{"@type":"ImageObject","url":"https://goodcircles.org/resources/og.png"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the de minimis indirect cost rate?","acceptedAnswer":{"@type":"Answer","text":"The de minimis rate lets a nonprofit without a negotiated rate charge a flat percentage of its Modified Total Direct Cost (MTDC) base for indirect costs. Under 2 CFR 200 it is <b>15% of MTDC</b>, effective for federal awards issued on or after October 1, 2024 (it was 10% before that)."}},{"@type":"Question","name":"What is the MTDC base?","acceptedAnswer":{"@type":"Answer","text":"Modified Total Direct Cost is your total direct costs minus certain exclusions: equipment and capital expenditures, participant support costs, rental costs, tuition remission, scholarships and fellowships, and the portion of each subaward over $25,000. You apply the indirect rate to MTDC, not to total direct costs."}},{"@type":"Question","name":"Do I need federal approval to use the 15% rate?","acceptedAnswer":{"@type":"Answer","text":"No. The de minimis rate is available to any eligible non-federal entity that does not have a current negotiated indirect cost rate, with no prior approval or negotiation required. You must apply it consistently across your federal awards."}},{"@type":"Question","name":"Should I negotiate a NICRA instead?","acceptedAnswer":{"@type":"Answer","text":"If your actual indirect costs run well above 15% of MTDC and your federal funding is substantial, a Negotiated Indirect Cost Rate Agreement (NICRA) can recover more. For smaller or occasional federal awards, the de minimis rate is simpler and avoids the cost of negotiating."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Good Circles","item":"https://goodcircles.org"},{"@type":"ListItem","position":2,"name":"Resources","item":"https://goodcircles.org/resources/"},{"@type":"ListItem","position":3,"name":"Tools","item":"https://goodcircles.org/resources/tools/"},{"@type":"ListItem","position":4,"name":"Indirect Cost Calculator","item":"https://goodcircles.org/resources/tools/indirect-cost-calculator/"}]}</script>
+</head><body>
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/tools/">Tools</a><a href="/resources/templates/">Templates</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>
+<div class="wrap"><header class="hero">
+  <div class="crumb"><a href="/resources/">Resources</a> › <a href="/resources/tools/">Tools</a> › Indirect Cost Calculator</div>
+  <div class="eyebrow">Grants &amp; Finance</div>
+  <h1>Indirect Cost Calculator (15% de minimis)</h1>
+  <div class="dateline">Updated June 17, 2026 · Good Circles · interactive tool · runs in your browser</div>
+</header>
+<article>
+  <div class="answer">Indirect costs (your real overhead — rent, accounting, leadership, IT) are recoverable on federal grants. If you have no negotiated rate, you may charge the <b>15% de minimis rate</b> on your <b>Modified Total Direct Cost (MTDC)</b> base under <a href="https://www.ecfr.gov/current/title-2/subtitle-A/chapter-II/part-200" target="_blank" rel="noopener">2 CFR 200</a> (the rate rose from 10% to 15%, effective for awards on or after October 1, 2024). MTDC is your direct costs <em>minus</em> certain exclusions. Enter your numbers below — nothing is saved or sent.</div>
+
+  <style>
+.gct{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow-sm);margin:8px 0 6px}
+.gct .fld{margin:12px 0 4px}
+.gct label{display:block;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.84rem;letter-spacing:.3px;margin-bottom:5px}
+.gct label .sub{font-weight:600;color:var(--ash);font-size:.78rem;letter-spacing:0;text-transform:none}
+.gct input[type=number],.gct input[type=text]{width:170px;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:1.02rem;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.gct input[type=range]{flex:1;min-width:170px;accent-color:#7851A9}
+.gct .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gct .num{font-family:'Montserrat';font-weight:900;color:var(--purple);font-size:1.15rem;min-width:84px;text-align:right}
+.gct .num.g{color:var(--gold-deep)}
+.gct hr{border:none;border-top:1px solid var(--line);margin:16px 0 12px}
+.gct .scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ash);font-family:'Montserrat';font-weight:700;margin-top:3px}
+.gct .out .stat .n{font-size:1.7rem}
+.gct .note{font-size:.84rem;color:var(--ash);margin-top:8px}
+.gct .mini{width:120px}
+.gct table.tbl input{width:108px}
+.gct .ck{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.gct .ck input{margin-top:3px;width:18px;height:18px;accent-color:#7851A9}
+.gct .pill{display:inline-block;font-family:'Montserrat';font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:999px;background:#f0e9f7;color:var(--purple)}
+.gct .pill.ok{background:#e6f5ec;color:#1f7a44}.gct .pill.warn{background:#fbf0e0;color:#9a6a16}.gct .pill.bad{background:#fdeaea;color:#a3232b}
+</style>
+
+  <div class="gct">
+  <div class="fld"><label for="ic-direct">Total direct costs <span class="sub">— all direct program + personnel costs in the budget</span></label><input type="number" id="ic-direct" min="0" step="100" value="200000"></div>
+  <p style="font-weight:800;margin:14px 0 4px;font-family:'Montserrat';font-size:.84rem;color:var(--ink)">MTDC exclusions <span style="font-weight:600;color:var(--ash);font-size:.78rem">— amounts that do NOT count toward the base</span></p>
+  <div class="fld"><label for="ic-equip">Equipment &amp; capital expenditures</label><input type="number" id="ic-equip" min="0" step="100" value="15000"></div>
+  <div class="fld"><label for="ic-part">Participant support costs</label><input type="number" id="ic-part" min="0" step="100" value="0"></div>
+  <div class="fld"><label for="ic-sub">Portion of each subaward over $25,000 <span class="sub">— only the first $25k of each subaward is in MTDC</span></label><input type="number" id="ic-sub" min="0" step="100" value="0"></div>
+  <div class="fld"><label for="ic-other">Other exclusions <span class="sub">— rent, tuition remission, scholarships/fellowships</span></label><input type="number" id="ic-other" min="0" step="100" value="0"></div>
+  <div class="fld"><label for="ic-rate">Indirect rate <span class="sub">— 15% de minimis by default; enter your negotiated (NICRA) rate if you have one</span></label><div class="row"><input type="number" id="ic-rate" class="mini" min="0" max="100" step="0.1" value="15"><span>% of MTDC</span></div></div>
+  <hr>
+  <div class="out stats" style="grid-template-columns:repeat(2,1fr)">
+    <div class="stat"><div class="n" id="ic-mtdc">$0</div><div class="l">MTDC base</div></div>
+    <div class="stat"><div class="n g" id="ic-indirect">$0</div><div class="l">Indirect costs recoverable</div></div>
+  </div>
+  <p class="note" id="ic-summary"></p>
+  <table class="tbl"><tbody>
+    <tr><td>Total direct costs</td><td style="text-align:right" id="ic-r-direct">—</td></tr>
+    <tr><td>Less: MTDC exclusions</td><td style="text-align:right" id="ic-r-excl">—</td></tr>
+    <tr><td><b>= MTDC base</b></td><td style="text-align:right" id="ic-r-mtdc"><b>—</b></td></tr>
+    <tr><td>Indirect (rate × MTDC)</td><td style="text-align:right" id="ic-r-ind">—</td></tr>
+    <tr><td><b>Total project budget</b></td><td style="text-align:right" id="ic-r-total"><b>—</b></td></tr>
+  </tbody></table>
+  <p class="note">MTDC excludes equipment, capital expenditures, participant support costs, rental costs, tuition remission, scholarships/fellowships, and the portion of each subaward exceeding $25,000 (2 CFR 200.1). Always confirm the program’s rules — some federal programs cap or disallow indirect.</p>
+</div>
+
+  <div class="gcbox"><span class="tagpill">Unrestricted funding covers the overhead grants won’t</span><h3>The opposite of restricted grant dollars</h3><p>Indirect-cost recovery helps — but it is still grant money with strings. <b>Good Circles</b> builds a base of <b>recurring, unrestricted</b> funding you can spend on whatever your mission needs, including the overhead funders underwrite poorly. Supporters pick your cause once, then a share of their everyday local spending funds you automatically — about 10% of each merchant’s net profit, conservatively ~$72 per active supporter per year (an estimate), free for your nonprofit.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a></div>
+
+  <div class="callout"><h4>Sources &amp; tools</h4>
+<p style="font-weight:800;margin:6px 0 2px">Free first</p>
+<ul><li><a href="https://www.ecfr.gov/current/title-2/subtitle-A/chapter-II/part-200" target="_blank" rel="noopener">2 CFR 200 (Uniform Guidance), eCFR</a> — the authoritative federal cost-principles text, including MTDC (200.1) and the de minimis rate.</li><li><a href="https://www.grants.gov/" target="_blank" rel="noopener">Grants.gov</a> — find and apply for federal grants; program notices state any indirect-cost limits.</li><li><a href="https://www.councilofnonprofits.org/" target="_blank" rel="noopener">National Council of Nonprofits — indirect costs</a> — plain-language explainers on recovering true overhead.</li></ul>
+<p style="font-weight:800;margin:10px 0 2px">Paid — optional labor-savers</p>
+<ul><li><a href="https://www.councilofnonprofits.org/" target="_blank" rel="noopener">A grant-accounting CPA / cost-rate specialist</a> — helps negotiate a NICRA when the de minimis rate leaves money on the table. <i>Worth it when your federal funding is large enough that a negotiated rate beats 15%.</i></li></ul>
+<p class="muted" style="margin-top:8px">Last verified 2026-06-17. Figures and rules change — verify at the source before you act.</p></div>
+
+  <div class="sharebar"><span class="lbl">Share</span><a href="javascript:void(0)" onclick="gcShare('facebook')" aria-label="Share on Facebook"><svg viewBox="0 0 24 24"><path d="M13 22v-8h3l1-4h-4V8c0-1 .5-2 2-2h2V2h-3c-3 0-5 2-5 5v3H6v4h3v8z"/></svg>Facebook</a><a href="javascript:void(0)" onclick="gcShare('x')" aria-label="Share on X"><svg viewBox="0 0 24 24"><path d="M18 2h3l-7 8 8 12h-6l-5-7-6 7H2l8-9L2 2h6l4 6zm-1 18h2L8 4H6z"/></svg>X</a><a href="javascript:void(0)" onclick="gcShare('linkedin')" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M4 4a2 2 0 110 4 2 2 0 010-4zM3 9h3v12H3zM9 9h3v2c.5-1 2-2 4-2 3 0 4 2 4 5v7h-3v-6c0-2-1-3-2-3s-2 1-2 3v6H9z"/></svg>LinkedIn</a><a href="javascript:void(0)" onclick="gcShare('email')" aria-label="Share by email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg>Email</a><button onclick="gcCopy(this)" aria-label="Copy link"><svg viewBox="0 0 24 24"><path d="M9 7h9v12H9zM5 3h9v2H7v10H5z"/></svg><span class="t">Copy link</span></button></div>
+
+  <h2 id="faq">FAQ</h2>
+<div class="faq"><h4>What is the de minimis indirect cost rate?</h4><p>The de minimis rate lets a nonprofit without a negotiated rate charge a flat percentage of its Modified Total Direct Cost (MTDC) base for indirect costs. Under 2 CFR 200 it is <b>15% of MTDC</b>, effective for federal awards issued on or after October 1, 2024 (it was 10% before that).</p></div>
+<div class="faq"><h4>What is the MTDC base?</h4><p>Modified Total Direct Cost is your total direct costs minus certain exclusions: equipment and capital expenditures, participant support costs, rental costs, tuition remission, scholarships and fellowships, and the portion of each subaward over $25,000. You apply the indirect rate to MTDC, not to total direct costs.</p></div>
+<div class="faq"><h4>Do I need federal approval to use the 15% rate?</h4><p>No. The de minimis rate is available to any eligible non-federal entity that does not have a current negotiated indirect cost rate, with no prior approval or negotiation required. You must apply it consistently across your federal awards.</p></div>
+<div class="faq"><h4>Should I negotiate a NICRA instead?</h4><p>If your actual indirect costs run well above 15% of MTDC and your federal funding is substantial, a Negotiated Indirect Cost Rate Agreement (NICRA) can recover more. For smaller or occasional federal awards, the de minimis rate is simpler and avoids the cost of negotiating.</p></div>
+
+  <div class="related"><b>Related guides &amp; tools:</b><br>
+  <a href="/resources/grants/indirect-costs-and-nicra/">Indirect costs &amp; NICRA</a>
+  <a href="/resources/grants/grant-budget-guide/">Grant budget guide</a>
+  <a href="/resources/grants/federal-grants-guide/">Federal grants</a>
+  <a href="/resources/tools/operating-reserve-calculator/">Operating-reserve calculator</a>
+  <a href="/resources/tools/">All free tools</a>
+</div>
+</article></div>
+<footer><div class="wrap">
+  <div class="ftag">Save. Give. Stay local.</div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/tools/">Tools</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
+</div></footer>
+<script>(function(){
+  function $(id){return document.getElementById(id);}
+  function n(id){var v=parseFloat($(id).value);return isNaN(v)||v<0?0:v;}
+  function money(x){return '$'+Math.round(x).toLocaleString('en-US');}
+  function render(){
+    var direct=n('ic-direct'),excl=n('ic-equip')+n('ic-part')+n('ic-sub')+n('ic-other');
+    var rate=n('ic-rate');
+    var mtdc=Math.max(0,direct-excl);
+    var indirect=mtdc*rate/100;
+    var total=direct+indirect;
+    $('ic-mtdc').textContent=money(mtdc);
+    $('ic-indirect').textContent=money(indirect);
+    $('ic-r-direct').textContent=money(direct);
+    $('ic-r-excl').textContent='−'+money(excl);
+    $('ic-r-mtdc').innerHTML='<b>'+money(mtdc)+'</b>';
+    $('ic-r-ind').textContent=money(indirect);
+    $('ic-r-total').innerHTML='<b>'+money(total)+'</b>';
+    var pct=total>0?(indirect/total*100):0;
+    $('ic-summary').innerHTML='At <b>'+rate+'%</b> of an MTDC base of <b>'+money(mtdc)+'</b>, you can recover about <b>'+money(indirect)+'</b> in indirect costs — roughly <b>'+pct.toFixed(1)+'%</b> of the total project budget. Estimate only; confirm program rules.';
+  }
+  ['ic-direct','ic-equip','ic-part','ic-sub','ic-other','ic-rate'].forEach(function(id){$(id).addEventListener('input',render);});
+  render();
+})();</script>
+<script src="/resources/share.js"></script>
+</body></html>

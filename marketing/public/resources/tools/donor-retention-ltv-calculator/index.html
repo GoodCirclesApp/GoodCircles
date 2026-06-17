@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Donor Retention &amp; Lifetime Value Calculator · Good Circles</title>
+<meta name="description" content="Free donor lifetime value calculator: enter average gift and retention rate to estimate donor lifespan, LTV, and the payoff of improving retention by 10 points.">
+<link rel="canonical" href="https://goodcircles.org/resources/tools/donor-retention-ltv-calculator/">
+<meta property="og:title" content="Donor Retention &amp; Lifetime Value Calculator · Good Circles">
+<meta property="og:description" content="See what a donor is really worth over time — and how much a 10-point retention gain adds. Calculate donor LTV live.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://goodcircles.org/resources/tools/donor-retention-ltv-calculator/"><meta property="og:image" content="https://goodcircles.org/resources/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#7851A9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/resources.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Donor Retention and Lifetime Value (LTV) Calculator","description":"Estimates a donor’s expected giving lifespan and lifetime value from average annual gift and retention rate, and shows how improving retention raises lifetime value.","applicationCategory":"FinanceApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://goodcircles.org/resources/tools/donor-retention-ltv-calculator/","publisher":{"@type":"Organization","name":"Good Circles","url":"https://goodcircles.org","logo":{"@type":"ImageObject","url":"https://goodcircles.org/resources/og.png"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is donor lifetime value?","acceptedAnswer":{"@type":"Answer","text":"Donor lifetime value (LTV) is the total amount a donor is expected to give over the full course of their relationship with your organization. It depends on how much they give each year and how many years they keep giving."}},{"@type":"Question","name":"How is donor lifetime value estimated?","acceptedAnswer":{"@type":"Answer","text":"A simple model is: expected giving lifespan equals one divided by (one minus the retention rate), and lifetime value equals the average annual gift times that lifespan. A donor giving $120 a year at 60% retention has an estimated lifespan of 2.5 years and an LTV of about $300."}},{"@type":"Question","name":"Why does donor retention matter so much?","acceptedAnswer":{"@type":"Answer","text":"Because acquiring a new donor usually costs far more than keeping an existing one, and retained donors give for years and often upgrade. Even a small improvement in retention compounds into a large increase in lifetime value."}},{"@type":"Question","name":"What is a typical donor retention rate?","acceptedAnswer":{"@type":"Answer","text":"According to the Fundraising Effectiveness Project, overall donor retention has hovered in the mid-40% range, with new-donor retention much lower (often around 20%) and repeat-donor retention much higher. Your own rate is the number that matters for planning."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Good Circles","item":"https://goodcircles.org"},{"@type":"ListItem","position":2,"name":"Resources","item":"https://goodcircles.org/resources/"},{"@type":"ListItem","position":3,"name":"Tools","item":"https://goodcircles.org/resources/tools/"},{"@type":"ListItem","position":4,"name":"Donor LTV Calculator","item":"https://goodcircles.org/resources/tools/donor-retention-ltv-calculator/"}]}</script>
+</head><body>
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/tools/">Tools</a><a href="/resources/templates/">Templates</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>
+<div class="wrap"><header class="hero">
+  <div class="crumb"><a href="/resources/">Resources</a> › <a href="/resources/tools/">Tools</a> › Donor LTV Calculator</div>
+  <div class="eyebrow">Fundraising &amp; Donors</div>
+  <h1>Donor Retention &amp; Lifetime Value Calculator</h1>
+  <div class="dateline">Updated June 17, 2026 · Good Circles · interactive tool · runs in your browser</div>
+</header>
+<article>
+  <div class="answer">Acquiring a donor is expensive; <b>keeping</b> one is where the value compounds. A donor’s <b>lifetime value (LTV)</b> depends on how much they give and how long they keep giving — and retention drives the “how long.” Enter your numbers to estimate donor lifespan and LTV, and see how a modest retention gain pays off. (Average new-donor retention runs low — often in the low 20%s — while repeat-donor retention is far higher; see the <a href="https://afpfep.org/" target="_blank" rel="noopener">Fundraising Effectiveness Project</a>.)</div>
+
+  <style>
+.gct{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow-sm);margin:8px 0 6px}
+.gct .fld{margin:12px 0 4px}
+.gct label{display:block;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.84rem;letter-spacing:.3px;margin-bottom:5px}
+.gct label .sub{font-weight:600;color:var(--ash);font-size:.78rem;letter-spacing:0;text-transform:none}
+.gct input[type=number],.gct input[type=text]{width:170px;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:1.02rem;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.gct input[type=range]{flex:1;min-width:170px;accent-color:#7851A9}
+.gct .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gct .num{font-family:'Montserrat';font-weight:900;color:var(--purple);font-size:1.15rem;min-width:84px;text-align:right}
+.gct .num.g{color:var(--gold-deep)}
+.gct hr{border:none;border-top:1px solid var(--line);margin:16px 0 12px}
+.gct .scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ash);font-family:'Montserrat';font-weight:700;margin-top:3px}
+.gct .out .stat .n{font-size:1.7rem}
+.gct .note{font-size:.84rem;color:var(--ash);margin-top:8px}
+.gct .mini{width:120px}
+.gct table.tbl input{width:108px}
+.gct .ck{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.gct .ck input{margin-top:3px;width:18px;height:18px;accent-color:#7851A9}
+.gct .pill{display:inline-block;font-family:'Montserrat';font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:999px;background:#f0e9f7;color:var(--purple)}
+.gct .pill.ok{background:#e6f5ec;color:#1f7a44}.gct .pill.warn{background:#fbf0e0;color:#9a6a16}.gct .pill.bad{background:#fdeaea;color:#a3232b}
+</style>
+
+  <div class="gct">
+  <div class="fld"><label for="lt-gift">Average annual gift per donor</label><input type="number" id="lt-gift" min="0" step="5" value="120"></div>
+  <div class="fld"><label for="lt-ret">Annual donor retention rate <span class="sub">— share of donors who give again next year</span></label><div class="row"><input type="range" id="lt-ret" min="10" max="95" step="1" value="60"><span class="num g" id="lt-ret-out">60%</span></div><div class="scale"><span>10% · weak</span><span>~45% · sector avg</span><span>95% · excellent</span></div></div>
+  <div class="fld"><label for="lt-num">Number of donors <span class="sub">— optional, for total portfolio value</span></label><input type="number" id="lt-num" min="0" step="1" value="250"></div>
+  <hr>
+  <div class="out stats" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat"><div class="n" id="lt-life">0.0</div><div class="l">Expected giving lifespan (yrs)</div></div>
+    <div class="stat"><div class="n g" id="lt-ltv">$0</div><div class="l">Lifetime value per donor</div></div>
+    <div class="stat"><div class="n" id="lt-total">$0</div><div class="l">Total portfolio LTV</div></div>
+  </div>
+  <p class="note" id="lt-summary"></p>
+  <div class="callout"><h4>The payoff of better retention</h4><p id="lt-leverage" style="margin:0"></p></div>
+  <p class="note">A simple model: expected lifespan = 1 ÷ (1 − retention rate); LTV = average annual gift × lifespan. It ignores upgrades and discounting, so treat it as a directional planning estimate, not a forecast.</p>
+</div>
+
+  <div class="gcbox"><span class="tagpill">The most retainable supporters you’ll ever have</span><h3>Passive supporters don’t lapse like donors do</h3><p>Retention is hard because giving takes a decision every time. <b>Good Circles</b> supporters decide <em>once</em>, then a share of their everyday local spending funds you automatically — about 10% of each merchant’s net profit, conservatively ~$72 per active supporter per year (an estimate), recurring and unrestricted, free for your nonprofit. It behaves like a near-100%-retention base alongside your donor program.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a></div>
+
+  <div class="callout"><h4>Sources &amp; tools</h4>
+<p style="font-weight:800;margin:6px 0 2px">Free first</p>
+<ul><li><a href="https://afpfep.org/" target="_blank" rel="noopener">Fundraising Effectiveness Project (AFP)</a> — free sector benchmarks for donor retention and growth.</li><li><a href="https://bloomerang.co/resources/" target="_blank" rel="noopener">Bloomerang — donor retention resources</a> — free guides and the widely cited retention research.</li><li><a href="https://afpglobal.org/donor-bill-rights" target="_blank" rel="noopener">AFP Donor Bill of Rights</a> — the stewardship standard that underpins retention.</li></ul>
+<p style="font-weight:800;margin:10px 0 2px">Paid — optional labor-savers</p>
+<ul><li><a href="https://bloomerang.co/" target="_blank" rel="noopener">A donor CRM (Bloomerang, DonorPerfect, Neon)</a> — tracks retention and automates stewardship at scale. <i>Worth it when spreadsheets can no longer keep your donor data clean.</i></li></ul>
+<p class="muted" style="margin-top:8px">Last verified 2026-06-17. Figures and rules change — verify at the source before you act.</p></div>
+
+  <div class="sharebar"><span class="lbl">Share</span><a href="javascript:void(0)" onclick="gcShare('facebook')" aria-label="Share on Facebook"><svg viewBox="0 0 24 24"><path d="M13 22v-8h3l1-4h-4V8c0-1 .5-2 2-2h2V2h-3c-3 0-5 2-5 5v3H6v4h3v8z"/></svg>Facebook</a><a href="javascript:void(0)" onclick="gcShare('x')" aria-label="Share on X"><svg viewBox="0 0 24 24"><path d="M18 2h3l-7 8 8 12h-6l-5-7-6 7H2l8-9L2 2h6l4 6zm-1 18h2L8 4H6z"/></svg>X</a><a href="javascript:void(0)" onclick="gcShare('linkedin')" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M4 4a2 2 0 110 4 2 2 0 010-4zM3 9h3v12H3zM9 9h3v2c.5-1 2-2 4-2 3 0 4 2 4 5v7h-3v-6c0-2-1-3-2-3s-2 1-2 3v6H9z"/></svg>LinkedIn</a><a href="javascript:void(0)" onclick="gcShare('email')" aria-label="Share by email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg>Email</a><button onclick="gcCopy(this)" aria-label="Copy link"><svg viewBox="0 0 24 24"><path d="M9 7h9v12H9zM5 3h9v2H7v10H5z"/></svg><span class="t">Copy link</span></button></div>
+
+  <h2 id="faq">FAQ</h2>
+<div class="faq"><h4>What is donor lifetime value?</h4><p>Donor lifetime value (LTV) is the total amount a donor is expected to give over the full course of their relationship with your organization. It depends on how much they give each year and how many years they keep giving.</p></div>
+<div class="faq"><h4>How is donor lifetime value estimated?</h4><p>A simple model is: expected giving lifespan equals one divided by (one minus the retention rate), and lifetime value equals the average annual gift times that lifespan. A donor giving $120 a year at 60% retention has an estimated lifespan of 2.5 years and an LTV of about $300.</p></div>
+<div class="faq"><h4>Why does donor retention matter so much?</h4><p>Because acquiring a new donor usually costs far more than keeping an existing one, and retained donors give for years and often upgrade. Even a small improvement in retention compounds into a large increase in lifetime value.</p></div>
+<div class="faq"><h4>What is a typical donor retention rate?</h4><p>According to the Fundraising Effectiveness Project, overall donor retention has hovered in the mid-40% range, with new-donor retention much lower (often around 20%) and repeat-donor retention much higher. Your own rate is the number that matters for planning.</p></div>
+
+  <div class="related"><b>Related guides &amp; tools:</b><br>
+  <a href="/resources/donor-development/donor-retention-and-stewardship/">Donor retention &amp; stewardship</a>
+  <a href="/resources/donor-development/building-a-donor-journey/">Building a donor journey</a>
+  <a href="/resources/donor-development/lapsed-donor-reactivation/">Lapsed-donor reactivation</a>
+  <a href="/resources/tools/passive-funding-calculator/">Passive funding calculator</a>
+  <a href="/resources/tools/">All free tools</a>
+</div>
+</article></div>
+<footer><div class="wrap">
+  <div class="ftag">Save. Give. Stay local.</div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/tools/">Tools</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
+</div></footer>
+<script>(function(){
+  function $(id){return document.getElementById(id);}
+  function n(id){var v=parseFloat($(id).value);return isNaN(v)||v<0?0:v;}
+  function money(x){return '$'+Math.round(x).toLocaleString('en-US');}
+  function lifespan(r){return r>=1?40:(r<=0?1:1/(1-r));}
+  function render(){
+    var gift=n('lt-gift'),retPct=n('lt-ret'),num=n('lt-num');
+    $('lt-ret-out').textContent=retPct+'%';
+    var r=Math.min(0.99,retPct/100);
+    var life=Math.min(40,lifespan(r));
+    var ltv=gift*life;
+    $('lt-life').textContent=life.toFixed(1);
+    $('lt-ltv').textContent=money(ltv);
+    $('lt-total').textContent=money(ltv*num);
+    $('lt-summary').innerHTML='At a <b>'+retPct+'%</b> retention rate, the average donor keeps giving about <b>'+life.toFixed(1)+' years</b>, worth roughly <b>'+money(ltv)+'</b> over their lifetime at <b>'+money(gift)+'</b>/year.';
+    var r2=Math.min(0.99,(retPct+10)/100);
+    var life2=Math.min(40,lifespan(r2));
+    var ltv2=gift*life2;
+    var lift=ltv2-ltv;
+    $('lt-leverage').innerHTML='Raising retention by just <b>10 points</b> (to '+Math.min(99,retPct+10)+'%) lengthens the average relationship to <b>'+life2.toFixed(1)+' years</b> and lifts lifetime value to <b>'+money(ltv2)+'</b> — an extra <b>'+money(lift)+'</b> per donor'+(num>0?(', or about <b>'+money(lift*num)+'</b> across '+num.toLocaleString('en-US')+' donors'):'')+'. That is why stewardship usually beats acquisition dollar-for-dollar.';
+  }
+  ['lt-gift','lt-ret','lt-num'].forEach(function(id){$(id).addEventListener('input',render);});
+  render();
+})();</script>
+<script src="/resources/share.js"></script>
+</body></html>
