@@ -8,11 +8,14 @@ export const STALE_FIGURES = [
     label: 'Federal de minimis indirect cost rate is 15% of MTDC (2 CFR 200, eff. 2024-10-01)',
     current: '15% de minimis',
     pattern: /10%\s*de\s*minimis/i,
+    // Suppress when the page also states the current value (i.e. it's explaining the rise, not stating the old rate as current).
+    okIf: /15%\s*de\s*minimis/i,
   },
   {
     label: 'Single Audit threshold is $1,000,000 (Uniform Guidance, FYs beginning on/after 2024-10-01)',
     current: '$1,000,000',
     pattern: /single\s*audit[\s\S]{0,90}\$\s*750,?000/i,
+    okIf: /\$\s*1,000,000|\b1\s*million\b/i,
   },
   // NOTE: only track figures that actually CHANGE year to year (rates, thresholds,
   // statutory limits). Historical facts (e.g. AmazonSmile shut down in 2023) belong

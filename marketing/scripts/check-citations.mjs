@@ -29,7 +29,10 @@ for (const f of pages) {
   const html = readFileSync(f, 'utf8');
   const rel = 'resources/' + relative(DIST, f).replace(/\\/g, '/');
   for (const s of STALE_FIGURES) {
-    if (s.pattern.test(html)) errors.push(`${rel}: STALE figure — ${s.label} (use "${s.current}")`);
+    // Flag a stale figure only if the page states it WITHOUT also stating the current value
+    // (a page explaining "rose from $750k to $1M" / "from 10% to 15%" is correct, not stale).
+    if (s.pattern.test(html) && !(s.okIf && s.okIf.test(html)))
+      errors.push(`${rel}: STALE figure — ${s.label} (use "${s.current}")`);
   }
   // Pages adopting the new "Sources & tools" standard must carry a Last-verified date.
   if (/Sources &amp; tools/.test(html)) {
