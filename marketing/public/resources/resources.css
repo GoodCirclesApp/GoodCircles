@@ -169,6 +169,13 @@ footer .muted{color:#9883b5;font-size:.8rem;margin-top:6px}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--purple);outline-offset:2px;border-radius:4px}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 
+/* ---- E-E-A-T author/reviewer byline (injected by build-eeat-bylines.mjs) ---- */
+.byline{font-family:'Fira Sans';font-size:.85rem;color:var(--ash);background:#faf7fd;border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin:0 0 18px;line-height:1.55}
+.byline a{color:var(--gold-deep);font-weight:600;text-decoration:none}
+.byline a:hover{text-decoration:underline}
+.byl-ck{display:inline-block;width:17px;height:17px;line-height:17px;text-align:center;background:#1f7a44;color:#fff;border-radius:50%;font-size:.66rem;font-weight:800;margin-right:5px;vertical-align:middle}
+.byl-rev{color:var(--purple);font-weight:700}
+
 /* ---- "Was this helpful?" feedback widget (injected by share.js) ---- */
 .gcfb{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:24px 0 6px;padding:13px 18px;background:#fff;border:1px solid var(--line);border-radius:12px}
 .gcfb-q{font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.92rem}
