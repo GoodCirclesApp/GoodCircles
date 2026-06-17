@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Board Composition Matrix · Good Circles</title>
+<meta name="description" content="Free board composition matrix: map the skills and perspectives on your nonprofit board, see your gaps at a glance, and guide your next recruitment.">
+<link rel="canonical" href="https://goodcircles.org/resources/tools/board-composition-matrix/">
+<meta property="og:title" content="Board Composition Matrix · Good Circles">
+<meta property="og:description" content="Map your board’s skills and perspectives, spot the gaps, and recruit on purpose — a free board matrix.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://goodcircles.org/resources/tools/board-composition-matrix/"><meta property="og:image" content="https://goodcircles.org/resources/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#7851A9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/resources.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Nonprofit Board Composition Matrix","description":"A planning grid that maps the skills, expertise, and perspectives present on a nonprofit board against the areas it needs, highlighting gaps to guide recruitment.","applicationCategory":"BusinessApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://goodcircles.org/resources/tools/board-composition-matrix/","publisher":{"@type":"Organization","name":"Good Circles","url":"https://goodcircles.org","logo":{"@type":"ImageObject","url":"https://goodcircles.org/resources/og.png"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a board composition matrix?","acceptedAnswer":{"@type":"Answer","text":"It is a grid that lists the skills, areas of expertise, and perspectives a board needs and maps them against what current members bring. It makes gaps visible so the board can recruit intentionally rather than filling seats with people like those already there."}},{"@type":"Question","name":"What should be on the matrix?","acceptedAnswer":{"@type":"Answer","text":"Common rows include governance, finance and accounting, legal, fundraising, marketing, strategic planning, program or subject-matter expertise, human resources, technology, and perspectives such as the lived experience of the people the organization serves and community or cultural representation. Tailor the list to your mission."}},{"@type":"Question","name":"How many board members should cover each area?","acceptedAnswer":{"@type":"Answer","text":"There is no fixed rule, but most areas benefit from at least two members so there is depth and backup if one departs. Critical areas like finance often warrant more. Use the matrix to balance coverage against board size."}},{"@type":"Question","name":"Is board diversity part of the matrix?","acceptedAnswer":{"@type":"Answer","text":"Yes. Beyond professional skills, a good matrix tracks perspectives and representation — including the lived experience of those served and cultural competence — because a board that reflects the community governs more effectively. Treat these as essential rows, not extras."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Good Circles","item":"https://goodcircles.org"},{"@type":"ListItem","position":2,"name":"Resources","item":"https://goodcircles.org/resources/"},{"@type":"ListItem","position":3,"name":"Tools","item":"https://goodcircles.org/resources/tools/"},{"@type":"ListItem","position":4,"name":"Board Composition Matrix","item":"https://goodcircles.org/resources/tools/board-composition-matrix/"}]}</script>
+</head><body>
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/tools/">Tools</a><a href="/resources/templates/">Templates</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>
+<div class="wrap"><header class="hero">
+  <div class="crumb"><a href="/resources/">Resources</a> › <a href="/resources/tools/">Tools</a> › Board Composition Matrix</div>
+  <div class="eyebrow">Governance &amp; Compliance</div>
+  <h1>Board Composition Matrix</h1>
+  <div class="dateline">Updated June 17, 2026 · Good Circles · interactive tool · runs in your browser</div>
+</header>
+<article>
+  <div class="answer">A strong board is built on purpose, not by accident. A <b>board composition matrix</b> maps the skills, expertise, and perspectives your board needs against what your current members actually bring — so you recruit to fill real gaps instead of cloning who you already have. Enter how many current members bring strength in each area; zeros are flagged as gaps. This is a planning grid, not a scorecard.</div>
+
+  <style>
+.gct{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow-sm);margin:8px 0 6px}
+.gct .fld{margin:12px 0 4px}
+.gct label{display:block;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.84rem;letter-spacing:.3px;margin-bottom:5px}
+.gct label .sub{font-weight:600;color:var(--ash);font-size:.78rem;letter-spacing:0;text-transform:none}
+.gct input[type=number],.gct input[type=text]{width:170px;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:1.02rem;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.gct input[type=range]{flex:1;min-width:170px;accent-color:#7851A9}
+.gct .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gct .num{font-family:'Montserrat';font-weight:900;color:var(--purple);font-size:1.15rem;min-width:84px;text-align:right}
+.gct .num.g{color:var(--gold-deep)}
+.gct hr{border:none;border-top:1px solid var(--line);margin:16px 0 12px}
+.gct .scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ash);font-family:'Montserrat';font-weight:700;margin-top:3px}
+.gct .out .stat .n{font-size:1.7rem}
+.gct .note{font-size:.84rem;color:var(--ash);margin-top:8px}
+.gct .mini{width:120px}
+.gct table.tbl input{width:108px}
+.gct .ck{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.gct .ck input{margin-top:3px;width:18px;height:18px;accent-color:#7851A9}
+.gct .pill{display:inline-block;font-family:'Montserrat';font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:999px;background:#f0e9f7;color:var(--purple)}
+.gct .pill.ok{background:#e6f5ec;color:#1f7a44}.gct .pill.warn{background:#fbf0e0;color:#9a6a16}.gct .pill.bad{background:#fdeaea;color:#a3232b}
+</style>
+
+  <div class="gct">
+  <div class="fld"><label for="bm-size">Current board size</label><input type="number" id="bm-size" min="1" step="1" value="9"></div>
+  <p class="note">For each area, enter how many current board members bring real strength in it.</p>
+  <table class="tbl"><thead><tr><th>Skill / perspective</th><th># of members</th><th>Status</th></tr></thead><tbody id="bm-rows">
+    <tr><td>Nonprofit governance</td><td><input type="number" class="bm-c" min="0" step="1" value="3"></td><td class="bm-st"></td></tr>
+    <tr><td>Financial management / accounting</td><td><input type="number" class="bm-c" min="0" step="1" value="1"></td><td class="bm-st"></td></tr>
+    <tr><td>Legal</td><td><input type="number" class="bm-c" min="0" step="1" value="0"></td><td class="bm-st"></td></tr>
+    <tr><td>Fundraising / development</td><td><input type="number" class="bm-c" min="0" step="1" value="2"></td><td class="bm-st"></td></tr>
+    <tr><td>Marketing &amp; communications</td><td><input type="number" class="bm-c" min="0" step="1" value="1"></td><td class="bm-st"></td></tr>
+    <tr><td>Strategic planning</td><td><input type="number" class="bm-c" min="0" step="1" value="2"></td><td class="bm-st"></td></tr>
+    <tr><td>Program / subject-matter expertise</td><td><input type="number" class="bm-c" min="0" step="1" value="3"></td><td class="bm-st"></td></tr>
+    <tr><td>Human resources</td><td><input type="number" class="bm-c" min="0" step="1" value="0"></td><td class="bm-st"></td></tr>
+    <tr><td>Technology / cybersecurity</td><td><input type="number" class="bm-c" min="0" step="1" value="0"></td><td class="bm-st"></td></tr>
+    <tr><td>Lived experience of those served</td><td><input type="number" class="bm-c" min="0" step="1" value="1"></td><td class="bm-st"></td></tr>
+    <tr><td>DEI / cultural competence</td><td><input type="number" class="bm-c" min="0" step="1" value="1"></td><td class="bm-st"></td></tr>
+    <tr><td>Advocacy / public policy</td><td><input type="number" class="bm-c" min="0" step="1" value="0"></td><td class="bm-st"></td></tr>
+  </tbody></table>
+  <hr>
+  <div class="out stats" style="grid-template-columns:repeat(2,1fr)">
+    <div class="stat"><div class="n g" id="bm-covered">0</div><div class="l">Areas covered</div></div>
+    <div class="stat"><div class="n" id="bm-gaps">0</div><div class="l">Gaps to recruit for</div></div>
+  </div>
+  <p class="note" id="bm-summary"></p>
+  <p class="note">A board matrix guides recruitment so your board has the skills, perspectives, and community representation your mission needs — see BoardSource for governance guidance. Coverage is a starting point: even “covered” areas may need depth or succession.</p>
+</div>
+
+  <div class="gcbox"><span class="tagpill">A board that builds, not just oversees</span><h3>Give your board an easy, high-impact win</h3><p>Boards engage most when they can help in concrete ways. Enrolling as a <b>Good Circles</b> Founding Nonprofit gives every board member a simple, repeatable ask — invite supporters to pick your cause, then a share of their everyday local spending funds you automatically (about 10% of each merchant’s net profit; conservatively ~$72 per active supporter per year, an estimate), free for your nonprofit.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a></div>
+
+  <div class="callout"><h4>Sources &amp; tools</h4>
+<p style="font-weight:800;margin:6px 0 2px">Free first</p>
+<ul><li><a href="https://boardsource.org/" target="_blank" rel="noopener">BoardSource</a> — the leading free guidance on nonprofit board composition and recruitment.</li><li><a href="https://www.councilofnonprofits.org/" target="_blank" rel="noopener">National Council of Nonprofits — board roles</a> — what an effective board does and how to build one.</li><li><a href="https://www.bridgespan.org/" target="_blank" rel="noopener">Bridgespan — nonprofit boards</a> — free articles on board effectiveness and recruitment.</li></ul>
+<p style="font-weight:800;margin:10px 0 2px">Paid — optional labor-savers</p>
+<ul><li><a href="https://boardsource.org/" target="_blank" rel="noopener">A governance consultant / board-recruitment platform</a> — runs a structured board assessment and sources candidates. <i>Worth it when you are rebuilding the board or preparing for a leadership transition.</i></li></ul>
+<p class="muted" style="margin-top:8px">Last verified 2026-06-17. Figures and rules change — verify at the source before you act.</p></div>
+
+  <div class="sharebar"><span class="lbl">Share</span><a href="javascript:void(0)" onclick="gcShare('facebook')" aria-label="Share on Facebook"><svg viewBox="0 0 24 24"><path d="M13 22v-8h3l1-4h-4V8c0-1 .5-2 2-2h2V2h-3c-3 0-5 2-5 5v3H6v4h3v8z"/></svg>Facebook</a><a href="javascript:void(0)" onclick="gcShare('x')" aria-label="Share on X"><svg viewBox="0 0 24 24"><path d="M18 2h3l-7 8 8 12h-6l-5-7-6 7H2l8-9L2 2h6l4 6zm-1 18h2L8 4H6z"/></svg>X</a><a href="javascript:void(0)" onclick="gcShare('linkedin')" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M4 4a2 2 0 110 4 2 2 0 010-4zM3 9h3v12H3zM9 9h3v2c.5-1 2-2 4-2 3 0 4 2 4 5v7h-3v-6c0-2-1-3-2-3s-2 1-2 3v6H9z"/></svg>LinkedIn</a><a href="javascript:void(0)" onclick="gcShare('email')" aria-label="Share by email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg>Email</a><button onclick="gcCopy(this)" aria-label="Copy link"><svg viewBox="0 0 24 24"><path d="M9 7h9v12H9zM5 3h9v2H7v10H5z"/></svg><span class="t">Copy link</span></button></div>
+
+  <h2 id="faq">FAQ</h2>
+<div class="faq"><h4>What is a board composition matrix?</h4><p>It is a grid that lists the skills, areas of expertise, and perspectives a board needs and maps them against what current members bring. It makes gaps visible so the board can recruit intentionally rather than filling seats with people like those already there.</p></div>
+<div class="faq"><h4>What should be on the matrix?</h4><p>Common rows include governance, finance and accounting, legal, fundraising, marketing, strategic planning, program or subject-matter expertise, human resources, technology, and perspectives such as the lived experience of the people the organization serves and community or cultural representation. Tailor the list to your mission.</p></div>
+<div class="faq"><h4>How many board members should cover each area?</h4><p>There is no fixed rule, but most areas benefit from at least two members so there is depth and backup if one departs. Critical areas like finance often warrant more. Use the matrix to balance coverage against board size.</p></div>
+<div class="faq"><h4>Is board diversity part of the matrix?</h4><p>Yes. Beyond professional skills, a good matrix tracks perspectives and representation — including the lived experience of those served and cultural competence — because a board that reflects the community governs more effectively. Treat these as essential rows, not extras.</p></div>
+
+  <div class="related"><b>Related guides &amp; tools:</b><br>
+  <a href="/resources/governance-compliance/nonprofit-board-governance/">Nonprofit board governance</a>
+  <a href="/resources/program-design/equity-and-community-engagement/">Equity, DEI &amp; community engagement</a>
+  <a href="/resources/operations/strategic-planning/">Strategic planning</a>
+  <a href="/resources/tools/">All free tools</a>
+</div>
+</article></div>
+<footer><div class="wrap">
+  <div class="ftag">Save. Give. Stay local.</div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/tools/">Tools</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
+</div></footer>
+<script>(function(){
+  function $(id){return document.getElementById(id);}
+  var rows=document.querySelectorAll('#bm-rows tr');
+  function render(){
+    var covered=0,gaps=0,gapNames=[];
+    rows.forEach(function(tr){
+      var c=parseInt(tr.querySelector('.bm-c').value,10);if(isNaN(c)||c<0)c=0;
+      var st=tr.querySelector('.bm-st');
+      if(c>=1){covered++;st.innerHTML='<span class="pill ok">covered ('+c+')</span>';}
+      else {gaps++;gapNames.push(tr.querySelector('td').textContent);st.innerHTML='<span class="pill bad">gap</span>';}
+    });
+    $('bm-covered').textContent=covered;
+    $('bm-gaps').textContent=gaps;
+    var size=parseInt($('bm-size').value,10);if(isNaN(size)||size<1)size=1;
+    var msg='Your board of <b>'+size+'</b> covers <b>'+covered+'</b> of '+rows.length+' areas. ';
+    if(gaps===0)msg+='No obvious skill gaps — focus next recruitment on depth and succession.';
+    else msg+='Priorities to recruit for: <b>'+gapNames.join(', ')+'</b>.';
+    $('bm-summary').innerHTML=msg;
+  }
+  document.querySelectorAll('#bm-rows .bm-c, #bm-size').forEach(function(i){i.addEventListener('input',render);});
+  render();
+})();</script>
+<script src="/resources/share.js"></script>
+</body></html>

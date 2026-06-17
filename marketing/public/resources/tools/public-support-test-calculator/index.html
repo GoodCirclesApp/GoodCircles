@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Public Support Test Calculator · Good Circles</title>
+<meta name="description" content="Free public support test calculator: estimate your 509(a)(1) public support percentage and see whether you pass the 33-1/3% test, the facts-and-circumstances range, or fail.">
+<link rel="canonical" href="https://goodcircles.org/resources/tools/public-support-test-calculator/">
+<meta property="og:title" content="Public Support Test Calculator · Good Circles">
+<meta property="og:description" content="Estimate your public support percentage and whether you keep public-charity status under the 509(a)(1) test — live.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://goodcircles.org/resources/tools/public-support-test-calculator/"><meta property="og:image" content="https://goodcircles.org/resources/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#7851A9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/resources.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Nonprofit Public Support Test Calculator (509(a)(1))","description":"Estimates the public support percentage used in the 509(a)(1) / 170(b)(1)(A)(vi) public support test and indicates whether an organization passes the one-third test, the 10% facts-and-circumstances range, or fails.","applicationCategory":"BusinessApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://goodcircles.org/resources/tools/public-support-test-calculator/","publisher":{"@type":"Organization","name":"Good Circles","url":"https://goodcircles.org","logo":{"@type":"ImageObject","url":"https://goodcircles.org/resources/og.png"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the public support test?","acceptedAnswer":{"@type":"Answer","text":"It is the IRS test that determines whether a 501(c)(3) is a publicly supported charity rather than a private foundation. Under section 509(a)(1) and 170(b)(1)(A)(vi), an organization generally must receive at least one-third of its total support from the general public and government over a five-year measuring period."}},{"@type":"Question","name":"What is the 2% donor cap?","acceptedAnswer":{"@type":"Answer","text":"When computing public support under the 509(a)(1) test, the amount counted from any one individual or company is limited to 2% of the organization’s total support over the period. Contributions from government units and other public charities are not subject to this cap. The cap prevents a few very large gifts from masking a narrow base."}},{"@type":"Question","name":"What happens if we fail the test?","acceptedAnswer":{"@type":"Answer","text":"An organization that cannot meet the one-third test or the 10% facts-and-circumstances test is reclassified as a private foundation, which brings stricter rules, excise taxes, and different deductibility limits. Many organizations instead qualify under the alternative 509(a)(2) test if they earn significant exempt-function revenue."}},{"@type":"Question","name":"Is this calculator the official figure?","acceptedAnswer":{"@type":"Answer","text":"No. This is a simplified planning estimate. The official public support percentage is calculated on Schedule A of the Form 990 with the donor cap, unusual-grant exclusions, and the five-year window applied. Use this to monitor your position, then confirm with a CPA."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Good Circles","item":"https://goodcircles.org"},{"@type":"ListItem","position":2,"name":"Resources","item":"https://goodcircles.org/resources/"},{"@type":"ListItem","position":3,"name":"Tools","item":"https://goodcircles.org/resources/tools/"},{"@type":"ListItem","position":4,"name":"Public Support Test","item":"https://goodcircles.org/resources/tools/public-support-test-calculator/"}]}</script>
+</head><body>
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/tools/">Tools</a><a href="/resources/templates/">Templates</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>
+<div class="wrap"><header class="hero">
+  <div class="crumb"><a href="/resources/">Resources</a> › <a href="/resources/tools/">Tools</a> › Public Support Test</div>
+  <div class="eyebrow">Governance &amp; Compliance</div>
+  <h1>Public Support Test Calculator</h1>
+  <div class="dateline">Updated June 17, 2026 · Good Circles · interactive tool · runs in your browser</div>
+</header>
+<article>
+  <div class="answer">To stay a public charity (not a private foundation), a 501(c)(3) that relies on gifts and grants must pass the <b>public support test</b> under sections 509(a)(1) and 170(b)(1)(A)(vi): broadly, <b>at least one-third</b> of its total support must come from the public. This tool estimates your public support percentage. It is a simplified planning estimate — the official figure is computed on <b>Schedule A</b> of the Form 990 over a five-year window with a 2%-per-donor cap.</div>
+
+  <style>
+.gct{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow-sm);margin:8px 0 6px}
+.gct .fld{margin:12px 0 4px}
+.gct label{display:block;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.84rem;letter-spacing:.3px;margin-bottom:5px}
+.gct label .sub{font-weight:600;color:var(--ash);font-size:.78rem;letter-spacing:0;text-transform:none}
+.gct input[type=number],.gct input[type=text]{width:170px;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:1.02rem;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.gct input[type=range]{flex:1;min-width:170px;accent-color:#7851A9}
+.gct .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gct .num{font-family:'Montserrat';font-weight:900;color:var(--purple);font-size:1.15rem;min-width:84px;text-align:right}
+.gct .num.g{color:var(--gold-deep)}
+.gct hr{border:none;border-top:1px solid var(--line);margin:16px 0 12px}
+.gct .scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ash);font-family:'Montserrat';font-weight:700;margin-top:3px}
+.gct .out .stat .n{font-size:1.7rem}
+.gct .note{font-size:.84rem;color:var(--ash);margin-top:8px}
+.gct .mini{width:120px}
+.gct table.tbl input{width:108px}
+.gct .ck{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.gct .ck input{margin-top:3px;width:18px;height:18px;accent-color:#7851A9}
+.gct .pill{display:inline-block;font-family:'Montserrat';font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:999px;background:#f0e9f7;color:var(--purple)}
+.gct .pill.ok{background:#e6f5ec;color:#1f7a44}.gct .pill.warn{background:#fbf0e0;color:#9a6a16}.gct .pill.bad{background:#fdeaea;color:#a3232b}
+</style>
+
+  <div class="gct">
+  <div class="fld"><label for="ps-total">Total support over the measuring period <span class="sub">— usually the current year plus the prior four</span></label><input type="number" id="ps-total" min="0" step="1000" value="1000000"></div>
+  <div class="fld"><label for="ps-public">Public support that counts <span class="sub">— gifts/grants from the public &amp; government, with each individual donor capped at 2% of total support</span></label><input type="number" id="ps-public" min="0" step="1000" value="400000"></div>
+  <hr>
+  <div class="out stats" style="grid-template-columns:repeat(2,1fr)">
+    <div class="stat"><div class="n" id="ps-pct">0%</div><div class="l">Public support percentage</div></div>
+    <div class="stat"><div class="n g" id="ps-verdict">—</div><div class="l">Result</div></div>
+  </div>
+  <p class="note" id="ps-summary"></p>
+  <div class="callout"><h4>How to read the result</h4><ul>
+    <li><b>33⅓% or more</b> — you meet the public support test as a 509(a)(1) / 170(b)(1)(A)(vi) public charity.</li>
+    <li><b>10% to 33⅓%</b> — you may still qualify under the <b>facts-and-circumstances</b> test if you can show you genuinely operate to attract public support.</li>
+    <li><b>Under 10%</b> — you fail this test and risk private-foundation status; ask a CPA about the 509(a)(2) test or restructuring your support.</li>
+  </ul></div>
+  <p class="note">Simplified estimator for the 509(a)(1) test. The real Schedule A calculation caps each individual/corporate donor’s gifts at 2% of total support (government units and other public charities are not capped), excludes “unusual grants,” and uses a five-year window. A separate 509(a)(2) test applies to organizations funded mainly by exempt-function (program) revenue. Confirm with a nonprofit CPA.</p>
+</div>
+
+  <div class="gcbox"><span class="tagpill">Broad public support, by design</span><h3>A funding base that widens your public support</h3><p>Passing the public support test means money from <b>many</b> members of the public, not a few big donors. <b>Good Circles</b> builds exactly that kind of broad base — lots of supporters each contributing a share of their everyday local spending (about 10% of each merchant’s net profit; conservatively ~$72 per active supporter per year, an estimate), free for your nonprofit. Broad public support is good for your mission <em>and</em> for your 509(a)(1) math.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a></div>
+
+  <div class="callout"><h4>Sources &amp; tools</h4>
+<p style="font-weight:800;margin:6px 0 2px">Free first</p>
+<ul><li><a href="https://www.irs.gov/forms-pubs/about-schedule-a-form-990-or-990-ez" target="_blank" rel="noopener">IRS Schedule A (Form 990) &amp; instructions</a> — the official public support test calculation and worksheets.</li><li><a href="https://www.irs.gov/charities-non-profits/charitable-organizations/exempt-organizations-public-charities" target="_blank" rel="noopener">IRS — public charities</a> — how the IRS classifies public charities vs. private foundations.</li><li><a href="https://www.councilofnonprofits.org/" target="_blank" rel="noopener">National Council of Nonprofits</a> — plain-language guidance on maintaining public-charity status.</li></ul>
+<p style="font-weight:800;margin:10px 0 2px">Paid — optional labor-savers</p>
+<ul><li><a href="https://www.councilofnonprofits.org/" target="_blank" rel="noopener">A nonprofit CPA</a> — computes Schedule A correctly and plans to keep you above the threshold. <i>Worth it when your public support percentage is trending toward 33⅓% or below.</i></li></ul>
+<p class="muted" style="margin-top:8px">Last verified 2026-06-17. Figures and rules change — verify at the source before you act.</p></div>
+
+  <div class="sharebar"><span class="lbl">Share</span><a href="javascript:void(0)" onclick="gcShare('facebook')" aria-label="Share on Facebook"><svg viewBox="0 0 24 24"><path d="M13 22v-8h3l1-4h-4V8c0-1 .5-2 2-2h2V2h-3c-3 0-5 2-5 5v3H6v4h3v8z"/></svg>Facebook</a><a href="javascript:void(0)" onclick="gcShare('x')" aria-label="Share on X"><svg viewBox="0 0 24 24"><path d="M18 2h3l-7 8 8 12h-6l-5-7-6 7H2l8-9L2 2h6l4 6zm-1 18h2L8 4H6z"/></svg>X</a><a href="javascript:void(0)" onclick="gcShare('linkedin')" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M4 4a2 2 0 110 4 2 2 0 010-4zM3 9h3v12H3zM9 9h3v2c.5-1 2-2 4-2 3 0 4 2 4 5v7h-3v-6c0-2-1-3-2-3s-2 1-2 3v6H9z"/></svg>LinkedIn</a><a href="javascript:void(0)" onclick="gcShare('email')" aria-label="Share by email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg>Email</a><button onclick="gcCopy(this)" aria-label="Copy link"><svg viewBox="0 0 24 24"><path d="M9 7h9v12H9zM5 3h9v2H7v10H5z"/></svg><span class="t">Copy link</span></button></div>
+
+  <h2 id="faq">FAQ</h2>
+<div class="faq"><h4>What is the public support test?</h4><p>It is the IRS test that determines whether a 501(c)(3) is a publicly supported charity rather than a private foundation. Under section 509(a)(1) and 170(b)(1)(A)(vi), an organization generally must receive at least one-third of its total support from the general public and government over a five-year measuring period.</p></div>
+<div class="faq"><h4>What is the 2% donor cap?</h4><p>When computing public support under the 509(a)(1) test, the amount counted from any one individual or company is limited to 2% of the organization’s total support over the period. Contributions from government units and other public charities are not subject to this cap. The cap prevents a few very large gifts from masking a narrow base.</p></div>
+<div class="faq"><h4>What happens if we fail the test?</h4><p>An organization that cannot meet the one-third test or the 10% facts-and-circumstances test is reclassified as a private foundation, which brings stricter rules, excise taxes, and different deductibility limits. Many organizations instead qualify under the alternative 509(a)(2) test if they earn significant exempt-function revenue.</p></div>
+<div class="faq"><h4>Is this calculator the official figure?</h4><p>No. This is a simplified planning estimate. The official public support percentage is calculated on Schedule A of the Form 990 with the donor cap, unusual-grant exclusions, and the five-year window applied. Use this to monitor your position, then confirm with a CPA.</p></div>
+
+  <div class="related"><b>Related guides &amp; tools:</b><br>
+  <a href="/resources/governance-compliance/form-990-explained/">Form 990 explained</a>
+  <a href="/resources/governance-compliance/annual-compliance-checklist/">Annual compliance checklist</a>
+  <a href="/resources/grants/why-diversified-nonprofits-win-grants/">Why diversified nonprofits win grants</a>
+  <a href="/resources/tools/">All free tools</a>
+</div>
+</article></div>
+<footer><div class="wrap">
+  <div class="ftag">Save. Give. Stay local.</div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/tools/">Tools</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
+</div></footer>
+<script>(function(){
+  function $(id){return document.getElementById(id);}
+  function n(id){var v=parseFloat($(id).value);return isNaN(v)||v<0?0:v;}
+  function render(){
+    var total=n('ps-total'),pub=Math.min(n('ps-public'),total);
+    var pct=total>0?pub/total*100:0;
+    $('ps-pct').textContent=pct.toFixed(1)+'%';
+    var v=$('ps-verdict');
+    if(pct>=33.333){v.textContent='Passes';v.className='n g';}
+    else if(pct>=10){v.textContent='Maybe (F&C)';v.className='n g';}
+    else {v.textContent='Fails';v.className='n';}
+    var msg;
+    if(pct>=33.333)msg='At <b>'+pct.toFixed(1)+'%</b> you meet the one-third public support test. Keep documenting broad public support to stay above 33⅓%.';
+    else if(pct>=10)msg='At <b>'+pct.toFixed(1)+'%</b> you fall in the facts-and-circumstances range (10–33⅓%). You may still qualify if you actively solicit and attract public support — document those efforts carefully.';
+    else msg='At <b>'+pct.toFixed(1)+'%</b> you are below 10% and would fail this test. Review the 2% donor cap, look at the 509(a)(2) test, and consult a CPA.';
+    $('ps-summary').innerHTML=msg+' Estimate only.';
+  }
+  ['ps-total','ps-public'].forEach(function(id){$(id).addEventListener('input',render);});
+  render();
+})();</script>
+<script src="/resources/share.js"></script>
+</body></html>

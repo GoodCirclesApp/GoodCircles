@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Website Accessibility Quick-Audit · Good Circles</title>
+<meta name="description" content="Free website accessibility quick-audit: check your site against 14 common WCAG 2.1 AA items, get a score, and see the top fixes to prioritize. Not a substitute for a full audit.">
+<link rel="canonical" href="https://goodcircles.org/resources/tools/wcag-accessibility-quick-audit/">
+<meta property="og:title" content="Website Accessibility Quick-Audit · Good Circles">
+<meta property="og:description" content="Run a quick WCAG 2.1 AA self-check on your nonprofit website and see the highest-impact fixes — free.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://goodcircles.org/resources/tools/wcag-accessibility-quick-audit/"><meta property="og:image" content="https://goodcircles.org/resources/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#7851A9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/resources.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Nonprofit Website Accessibility Quick-Audit (WCAG 2.1 AA)","description":"A self-audit checklist of common, high-impact WCAG 2.1 AA accessibility checks for a nonprofit website, scoring how many pass and listing the top fixes to prioritize.","applicationCategory":"BusinessApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://goodcircles.org/resources/tools/wcag-accessibility-quick-audit/","publisher":{"@type":"Organization","name":"Good Circles","url":"https://goodcircles.org","logo":{"@type":"ImageObject","url":"https://goodcircles.org/resources/og.png"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is WCAG 2.1 AA?","acceptedAnswer":{"@type":"Answer","text":"The Web Content Accessibility Guidelines (WCAG) 2.1 are the international standard for web accessibility, published by the W3C. Level AA is the commonly required conformance level and covers practical requirements like color contrast, keyboard access, captions, and form labels."}},{"@type":"Question","name":"Do nonprofits legally have to be accessible?","acceptedAnswer":{"@type":"Answer","text":"It depends. The 2024 U.S. Department of Justice rule under ADA Title II requires state and local governments to meet WCAG 2.1 AA on a set timeline. Private nonprofits are generally covered by ADA Title III as places of public accommodation, and accessibility is both a legal-risk and an inclusion issue, so WCAG 2.1 AA is the best-practice target."}},{"@type":"Question","name":"What are the highest-impact accessibility fixes?","acceptedAnswer":{"@type":"Answer","text":"Meaningful alt text, sufficient color contrast, full keyboard operability, and properly labeled form fields tend to deliver the most benefit for the least effort. Captions and transcripts matter wherever you publish audio or video."}},{"@type":"Question","name":"Is this self-audit enough for compliance?","acceptedAnswer":{"@type":"Answer","text":"No. A quick self-check is a useful starting point, but real conformance requires testing with assistive technology such as screen readers, automated scanners, and ideally people with disabilities. Treat a high score as a floor, not proof of compliance."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Good Circles","item":"https://goodcircles.org"},{"@type":"ListItem","position":2,"name":"Resources","item":"https://goodcircles.org/resources/"},{"@type":"ListItem","position":3,"name":"Tools","item":"https://goodcircles.org/resources/tools/"},{"@type":"ListItem","position":4,"name":"Accessibility Quick-Audit","item":"https://goodcircles.org/resources/tools/wcag-accessibility-quick-audit/"}]}</script>
+</head><body>
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/tools/">Tools</a><a href="/resources/templates/">Templates</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>
+<div class="wrap"><header class="hero">
+  <div class="crumb"><a href="/resources/">Resources</a> › <a href="/resources/tools/">Tools</a> › Accessibility Quick-Audit</div>
+  <div class="eyebrow">Marketing &amp; Communications</div>
+  <h1>Website Accessibility Quick-Audit</h1>
+  <div class="dateline">Updated June 17, 2026 · Good Circles · interactive tool · runs in your browser</div>
+</header>
+<article>
+  <div class="answer">An accessible website reaches more people and reduces legal risk. This is a quick self-check of common, high-impact <b>WCAG 2.1 AA</b> items — the consensus standard for web accessibility. Tick what your site already does; you’ll get a score and a prioritized fix list. <em>This is a starting point, not a substitute for a full audit or testing with real assistive technology and users.</em></div>
+
+  <style>
+.gct{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow-sm);margin:8px 0 6px}
+.gct .fld{margin:12px 0 4px}
+.gct label{display:block;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.84rem;letter-spacing:.3px;margin-bottom:5px}
+.gct label .sub{font-weight:600;color:var(--ash);font-size:.78rem;letter-spacing:0;text-transform:none}
+.gct input[type=number],.gct input[type=text]{width:170px;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:1.02rem;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.gct input[type=range]{flex:1;min-width:170px;accent-color:#7851A9}
+.gct .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gct .num{font-family:'Montserrat';font-weight:900;color:var(--purple);font-size:1.15rem;min-width:84px;text-align:right}
+.gct .num.g{color:var(--gold-deep)}
+.gct hr{border:none;border-top:1px solid var(--line);margin:16px 0 12px}
+.gct .scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ash);font-family:'Montserrat';font-weight:700;margin-top:3px}
+.gct .out .stat .n{font-size:1.7rem}
+.gct .note{font-size:.84rem;color:var(--ash);margin-top:8px}
+.gct .mini{width:120px}
+.gct table.tbl input{width:108px}
+.gct .ck{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.gct .ck input{margin-top:3px;width:18px;height:18px;accent-color:#7851A9}
+.gct .pill{display:inline-block;font-family:'Montserrat';font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:999px;background:#f0e9f7;color:var(--purple)}
+.gct .pill.ok{background:#e6f5ec;color:#1f7a44}.gct .pill.warn{background:#fbf0e0;color:#9a6a16}.gct .pill.bad{background:#fdeaea;color:#a3232b}
+</style>
+
+  <div class="gct">
+  <p class="note" style="margin-top:0">Check each item your website currently meets.</p>
+  <div id="wc-list">
+    <label class="ck"><input type="checkbox" class="wc" checked data-fix="Add meaningful alt text to images (and empty alt to decorative ones)"><span>Every image has meaningful alt text (decorative images use empty alt).</span></label>
+    <label class="ck"><input type="checkbox" class="wc" data-fix="Fix low-contrast text to at least 4.5:1 (3:1 for large text)"><span>Text has sufficient color contrast (at least 4.5:1 for normal text).</span></label>
+    <label class="ck"><input type="checkbox" class="wc" checked data-fix="Make every function operable with the keyboard alone"><span>The whole site works with a keyboard alone (no mouse needed).</span></label>
+    <label class="ck"><input type="checkbox" class="wc" data-fix="Add a visible focus indicator for keyboard users"><span>A visible focus indicator shows where keyboard focus is.</span></label>
+    <label class="ck"><input type="checkbox" class="wc" checked data-fix="Give every form field a visible, programmatic label"><span>Form fields have visible, programmatically-associated labels.</span></label>
+    <label class="ck"><input type="checkbox" class="wc" checked data-fix="Use headings in order with a single H1 per page"><span>Headings are used in order (one H1, then H2/H3) to structure pages.</span></label>
+    <label class="ck"><input type="checkbox" class="wc" data-fix="Rewrite vague links so the text makes sense out of context"><span>Link text makes sense out of context (no bare “click here”).</span></label>
+    <label class="ck"><input type="checkbox" class="wc" data-fix="Add captions to video and transcripts to audio"><span>Video has captions and audio has a transcript.</span></label>
+    <label class="ck"><input type="checkbox" class="wc" checked data-fix="Convey information with more than color alone"><span>Color is not the only way information is conveyed.</span></label>
+    <label class="ck"><input type="checkbox" class="wc" checked data-fix="Ensure text reflows and stays usable at 200% zoom"><span>Text can zoom to 200% without breaking the layout.</span></label>
+    <label class="ck"><input type="checkbox" class="wc" checked data-fix="Give every page a descriptive, unique title"><span>Pages have descriptive, unique titles.</span></label>
+    <label class="ck"><input type="checkbox" class="wc" checked data-fix="Set the page language with the lang attribute"><span>The page language is set (the lang attribute).</span></label>
+    <label class="ck"><input type="checkbox" class="wc" data-fix="Add a skip-to-main-content link"><span>There is a “skip to main content” link.</span></label>
+    <label class="ck"><input type="checkbox" class="wc" data-fix="Remove content that auto-plays or flashes more than 3 times per second"><span>Nothing auto-plays audio or flashes more than three times per second.</span></label>
+  </div>
+  <hr>
+  <div class="out stats" style="grid-template-columns:repeat(2,1fr)">
+    <div class="stat"><div class="n" id="wc-score">0 / 14</div><div class="l">Checks passed</div></div>
+    <div class="stat"><div class="n g" id="wc-pct">0%</div><div class="l">Quick score</div></div>
+  </div>
+  <p class="note" id="wc-summary"></p>
+  <div class="callout" id="wc-fixes" style="display:none"><h4>Top fixes to prioritize</h4><ul id="wc-fixlist"></ul></div>
+  <p class="note">WCAG 2.1 AA is the widely referenced standard. The U.S. DOJ’s 2024 ADA Title II rule requires it of state and local governments on a set timeline; private nonprofits should treat WCAG 2.1 AA as the best-practice target and consider ADA Title III obligations. A passing self-check is a floor, not a guarantee of compliance.</p>
+</div>
+
+  <div class="gcbox"><span class="tagpill">Reach more supporters, for free</span><h3>An accessible site brings more people to your cause</h3><p>Accessibility widens your audience — and so does <b>Good Circles</b>. Supporters pick your cause once on any device, then a share of their everyday local spending funds you automatically: about 10% of each merchant’s net profit, conservatively ~$72 per active supporter per year (an estimate), recurring, unrestricted, and free for your nonprofit.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a></div>
+
+  <div class="callout"><h4>Sources &amp; tools</h4>
+<p style="font-weight:800;margin:6px 0 2px">Free first</p>
+<ul><li><a href="https://www.w3.org/WAI/" target="_blank" rel="noopener">W3C Web Accessibility Initiative (WAI)</a> — the authoritative source for WCAG and how to meet it.</li><li><a href="https://wave.webaim.org/" target="_blank" rel="noopener">WAVE web accessibility evaluation tool</a> — a free automated scanner that flags many accessibility errors.</li><li><a href="https://www.ada.gov/resources/web-guidance/" target="_blank" rel="noopener">ADA.gov — web guidance</a> — the U.S. DOJ’s guidance on web accessibility and the ADA.</li></ul>
+<p style="font-weight:800;margin:10px 0 2px">Paid — optional labor-savers</p>
+<ul><li><a href="https://www.w3.org/WAI/test-evaluate/" target="_blank" rel="noopener">A professional accessibility audit</a> — manual testing with assistive tech and a remediation plan. <i>Worth it when your site is large, transactional, or facing a complaint.</i></li></ul>
+<p class="muted" style="margin-top:8px">Last verified 2026-06-17. Figures and rules change — verify at the source before you act.</p></div>
+
+  <div class="sharebar"><span class="lbl">Share</span><a href="javascript:void(0)" onclick="gcShare('facebook')" aria-label="Share on Facebook"><svg viewBox="0 0 24 24"><path d="M13 22v-8h3l1-4h-4V8c0-1 .5-2 2-2h2V2h-3c-3 0-5 2-5 5v3H6v4h3v8z"/></svg>Facebook</a><a href="javascript:void(0)" onclick="gcShare('x')" aria-label="Share on X"><svg viewBox="0 0 24 24"><path d="M18 2h3l-7 8 8 12h-6l-5-7-6 7H2l8-9L2 2h6l4 6zm-1 18h2L8 4H6z"/></svg>X</a><a href="javascript:void(0)" onclick="gcShare('linkedin')" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M4 4a2 2 0 110 4 2 2 0 010-4zM3 9h3v12H3zM9 9h3v2c.5-1 2-2 4-2 3 0 4 2 4 5v7h-3v-6c0-2-1-3-2-3s-2 1-2 3v6H9z"/></svg>LinkedIn</a><a href="javascript:void(0)" onclick="gcShare('email')" aria-label="Share by email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg>Email</a><button onclick="gcCopy(this)" aria-label="Copy link"><svg viewBox="0 0 24 24"><path d="M9 7h9v12H9zM5 3h9v2H7v10H5z"/></svg><span class="t">Copy link</span></button></div>
+
+  <h2 id="faq">FAQ</h2>
+<div class="faq"><h4>What is WCAG 2.1 AA?</h4><p>The Web Content Accessibility Guidelines (WCAG) 2.1 are the international standard for web accessibility, published by the W3C. Level AA is the commonly required conformance level and covers practical requirements like color contrast, keyboard access, captions, and form labels.</p></div>
+<div class="faq"><h4>Do nonprofits legally have to be accessible?</h4><p>It depends. The 2024 U.S. Department of Justice rule under ADA Title II requires state and local governments to meet WCAG 2.1 AA on a set timeline. Private nonprofits are generally covered by ADA Title III as places of public accommodation, and accessibility is both a legal-risk and an inclusion issue, so WCAG 2.1 AA is the best-practice target.</p></div>
+<div class="faq"><h4>What are the highest-impact accessibility fixes?</h4><p>Meaningful alt text, sufficient color contrast, full keyboard operability, and properly labeled form fields tend to deliver the most benefit for the least effort. Captions and transcripts matter wherever you publish audio or video.</p></div>
+<div class="faq"><h4>Is this self-audit enough for compliance?</h4><p>No. A quick self-check is a useful starting point, but real conformance requires testing with assistive technology such as screen readers, automated scanners, and ideally people with disabilities. Treat a high score as a floor, not proof of compliance.</p></div>
+
+  <div class="related"><b>Related guides &amp; tools:</b><br>
+  <a href="/resources/marketing/nonprofit-website-accessibility/">Website accessibility</a>
+  <a href="/resources/marketing/nonprofit-website-essentials/">Website essentials</a>
+  <a href="/resources/marketing/">Marketing &amp; communications hub</a>
+  <a href="/resources/tools/">All free tools</a>
+</div>
+</article></div>
+<footer><div class="wrap">
+  <div class="ftag">Save. Give. Stay local.</div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/tools/">Tools</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
+</div></footer>
+<script>(function(){
+  function $(id){return document.getElementById(id);}
+  var boxes=document.querySelectorAll('.wc');
+  function render(){
+    var passed=0,fixes=[];
+    boxes.forEach(function(b){ if(b.checked)passed++; else fixes.push(b.getAttribute('data-fix')); });
+    var tot=boxes.length;
+    $('wc-score').textContent=passed+' / '+tot;
+    var pct=Math.round(passed/tot*100);
+    $('wc-pct').textContent=pct+'%';
+    var s;
+    if(pct>=90)s='Strong — your site meets most common WCAG 2.1 AA checks. Close the remaining gaps and test with a screen reader.';
+    else if(pct>=60)s='Decent foundation, with real gaps to close. Work through the prioritized fixes below.';
+    else s='Significant accessibility gaps. Start with the fixes below — alt text, contrast, keyboard access and labels have the highest impact.';
+    $('wc-summary').innerHTML='<b>'+passed+' of '+tot+'</b> checks pass ('+pct+'%). '+s;
+    var box=$('wc-fixes'),list=$('wc-fixlist');
+    if(fixes.length){box.style.display='';list.innerHTML='';fixes.forEach(function(f){var li=document.createElement('li');li.textContent=f;list.appendChild(li);});}
+    else box.style.display='none';
+  }
+  boxes.forEach(function(b){b.addEventListener('change',render);});
+  render();
+})();</script>
+<script src="/resources/share.js"></script>
+</body></html>

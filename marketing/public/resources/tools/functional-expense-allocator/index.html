@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Functional Expense Allocator · Good Circles</title>
+<meta name="description" content="Free functional expense allocator: split nonprofit costs across program, management &amp; general, and fundraising and get your program-expense ratio for the Form 990.">
+<link rel="canonical" href="https://goodcircles.org/resources/tools/functional-expense-allocator/">
+<meta property="og:title" content="Functional Expense Allocator · Good Circles">
+<meta property="og:description" content="Build a Statement of Functional Expenses and see your program ratio — split costs across program, M&amp;G and fundraising live.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://goodcircles.org/resources/tools/functional-expense-allocator/"><meta property="og:image" content="https://goodcircles.org/resources/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#7851A9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/resources.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Nonprofit Functional Expense Allocator","description":"Allocates a nonprofit’s expenses across program, management & general, and fundraising functions and computes the program-expense ratio for the IRS Form 990 Statement of Functional Expenses.","applicationCategory":"FinanceApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://goodcircles.org/resources/tools/functional-expense-allocator/","publisher":{"@type":"Organization","name":"Good Circles","url":"https://goodcircles.org","logo":{"@type":"ImageObject","url":"https://goodcircles.org/resources/og.png"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are functional expenses?","acceptedAnswer":{"@type":"Answer","text":"Functional expenses classify spending by purpose rather than by type. The three functions are program services (your mission work), management and general (M&G, the cost of running the organization), and fundraising. The IRS Form 990 requires this breakdown in the Statement of Functional Expenses."}},{"@type":"Question","name":"How do I allocate a shared cost across functions?","acceptedAnswer":{"@type":"Answer","text":"Allocate on a reasonable, documented basis — for example, splitting a staff member’s salary by the share of their time spent on program, management, and fundraising, or splitting rent by square footage. Keep your method written down and apply it consistently."}},{"@type":"Question","name":"What is a good program-expense ratio?","acceptedAnswer":{"@type":"Answer","text":"Many charity raters look for roughly 65% or more of expenses going to program, but there is no universal rule and context matters. Underfunding overhead to inflate the ratio (the “starvation cycle”) harms organizations, so allocate honestly rather than to a target."}},{"@type":"Question","name":"Is the program ratio the only thing funders look at?","acceptedAnswer":{"@type":"Answer","text":"No. The sector’s “Overhead Myth” campaign urged funders to look at results, transparency, and financial health rather than the overhead ratio alone. Use this ratio as one input, not a verdict."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Good Circles","item":"https://goodcircles.org"},{"@type":"ListItem","position":2,"name":"Resources","item":"https://goodcircles.org/resources/"},{"@type":"ListItem","position":3,"name":"Tools","item":"https://goodcircles.org/resources/tools/"},{"@type":"ListItem","position":4,"name":"Functional Expense Allocator","item":"https://goodcircles.org/resources/tools/functional-expense-allocator/"}]}</script>
+</head><body>
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/tools/">Tools</a><a href="/resources/templates/">Templates</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>
+<div class="wrap"><header class="hero">
+  <div class="crumb"><a href="/resources/">Resources</a> › <a href="/resources/tools/">Tools</a> › Functional Expense Allocator</div>
+  <div class="eyebrow">Operations &amp; Finance</div>
+  <h1>Functional Expense Allocator</h1>
+  <div class="dateline">Updated June 17, 2026 · Good Circles · interactive tool · runs in your browser</div>
+</header>
+<article>
+  <div class="answer">Nonprofits report expenses by <b>function</b> — program, management &amp; general (M&amp;G), and fundraising — on the IRS Form 990 and in audited statements. This tool splits each cost line across the three functions and computes your <b>program-expense ratio</b>. One caution up front: a high program ratio is not automatically “better.” Starving real overhead weakens organizations, so allocate <em>honestly</em>, not to hit a number.</div>
+
+  <style>
+.gct{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow-sm);margin:8px 0 6px}
+.gct .fld{margin:12px 0 4px}
+.gct label{display:block;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:.84rem;letter-spacing:.3px;margin-bottom:5px}
+.gct label .sub{font-weight:600;color:var(--ash);font-size:.78rem;letter-spacing:0;text-transform:none}
+.gct input[type=number],.gct input[type=text]{width:170px;font-family:'Montserrat';font-weight:800;color:var(--ink);font-size:1.02rem;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.gct input[type=range]{flex:1;min-width:170px;accent-color:#7851A9}
+.gct .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gct .num{font-family:'Montserrat';font-weight:900;color:var(--purple);font-size:1.15rem;min-width:84px;text-align:right}
+.gct .num.g{color:var(--gold-deep)}
+.gct hr{border:none;border-top:1px solid var(--line);margin:16px 0 12px}
+.gct .scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ash);font-family:'Montserrat';font-weight:700;margin-top:3px}
+.gct .out .stat .n{font-size:1.7rem}
+.gct .note{font-size:.84rem;color:var(--ash);margin-top:8px}
+.gct .mini{width:120px}
+.gct table.tbl input{width:108px}
+.gct .ck{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.gct .ck input{margin-top:3px;width:18px;height:18px;accent-color:#7851A9}
+.gct .pill{display:inline-block;font-family:'Montserrat';font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:999px;background:#f0e9f7;color:var(--purple)}
+.gct .pill.ok{background:#e6f5ec;color:#1f7a44}.gct .pill.warn{background:#fbf0e0;color:#9a6a16}.gct .pill.bad{background:#fdeaea;color:#a3232b}
+</style>
+
+  <div class="gct">
+  <p class="note" style="margin-top:0">Enter each cost and the % going to each function — each row should total 100%. Defaults are illustrative.</p>
+  <table class="tbl"><thead><tr><th>Expense</th><th>Amount</th><th>Prog %</th><th>M&amp;G %</th><th>Fund %</th></tr></thead><tbody id="fe-rows">
+    <tr><td>Salaries &amp; benefits</td><td><input type="number" class="fe-amt" min="0" value="180000"></td><td><input type="number" class="fe-p" min="0" max="100" value="70"></td><td><input type="number" class="fe-m" min="0" max="100" value="20"></td><td><input type="number" class="fe-f" min="0" max="100" value="10"></td></tr>
+    <tr><td>Rent &amp; occupancy</td><td><input type="number" class="fe-amt" min="0" value="48000"></td><td><input type="number" class="fe-p" min="0" max="100" value="60"></td><td><input type="number" class="fe-m" min="0" max="100" value="30"></td><td><input type="number" class="fe-f" min="0" max="100" value="10"></td></tr>
+    <tr><td>Professional fees</td><td><input type="number" class="fe-amt" min="0" value="22000"></td><td><input type="number" class="fe-p" min="0" max="100" value="30"></td><td><input type="number" class="fe-m" min="0" max="100" value="60"></td><td><input type="number" class="fe-f" min="0" max="100" value="10"></td></tr>
+    <tr><td>Office &amp; supplies</td><td><input type="number" class="fe-amt" min="0" value="14000"></td><td><input type="number" class="fe-p" min="0" max="100" value="60"></td><td><input type="number" class="fe-m" min="0" max="100" value="25"></td><td><input type="number" class="fe-f" min="0" max="100" value="15"></td></tr>
+    <tr><td>Technology</td><td><input type="number" class="fe-amt" min="0" value="18000"></td><td><input type="number" class="fe-p" min="0" max="100" value="55"></td><td><input type="number" class="fe-m" min="0" max="100" value="35"></td><td><input type="number" class="fe-f" min="0" max="100" value="10"></td></tr>
+    <tr><td>Travel</td><td><input type="number" class="fe-amt" min="0" value="9000"></td><td><input type="number" class="fe-p" min="0" max="100" value="80"></td><td><input type="number" class="fe-m" min="0" max="100" value="10"></td><td><input type="number" class="fe-f" min="0" max="100" value="10"></td></tr>
+    <tr><td>Other</td><td><input type="number" class="fe-amt" min="0" value="9000"></td><td><input type="number" class="fe-p" min="0" max="100" value="50"></td><td><input type="number" class="fe-m" min="0" max="100" value="35"></td><td><input type="number" class="fe-f" min="0" max="100" value="15"></td></tr>
+  </tbody></table>
+  <hr>
+  <div class="out stats" style="grid-template-columns:repeat(2,1fr)">
+    <div class="stat"><div class="n" id="fe-prog">$0</div><div class="l">Program expenses</div></div>
+    <div class="stat"><div class="n g" id="fe-progpct">0%</div><div class="l">Program-expense ratio</div></div>
+  </div>
+  <table class="tbl"><thead><tr><th>Function</th><th>Amount</th><th>% of total</th></tr></thead><tbody>
+    <tr><td>Program services</td><td style="text-align:right" id="fe-t-prog">—</td><td style="text-align:right" id="fe-pct-prog">—</td></tr>
+    <tr><td>Management &amp; general</td><td style="text-align:right" id="fe-t-mg">—</td><td style="text-align:right" id="fe-pct-mg">—</td></tr>
+    <tr><td>Fundraising</td><td style="text-align:right" id="fe-t-fund">—</td><td style="text-align:right" id="fe-pct-fund">—</td></tr>
+    <tr><td><b>Total expenses</b></td><td style="text-align:right" id="fe-t-total">—</td><td style="text-align:right">100%</td></tr>
+  </tbody></table>
+  <p class="note" id="fe-warn"></p>
+  <p class="note">Program ratio = program expenses ÷ total expenses. Charity raters often look for roughly 65%+ on program, but context matters: the “Overhead Myth” letter from Charity Navigator, BBB Wise Giving Alliance and the former GuideStar warns against judging nonprofits on this ratio alone.</p>
+</div>
+
+  <div class="gcbox"><span class="tagpill">Unrestricted money funds true overhead</span><h3>The funding that doesn’t force you to starve overhead</h3><p>The starvation cycle happens because restricted grants underfund M&amp;G. <b>Good Circles</b> builds <b>unrestricted</b> income — about 10% of each merchant’s net profit, conservatively ~$72 per active supporter per year (an estimate), recurring and free for your nonprofit — the kind of money that lets you fund real infrastructure instead of hiding it.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a></div>
+
+  <div class="callout"><h4>Sources &amp; tools</h4>
+<p style="font-weight:800;margin:6px 0 2px">Free first</p>
+<ul><li><a href="https://www.irs.gov/forms-pubs/about-form-990" target="_blank" rel="noopener">IRS Form 990 &amp; instructions</a> — the official Statement of Functional Expenses and how to report it.</li><li><a href="https://www.councilofnonprofits.org/running-nonprofit/administration-and-financial-management/myth-overhead-ratio" target="_blank" rel="noopener">The Overhead Myth</a> — why the overhead ratio is a poor measure of effectiveness.</li><li><a href="https://www.propelnonprofits.org/" target="_blank" rel="noopener">Propel Nonprofits — cost allocation</a> — free guidance and templates for allocating shared costs.</li></ul>
+<p style="font-weight:800;margin:10px 0 2px">Paid — optional labor-savers</p>
+<ul><li><a href="https://www.propelnonprofits.org/" target="_blank" rel="noopener">Nonprofit accounting software / a bookkeeper</a> — tracks functional expenses automatically by class or fund. <i>Worth it when manual spreadsheets no longer keep your allocations consistent.</i></li></ul>
+<p class="muted" style="margin-top:8px">Last verified 2026-06-17. Figures and rules change — verify at the source before you act.</p></div>
+
+  <div class="sharebar"><span class="lbl">Share</span><a href="javascript:void(0)" onclick="gcShare('facebook')" aria-label="Share on Facebook"><svg viewBox="0 0 24 24"><path d="M13 22v-8h3l1-4h-4V8c0-1 .5-2 2-2h2V2h-3c-3 0-5 2-5 5v3H6v4h3v8z"/></svg>Facebook</a><a href="javascript:void(0)" onclick="gcShare('x')" aria-label="Share on X"><svg viewBox="0 0 24 24"><path d="M18 2h3l-7 8 8 12h-6l-5-7-6 7H2l8-9L2 2h6l4 6zm-1 18h2L8 4H6z"/></svg>X</a><a href="javascript:void(0)" onclick="gcShare('linkedin')" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M4 4a2 2 0 110 4 2 2 0 010-4zM3 9h3v12H3zM9 9h3v2c.5-1 2-2 4-2 3 0 4 2 4 5v7h-3v-6c0-2-1-3-2-3s-2 1-2 3v6H9z"/></svg>LinkedIn</a><a href="javascript:void(0)" onclick="gcShare('email')" aria-label="Share by email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg>Email</a><button onclick="gcCopy(this)" aria-label="Copy link"><svg viewBox="0 0 24 24"><path d="M9 7h9v12H9zM5 3h9v2H7v10H5z"/></svg><span class="t">Copy link</span></button></div>
+
+  <h2 id="faq">FAQ</h2>
+<div class="faq"><h4>What are functional expenses?</h4><p>Functional expenses classify spending by purpose rather than by type. The three functions are program services (your mission work), management and general (M&G, the cost of running the organization), and fundraising. The IRS Form 990 requires this breakdown in the Statement of Functional Expenses.</p></div>
+<div class="faq"><h4>How do I allocate a shared cost across functions?</h4><p>Allocate on a reasonable, documented basis — for example, splitting a staff member’s salary by the share of their time spent on program, management, and fundraising, or splitting rent by square footage. Keep your method written down and apply it consistently.</p></div>
+<div class="faq"><h4>What is a good program-expense ratio?</h4><p>Many charity raters look for roughly 65% or more of expenses going to program, but there is no universal rule and context matters. Underfunding overhead to inflate the ratio (the “starvation cycle”) harms organizations, so allocate honestly rather than to a target.</p></div>
+<div class="faq"><h4>Is the program ratio the only thing funders look at?</h4><p>No. The sector’s “Overhead Myth” campaign urged funders to look at results, transparency, and financial health rather than the overhead ratio alone. Use this ratio as one input, not a verdict.</p></div>
+
+  <div class="related"><b>Related guides &amp; tools:</b><br>
+  <a href="/resources/operations/nonprofit-fund-accounting-financial-statements/">Fund accounting &amp; statements</a>
+  <a href="/resources/operations/functional-expense-allocation/">Functional expense allocation guide</a>
+  <a href="/resources/operations/nonprofit-budgeting/">Nonprofit budgeting</a>
+  <a href="/resources/tools/operating-reserve-calculator/">Operating-reserve calculator</a>
+  <a href="/resources/tools/">All free tools</a>
+</div>
+</article></div>
+<footer><div class="wrap">
+  <div class="ftag">Save. Give. Stay local.</div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/tools/">Tools</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
+</div></footer>
+<script>(function(){
+  function money(x){return '$'+Math.round(x).toLocaleString('en-US');}
+  function val(el){var v=parseFloat(el.value);return isNaN(v)||v<0?0:v;}
+  function $(id){return document.getElementById(id);}
+  var rows=document.querySelectorAll('#fe-rows tr');
+  function render(){
+    var prog=0,mg=0,fund=0,bad=0;
+    rows.forEach(function(tr){
+      var amt=val(tr.querySelector('.fe-amt'));
+      var p=val(tr.querySelector('.fe-p')),m=val(tr.querySelector('.fe-m')),f=val(tr.querySelector('.fe-f'));
+      if(amt>0 && Math.abs(p+m+f-100)>0.5)bad++;
+      prog+=amt*p/100;mg+=amt*m/100;fund+=amt*f/100;
+    });
+    var total=prog+mg+fund;
+    function pct(x){return (total>0?(x/total*100):0).toFixed(1)+'%';}
+    $('fe-prog').textContent=money(prog);
+    $('fe-progpct').textContent=pct(prog);
+    $('fe-t-prog').textContent=money(prog);$('fe-t-mg').textContent=money(mg);$('fe-t-fund').textContent=money(fund);
+    $('fe-t-total').innerHTML='<b>'+money(total)+'</b>';
+    $('fe-pct-prog').textContent=pct(prog);$('fe-pct-mg').textContent=pct(mg);$('fe-pct-fund').textContent=pct(fund);
+    $('fe-warn').innerHTML=bad>0?('<b>Note:</b> '+bad+' row(s) do not total 100% across the three functions — adjust so each cost is fully allocated.'):'';
+  }
+  document.querySelectorAll('#fe-rows input').forEach(function(i){i.addEventListener('input',render);});
+  render();
+})();</script>
+<script src="/resources/share.js"></script>
+</body></html>
