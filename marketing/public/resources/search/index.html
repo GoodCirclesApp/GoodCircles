@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Search the Nonprofit Resource Hub · Good Circles</title>
+<meta name="description" content="Search every free Good Circles nonprofit resource — guides, tools, templates, the funder directory, answers, and Mississippi state guides — from one box.">
+<link rel="canonical" href="https://goodcircles.org/resources/search/">
+<meta property="og:title" content="Search the Nonprofit Resource Hub · Good Circles">
+<meta property="og:description" content="Search every free guide, tool, template, and answer in the Good Circles nonprofit resource hub from one box.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://goodcircles.org/resources/search/"><meta property="og:image" content="https://goodcircles.org/resources/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#7851A9">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/resources/resources.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Good Circles","url":"https://goodcircles.org/","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://goodcircles.org/resources/search/?q={search_term_string}"},"query-input":"required name=search_term_string"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Good Circles","item":"https://goodcircles.org"},{"@type":"ListItem","position":2,"name":"Resources","item":"https://goodcircles.org/resources/"},{"@type":"ListItem","position":3,"name":"Search","item":"https://goodcircles.org/resources/search/"}]}</script>
+<style>
+.srch{display:flex;gap:10px;margin:14px 0 8px}
+.srch input{flex:1;font-family:'Fira Sans';font-size:1.1rem;border:2px solid var(--line);border-radius:12px;padding:13px 16px;color:var(--ink)}
+.srch input:focus{border-color:var(--purple);outline:none}
+#sr-count{font-family:'Montserrat';font-weight:800;color:var(--purple);font-size:.86rem;margin:8px 0 2px}
+.sr{display:block;border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin:9px 0;background:#fff;box-shadow:var(--shadow-sm)}
+.sr h3{font-size:1.04rem;margin:0 0 3px}.sr h3 a{color:var(--ink)}
+.sr .tag{display:inline-block;font-family:'Montserrat';font-weight:700;font-size:.68rem;letter-spacing:.5px;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:#f0e9f7;color:var(--purple);margin-bottom:4px}
+.sr p{font-size:.88rem;color:#46405c;margin:2px 0 0}
+.sr-none{padding:18px;color:var(--ash)}
+mark{background:#FADC9C;color:inherit;padding:0 1px;border-radius:2px}
+</style>
+</head><body>
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/tools/">Tools</a><a href="/resources/glossary/">Glossary</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>
+<div class="wrap"><header class="hero">
+  <div class="crumb"><a href="/resources/">Resources</a> › Search</div>
+  <div class="eyebrow">Search</div>
+  <h1>Search the resource hub</h1>
+  <div class="dateline">Good Circles · search guides, tools, templates, answers, the funder directory &amp; state guides</div>
+</header>
+<article>
+  <div class="srch"><input type="search" id="sr-q" placeholder="Search nonprofit guides, tools, templates, answers…" aria-label="Search the resource hub" autocomplete="off" autofocus></div>
+  <div id="sr-count"></div>
+  <div id="sr-results"></div>
+  <div id="sr-empty" class="sr-none" style="display:none">
+    <p>Type to search across the whole hub. Popular starting points:</p>
+    <ul>
+      <li><a href="/resources/start-a-nonprofit/how-to-start-a-nonprofit/">How to start a nonprofit</a></li>
+      <li><a href="/resources/grants/how-to-write-a-grant-proposal/">How to write a grant proposal</a></li>
+      <li><a href="/resources/tools/">Free interactive tools</a> · <a href="/resources/templates/">Templates</a> · <a href="/resources/grants/funder-directory/">Funder directory</a></li>
+      <li><a href="/resources/answers/">Nonprofit answers</a> · <a href="/resources/glossary/">Glossary</a> · <a href="/resources/states/mississippi/">Mississippi playbook</a></li>
+    </ul>
+  </div>
+</article></div>
+<footer><div class="wrap">
+  <div class="ftag">Save. Give. Stay local.</div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/tools/">Tools</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
+</div></footer>
+<script>
+(function(){
+  var input=document.getElementById('sr-q'), out=document.getElementById('sr-results'),
+      count=document.getElementById('sr-count'), empty=document.getElementById('sr-empty');
+  var DATA=[], ready=false;
+  function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
+  function hl(s,toks){var e=esc(s);toks.forEach(function(t){if(t.length<2)return;try{e=e.replace(new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>');}catch(x){}});return e;}
+  function run(){
+    var q=(input.value||'').trim().toLowerCase();
+    if(!q){out.innerHTML='';count.textContent='';empty.style.display='';return;}
+    empty.style.display='none';
+    if(!ready){count.textContent='Loading…';return;}
+    var toks=q.split(/\s+/).filter(Boolean);
+    var res=[];
+    for(var i=0;i<DATA.length;i++){
+      var r=DATA[i], ok=true, score=0;
+      for(var j=0;j<toks.length;j++){ if(r.b.indexOf(toks[j])<0){ok=false;break;} }
+      if(!ok)continue;
+      var tl=r.t.toLowerCase();
+      if(tl.indexOf(q)>=0)score+=100;
+      toks.forEach(function(t){ if(tl.indexOf(t)===0)score+=20; else if(tl.indexOf(t)>=0)score+=10; });
+      res.push({r:r,score:score});
+    }
+    res.sort(function(a,b){return b.score-a.score;});
+    count.textContent=res.length+(res.length===1?' result':' results')+' for "'+input.value.trim()+'"';
+    if(!res.length){out.innerHTML='<div class="sr-none">No matches. Try fewer or different words, or <a href="/resources/answers/ask/">ask the hub</a>.</div>';return;}
+    out.innerHTML=res.slice(0,40).map(function(x){var r=x.r;return '<a class="sr" href="'+r.u+'"><span class="tag">'+esc(r.s)+'</span><h3>'+hl(r.t,toks)+'</h3>'+(r.d?'<p>'+hl(r.d,toks)+'</p>':'')+'</a>';}).join('');
+  }
+  fetch('/resources/search-index.json').then(function(r){return r.json();}).then(function(d){DATA=d;ready=true;run();}).catch(function(){count.textContent='Search index unavailable.';});
+  // seed from ?q=
+  try{var m=location.search.match(/[?&]q=([^&]*)/);if(m){input.value=decodeURIComponent(m[1].replace(/\+/g,' '));}}catch(e){}
+  input.addEventListener('input',run);
+  run();
+})();
+</script>
+<script src="/resources/share.js"></script>
+</body></html>
