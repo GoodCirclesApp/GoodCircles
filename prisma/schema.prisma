@@ -1722,6 +1722,10 @@ model WaitlistEntry {
   ipHash          String?
   requestBriefing Boolean @default(false)
 
+  // Launch-course funnel (nonprofit "Launch & Grow in 12 Months" email course)
+  intentLevel    String? // low | exploring | building | ready (how ready to launch)
+  courseEnrolled Boolean @default(false)
+
   // Briefing workflow (CDFI + MUNICIPAL)
   briefingStatus String? // null=pending | "scheduled" | "completed" | "dismissed"
   briefingNotes  String?

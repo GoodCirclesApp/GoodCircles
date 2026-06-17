@@ -45,6 +45,10 @@ const BaseSchema = z.object({
   orgName: z.string().optional(),
   ein:     z.string().optional(),
 
+  // Launch-course funnel
+  intentLevel:    z.string().optional(),
+  courseEnrolled: z.boolean().optional(),
+
   // CDFI
   cdfiCertNumber: z.string().optional(),
   lendingRegions: z.array(z.string()).optional(),
@@ -111,6 +115,8 @@ export const submitWaitlist = async (req: Request, res: Response) => {
         category:          data.category,
         orgName:           data.orgName,
         ein:               data.ein,
+        intentLevel:       data.intentLevel,
+        courseEnrolled:    data.courseEnrolled ?? false,
         cdfiCertNumber:    data.cdfiCertNumber,
         lendingRegions:    data.lendingRegions ?? [],
         jurisdiction:      data.jurisdiction,
@@ -178,10 +184,10 @@ export const listForAdmin = async (req: Request, res: Response) => {
   ]);
 
   if (csv === 'true') {
-    const headers = 'position,role,email,inviteCode,businessName,orgName,city,state,zipCode,requestBriefing,createdAt';
+    const headers = 'position,role,email,inviteCode,businessName,orgName,city,state,zipCode,intentLevel,courseEnrolled,requestBriefing,createdAt';
     const rows = entries.map(e =>
       [e.position, e.role, e.email, e.inviteCode, e.businessName ?? '', e.orgName ?? '',
-       e.city ?? '', e.state ?? '', e.zipCode ?? '', e.requestBriefing, e.createdAt.toISOString()]
+       e.city ?? '', e.state ?? '', e.zipCode ?? '', e.intentLevel ?? '', e.courseEnrolled, e.requestBriefing, e.createdAt.toISOString()]
         .map(v => `"${String(v).replace(/"/g, '""')}"`)
         .join(',')
     );
