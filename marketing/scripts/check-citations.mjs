@@ -34,11 +34,12 @@ for (const f of pages) {
     if (s.pattern.test(html) && !(s.okIf && s.okIf.test(html)))
       errors.push(`${rel}: STALE figure — ${s.label} (use "${s.current}")`);
   }
-  // Pages adopting the new "Sources & tools" standard must carry a Last-verified date.
-  if (/Sources &amp; tools/.test(html)) {
+  // Pages adopting the "Sources & tools" standard (English or the Spanish
+  // "Fuentes y herramientas") must carry a dated verified-on stamp.
+  if (/Sources &amp; tools/.test(html) || /Fuentes y herramientas/.test(html)) {
     sourcedPages++;
-    if (!/Last verified \d{4}-\d{2}-\d{2}/.test(html))
-      errors.push(`${rel}: has a "Sources & tools" block but no "Last verified YYYY-MM-DD" date`);
+    if (!/Last verified \d{4}-\d{2}-\d{2}/.test(html) && !/Verificado por última vez \d{4}-\d{2}-\d{2}/.test(html))
+      errors.push(`${rel}: sourced page missing a "Last verified"/"Verificado por última vez YYYY-MM-DD" date`);
   }
 }
 
