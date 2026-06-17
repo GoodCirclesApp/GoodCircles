@@ -12,8 +12,8 @@ const PUBLIC = fileURLToPath(new URL('../public', import.meta.url));
 const HERE = fileURLToPath(new URL('.', import.meta.url));
 const DATE = '2026-06-17';
 const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const STATES = { MS: 'mississippi', AL: 'alabama', AR: 'arkansas', LA: 'louisiana', TN: 'tennessee' };
-const STATEN = { MS: 'Mississippi', AL: 'Alabama', AR: 'Arkansas', LA: 'Louisiana', TN: 'Tennessee' };
+const STATES = { MS: 'mississippi', AL: 'alabama', AR: 'arkansas', LA: 'louisiana', TN: 'tennessee', GA: 'georgia', FL: 'florida', NC: 'north-carolina', SC: 'south-carolina', KY: 'kentucky', VA: 'virginia', TX: 'texas', OK: 'oklahoma' };
+const STATEN = { MS: 'Mississippi', AL: 'Alabama', AR: 'Arkansas', LA: 'Louisiana', TN: 'Tennessee', GA: 'Georgia', FL: 'Florida', NC: 'North Carolina', SC: 'South Carolina', KY: 'Kentucky', VA: 'Virginia', TX: 'Texas', OK: 'Oklahoma' };
 const NTEE = {
   T20: ['private grantmaking foundation', 'a private foundation that makes grants to other organizations and causes'],
   T21: ['corporate foundation', 'a company-sponsored foundation that directs corporate philanthropy'],

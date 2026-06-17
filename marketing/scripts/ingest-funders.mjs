@@ -11,7 +11,7 @@ const HERE = fileURLToPath(new URL('.', import.meta.url));
 const CACHE = join(HERE, '.cache');
 mkdirSync(CACHE, { recursive: true });
 const API = 'https://projects.propublica.org/nonprofits/api/v2';
-const STATES = ['MS', 'AL', 'AR', 'LA', 'TN'];
+const STATES = ['MS', 'AL', 'AR', 'LA', 'TN', 'GA', 'FL', 'NC', 'SC', 'KY', 'VA', 'TX', 'OK'];
 const QUERIES = ['foundation', 'trust', 'charitable'];
 const PAGES = 8;            // search pages per (state,query)
 const RATE_MS = 320;        // polite delay between live calls
