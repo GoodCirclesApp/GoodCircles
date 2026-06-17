@@ -169,6 +169,24 @@ footer .muted{color:#9883b5;font-size:.8rem;margin-top:6px}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--purple);outline-offset:2px;border-radius:4px}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 
+/* ---- Spanish hub (/resources/es/) card grid ---- */
+.lede{font-size:1.06rem;color:var(--ink);max-width:64ch;margin:14px 0 0;line-height:1.55}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;margin:24px 0}
+.cardgrid .card{background:#fff;border:1px solid #ece6f3;border-radius:14px;padding:18px 20px}
+.cardgrid .card h2{font-size:1.02rem;margin:0 0 11px;border:0;padding:0}
+.cardgrid .card h2 a{color:var(--purple);text-decoration:none}
+.cardgrid .card h2 a:hover{text-decoration:underline}
+.guidelist{list-style:none;margin:0;padding:0}
+.guidelist li{margin:0 0 7px;padding:0 0 7px;border-bottom:1px solid #f3eef9}
+.guidelist li:last-child{border:0;margin-bottom:0;padding-bottom:0}
+.guidelist li a{color:var(--ink);text-decoration:none;font-size:.92rem;line-height:1.4;display:block}
+.guidelist li a:hover{color:var(--purple)}
+
+/* ---- Language switcher (injected by build-lang-switch.mjs) ---- */
+.langswitch{margin:0 0 12px}
+.langswitch a{display:inline-block;font-family:'Montserrat';font-weight:700;font-size:.82rem;color:var(--purple);background:var(--lav-soft);border:1px solid var(--lav);border-radius:999px;padding:5px 13px;text-decoration:none}
+.langswitch a:hover{background:var(--lav)}
+
 /* ---- E-E-A-T author/reviewer byline (injected by build-eeat-bylines.mjs) ---- */
 .byline{font-family:'Fira Sans';font-size:.85rem;color:var(--ash);background:#faf7fd;border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin:0 0 18px;line-height:1.55}
 .byline a{color:var(--gold-deep);font-weight:600;text-decoration:none}

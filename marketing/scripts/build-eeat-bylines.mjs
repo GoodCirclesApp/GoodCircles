@@ -25,7 +25,7 @@ let injected = 0, reviewed = 0;
 for (const f of files) {
   let html = readFileSync(f, 'utf8');
   // Only editorial prose guides: an Article with the Good Circles author + a Sources block + an answer box.
-  const isGuide = html.includes('"@type":"Article"') && /"author":\{"@type":"Organization","name":"Good Circles"/.test(html)
+  const isGuide = html.includes('"@type":"Article"') && /"author":\{"@type":"Organization","name":"Good Circles( Editorial Team)?"/.test(html)
     && (/Sources &amp; tools/.test(html) || /Fuentes y herramientas/.test(html)) && html.includes('<div class="answer">');
   // Remove any prior byline (idempotent re-run).
   html = html.replace(/<!--byline-->[\s\S]*?<!--\/byline-->\n*\s*/g, '');
