@@ -188,6 +188,19 @@ async function startServer() {
     res.json({ status: 'ok', message: 'Good Circles API is running', version: '1.0.0-beta' });
   });
 
+  // Readiness probe: liveness (/api/health) only says the process is up; this
+  // verifies the DB is actually reachable (SELECT 1) so a free external uptime
+  // monitor (e.g. UptimeRobot) can distinguish "process up" from "can't serve".
+  // Returns 503 when the DB is unreachable.
+  app.get('/api/health/ready', async (req, res) => {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      res.json({ status: 'ready', db: 'up' });
+    } catch {
+      res.status(503).json({ status: 'unavailable', db: 'down' });
+    }
+  });
+
 
   // ══════════════════════════════════════════════════════════════
   // Static files & SPA fallback (MUST come after API routes)

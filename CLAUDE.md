@@ -230,7 +230,7 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 | Backend | Express 5, TypeScript, tsx (runtime) |
 | Database | Prisma ORM (see `/prisma`) |
 | Payments | Stripe (test mode during beta) |
-| AI | Anthropic SDK (`@anthropic-ai/sdk`), Google GenAI (`@google/genai`) |
+| AI | Anthropic SDK (`@anthropic-ai/sdk`) — Claude only (Google GenAI removed 2026-06-18) |
 | Auth | JWT + bcryptjs (access token: 15min, refresh: 7 days — auto-refresh via apiClient) |
 | Email | Resend |
 | Deploy | Railway (`railway.toml`, `nixpacks.toml`), Docker |
