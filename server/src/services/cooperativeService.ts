@@ -116,6 +116,11 @@ export class CooperativeService {
         include: { user: true }
       });
       
+      if (!coop.merchantId || !memberMerchant) {
+        memberPurchases[member.merchantId] = new Decimal(0);
+        continue;
+      }
+
       const transactions = await prisma.transaction.findMany({
         where: {
           merchantId: coop.merchantId, // Coop is the seller

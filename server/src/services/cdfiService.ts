@@ -133,12 +133,14 @@ export class CDFIService {
         });
 
         if (merchant) {
+          const wallet = await tx.wallet.findUnique({ where: { userId: merchant.userId } });
+          if (!wallet) throw new Error(`Wallet not found for merchant ${merchant.id}`);
           await tx.ledgerEntry.create({
             data: {
-              walletId: (await tx.wallet.findUnique({ where: { userId: merchant.userId } })).id,
+              walletId: wallet.id,
               entryType: 'CREDIT',
               amount: deployment.amount,
-              balanceAfter: (await tx.wallet.findUnique({ where: { userId: merchant.userId } })).balance.add(deployment.amount),
+              balanceAfter: wallet.balance.add(deployment.amount),
               description: `Loan disbursement from ${deployment.fund.name}`
             }
           });

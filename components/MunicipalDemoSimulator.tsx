@@ -297,15 +297,15 @@ export const MunicipalDemoSimulator: React.FC = () => {
           {activeChart === 'growth' && (
             <ResponsiveContainer width="100%" height="100%"><AreaChart data={growthData.filter((_,i)=>i%2===0)}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/><XAxis dataKey="month" tick={{fontSize:10,fill:'#94a3b8'}}/><YAxis tick={{fontSize:10,fill:'#94a3b8'}} tickFormatter={v=>formatNumber(v)}/>
-              <Tooltip formatter={(v:number,n:string)=>[n.includes('onsumer')?formatNumber(v):formatCurrency(v),n]} contentStyle={{borderRadius:12,border:'1px solid #CA9CE1',fontSize:12}}/>
+              <Tooltip formatter={(v,n)=>[String(n).includes('onsumer')?formatNumber(Number(v)):formatCurrency(Number(v)),String(n)]} contentStyle={{borderRadius:12,border:'1px solid #CA9CE1',fontSize:12}}/>
               <Legend wrapperStyle={{fontSize:11}}/><Area type="monotone" dataKey="consumers" stroke={BRAND.purple} fill={BRAND.purple+'20'} name="Active Users"/>
               <Area type="monotone" dataKey="volume" stroke={BRAND.gold} fill={BRAND.gold+'20'} name="Monthly Volume ($)"/>
             </AreaChart></ResponsiveContainer>
           )}
           {activeChart === 'money' && (
             <div className="flex items-center justify-center h-full gap-12">
-              <ResponsiveContainer width="50%" height="100%"><PieChart><Pie data={moneyFlowData} cx="50%" cy="50%" outerRadius={isPresentationMode?160:120} innerRadius={isPresentationMode?80:60} paddingAngle={3} dataKey="value" label={({name,percent})=>`${name} (${(percent*100).toFixed(0)}%)`}>
-                {moneyFlowData.map((_,i)=>(<Cell key={i} fill={PIE_COLORS[i]}/>))}</Pie><Tooltip formatter={(v:number)=>formatCurrency(v)}/></PieChart></ResponsiveContainer>
+              <ResponsiveContainer width="50%" height="100%"><PieChart><Pie data={moneyFlowData} cx="50%" cy="50%" outerRadius={isPresentationMode?160:120} innerRadius={isPresentationMode?80:60} paddingAngle={3} dataKey="value" label={({name,percent})=>`${name} (${((percent??0)*100).toFixed(0)}%)`}>
+                {moneyFlowData.map((_,i)=>(<Cell key={i} fill={PIE_COLORS[i]}/>))}</Pie><Tooltip formatter={(v)=>formatCurrency(Number(v))}/></PieChart></ResponsiveContainer>
               <div className="space-y-4"><h4 className="text-sm font-black text-[#7851A9] uppercase tracking-widest">Annual Money Flow</h4>
                 {moneyFlowData.map(item=>(<div key={item.name} className="flex items-center gap-3"><div className="w-4 h-4 rounded-full" style={{backgroundColor:item.color}}/><div><div className="text-sm font-bold text-slate-700">{item.name}</div><div className="text-lg font-black" style={{color:item.color}}>{formatCurrency(item.value)}</div></div></div>))}</div>
             </div>
@@ -313,7 +313,7 @@ export const MunicipalDemoSimulator: React.FC = () => {
           {activeChart === 'impact' && (
             <ResponsiveContainer width="100%" height="100%"><LineChart data={growthData.filter((_,i)=>i%2===0)}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/><XAxis dataKey="month" tick={{fontSize:10,fill:'#94a3b8'}}/><YAxis tick={{fontSize:10,fill:'#94a3b8'}} tickFormatter={v=>formatCurrency(v)}/>
-              <Tooltip formatter={(v:number)=>formatCurrency(v)} contentStyle={{borderRadius:12,border:'1px solid #CA9CE1',fontSize:12}}/><Legend wrapperStyle={{fontSize:11}}/>
+              <Tooltip formatter={(v)=>formatCurrency(Number(v))} contentStyle={{borderRadius:12,border:'1px solid #CA9CE1',fontSize:12}}/><Legend wrapperStyle={{fontSize:11}}/>
               <Line type="monotone" dataKey="cumulativeSavings" stroke={BRAND.gold} strokeWidth={3} name="Cumulative Consumer Savings" dot={false}/>
               <Line type="monotone" dataKey="cumulativeDonations" stroke="#34D399" strokeWidth={3} name="Cumulative Nonprofit Funding" dot={false}/>
               <Line type="monotone" dataKey="cumulativeVolume" stroke={BRAND.purple} strokeWidth={2} name="Cumulative Volume" dot={false} strokeDasharray="5 5"/>
@@ -323,14 +323,14 @@ export const MunicipalDemoSimulator: React.FC = () => {
             <ResponsiveContainer width="100%" height="100%"><BarChart data={retentionComparison} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/><XAxis type="number" domain={[0,100]} tick={{fontSize:10,fill:'#94a3b8'}} tickFormatter={v=>`${v}%`}/>
               <YAxis type="category" dataKey="category" tick={{fontSize:12,fill:'#1A1A1A',fontWeight:700}} width={120}/>
-              <Tooltip formatter={(v:number)=>`${v}%`} contentStyle={{borderRadius:12,border:'1px solid #CA9CE1',fontSize:12}}/><Legend wrapperStyle={{fontSize:11}}/>
+              <Tooltip formatter={(v)=>`${Number(v)}%`} contentStyle={{borderRadius:12,border:'1px solid #CA9CE1',fontSize:12}}/><Legend wrapperStyle={{fontSize:11}}/>
               <Bar dataKey="local" name="Stays in Community" fill={BRAND.purple} radius={[0,8,8,0]}/><Bar dataKey="leakage" name="Leaves Community" fill="#E2E8F0" radius={[0,8,8,0]}/>
             </BarChart></ResponsiveContainer>
           )}
           {activeChart === 'scale' && (
             <ResponsiveContainer width="100%" height="100%"><BarChart data={scaleComparisonData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/><XAxis dataKey="name" tick={{fontSize:9,fill:'#94a3b8'}} angle={-20} textAnchor="end" height={60}/>
-              <YAxis tick={{fontSize:10,fill:'#94a3b8'}} tickFormatter={v=>formatCurrency(v)}/><Tooltip formatter={(v:number)=>formatCurrency(v)} contentStyle={{borderRadius:12,border:'1px solid #CA9CE1',fontSize:12}}/>
+              <YAxis tick={{fontSize:10,fill:'#94a3b8'}} tickFormatter={v=>formatCurrency(v)}/><Tooltip formatter={(v)=>formatCurrency(Number(v))} contentStyle={{borderRadius:12,border:'1px solid #CA9CE1',fontSize:12}}/>
               <Legend wrapperStyle={{fontSize:11}}/><Bar dataKey="savings" name="Consumer Savings" fill={BRAND.gold} radius={[4,4,0,0]}/>
               <Bar dataKey="nonprofit" name="Nonprofit Funding" fill="#34D399" radius={[4,4,0,0]}/><Bar dataKey="platform" name="Platform Revenue" fill={BRAND.lavender} radius={[4,4,0,0]}/>
             </BarChart></ResponsiveContainer>

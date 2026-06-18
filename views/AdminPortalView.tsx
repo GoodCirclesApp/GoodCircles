@@ -102,7 +102,7 @@ const SystemDashboard = ({ isViewer }: { isViewer?: boolean }) => {
         <StatCard title="Platform Revenue" value={`$${activeStats.totalRevenue.toLocaleString()}`} icon={<DollarSign className="w-5 h-5" />} trend="+12%" />
         <StatCard title="Transaction Volume" value={`$${activeStats.totalTransactionVolume.toLocaleString()}`} icon={<History className="w-5 h-5" />} trend="+8%" />
         <StatCard title="Nonprofit Funding" value={`$${activeStats.totalNonprofitFunding.toLocaleString()}`} icon={<Heart className="w-5 h-5" />} trend="+15%" />
-        <StatCard title="Active Users" value={Object.values(activeStats.activeUsersByRole).reduce((a: any, b: any) => a + b, 0).toString()} icon={<Users className="w-5 h-5" />} trend="+5%" />
+        <StatCard title="Active Users" value={Object.values((activeStats.activeUsersByRole ?? {}) as Record<string, number>).reduce((a, b) => a + b, 0).toString()} icon={<Users className="w-5 h-5" />} trend="+5%" />
       </div>
       {!isViewer && (
         <div className="bg-white p-6 rounded-2xl border border-amber-100 flex items-center justify-between gap-6">

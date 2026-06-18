@@ -209,7 +209,9 @@ export const MerchantProductManager: React.FC<Props> = ({ merchant, products, on
   );
 };
 
-const InputBlock = ({ label, value, onChange, placeholder, type = "text" }: any) => (
+const InputBlock = ({ label, value, onChange, placeholder, type = "text" }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
+}) => (
   <div className="space-y-2">
     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{label}</label>
     <input 

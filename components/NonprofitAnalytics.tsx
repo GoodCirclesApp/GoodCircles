@@ -78,7 +78,7 @@ export const NonprofitAnalytics: React.FC = () => {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(v: number) => `$${v.toFixed(2)}`} />
+                    <Tooltip formatter={(v) => `$${Number(v).toFixed(2)}`} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -117,7 +117,7 @@ export const NonprofitAnalytics: React.FC = () => {
                 <Tooltip
                   cursor={{ fill: '#f8fafc' }}
                   contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                  formatter={(v: number) => [`$${v.toFixed(2)}`, 'Donations']}
+                  formatter={(v) => [`$${Number(v).toFixed(2)}`, 'Donations']}
                 />
                 <Bar dataKey="amount" fill="#7851A9" radius={[8, 8, 0, 0]} />
               </BarChart>

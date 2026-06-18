@@ -329,7 +329,7 @@ export const ImpactMapView: React.FC<Props> = ({ currentUser }) => {
   const cityList = useMemo(() => {
     if (!selectedState) return [];
     if (!demoMode && liveStateDetail) {
-      return liveStateDetail.cities.map(c => ({ city: c.city, ...c }));
+      return liveStateDetail.cities.map(c => ({ ...c }));
     }
     const cities = SIM_CITIES[selectedState] ?? ['Main City', 'Riverside', 'Northside'];
     return cities.map(city => ({ city, ...simCityData(city, selectedState) }));

@@ -88,8 +88,9 @@ describe('Cooperative Ownership Structure', () => {
     expect(coop.ein).toBe('999888777');
     
     const details = await CooperativeService.getCoopDetails(coop.id);
-    expect(details.members.length).toBe(3);
-    expect(details.merchantId).toBeDefined();
+    expect(details).toBeTruthy();
+    expect(details!.members.length).toBe(3);
+    expect(details!.merchantId).toBeDefined();
   });
 
   it('should allow a merchant to join an existing cooperative', async () => {
@@ -154,10 +155,10 @@ describe('Cooperative Ownership Structure', () => {
     
     expect(records.length).toBe(4); // 3 founders + 1 new member
     // Each of the first 2 should get 50% of surplus = 500
-    expect(records.find(r => r.merchantId === coop.members[0].merchantId).patronageDividendAmount.toString()).toBe('500');
-    expect(records.find(r => r.merchantId === coop.members[1].merchantId).patronageDividendAmount.toString()).toBe('500');
+    expect(records.find(r => r.merchantId === coop.members[0].merchantId)!.patronageDividendAmount.toString()).toBe('500');
+    expect(records.find(r => r.merchantId === coop.members[1].merchantId)!.patronageDividendAmount.toString()).toBe('500');
     // Others should get 0
-    expect(records.find(r => r.merchantId === coop.members[2].merchantId).patronageDividendAmount.toString()).toBe('0');
+    expect(records.find(r => r.merchantId === coop.members[2].merchantId)!.patronageDividendAmount.toString()).toBe('0');
     
     // Check equity update (20% of 500 = 100)
     const updatedMember = await prisma.coopMember.findUnique({ where: { id: coop.members[0].id } });

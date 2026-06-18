@@ -107,7 +107,7 @@ describe('E2E: Happy Path — Shopify Growth Tier', () => {
     expect(tierConfig).toBeDefined();
     expect(tierConfig!.fee).toBe(EXPECTED_FEE);
     expect(PRODUCT_COUNT).toBeGreaterThanOrEqual(tierConfig!.minProducts);
-    expect(PRODUCT_COUNT).toBeLessThanOrEqual(tierConfig!.maxProducts);
+    expect(PRODUCT_COUNT).toBeLessThanOrEqual(tierConfig!.maxProducts ?? Infinity);
   });
 
   it('should create Stripe checkout session with correct amount', async () => {

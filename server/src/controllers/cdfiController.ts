@@ -32,7 +32,9 @@ export const evaluateApplication = async (req: Request, res: Response) => {
     if (!application) return res.status(404).json({ error: 'Application not found' });
     
     const merchantHistory = await CDFIService.getMerchantHistory(application.recipientMerchantId);
-    const evaluation = await AIUnderwritingService.evaluateLoanApplication(application, merchantHistory);
+    const { recipientMerchant } = application;
+    if (!recipientMerchant) return res.status(400).json({ error: 'This application has no recipient merchant to evaluate.' });
+    const evaluation = await AIUnderwritingService.evaluateLoanApplication({ ...application, recipientMerchant }, merchantHistory);
     res.json(evaluation);
   } catch (err: any) {
     res.status(500).json({ error: err.message });

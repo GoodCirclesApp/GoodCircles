@@ -258,12 +258,12 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
 };
 
 const updateProfileSchema = z.object({
-  firstName: z.string().nullish(),
-  lastName: z.string().nullish(),
-  email: z.string().email().nullish(),
-  phone: z.string().nullish(),
-  address: z.string().nullish(),
-  discountMode: z.enum(['PRICE_REDUCTION', 'PLATFORM_CREDITS']).nullish(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  discountMode: z.enum(['PRICE_REDUCTION', 'PLATFORM_CREDITS']).optional(),
 });
 
 export const updateProfile = async (req: AuthRequest, res: Response) => {

@@ -320,10 +320,10 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie data={stats.categoryBreakdown} cx="50%" cy="50%" outerRadius={100} innerRadius={50} paddingAngle={3} dataKey="value"
-                        label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
+                        label={({ name, percent }) => `${name} (${((percent ?? 0) * 100).toFixed(0)}%)`}>
                         {stats.categoryBreakdown.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                       </Pie>
-                      <Tooltip formatter={(v: number) => [formatCurrency(v), 'Volume']} contentStyle={{ borderRadius: 12, border: '1px solid #CA9CE1', fontSize: 12 }} />
+                      <Tooltip formatter={(v) => [formatCurrency(Number(v)), 'Volume']} contentStyle={{ borderRadius: 12, border: '1px solid #CA9CE1', fontSize: 12 }} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
@@ -373,7 +373,7 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={v => `$${v}`} />
                     <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: '#1A1A1A', fontWeight: 700 }} width={180} />
-                    <Tooltip formatter={(v: number) => `$${v.toLocaleString()}`} contentStyle={{ borderRadius: 12, border: '1px solid #CA9CE1', fontSize: 12 }} />
+                    <Tooltip formatter={(v) => `$${Number(v).toLocaleString()}`} contentStyle={{ borderRadius: 12, border: '1px solid #CA9CE1', fontSize: 12 }} />
                     <Bar dataKey="received" fill={BRAND.crimson} radius={[0, 8, 8, 0]} name="Funding Received" />
                   </BarChart>
                 </ResponsiveContainer>

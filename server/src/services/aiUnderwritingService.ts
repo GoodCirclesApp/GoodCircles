@@ -65,6 +65,7 @@ export class AIUnderwritingService {
         }
       });
 
+      if (!response.text) throw new Error('Empty AI underwriting response');
       return JSON.parse(response.text);
     } catch (error) {
       console.error("AI Underwriting Error:", error);

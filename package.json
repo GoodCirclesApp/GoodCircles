@@ -12,7 +12,6 @@
     "seed:beta": "tsx seed-beta.ts",
     "seed:nonprofits": "tsx seed-nonprofits.ts",
     "lint": "tsc --noEmit",
-    "lint:strict": "tsc --noEmit -p tsconfig.strict.json",
     "preview": "vite preview",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
@@ -49,6 +48,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.2",
     "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.14.0",

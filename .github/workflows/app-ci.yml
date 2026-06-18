@@ -23,14 +23,10 @@ jobs:
       - run: npm ci
       # Prisma client is needed for the server to typecheck.
       - run: npx prisma generate
-      # Whole-project typecheck — the same gate the Dockerfile build uses (tsc --noEmit).
-      - name: Typecheck (tsc --noEmit)
+      # Whole-project typecheck. `strict` is now ON in the base tsconfig.json, so
+      # this (and the Dockerfile build) enforce strict — a regression fails CI.
+      - name: Typecheck (tsc --noEmit, strict)
         run: npx tsc --noEmit
-      # Report-only strict typecheck: surfaces the strict-mode baseline without
-      # failing the build. Burn it down per docs/ts-strict-burndown.md, then make
-      # this blocking (drop the `|| true`) once it reaches zero.
-      - name: TypeScript strict (report-only)
-        run: npx tsc --noEmit -p tsconfig.strict.json || true
       # DB-free unit tests (pure money-math + webhook handler). The PrismaClient-backed
       # suites (auth/wallet/netting/communityFund/cooperative) need a Postgres service
       # container — add that to graduate them into CI (tracked in P2).
