@@ -48,4 +48,7 @@ router.post('/qr-checkout', merchantController.processQrCheckout);
 router.get('/cogs-suggestions', merchantController.getCogsSuggestions);
 router.put('/cogs-suggestions/:id', merchantController.respondToCogsSuggestion);
 
+// Margin Copilot — AI-assisted pricing/margin advisor over the merchant's own data
+router.get('/margin-copilot', merchantController.getMarginCopilot);
+
 export default router;

@@ -127,5 +127,8 @@ export const merchantService = {
 
   processQrCheckout: async (qrToken: string, productServiceId: string): Promise<any> => {
     return apiClient.post<any>('/merchant/qr-checkout', { qrToken, productServiceId });
+  },
+  getMarginCopilot: async (): Promise<any> => {
+    return apiClient.get<any>('/merchant/margin-copilot');
   }
 };

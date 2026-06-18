@@ -10,6 +10,7 @@ import { CreditService } from '../services/creditService';
 import { PriceSentinelService } from '../services/priceSentinelService';
 import { TransactionService } from '../services/transactionService';
 import { QrCheckoutService } from '../services/qrCheckoutService';
+import { MarginCopilotService } from '../services/marginCopilotService';
 
 
 
@@ -765,6 +766,20 @@ export const respondToCogsSuggestion = async (req: AuthRequest, res: Response) =
     res.json(updated);
   } catch (err: any) {
     if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Margin Copilot — deterministic margin analysis over the merchant's OWN products
+// (+ optional Claude narrative). Scoped to the authenticated merchant only.
+export const getMarginCopilot = async (req: AuthRequest, res: Response) => {
+  if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const merchant = await prisma.merchant.findUnique({ where: { userId: req.user.id } });
+    if (!merchant) return res.status(404).json({ error: 'Merchant profile not found' });
+    const result = await MarginCopilotService.analyze(merchant.id);
+    res.json(result);
+  } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 };

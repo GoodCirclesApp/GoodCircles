@@ -31,7 +31,7 @@ jobs:
       # suites (auth/wallet/netting/communityFund/cooperative) need a Postgres service
       # container — add that to graduate them into CI (tracked in P2).
       - name: Unit tests (no DB)
-        run: npx vitest run server/src/tests/transaction.test.ts server/src/tests/emailWebhook.test.ts server/src/tests/localDollarGraph.test.ts
+        run: npx vitest run server/src/tests/transaction.test.ts server/src/tests/emailWebhook.test.ts server/src/tests/localDollarGraph.test.ts server/src/tests/marginCopilot.test.ts
       # Report-only for now (lockfile refresh + fixes tracked in P2). Tighten to a
       # failing gate once the high-severity transitive vulns are resolved.
       - name: npm audit (report-only)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { LayoutDashboard, Package, Calendar, BarChart3, ShoppingBag, Truck, Heart, Settings, Menu, X, ChevronRight, QrCode, Smartphone } from 'lucide-react';
+import { LayoutDashboard, Package, Calendar, BarChart3, ShoppingBag, Truck, Heart, Settings, Menu, X, ChevronRight, QrCode, Smartphone, TrendingUp } from 'lucide-react';
 import { MerchantDashboard } from '../components/MerchantDashboard';
 import { MerchantListings } from '../components/MerchantListings';
 import { MerchantBookings } from '../components/MerchantBookings';
@@ -10,6 +10,7 @@ import { MerchantSupplyChain } from '../components/MerchantSupplyChain';
 import { MerchantBenefits } from '../components/MerchantBenefits';
 import { MerchantSettings } from '../components/MerchantSettings';
 import { MerchantOrders } from '../components/MerchantOrders';
+import { MarginCopilot } from '../components/MarginCopilot';
 import { HandshakeScanner } from '../components/HandshakeScanner';
 import { MerchantQRDisplay } from '../components/QRPaymentSystem';
 import { useGoodCirclesStore } from '../hooks/useGoodCirclesStore';
@@ -17,7 +18,7 @@ import { MerchantAdvisor } from '../components/MerchantAdvisor';
 import { MerchantWelcomeKit } from '../components/MerchantWelcomeKit';
 import { merchantService } from '../services/merchantService';
 
-type MerchantSubView = 'DASHBOARD' | 'LISTINGS' | 'ORDERS' | 'BOOKINGS' | 'FINANCIALS' | 'COOP' | 'SUPPLY_CHAIN' | 'BENEFITS' | 'SETTLEMENT' | 'QR_PAY' | 'SETTINGS';
+type MerchantSubView = 'DASHBOARD' | 'LISTINGS' | 'MARGIN' | 'ORDERS' | 'BOOKINGS' | 'FINANCIALS' | 'COOP' | 'SUPPLY_CHAIN' | 'BENEFITS' | 'SETTLEMENT' | 'QR_PAY' | 'SETTINGS';
 
 export const MerchantPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<MerchantSubView>('DASHBOARD');
@@ -79,6 +80,7 @@ export const MerchantPortalView: React.FC = () => {
   const navItems = [
     { id: 'DASHBOARD', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'LISTINGS', label: 'Marketplace Assets', icon: Package },
+    { id: 'MARGIN', label: 'Margin Copilot', icon: TrendingUp },
     { id: 'ORDERS', label: 'Order Fulfillment', icon: ShoppingBag },
     { id: 'BOOKINGS', label: 'Service Schedule', icon: Calendar },
     { id: 'FINANCIALS', label: 'Financial Reports', icon: BarChart3 },
@@ -94,6 +96,7 @@ export const MerchantPortalView: React.FC = () => {
     switch (activeSubView) {
       case 'DASHBOARD': return <MerchantDashboard onOpenAdvisor={(query) => { setAdvisorInitialQuery(query); setIsAdvisorOpen(true); }} />;
       case 'LISTINGS': return <MerchantListings />;
+      case 'MARGIN': return <MarginCopilot />;
       case 'ORDERS': return <MerchantOrders />;
       case 'BOOKINGS': return <MerchantBookings />;
       case 'FINANCIALS': return <MerchantFinancials />;
