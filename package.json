@@ -12,6 +12,7 @@
     "seed:beta": "tsx seed-beta.ts",
     "seed:nonprofits": "tsx seed-nonprofits.ts",
     "lint": "tsc --noEmit",
+    "lint:strict": "tsc --noEmit -p tsconfig.strict.json",
     "preview": "vite preview",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",

@@ -1,0 +1,11 @@
+{
+  // Report-only strict typecheck. Extends the base config and flips `strict` on.
+  // NOT used by the production build (package.json `build` uses tsconfig.json),
+  // so turning this on can never break the deploy. CI runs it non-blocking to
+  // surface the strict-violation baseline; burn it down incrementally, then make
+  // the gate blocking once it reaches zero. See docs/ts-strict-burndown.md.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "strict": true
+  }
+}
