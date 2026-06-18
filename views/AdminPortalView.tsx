@@ -57,9 +57,10 @@ import { AdminAffiliateDashboard } from '../components/AdminAffiliateDashboard';
 import { ComplianceDashboard } from '../components/ComplianceDashboard';
 import AdminIntegrityTest from '../components/AdminIntegrityTest';
 import { Scale } from 'lucide-react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Network } from 'lucide-react';
 import EmailCampaignsManager from '../components/EmailCampaignsManager';
 import { ErrorMonitor } from '../components/ErrorMonitor';
+import { LocalDollarGraphView } from '../components/LocalDollarGraphView';
 
 // Sub-components
 
@@ -1882,7 +1883,7 @@ type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
   | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT'
-  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST' | 'BRIEFINGS' | 'INBOX' | 'EMAIL' | 'ERRORS';
+  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST' | 'BRIEFINGS' | 'INBOX' | 'EMAIL' | 'ERRORS' | 'LDG';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -1899,6 +1900,7 @@ export const AdminPortalView: React.FC = () => {
     { id: 'FUND', label: 'Community Fund', icon: ShieldCheck },
     { id: 'MUNICIPAL', label: 'Municipal Partners', icon: Map },
     { id: 'DATA', label: 'Data Cooperative', icon: Database },
+    { id: 'LDG', label: 'Local Dollar Graph', icon: Network },
     { id: 'HEALTH', label: 'System Health', icon: Activity },
     { id: 'DEMO', label: 'Municipal Demo', icon: Presentation },
     { id: 'MOCK_DATA', label: 'Demo Data Manager', icon: FlaskConical },
@@ -1939,6 +1941,7 @@ export const AdminPortalView: React.FC = () => {
       case 'EMAIL':      return <EmailCampaignsManager isViewer={isViewer} />;
       case 'AUDIT_LOG': return <AuditLogPanel />;
       case 'ERRORS': return <ErrorMonitor />;
+      case 'LDG': return <LocalDollarGraphView />;
       case 'SETTINGS': return <AdminSettings isViewer={isViewer} />;
       case 'INTEGRITY': return <AdminIntegrityTest />;
       default: return <SystemDashboard isViewer={isViewer} />;

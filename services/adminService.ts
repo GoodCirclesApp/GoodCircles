@@ -54,5 +54,8 @@ export const adminService = {
   resolveErrorLog: (id: string, resolved = true) =>
     apiClient.post<any>(`/admin/error-logs/${id}/resolve`, { resolved }),
   clearErrorLogs: (all = false) => apiClient.post<any>('/admin/error-logs/clear', { all }),
+  getLocalDollarGraph: (period?: string) =>
+    apiClient.get<any>(`/admin/local-dollar-graph${period ? `?period=${encodeURIComponent(period)}` : ''}`),
+  reconcileLocalDollarGraph: () => apiClient.post<any>('/admin/local-dollar-graph/reconcile', {}),
   resetDemo: () => apiClient.post<any>('/admin/demo/reset', {}),
 };

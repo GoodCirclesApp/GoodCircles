@@ -1930,3 +1930,64 @@ model ErrorLog {
   @@index([createdAt])
   @@index([resolved])
 }
+
+// ── The Local Dollar Graph ───────────────────────────────────────────────────
+// One immutable, append-only edge per settled transaction capturing the FULL path
+// of the dollar: neighbor -> merchant (-> census tract) -> nonprofit (-> fund /
+// initiative). Dimensions are SNAPSHOTTED at settlement time (not foreign keys), so
+// the historical record never changes when a merchant later edits a category or a
+// tract is reclassified — this is what makes the longitudinal series trustworthy
+// and impossible to back-fill. Every civic / merchant / nonprofit data product is a
+// query (traversal) over this one table rather than a separate pipeline.
+// Conservation: grossAmount == discountAmount + merchantNet + nonprofitShare + platformFee.
+model LocalDollarEdge {
+  id            String   @id @default(uuid())
+  transactionId String   @unique // idempotency + back-reference to the source-of-truth Transaction
+  occurredAt    DateTime // settlement time (= Transaction.createdAt)
+  period        String // "YYYY-MM" bucket for time-series queries
+  source        String   @default("settlement") // "settlement" (true snapshot) | "reconciled" (self-heal)
+  schemaVersion Int      @default(1)
+
+  // ── Parties (ids + snapshot attributes captured at settlement) ──
+  neighborId           String
+  consumerState        String? // 2-letter US state at sale time
+  merchantId           String
+  merchantType         String? // businessType snapshot
+  productCategory      String? // product taxonomy snapshot
+  censusTractId        String? // FFIEC FIPS tract snapshot
+  isQIA                Boolean @default(false) // qualified-investment-area (LMI/distressed) snapshot
+  regionId             String?
+  nonprofitId          String
+  nonprofitName        String? // orgName snapshot
+  nonprofitEin         String? // ein snapshot
+  nteeCode             String? // null until enriched from IRS EO-BMF data
+  waivedToInitiativeId String? // where the waived 10% went (initiative), if any
+  waivedToFundId       String? // where the waived 10% went (community fund), if any
+
+  // ── Money decomposition (cent-exact; reconciles to grossAmount) ──
+  grossAmount        Decimal @db.Decimal(12, 2)
+  discountAmount     Decimal @db.Decimal(12, 2)
+  cogs               Decimal @db.Decimal(12, 2)
+  merchantNet        Decimal @db.Decimal(12, 2)
+  nonprofitShare     Decimal @db.Decimal(12, 2)
+  platformFee        Decimal @db.Decimal(12, 2)
+  waivedContribution Decimal @db.Decimal(12, 2)
+  creditIssued       Decimal @db.Decimal(12, 2)
+
+  // ── Classifiers ──
+  paymentMethod  String // INTERNAL | CARD | STRIPE | CASH
+  isInternal     Boolean @default(false) // payment stayed in the local closed loop (spend-retention signal)
+  discountWaived Boolean @default(false)
+  discountMode   String?
+
+  createdAt DateTime @default(now()) // when the edge ROW was written
+
+  @@index([period])
+  @@index([censusTractId])
+  @@index([regionId])
+  @@index([nonprofitId])
+  @@index([merchantId])
+  @@index([neighborId])
+  @@index([isQIA])
+  @@index([paymentMethod])
+}

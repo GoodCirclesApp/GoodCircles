@@ -10,6 +10,7 @@ import { DonorMilestoneService } from './donorMilestoneService';
 import { CrmWebhookService } from './crmWebhookService';
 import { TaxReportingService } from './taxReportingService';
 import { CdfiPackagingService } from './cdfiPackagingService';
+import { LocalDollarGraphService, EdgeInput } from './localDollarGraphService';
 
 
 
@@ -301,9 +302,42 @@ export class TransactionService {
         }
       }
 
+      // Build the Local Dollar Graph edge from the TRUE settlement snapshot. Written
+      // post-commit (below) so a graph-write issue can never roll back the sale.
+      const ldg: EdgeInput = {
+        transactionId: transaction.id,
+        occurredAt: transaction.createdAt,
+        source: 'settlement',
+        neighborId,
+        consumerState,
+        merchantId,
+        merchantType: product.merchant.businessType,
+        productCategory: product.category,
+        censusTractId: product.merchant.censusTractId,
+        isQIA: product.merchant.isQualifiedInvestmentArea,
+        regionId: product.merchant.regionId,
+        nonprofitId,
+        nonprofitName: nonprofit.orgName,
+        nonprofitEin: nonprofit.ein,
+        waivedToInitiativeId: discountWaived ? (waivedToInitiativeId ?? null) : null,
+        waivedToFundId: discountWaived ? (waivedToFundId ?? null) : null,
+        grossAmount: distribution.msrp,
+        discountAmount: distribution.neighborDiscount,
+        cogs: distribution.cogs,
+        merchantNet: distribution.merchantNet,
+        nonprofitShare: distribution.nonprofitShare,
+        platformFee: distribution.platformFee,
+        waivedContribution: distribution.waivedContribution,
+        creditIssued: distribution.creditIssued,
+        paymentMethod,
+        discountWaived,
+        discountMode,
+      };
+
       return {
         transaction,
         stripeUrl,
+        ldg,
         breakdown: {
           grossAmount,
           neighborDiscount,
@@ -314,7 +348,10 @@ export class TransactionService {
           totalNeighborCost: neighborPays
         }
       };
-    }) as { transaction: any; stripeUrl: string | undefined; breakdown: any };
+    }) as { transaction: any; stripeUrl: string | undefined; ldg: EdgeInput; breakdown: any };
+
+    // Local Dollar Graph: persist the dollar's full path (best-effort, idempotent).
+    LocalDollarGraphService.record(txResult.ldg);
 
     // Post-commit compliance tracking (non-blocking)
     const { transaction: committedTx, breakdown } = txResult;

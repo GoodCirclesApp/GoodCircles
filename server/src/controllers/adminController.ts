@@ -5,6 +5,7 @@ import { AuthRequest } from '../middleware/authMiddleware';
 import { PriceSentinelService } from '../services/priceSentinelService';
 import { FeatureFlagService, FeatureFlags } from '../services/featureFlagService';
 import { ErrorLogService } from '../services/errorLogService';
+import { LocalDollarGraphService } from '../services/localDollarGraphService';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
@@ -700,6 +701,37 @@ export const clearErrorLogs = async (req: AuthRequest, res: Response) => {
     const count = await ErrorLogService.clear(all);
     await writeAuditLog(req.user.id, 'CLEAR_ERROR_LOGS', undefined, JSON.stringify({ all, count }));
     res.json({ cleared: count });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ── Local Dollar Graph ───────────────────────────────────────────────────────
+
+export const getLocalDollarGraph = async (req: AuthRequest, res: Response) => {
+  if (!req.user || (req.user.role !== 'PLATFORM' && req.user.role !== 'PLATFORM_VIEWER')) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const period = typeof req.query.period === 'string' && req.query.period ? req.query.period : undefined;
+  try {
+    const [summary, tracts, nonprofits, categories] = await Promise.all([
+      LocalDollarGraphService.summary(period),
+      LocalDollarGraphService.topTracts(10, period),
+      LocalDollarGraphService.topNonprofits(10, period),
+      LocalDollarGraphService.byCategory(12, period),
+    ]);
+    res.json({ summary, tracts, nonprofits, categories });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const reconcileLocalDollarGraph = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  try {
+    const written = await LocalDollarGraphService.reconcile(5000);
+    await writeAuditLog(req.user.id, 'LDG_RECONCILE', undefined, JSON.stringify({ written }));
+    res.json({ written });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

@@ -61,6 +61,7 @@ import { config, validateConfig } from './server/src/config';
 import { logger } from './server/src/utils/logger';
 import { requestId } from './server/src/middleware/requestId';
 import { ErrorLogService } from './server/src/services/errorLogService';
+import { LocalDollarGraphService } from './server/src/services/localDollarGraphService';
 
 dotenv.config();
 
@@ -506,6 +507,23 @@ async function startServer() {
         if (pruned > 0) console.log(`[Server] Pruned ${pruned} old error-log entries.`);
       } catch (err) {
         console.error('[Server] Error pruning error logs:', err);
+      }
+    }, 24 * 60 * 60 * 1000);
+
+    // Local Dollar Graph: seed from existing transactions shortly after boot, then
+    // self-heal daily — guarantees every settled transaction has an edge regardless
+    // of which code path created it (append-only; existing edges are never touched).
+    setTimeout(() => {
+      LocalDollarGraphService.reconcile(2000)
+        .then((n) => { if (n > 0) console.log(`[Server] Local Dollar Graph: backfilled ${n} edges on boot.`); })
+        .catch((err) => console.error('[Server] LDG boot reconcile error:', err));
+    }, 20_000);
+    setInterval(async () => {
+      try {
+        const n = await LocalDollarGraphService.reconcile(2000);
+        if (n > 0) console.log(`[Server] Local Dollar Graph: reconciled ${n} edges.`);
+      } catch (err) {
+        console.error('[Server] LDG reconcile error:', err);
       }
     }, 24 * 60 * 60 * 1000);
   });

@@ -47,6 +47,10 @@ router.get('/error-logs', adminController.getErrorLogs);
 router.post('/error-logs/:id/resolve', adminController.resolveErrorLog);
 router.post('/error-logs/clear', adminController.clearErrorLogs);
 
+// Local Dollar Graph
+router.get('/local-dollar-graph', adminController.getLocalDollarGraph);
+router.post('/local-dollar-graph/reconcile', adminController.reconcileLocalDollarGraph);
+
 // Transactions
 router.get('/transactions', adminController.getTransactions);
 router.post('/transactions/:txId/refund', adminController.refundTransaction);
