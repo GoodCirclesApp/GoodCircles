@@ -22,6 +22,9 @@ model User {
   isActive            Boolean               @default(true)
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
+  // Terms/Privacy acceptance captured at signup (CAN-SPAM / consent record).
+  acceptedTermsVersion String?
+  termsAcceptedAt      DateTime?
   discountMode        String                @default("PRICE_REDUCTION")
   // "PRICE_REDUCTION" or "PLATFORM_CREDITS"
   electedNonprofitId  String?

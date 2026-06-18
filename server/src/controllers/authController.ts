@@ -30,6 +30,8 @@ const registerSchema = z.object({
   inviteCode: z.string().optional(),
   // Neighbor specific
   electedNonprofitId: z.string().optional(),
+  // Terms/Privacy acceptance recorded at signup (consent record).
+  acceptedTermsVersion: z.string().optional(),
 });
 
 export const register = async (req: Request, res: Response) => {
@@ -74,6 +76,9 @@ export const register = async (req: Request, res: Response) => {
           role: data.role,
           firstName: data.firstName,
           lastName: data.lastName,
+          ...(data.acceptedTermsVersion
+            ? { acceptedTermsVersion: data.acceptedTermsVersion, termsAcceptedAt: new Date() }
+            : {}),
           ...(data.role === 'NEIGHBOR' && data.electedNonprofitId
             ? { electedNonprofitId: data.electedNonprofitId }
             : {}),

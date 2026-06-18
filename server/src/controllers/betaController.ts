@@ -29,6 +29,8 @@ const betaRegisterSchema = z.object({
   lendingRegions: z.array(z.string()).optional(),
   // Neighbor fields
   electedNonprofitId: z.string().optional(),
+  // Terms/Privacy acceptance recorded at signup (consent record).
+  acceptedTermsVersion: z.string().optional(),
 });
 
 export const betaRegister = async (req: Request, res: Response) => {
@@ -45,6 +47,9 @@ export const betaRegister = async (req: Request, res: Response) => {
           role: data.role,
           firstName: data.firstName,
           lastName: data.lastName,
+          ...(data.acceptedTermsVersion
+            ? { acceptedTermsVersion: data.acceptedTermsVersion, termsAcceptedAt: new Date() }
+            : {}),
         },
       });
 
