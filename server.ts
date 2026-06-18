@@ -56,6 +56,10 @@ import { FfiecGeocodingService } from './server/src/services/ffiecGeocodingServi
 import { FeatureFlagService } from './server/src/services/featureFlagService';
 import { sendNonprofitDailyDigest } from './server/src/services/emailService';
 import { prisma } from './server/src/lib/prisma';
+import accountRoutes from './server/src/routes/accountRoutes';
+import { config, validateConfig } from './server/src/config';
+import { logger } from './server/src/utils/logger';
+import { requestId } from './server/src/middleware/requestId';
 
 dotenv.config();
 
@@ -66,9 +70,15 @@ async function startServer() {
   // Ensure all schema columns exist before handling any requests
   await ensureColumns();
 
+  // Log any environment-config issues (non-fatal) so they surface in the deploy log.
+  validateConfig();
+
   const app = express();
-  const PORT = parseInt(process.env.PORT || '3000', 10);
-  const isProd = process.env.NODE_ENV === 'production';
+  const PORT = config.port;
+  const isProd = config.isProd;
+
+  // ── Request correlation id (first, so every log line + error can be traced) ──
+  app.use(requestId);
 
   // ── Security headers ───────────────────────────────────────────
   app.use(helmet({
@@ -137,6 +147,7 @@ async function startServer() {
   // API Routes
   // ══════════════════════════════════════════════════════════════
   app.use('/api/auth', authRoutes);
+  app.use('/api/account', accountRoutes);
   app.use('/api/email', emailRoutes);
   app.use('/api/neighbor', neighborRoutes);
   app.use('/api/merchant', merchantRoutes);
@@ -201,8 +212,14 @@ async function startServer() {
   // Error handler (MUST be last middleware)
   // ══════════════════════════════════════════════════════════════
   app.use((err: any, req: any, res: any, next: any) => {
-    // Always log full detail server-side (stack included) for diagnostics.
-    console.error(`[Server] Error on ${req.method} ${req.originalUrl}:`, err && err.stack ? err.stack : (err && err.message) || err);
+    // Always log full detail server-side (stack included) for diagnostics, tagged
+    // with the request id so a single failing request can be traced end to end.
+    logger.error('Unhandled request error', {
+      requestId: req.id,
+      method: req.method,
+      url: req.originalUrl,
+      detail: err && err.stack ? err.stack : (err && err.message) || String(err),
+    });
 
     // If the response has already started streaming, we cannot send a body —
     // hand off to Express's default handler to close the connection.
@@ -219,7 +236,7 @@ async function startServer() {
       ? (err && err.message) || 'Bad Request'
       : (isProd ? 'Internal Server Error' : (err && err.message) || 'Internal Server Error');
 
-    const body: any = { error: message };
+    const body: any = { error: message, requestId: req.id };
     // Include the stack only outside production to aid local debugging.
     if (!isProd && err && err.stack) body.stack = err.stack;
 
