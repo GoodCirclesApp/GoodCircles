@@ -37,7 +37,9 @@ export const adminService = {
     apiClient.post<any>('/admin/change-password', { currentPassword, newPassword }),
   getFeatureFlags: () => apiClient.get<any>('/admin/flags'),
   updateFeatureFlag: (key: string, value: boolean) =>
-    apiClient.post<any>('/admin/flags', { key, value }),
+    // Backend expects { flag, value } (adminController.updateFeatureFlag); sending
+    // `key` made `flag` undefined → 400 "flag (string) and value (boolean) required".
+    apiClient.post<any>('/admin/flags', { flag: key, value }),
   getDemoMode: () => apiClient.get<any>('/admin/demo-mode'),
   setDemoMode: (enabled: boolean) => apiClient.post<any>('/admin/demo-mode', { enabled }),
   getAuditLog: () => apiClient.get<any[]>('/admin/audit-log'),
