@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { getStripe } from '../services/stripeService';
 import { prisma } from '../lib/prisma';
 import { sendWalletTopUpEmail } from '../services/emailService';
+import { FeatureFlagService } from '../services/featureFlagService';
 
 export const getBalance = async (req: AuthRequest, res: Response) => {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
@@ -75,6 +76,13 @@ export const createFundIntent = async (req: AuthRequest, res: Response) => {
 
 // Called by Stripe webhook when payment_intent.succeeded fires
 export const completeFundFromWebhook = async (paymentIntentId: string): Promise<void> => {
+  // MT-avoidance defense-in-depth: never credit a custodial top-up while internal
+  // banking is disabled, even if a stray PENDING top-up exists (the /fund/intent
+  // route is already gated, so none should be created while OFF).
+  if (!FeatureFlagService.isEnabled('enable_internal_banking')) {
+    console.warn('[Wallet] Skipping top-up completion — enable_internal_banking is OFF.');
+    return;
+  }
   const topUp = await prisma.walletTopUp.findUnique({ where: { stripePaymentIntentId: paymentIntentId } });
   if (!topUp || topUp.status !== 'PENDING') return;
 

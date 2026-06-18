@@ -2,6 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { Decimal } from '@prisma/client/runtime/library';
 import { WalletService } from './walletService';
+import { FeatureFlagService } from './featureFlagService';
 
 
 
@@ -81,7 +82,10 @@ export class NettingService {
     const activation = await prisma.nettingActivation.findFirst({
       orderBy: { checkDate: 'desc' }
     });
-    const isEnabled = activation?.isActive || false;
+    // MT-avoidance: actual merchant-to-merchant settlement (M2M money movement) only
+    // executes when BOTH the DB activation thresholds AND the feature flag allow it.
+    // Otherwise the cycle still runs in SIMULATED mode (safe, no funds move).
+    const isEnabled = (activation?.isActive || false) && FeatureFlagService.isEnabled('enable_netting_execution');
 
     // 1. Get unsettled obligations.
     // In simulation mode only pull obligations that have never been assigned to a batch

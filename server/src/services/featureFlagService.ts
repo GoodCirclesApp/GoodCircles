@@ -26,7 +26,11 @@ export interface FeatureFlags {
 
 const DEFAULT_FLAGS: FeatureFlags = {
   enable_marketplace: true,
-  enable_internal_banking: true,
+  // MT-avoidance: custodial wallet top-up + cash withdrawal are stored-value /
+  // money-transmitter triggers. OFF by default; flip ON only in a licensed/BaaS
+  // phase. (A persisted feature_flags row overrides this default — toggle it OFF
+  // in Admin → Feature Flags for existing environments.)
+  enable_internal_banking: false,
   enable_stripe_payments: true,
   enable_service_bookings: true,
   enable_nonprofit_election: true,

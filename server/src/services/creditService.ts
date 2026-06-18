@@ -1,4 +1,5 @@
 import { prisma } from '../lib/prisma';
+import { FeatureFlagService } from './featureFlagService';
 
 
 
@@ -113,8 +114,12 @@ export class CreditService {
    * Transfer credits between users.
    */
   static async transferCredits(fromUserId: string, toUserId: string, amount: number, tx?: any) {
+    // MT-avoidance: peer-to-peer movement of stored value is gated OFF until a BaaS phase.
+    if (!FeatureFlagService.isEnabled('enable_credit_transfers')) {
+      throw new Error('Credit transfers are not enabled.');
+    }
     const client = tx || prisma;
-    
+
     return await client.$transaction(async (t: any) => {
       const balance = await this.getBalance(fromUserId, t);
       if (balance < amount) throw new Error('Insufficient credit balance');
