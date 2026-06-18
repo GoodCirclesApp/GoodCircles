@@ -43,5 +43,16 @@ export const adminService = {
   getDemoMode: () => apiClient.get<any>('/admin/demo-mode'),
   setDemoMode: (enabled: boolean) => apiClient.post<any>('/admin/demo-mode', { enabled }),
   getAuditLog: () => apiClient.get<any[]>('/admin/audit-log'),
+  getErrorLogs: (params?: { page?: number; resolved?: boolean; level?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.page) q.set('page', String(params.page));
+    if (typeof params?.resolved === 'boolean') q.set('resolved', String(params.resolved));
+    if (params?.level) q.set('level', params.level);
+    const qs = q.toString();
+    return apiClient.get<any>(`/admin/error-logs${qs ? `?${qs}` : ''}`);
+  },
+  resolveErrorLog: (id: string, resolved = true) =>
+    apiClient.post<any>(`/admin/error-logs/${id}/resolve`, { resolved }),
+  clearErrorLogs: (all = false) => apiClient.post<any>('/admin/error-logs/clear', { all }),
   resetDemo: () => apiClient.post<any>('/admin/demo/reset', {}),
 };

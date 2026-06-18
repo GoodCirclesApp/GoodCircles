@@ -42,6 +42,11 @@ router.post('/demo-mode', adminController.setDemoMode);
 // Audit log
 router.get('/audit-log', adminController.getAuditLog);
 
+// Error monitor (in-house error logging)
+router.get('/error-logs', adminController.getErrorLogs);
+router.post('/error-logs/:id/resolve', adminController.resolveErrorLog);
+router.post('/error-logs/clear', adminController.clearErrorLogs);
+
 // Transactions
 router.get('/transactions', adminController.getTransactions);
 router.post('/transactions/:txId/refund', adminController.refundTransaction);

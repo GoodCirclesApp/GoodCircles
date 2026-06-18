@@ -60,6 +60,7 @@ import accountRoutes from './server/src/routes/accountRoutes';
 import { config, validateConfig } from './server/src/config';
 import { logger } from './server/src/utils/logger';
 import { requestId } from './server/src/middleware/requestId';
+import { ErrorLogService } from './server/src/services/errorLogService';
 
 dotenv.config();
 
@@ -227,6 +228,21 @@ async function startServer() {
 
     const status = Number(err && (err.status || err.statusCode)) || 500;
     const isClientError = status >= 400 && status < 500;
+
+    // Capture real (5xx) failures to the in-house error monitor (Admin Portal →
+    // Error Monitor). Best-effort + fire-and-forget — never blocks the response.
+    if (status >= 500) {
+      ErrorLogService.record({
+        level: 'error',
+        message: (err && err.message) || 'Internal Server Error',
+        stack: err && err.stack ? String(err.stack) : undefined,
+        source: `${req.method} ${req.originalUrl}`,
+        statusCode: status,
+        requestId: req.id,
+        userId: req.user?.id,
+        userRole: req.user?.role,
+      });
+    }
 
     // Client errors (4xx) carry a safe, intentional message (e.g. the 403 from
     // refundService and the 400 from crmWebhookService) — surface it with the
@@ -467,6 +483,16 @@ async function startServer() {
         console.log(`[Server] Monthly regional metrics aggregation completed for ${period}.`);
       } catch (err) {
         console.error('[Server] Error in regional metrics aggregation:', err);
+      }
+    }, 24 * 60 * 60 * 1000);
+
+    // Error-log retention: prune entries older than 30 days, daily.
+    setInterval(async () => {
+      try {
+        const pruned = await ErrorLogService.pruneOlderThan(30);
+        if (pruned > 0) console.log(`[Server] Pruned ${pruned} old error-log entries.`);
+      } catch (err) {
+        console.error('[Server] Error pruning error logs:', err);
       }
     }, 24 * 60 * 60 * 1000);
   });

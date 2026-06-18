@@ -57,7 +57,9 @@ import { AdminAffiliateDashboard } from '../components/AdminAffiliateDashboard';
 import { ComplianceDashboard } from '../components/ComplianceDashboard';
 import AdminIntegrityTest from '../components/AdminIntegrityTest';
 import { Scale } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import EmailCampaignsManager from '../components/EmailCampaignsManager';
+import { ErrorMonitor } from '../components/ErrorMonitor';
 
 // Sub-components
 
@@ -1880,7 +1882,7 @@ type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
   | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT'
-  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST' | 'BRIEFINGS' | 'INBOX' | 'EMAIL';
+  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST' | 'BRIEFINGS' | 'INBOX' | 'EMAIL' | 'ERRORS';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -1909,6 +1911,7 @@ export const AdminPortalView: React.FC = () => {
     { id: 'INBOX',      label: 'Support Inbox',      icon: Inbox },
     { id: 'EMAIL',      label: 'Email Campaigns',    icon: Send },
     { id: 'AUDIT_LOG', label: 'Audit Log', icon: ClipboardList },
+    { id: 'ERRORS', label: 'Error Monitor', icon: AlertTriangle },
     { id: 'SETTINGS', label: 'Admin Settings', icon: Settings },
     { id: 'INTEGRITY', label: 'System Integrity Test', icon: FlaskConical },
   ];
@@ -1935,6 +1938,7 @@ export const AdminPortalView: React.FC = () => {
       case 'INBOX':      return <SupportInbox isViewer={isViewer} />;
       case 'EMAIL':      return <EmailCampaignsManager isViewer={isViewer} />;
       case 'AUDIT_LOG': return <AuditLogPanel />;
+      case 'ERRORS': return <ErrorMonitor />;
       case 'SETTINGS': return <AdminSettings isViewer={isViewer} />;
       case 'INTEGRITY': return <AdminIntegrityTest />;
       default: return <SystemDashboard isViewer={isViewer} />;

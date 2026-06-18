@@ -4,6 +4,7 @@ import { prisma } from '../lib/prisma';
 import { AuthRequest } from '../middleware/authMiddleware';
 import { PriceSentinelService } from '../services/priceSentinelService';
 import { FeatureFlagService, FeatureFlags } from '../services/featureFlagService';
+import { ErrorLogService } from '../services/errorLogService';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
@@ -658,6 +659,47 @@ export const getAuditLog = async (req: AuthRequest, res: Response) => {
       take: limit,
     });
     res.json(logs);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ── Error monitor (in-house error logging) ───────────────────────────────────
+
+export const getErrorLogs = async (req: AuthRequest, res: Response) => {
+  if (!req.user || (req.user.role !== 'PLATFORM' && req.user.role !== 'PLATFORM_VIEWER')) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 50;
+  const resolvedQ = req.query.resolved;
+  const resolved = resolvedQ === 'true' ? true : resolvedQ === 'false' ? false : undefined;
+  const level = typeof req.query.level === 'string' ? req.query.level : undefined;
+  try {
+    const result = await ErrorLogService.list({ page, limit, resolved, level });
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const resolveErrorLog = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  try {
+    const updated = await ErrorLogService.setResolved(req.params.id as string, req.body?.resolved !== false);
+    res.json(updated);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const clearErrorLogs = async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role !== 'PLATFORM') return res.status(403).json({ error: 'Unauthorized' });
+  try {
+    const all = req.body?.all === true;
+    const count = await ErrorLogService.clear(all);
+    await writeAuditLog(req.user.id, 'CLEAR_ERROR_LOGS', undefined, JSON.stringify({ all, count }));
+    res.json({ cleared: count });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

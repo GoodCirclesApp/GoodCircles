@@ -1911,3 +1911,22 @@ model EmailSuppression {
   reason       String // HARD_BOUNCE | COMPLAINED | INVALID | MANUAL
   createdAt    DateTime @default(now())
 }
+
+// In-house error monitoring: server-side errors captured by the central error
+// handler and viewed in the Admin Portal (replaces a paid error-monitoring SaaS).
+model ErrorLog {
+  id         String   @id @default(uuid())
+  level      String   @default("error") // 'error' | 'warn'
+  message    String
+  stack      String?
+  source     String? // e.g. "POST /api/checkout"
+  statusCode Int?
+  requestId  String?
+  userId     String?
+  userRole   String?
+  resolved   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([resolved])
+}
