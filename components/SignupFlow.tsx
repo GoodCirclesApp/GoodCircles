@@ -5,10 +5,12 @@ import { authService } from '../services/authService';
 import { WelcomeEmailService } from '../services/welcomeEmailService';
 import { NonprofitSelector } from './NonprofitSelector';
 import { motion, AnimatePresence } from 'framer-motion';
+import { LegalDoc, TERMS_VERSION } from './LegalPages';
 
 interface Props {
   onComplete: (email: string, password?: string) => Promise<any>;
   onMerchantOnboarding: () => void;
+  onShowLegal?: (doc: LegalDoc) => void;
 }
 
 type SignupRole = 'NEIGHBOR' | 'MERCHANT' | 'NONPROFIT' | 'CDFI';
@@ -71,8 +73,9 @@ const ROLE_CONFIG: Record<SignupRole, {
   },
 };
 
-export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }) => {
+export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding, onShowLegal }) => {
   const [role, setRole] = useState<SignupRole>('NEIGHBOR');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -91,6 +94,11 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!agreedToTerms) {
+      setError('Please agree to the Terms of Service and Privacy Policy to continue.');
+      return;
+    }
 
     if (role === 'MERCHANT') {
       onMerchantOnboarding();
@@ -151,6 +159,7 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
           cdfiCertificationNumber: cdfiCertNumber,
           lendingRegions: regions.length > 0 ? regions : undefined,
         }),
+        acceptedTermsVersion: TERMS_VERSION,
       });
 
       if (finalUser && finalUser.user) {
@@ -371,6 +380,22 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
           />
         )}
 
+        {/* Terms & Privacy consent — required for all roles */}
+        <label className="flex items-start gap-3 px-1 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={agreedToTerms}
+            onChange={e => setAgreedToTerms(e.target.checked)}
+            className="mt-0.5 w-4 h-4 shrink-0 accent-[#7851A9]"
+          />
+          <span className="text-[11px] font-semibold text-slate-500 leading-snug">
+            I agree to the{' '}
+            <button type="button" onClick={() => onShowLegal?.('terms')} className="text-[#7851A9] font-black underline">Terms of Service</button>
+            {' '}and{' '}
+            <button type="button" onClick={() => onShowLegal?.('privacy')} className="text-[#7851A9] font-black underline">Privacy Policy</button>.
+          </span>
+        </label>
+
         {error && (
           <div className="p-4 bg-red-50 text-red-500 text-xs font-bold rounded-2xl border border-red-100">
             {error}
@@ -379,7 +404,7 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding }
 
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || !agreedToTerms}
           className="w-full py-6 rounded-2xl bg-black text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#7851A9] disabled:opacity-50 transition-all"
         >
           {isLoading

@@ -18,6 +18,7 @@ import { authService } from './services/authService';
 import { neighborService } from './services/neighborService';
 import ErrorBoundary from './components/ErrorBoundary';
 import { registerToastHandler } from './hooks/toast';
+import { LegalPages, LegalDoc } from './components/LegalPages';
 
 // --- Lazy-loaded views (code-split per route for faster mobile loads) ---
 const TimelineView = React.lazy(() => import('./views/TimelineView').then(m => ({ default: m.TimelineView })));
@@ -77,6 +78,7 @@ const App: React.FC = () => {
   const [showCdfiLanding, setShowCdfiLanding] = useState(false);
   const [showMunicipalLanding, setShowMunicipalLanding] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [legalDoc, setLegalDoc] = useState<LegalDoc | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [impactData, setImpactData] = useState<{
@@ -188,6 +190,20 @@ const App: React.FC = () => {
     }
   };
 
+  // While a stored session token is being verified, show a branded splash instead
+  // of flashing the login screen for already-authenticated users on hard refresh.
+  if (store.authLoading) {
+    return (
+      <div className="min-h-screen bg-[#FDFCFE] flex items-center justify-center" role="status" aria-live="polite">
+        <div className="flex flex-col items-center gap-4">
+          <BrandLogo variant="GOLD" className="transform scale-90" />
+          <div className="w-8 h-8 border-4 border-[#7851A9]/20 border-t-[#7851A9] rounded-full animate-spin" />
+          <span className="sr-only">Loading your account…</span>
+        </div>
+      </div>
+    );
+  }
+
   if (!store.currentUser) {
     if (showPublicImpact) {
       return <Suspense fallback={null}><PublicImpactDashboard onClose={() => setShowPublicImpact(false)} onJoin={() => setShowPublicImpact(false)} /></Suspense>;
@@ -209,7 +225,8 @@ const App: React.FC = () => {
     }
     return (
       <div>
-        <AuthSystem onLogin={store.login} />
+        {legalDoc && <LegalPages doc={legalDoc} onClose={() => setLegalDoc(null)} onSelect={setLegalDoc} />}
+        <AuthSystem onLogin={store.login} onShowLegal={setLegalDoc} />
         {/* ── Pre-login role selector bar ─────────────────────────────────────
             Two rows: primary actions (top) and partner channels (bottom).
             Each button uses the same elevated glass-pill treatment. ───────── */}
@@ -505,6 +522,8 @@ const App: React.FC = () => {
                   regionName={store.selectedRegion.name}
                   policy={store.activePolicy}
                   isLoading={store.isLoading}
+                  error={store.error}
+                  onRetry={store.retry}
                   wishlistIds={wishlistIds}
                   onToggleWishlist={(id) => wishlistIds.includes(id) ? handleRemoveFromWishlist(id) : handleAddToWishlist(id)}
                   pagination={{
@@ -629,6 +648,19 @@ const App: React.FC = () => {
           currentNonprofit={selectedNonprofit}
           onAddToCart={store.addToCart}
         />
+        <footer className="border-t border-[#CA9CE1]/20 mt-12 py-6 px-4">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">© {new Date().getFullYear()} Good Circles</p>
+            <div className="flex gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              <button onClick={() => setLegalDoc('terms')} className="hover:text-[#7851A9] transition-colors">Terms</button>
+              <span aria-hidden="true">·</span>
+              <button onClick={() => setLegalDoc('privacy')} className="hover:text-[#7851A9] transition-colors">Privacy</button>
+              <span aria-hidden="true">·</span>
+              <button onClick={() => setLegalDoc('cookies')} className="hover:text-[#7851A9] transition-colors">Cookies</button>
+            </div>
+          </div>
+        </footer>
+        {legalDoc && <LegalPages doc={legalDoc} onClose={() => setLegalDoc(null)} onSelect={setLegalDoc} />}
         <ActivityTicker />
         {toast && (
           <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 rounded-2xl shadow-2xl text-white text-sm font-black uppercase tracking-widest transition-all animate-in slide-in-from-bottom-4 duration-300 ${toast.type === 'error' ? 'bg-[#A20021]' : toast.type === 'info' ? 'bg-slate-700' : 'bg-emerald-600'}`}>

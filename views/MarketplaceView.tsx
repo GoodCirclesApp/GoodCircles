@@ -28,13 +28,15 @@ interface Props {
   policy: FiscalPolicy;
   pagination?: PaginationInfo;
   isLoading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
   wishlistIds?: string[];
   onToggleWishlist?: (productId: string) => void;
 }
 
 export const MarketplaceView: React.FC<Props> = ({
   products, cart, effectiveRole, selectedNonprofitName, onProductClick, onShopperClick,
-  regionName, policy, pagination, isLoading, wishlistIds = [], onToggleWishlist,
+  regionName, policy, pagination, isLoading, error, onRetry, wishlistIds = [], onToggleWishlist,
 }) => {
   const [affiliateListings, setAffiliateListings] = useState<AffiliateListingData[]>([]);
   const [recentlyAdded, setRecentlyAdded] = useState<string | null>(null);
@@ -114,7 +116,19 @@ export const MarketplaceView: React.FC<Props> = ({
 
       <MerchantStoriesSection />
 
-      {isLoading && products.length === 0 ? (
+      {error && products.length === 0 && !isLoading ? (
+        <div className="py-24 text-center border-2 border-dashed border-[#A20021]/20 rounded-[4rem]" role="alert">
+           <p className="text-[#A20021] font-bold italic uppercase tracking-widest">{error}</p>
+           {onRetry && (
+             <button
+               onClick={onRetry}
+               className="mt-5 px-8 py-3 bg-[#7851A9] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all"
+             >
+               Try again
+             </button>
+           )}
+        </div>
+      ) : isLoading && products.length === 0 ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
           {Array(8).fill(0).map((_, i) => (
             <div key={i} className="bg-white rounded-2xl sm:rounded-[3rem] border border-[#CA9CE1]/20 overflow-hidden animate-pulse">

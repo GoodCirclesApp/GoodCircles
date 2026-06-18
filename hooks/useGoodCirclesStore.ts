@@ -51,9 +51,15 @@ export function useGoodCirclesStore() {
   return {
     // Identity Domain
     ...identity,
-    
+
     // Inventory Domain
     ...inventory,
+
+    // Auth-loading flag, exposed under a distinct key because `...inventory`'s
+    // own `isLoading` (products fetch) shadows identity's in the spread above.
+    // Used to gate the initial render so the login screen doesn't flash on
+    // refresh while the stored session token is being verified.
+    authLoading: identity.isLoading,
     
     // Ledger Domain
     ...ledger,

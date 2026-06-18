@@ -7,6 +7,7 @@ export function useInventoryStore() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,6 +17,7 @@ export function useInventoryStore() {
 
   const fetchProducts = useCallback(async (page: number = 1) => {
     setIsLoading(true);
+    setError(null);
     try {
       const response: MarketplaceResponse = await marketplaceService.search({
         q: searchTerm || undefined,
@@ -27,8 +29,12 @@ export function useInventoryStore() {
       setCurrentPage(response.pagination.page);
       setTotalPages(response.pagination.totalPages);
       setTotalProducts(response.pagination.total);
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
+    } catch (err) {
+      // Surface the failure instead of swallowing it, so the UI can distinguish
+      // "couldn't load" from "no listings here" and offer a retry.
+      console.error('Failed to fetch products:', err);
+      setError('We couldn’t load listings right now. Please try again.');
+      setProducts([]);
     } finally {
       setIsLoading(false);
     }
@@ -72,6 +78,8 @@ export function useInventoryStore() {
     addProduct,
     deleteProduct,
     isLoading,
+    error,
+    retry: () => fetchProducts(currentPage),
     // Pagination
     currentPage,
     totalPages,

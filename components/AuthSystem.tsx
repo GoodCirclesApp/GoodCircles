@@ -6,12 +6,14 @@ import { authService } from '../services/authService';
 import { WelcomeEmailService } from '../services/welcomeEmailService';
 import { MerchantOnboarding } from './MerchantOnboarding';
 import { SignupFlow } from './SignupFlow';
+import { LegalDoc, TERMS_VERSION } from './LegalPages';
 
 interface Props {
   onLogin: (email: string, password?: string) => Promise<any>;
+  onShowLegal?: (doc: LegalDoc) => void;
 }
 
-export const AuthSystem: React.FC<Props> = ({ onLogin }) => {
+export const AuthSystem: React.FC<Props> = ({ onLogin, onShowLegal }) => {
   const [view, setView] = useState<'LOGIN' | 'SIGNUP' | 'RECOVERY' | 'MERCHANT_ONBOARDING'>('LOGIN');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -84,6 +86,7 @@ export const AuthSystem: React.FC<Props> = ({ onLogin }) => {
                     businessName: d.name,
                     businessType: d.businessType as 'GOODS' | 'SERVICES' | 'BOTH',
                     referralCode: d.referralCode,
+                    acceptedTermsVersion: TERMS_VERSION,
                   });
                   if (finalUser?.user) {
                     WelcomeEmailService.startSequence({
@@ -110,6 +113,7 @@ export const AuthSystem: React.FC<Props> = ({ onLogin }) => {
             <SignupFlow
               onComplete={onLogin}
               onMerchantOnboarding={() => setView('MERCHANT_ONBOARDING')}
+              onShowLegal={onShowLegal}
             />
           )}
 
@@ -167,8 +171,18 @@ export const AuthSystem: React.FC<Props> = ({ onLogin }) => {
             )}
           </div>
 
-        
+
         </div>
+
+        {onShowLegal && (
+          <div className="flex justify-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            <button onClick={() => onShowLegal('terms')} className="hover:text-[#7851A9] transition-colors">Terms</button>
+            <span aria-hidden="true">·</span>
+            <button onClick={() => onShowLegal('privacy')} className="hover:text-[#7851A9] transition-colors">Privacy</button>
+            <span aria-hidden="true">·</span>
+            <button onClick={() => onShowLegal('cookies')} className="hover:text-[#7851A9] transition-colors">Cookies</button>
+          </div>
+        )}
       </div>
     </div>
   );
