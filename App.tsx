@@ -663,7 +663,11 @@ const App: React.FC = () => {
         {legalDoc && <LegalPages doc={legalDoc} onClose={() => setLegalDoc(null)} onSelect={setLegalDoc} />}
         <ActivityTicker />
         {toast && (
-          <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 rounded-2xl shadow-2xl text-white text-sm font-black uppercase tracking-widest transition-all animate-in slide-in-from-bottom-4 duration-300 ${toast.type === 'error' ? 'bg-[#A20021]' : toast.type === 'info' ? 'bg-slate-700' : 'bg-emerald-600'}`}>
+          <div
+            role={toast.type === 'error' ? 'alert' : 'status'}
+            aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
+            className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 rounded-2xl shadow-2xl text-white text-sm font-black uppercase tracking-widest transition-all animate-in slide-in-from-bottom-4 duration-300 ${toast.type === 'error' ? 'bg-[#A20021]' : toast.type === 'info' ? 'bg-slate-700' : 'bg-emerald-600'}`}
+          >
             {toast.message}
           </div>
         )}

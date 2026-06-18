@@ -67,6 +67,27 @@ export function ProfileView({ user, onUpdate }: ProfileViewProps) {
     }
   };
 
+  const handleExportData = async () => {
+    setErrorMessage('');
+    setSuccessMessage('');
+    try {
+      const token =
+        localStorage.getItem('gc_auth_token') || localStorage.getItem('gc_access_token') || '';
+      const res = await fetch('/api/account/export', { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) throw new Error('Export failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'goodcircles-data-export.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      setSuccessMessage('Your data export has downloaded.');
+    } catch {
+      setErrorMessage('Could not download your data. Please try again.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage('');
@@ -238,6 +259,22 @@ export function ProfileView({ user, onUpdate }: ProfileViewProps) {
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               {selectedNonprofit ? 'Change Cause →' : 'Select a Cause →'}
+            </button>
+          </div>
+
+          {/* Privacy & Your Data Section */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold mb-4">Privacy &amp; Your Data</h2>
+            <p className="text-gray-600 mb-4">
+              Download a copy of the personal data Good Circles holds for your account. To request
+              deletion, email <a className="text-blue-600 underline" href="mailto:hello@goodcircles.org">hello@goodcircles.org</a>.
+            </p>
+            <button
+              type="button"
+              onClick={handleExportData}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+            >
+              Download my data
             </button>
           </div>
 
