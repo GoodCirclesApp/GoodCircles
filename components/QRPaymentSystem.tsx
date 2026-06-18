@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { QrCode, Camera, DollarSign, CheckCircle2, AlertCircle, ArrowLeft, Store, Heart, Receipt, Copy, Download, RefreshCw, Smartphone, Zap, Shield } from 'lucide-react';
 import { neighborService } from '../services/neighborService';
+import QRCode from 'qrcode';
 
 // ═══════════════════════════════════════════════════
 // QR CODE PAYMENT SYSTEM
@@ -17,47 +18,39 @@ const BRAND = {
   dark: '#1e293b',
 };
 
-// ── QR Code Generator (SVG-based, no external deps) ──
+// ── Real QR Code Generator (synchronous SVG via the qrcode matrix API) ──
+// The previous implementation drew hash-seeded decorative noise that LOOKED like
+// a QR but encoded nothing, so the scan-to-pay path could never work. This builds
+// the genuine module matrix with error-correction level H (30% recovery) plus a
+// 4-module quiet zone so the rendered code reliably scans. A small center badge
+// is kept under the H-level recovery budget, so it's safe to overlay.
 function generateQRSvg(data: string, size: number = 200): string {
-  const hash = data.split('').reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0);
-  const modules = 21;
-  const cellSize = size / modules;
-  let cells = '';
-
-  for (let row = 0; row < modules; row++) {
-    for (let col = 0; col < modules; col++) {
-      const isFinderPattern =
-        (row < 7 && col < 7) ||
-        (row < 7 && col >= modules - 7) ||
-        (row >= modules - 7 && col < 7);
-
-      const isFinderInner =
-        (row >= 2 && row <= 4 && col >= 2 && col <= 4) ||
-        (row >= 2 && row <= 4 && col >= modules - 5 && col <= modules - 3) ||
-        (row >= modules - 5 && row <= modules - 3 && col >= 2 && col <= 4);
-
-      const isFinderBorder =
-        isFinderPattern &&
-        !isFinderInner &&
-        (row === 0 || row === 6 || col === 0 || col === 6 ||
-          row === modules - 7 || row === modules - 1 ||
-          col === modules - 7 || col === modules - 1);
-
-      const seed = (hash + row * 31 + col * 17) & 0xFF;
-      const isData = !isFinderPattern && seed > 128;
-
-      if (isFinderBorder || isFinderInner || isData) {
-        const color = isFinderBorder || isFinderInner ? BRAND.purple : BRAND.dark;
-        cells += `<rect x="${col * cellSize}" y="${row * cellSize}" width="${cellSize}" height="${cellSize}" fill="${color}" rx="1"/>`;
+  let rects = '';
+  try {
+    const qr = QRCode.create(data, { errorCorrectionLevel: 'H' });
+    const count = qr.modules.size;
+    const margin = 4; // standard QR quiet zone, in modules
+    const cell = size / (count + margin * 2);
+    for (let row = 0; row < count; row++) {
+      for (let col = 0; col < count; col++) {
+        if (qr.modules.get(row, col)) {
+          const x = (col + margin) * cell;
+          const y = (row + margin) * cell;
+          rects += `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${cell.toFixed(2)}" height="${cell.toFixed(2)}" fill="${BRAND.dark}"/>`;
+        }
       }
     }
+  } catch {
+    // Extremely long payloads can exceed QR capacity; fail to a blank code rather than throw.
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"><rect width="${size}" height="${size}" fill="white"/></svg>`;
   }
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
-    <rect width="${size}" height="${size}" fill="white" rx="8"/>
-    ${cells}
-    <rect x="${size * 0.35}" y="${size * 0.35}" width="${size * 0.3}" height="${size * 0.3}" fill="white" rx="4"/>
-    <text x="${size / 2}" y="${size / 2 + 4}" text-anchor="middle" font-family="Arial" font-weight="800" font-size="${size * 0.06}" fill="${BRAND.purple}">GC</text>
+  const badge = size * 0.16;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" shape-rendering="crispEdges">
+    <rect width="${size}" height="${size}" fill="white"/>
+    ${rects}
+    <rect x="${(size - badge) / 2}" y="${(size - badge) / 2}" width="${badge}" height="${badge}" fill="white" rx="3"/>
+    <text x="${size / 2}" y="${size / 2 + badge * 0.18}" text-anchor="middle" font-family="Arial" font-weight="800" font-size="${badge * 0.5}" fill="${BRAND.purple}">GC</text>
   </svg>`;
 }
 
