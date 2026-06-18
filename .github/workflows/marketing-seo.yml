@@ -1,0 +1,34 @@
+# SEO regression CI for the marketing site (marketing/ only — never touches
+# the marketplace app). Build fails on any violation of the per-page SEO
+# invariants (scripts/check-seo.mjs), then Lighthouse asserts SEO/perf/a11y
+# budgets against the static build.
+name: marketing-seo
+
+on:
+  push:
+    branches: [main]
+    paths: ['marketing/**', '.github/workflows/marketing-seo.yml']
+  pull_request:
+    paths: ['marketing/**', '.github/workflows/marketing-seo.yml']
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: marketing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: marketing/package-lock.json
+      - run: npm ci
+      # astro build + scripts/check-seo.mjs (h1/title/canonical/schema/FAQ
+      # verbatim/broken links/sitemap-noindex consistency)
+      - run: npm run build
+      - name: Lighthouse budgets
+        run: |
+          npm install -g @lhci/cli@0.14.x
+          lhci autorun
