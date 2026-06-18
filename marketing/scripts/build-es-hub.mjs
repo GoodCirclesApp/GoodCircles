@@ -21,6 +21,7 @@ const PILLARS = [
   ['operations', 'Operaciones y finanzas'],
   ['marketing', 'Marketing y comunicaciones'],
   ['passive-funding', 'Financiación pasiva'],
+  ['tools', 'Herramientas interactivas'],
   ['states', 'Guías por estado'],
 ];
 const PNAME = Object.fromEntries(PILLARS);
@@ -44,6 +45,7 @@ for (const file of walk(RES)) {
   if (!/[\\/]es[\\/]$/.test(dir)) continue;                  // only .../es/ pages
   if (join(dir).replace(/[\\/]$/, '') === HUB_DIR) continue; // skip the hub page itself
   const rel = relative(RES, dir).replace(/\\/g, '/').replace(/\/es\/?$/, '');
+  if (rel === 'tools') continue;                             // the tools hub is a hub, not a guide
   const pillar = rel.split('/')[0];
   const html = readFileSync(file, 'utf8');
   const h1 = (html.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]?.replace(/<[^>]+>/g, '').trim() || rel;
