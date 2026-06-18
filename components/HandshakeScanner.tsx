@@ -37,9 +37,12 @@ export const HandshakeScanner: React.FC<Props> = ({ onVerify, onCancel, products
     }
   };
 
-  const handleSettle = async () => {
+  const handleSettle = async (explicitToken?: string) => {
+    // Use the passed-in token when settling straight from an optical scan — React
+    // state updates are async, so reading `token` here would be stale.
+    const t = (explicitToken ?? token).trim();
     setIsVerifying(true);
-    const verification = await onVerify(token.toUpperCase(), selectedProduct || undefined);
+    const verification = await onVerify(t, selectedProduct || undefined);
     setResult(verification);
     setIsVerifying(false);
     setStep('RESULT');
@@ -53,13 +56,17 @@ export const HandshakeScanner: React.FC<Props> = ({ onVerify, onCancel, products
         false
       );
       scannerRef.current.render((decodedText) => {
-        setToken(decodedText.slice(0, 6).toUpperCase());
+        // Use the full decoded token verbatim — the QR encodes a long, case-sensitive
+        // HMAC token, so truncating/upper-casing it (the old behavior) guaranteed a
+        // "token not found" failure.
+        const scanned = decodedText.trim();
+        setToken(scanned);
         setUseOptical(false);
         if (scannerRef.current) scannerRef.current.clear();
         if (products.length > 0) {
           setStep('SELECT_PRODUCT');
         } else {
-          handleSettle();
+          handleSettle(scanned);
         }
       }, (_error) => { /* ignore scanning errors */ });
     }
@@ -137,11 +144,10 @@ export const HandshakeScanner: React.FC<Props> = ({ onVerify, onCancel, products
             <div className="relative">
               <input
                 type="text"
-                maxLength={6}
                 value={token}
-                onChange={(e) => setToken(e.target.value.toUpperCase())}
-                placeholder="------"
-                className="w-full px-4 py-8 bg-slate-50 border-4 border-slate-100 rounded-[2.5rem] text-5xl font-black tracking-[0.4em] outline-none focus:border-[#7851A9] focus:bg-white transition-all text-center placeholder:text-slate-200 shadow-inner"
+                onChange={(e) => setToken(e.target.value.trim())}
+                placeholder="Scan above, or paste the customer's code"
+                className="w-full px-6 py-6 bg-slate-50 border-4 border-slate-100 rounded-[2.5rem] text-sm font-bold tracking-tight outline-none focus:border-[#7851A9] focus:bg-white transition-all text-center placeholder:text-slate-300 shadow-inner break-all"
               />
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -180,7 +186,7 @@ export const HandshakeScanner: React.FC<Props> = ({ onVerify, onCancel, products
               Back
             </button>
             <button
-              onClick={handleSettle}
+              onClick={() => handleSettle()}
               disabled={!selectedProduct || isVerifying}
               className="flex-[2] bg-black text-white py-5 rounded-3xl text-[11px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-all shadow-xl disabled:opacity-50 active:scale-95"
             >
