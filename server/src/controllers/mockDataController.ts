@@ -264,29 +264,11 @@ export const wipeLegacyData = async (req: AuthRequest, res: Response) => {
     const userIds = nonAdminUsers.map(u => u.id);
 
     if (userIds.length === 0) {
-      return res.json({ success: true, message: 'No legacy data found', deleted: 0 });
+      return res.json({ success: true, message: 'Already clean — only the admin and viewer accounts exist.', deleted: 0 });
     }
 
-    const merchantIds = (await prisma.merchant.findMany({ where: { userId: { in: userIds } }, select: { id: true } })).map(m => m.id);
-    const nonprofitIds = (await prisma.nonprofit.findMany({ where: { userId: { in: userIds } }, select: { id: true } })).map(n => n.id);
-    const walletIds = (await prisma.wallet.findMany({ where: { userId: { in: userIds } }, select: { id: true } })).map(w => w.id);
-
-    // Delete in FK-safe order
-    await prisma.donorMilestone.deleteMany({ where: { userId: { in: userIds } } });
-    await prisma.donationReceipt.deleteMany({ where: { OR: [{ merchantId: { in: merchantIds } }, { nonprofitId: { in: nonprofitIds } }] } });
-    await prisma.creditLedger.deleteMany({ where: { userId: { in: userIds } } });
-    await prisma.ledgerEntry.deleteMany({ where: { walletId: { in: walletIds } } });
-    await prisma.booking.deleteMany({ where: { merchantId: { in: merchantIds } } });
-    await prisma.transaction.deleteMany({
-      where: { OR: [{ neighborId: { in: userIds } }, { merchantId: { in: merchantIds } }, { nonprofitId: { in: nonprofitIds } }] },
-    });
-    await prisma.productService.deleteMany({ where: { merchantId: { in: merchantIds } } });
-    await prisma.wallet.deleteMany({ where: { userId: { in: userIds } } });
-    await prisma.merchant.deleteMany({ where: { userId: { in: userIds } } });
-    await prisma.nonprofit.deleteMany({ where: { userId: { in: userIds } } });
-    await prisma.user.deleteMany({ where: { id: { in: userIds } } });
-
-    res.json({ success: true, message: 'Reset complete. Admin + viewer accounts preserved; all other users and their data removed.', deleted: userIds.length });
+    const result = await purgeUsers(userIds);
+    res.json({ success: true, message: 'Reset complete. Admin + viewer accounts preserved; all other users and their data removed.', deleted: result.users });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -294,34 +276,73 @@ export const wipeLegacyData = async (req: AuthRequest, res: Response) => {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-async function wipeDemoData() {
-  const demoUsers = await prisma.user.findMany({
-    where: { email: { endsWith: DEMO_DOMAIN } },
-    select: { id: true },
-  });
-  const userIds = demoUsers.map(u => u.id);
+// FK-safe teardown of a set of users and EVERYTHING anchored to them — their
+// merchants, nonprofits, wallets, and every child row that RESTRICT-references
+// those entities (which is what blocks a naive delete). Runs in a single
+// transaction so it can never leave a half-deleted state, and clears the
+// append-only LocalDollarEdge snapshot rows so demo data also leaves the graph.
+async function purgeUsers(userIds: string[]): Promise<{ users: number; transactions: number; products: number }> {
   if (userIds.length === 0) return { users: 0, transactions: 0, products: 0 };
 
   const merchantIds = (await prisma.merchant.findMany({ where: { userId: { in: userIds } }, select: { id: true } })).map(m => m.id);
   const nonprofitIds = (await prisma.nonprofit.findMany({ where: { userId: { in: userIds } }, select: { id: true } })).map(n => n.id);
   const walletIds = (await prisma.wallet.findMany({ where: { userId: { in: userIds } }, select: { id: true } })).map(w => w.id);
 
-  await prisma.donorMilestone.deleteMany({ where: { userId: { in: userIds } } });
-  await prisma.donationReceipt.deleteMany({ where: { OR: [{ merchantId: { in: merchantIds } }, { nonprofitId: { in: nonprofitIds } }] } });
-  await prisma.creditLedger.deleteMany({ where: { userId: { in: userIds } } });
-  await prisma.ledgerEntry.deleteMany({ where: { walletId: { in: walletIds } } });
-  await prisma.booking.deleteMany({ where: { merchantId: { in: merchantIds } } });
+  const mFilter = { merchantId: { in: merchantIds } };
+  const npFilter = { nonprofitId: { in: nonprofitIds } };
 
-  const txDel = await prisma.transaction.deleteMany({
-    where: { OR: [{ neighborId: { in: userIds } }, { merchantId: { in: merchantIds } }, { nonprofitId: { in: nonprofitIds } }] },
+  return prisma.$transaction(async (tx) => {
+    // ── Children that RESTRICT-reference a NONPROFIT (must precede nonprofit delete) ──
+    await tx.donorMilestone.deleteMany({ where: { OR: [{ userId: { in: userIds } }, npFilter] } });
+    await tx.dmsExportJob.deleteMany({ where: npFilter });
+    await tx.crmWebhook.deleteMany({ where: npFilter });
+    await tx.nonprofitDigestLog.deleteMany({ where: npFilter });
+    await tx.ccvCampaign.deleteMany({ where: npFilter });        // CcvContract cascades from CcvCampaign
+    await tx.impactUpdate.deleteMany({ where: npFilter });        // also cascades; explicit for safety
+    await tx.donationReceipt.deleteMany({ where: { OR: [mFilter, npFilter] } });
+
+    // ── Children that RESTRICT-reference a MERCHANT ──
+    await tx.cogsSuggestion.deleteMany({ where: mFilter });
+    await tx.supplyMatch.deleteMany({ where: { OR: [{ buyerMerchantId: { in: merchantIds } }, { suggestedSupplierMerchantId: { in: merchantIds } }] } });
+    await tx.supplyRelationship.deleteMany({ where: { OR: [{ buyerMerchantId: { in: merchantIds } }, { supplierMerchantId: { in: merchantIds } }] } });
+    await tx.benefitEnrollment.deleteMany({ where: mFilter });
+
+    // ── MerchantReferral RESTRICT-references BOTH merchant and nonprofit; its
+    //    ReferralBonusPayout children RESTRICT-reference it, so clear those first. ──
+    const referralFilter = { OR: [{ merchantId: { in: merchantIds } }, { referringNonprofitId: { in: nonprofitIds } }] };
+    await tx.referralBonusPayout.deleteMany({ where: { referral: referralFilter } });
+    await tx.merchantReferral.deleteMany({ where: referralFilter });
+
+    // ── Bookings RESTRICT-reference BOTH merchant and nonprofit (reminders cascade) ──
+    await tx.booking.deleteMany({ where: { OR: [mFilter, npFilter] } });
+
+    // ── Transactions RESTRICT-reference neighbor/merchant/nonprofit; clear before products ──
+    const txDel = await tx.transaction.deleteMany({ where: { OR: [{ neighborId: { in: userIds } }, mFilter, npFilter] } });
+
+    // ── Append-only graph rows carry snapshot ids (no FK) — clear so demo leaves the graph ──
+    await tx.localDollarEdge.deleteMany({ where: { OR: [{ neighborId: { in: userIds } }, mFilter, npFilter] } });
+
+    // ── Wallet ledger + credit ──
+    await tx.ledgerEntry.deleteMany({ where: { walletId: { in: walletIds } } });
+    await tx.creditLedger.deleteMany({ where: { userId: { in: userIds } } });
+
+    // ── Products, then the parent entities ──
+    const pdDel = await tx.productService.deleteMany({ where: mFilter });
+    await tx.wallet.deleteMany({ where: { userId: { in: userIds } } });
+    await tx.merchant.deleteMany({ where: { userId: { in: userIds } } });
+    await tx.nonprofit.deleteMany({ where: { userId: { in: userIds } } });
+    const userDel = await tx.user.deleteMany({ where: { id: { in: userIds } } });
+
+    return { users: userDel.count, transactions: txDel.count, products: pdDel.count };
+  }, { maxWait: 15000, timeout: 60000 });
+}
+
+async function wipeDemoData() {
+  const demoUsers = await prisma.user.findMany({
+    where: { email: { endsWith: DEMO_DOMAIN } },
+    select: { id: true },
   });
-  const pdDel = await prisma.productService.deleteMany({ where: { merchantId: { in: merchantIds } } });
-  await prisma.wallet.deleteMany({ where: { userId: { in: userIds } } });
-  await prisma.merchant.deleteMany({ where: { userId: { in: userIds } } });
-  await prisma.nonprofit.deleteMany({ where: { userId: { in: userIds } } });
-  await prisma.user.deleteMany({ where: { id: { in: userIds } } });
-
-  return { users: userIds.length, transactions: txDel.count, products: pdDel.count };
+  return purgeUsers(demoUsers.map(u => u.id));
 }
 
 function getNpDescription(name: string): string {
