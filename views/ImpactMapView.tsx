@@ -143,9 +143,6 @@ interface PrintReportProps {
 }
 
 const PrintReport: React.FC<PrintReportProps> = ({ level, label, data, cities, reportDate }) => {
-  const isState = level === 'state';
-  const isMuni = label.includes('CDBG') || true; // always generate CDBG addendum
-
   return (
     <div id="print-report" style={{ fontFamily: 'Georgia, serif', maxWidth: 800, margin: '0 auto', padding: 40, color: '#111' }}>
       <div style={{ borderBottom: '3px solid #7851A9', paddingBottom: 16, marginBottom: 24 }}>
@@ -201,8 +198,12 @@ const PrintReport: React.FC<PrintReportProps> = ({ level, label, data, cities, r
       {/* CDBG Addendum */}
       <div style={{ marginTop: 32, pageBreakBefore: 'always' }}>
         <div style={{ background: '#f8f4ff', border: '1px solid #7851A9', borderRadius: 8, padding: 20, marginBottom: 20 }}>
-          <div style={{ fontSize: 10, color: '#7851A9', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700 }}>CDBG Compliance Addendum</div>
+          <div style={{ fontSize: 10, color: '#7851A9', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700 }}>CDBG Compliance Worksheet — DRAFT</div>
           <div style={{ fontSize: 11, color: '#444', marginTop: 4 }}>Community Development Block Grant Program &bull; HUD 24 CFR Part 570</div>
+          <div style={{ fontSize: 10, color: '#a05a00', marginTop: 8, fontWeight: 600 }}>
+            Draft for grantee review only. Figures are platform-reported and must be independently verified
+            (including LMI census-tract qualification) before any IDIS entry or CAPER submission.
+          </div>
         </div>
 
         <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 12 }}>National Objective Documentation</h2>
@@ -219,7 +220,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ level, label, data, cities, r
           <strong>{fmt$(data.nonprofitFunding)}</strong> was directed to community-elected nonprofit organizations
           serving LMI populations. This represents a nonprofit funding rate of{' '}
           <strong>{data.volume > 0 ? ((data.nonprofitFunding / data.volume) * 100).toFixed(1) : 0}%</strong>{' '}
-          of total transaction volume, exceeding the 8% program target.
+          of total transaction volume.
         </p>
         <p style={{ fontSize: 12, lineHeight: 1.7, marginBottom: 16, color: '#333' }}>
           A total of <strong>{data.merchants}</strong> local merchants participated in the platform, maintaining
@@ -235,7 +236,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ level, label, data, cities, r
               ['Matrix Code', '18A — ED Direct Financial Assistance to For-Profits'],
               ['National Objective', 'LMI Area Benefit (570.208(a)(1)(i))'],
               ['Beneficiary Area', label],
-              ['Percent LMI Benefit', '≥51% (census tract qualification)'],
+              ['Percent LMI Benefit', 'Pending independent census-tract (LMI) verification'],
               ['Accomplishment Type', '04 — Businesses'],
               ['Accomplishment Units', `${data.merchants} businesses`],
             ].map(([k, v]) => (
@@ -259,7 +260,7 @@ const PrintReport: React.FC<PrintReportProps> = ({ level, label, data, cities, r
 
 // ── Main Component ─────────────────────────────────────────────────────
 export const ImpactMapView: React.FC<Props> = ({ currentUser }) => {
-  const [demoMode, setDemoMode] = useState(true);
+  const [demoMode, setDemoMode] = useState(false);
   const [geoLevel, setGeoLevel] = useState<GeoLevel>('national');
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
@@ -283,18 +284,15 @@ export const ImpactMapView: React.FC<Props> = ({ currentUser }) => {
   const stateDataMap = useMemo(() => {
     const map: Record<string, StateData> = {};
     STATE_TILES.forEach(([abbr, name]) => {
-      const sim = simStateData(abbr);
       const liveRow = liveOverview?.byState.find(r => r.state === abbr);
-      const isLive = !demoMode && !!liveRow;
-      map[abbr] = {
-        abbr,
-        name,
-        merchants: isLive ? liveRow!.merchants : sim.merchants,
-        volume: isLive ? liveRow!.volume : sim.volume,
-        nonprofitFunding: isLive ? liveRow!.nonprofitFunding : sim.nonprofitFunding,
-        txCount: isLive ? liveRow!.txCount : sim.txCount,
-        isLive,
-      };
+      if (demoMode) {
+        // Demo mode is explicitly labeled in the header; simulated figures stay confined to it.
+        const sim = simStateData(abbr);
+        map[abbr] = { abbr, name, merchants: sim.merchants, volume: sim.volume, nonprofitFunding: sim.nonprofitFunding, txCount: sim.txCount, isLive: false };
+      } else {
+        // Live mode shows ONLY real figures — zeros where a state has no data yet, never simulated fill.
+        map[abbr] = { abbr, name, merchants: liveRow?.merchants ?? 0, volume: liveRow?.volume ?? 0, nonprofitFunding: liveRow?.nonprofitFunding ?? 0, txCount: liveRow?.txCount ?? 0, isLive: !!liveRow };
+      }
     });
     return map;
   }, [demoMode, liveOverview]);
@@ -328,8 +326,9 @@ export const ImpactMapView: React.FC<Props> = ({ currentUser }) => {
   // City list for selected state
   const cityList = useMemo(() => {
     if (!selectedState) return [];
-    if (!demoMode && liveStateDetail) {
-      return liveStateDetail.cities.map(c => ({ ...c }));
+    if (!demoMode) {
+      // Live: real cities only (empty until the state reports data) — no simulated city rows.
+      return liveStateDetail ? liveStateDetail.cities.map(c => ({ ...c })) : [];
     }
     const cities = SIM_CITIES[selectedState] ?? ['Main City', 'Riverside', 'Northside'];
     return cities.map(city => ({ city, ...simCityData(city, selectedState) }));
@@ -340,8 +339,11 @@ export const ImpactMapView: React.FC<Props> = ({ currentUser }) => {
   const currentCityData = useMemo(() => {
     if (!selectedCity || !selectedState) return null;
     const live = liveStateDetail?.cities.find(c => c.city === selectedCity);
-    if (!demoMode && live) {
-      return { merchants: live.merchants, volume: live.volume, nonprofitFunding: live.nonprofitFunding, txCount: live.txCount };
+    if (!demoMode) {
+      // Live: real city figures or honest zeros — never simulated.
+      return live
+        ? { merchants: live.merchants, volume: live.volume, nonprofitFunding: live.nonprofitFunding, txCount: live.txCount }
+        : { merchants: 0, volume: 0, nonprofitFunding: 0, txCount: 0 };
     }
     return simCityData(selectedCity, selectedState);
   }, [selectedCity, selectedState, demoMode, liveStateDetail]);
@@ -371,6 +373,8 @@ export const ImpactMapView: React.FC<Props> = ({ currentUser }) => {
   };
 
   const handlePrint = () => {
+    // A community-impact / CDBG report must never be generated from simulated demo data.
+    if (demoMode) return;
     setShowPrint(true);
     setTimeout(() => { window.print(); setShowPrint(false); }, 300);
   };
@@ -408,12 +412,14 @@ export const ImpactMapView: React.FC<Props> = ({ currentUser }) => {
             {demoMode ? 'Demo Mode' : 'Live Mode'}
           </button>
 
-          {/* Export PDF */}
+          {/* Export PDF — disabled in demo mode so reports can only be generated from real data */}
           <button
             onClick={handlePrint}
-            className="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-[#7851A9] text-white hover:bg-[#6040a0] transition-all"
+            disabled={demoMode}
+            title={demoMode ? 'Switch to Live Mode to export — reports cannot be generated from demo data' : undefined}
+            className="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-[#7851A9] text-white hover:bg-[#6040a0] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#7851A9]"
           >
-            Export Report
+            {demoMode ? 'Export (Live Only)' : 'Export Report'}
           </button>
         </div>
       </div>

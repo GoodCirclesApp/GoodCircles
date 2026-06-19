@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight, CheckCircle2, DollarSign, Heart, Users, TrendingUp, ShieldCheck,
-  Store, Zap, BarChart3, Globe, Star, ChevronDown, ChevronUp, ArrowUpRight,
+  Store, Zap, BarChart3, Globe, ChevronDown, ChevronUp, ArrowUpRight,
   Percent, CreditCard, PieChart, Award
 } from 'lucide-react';
 import { BrandLogo } from './BrandAssets';
@@ -106,7 +106,7 @@ export const MerchantLandingPage: React.FC<MerchantLandingProps> = ({ onSignUp, 
                   ))}
                 </div>
                 <p className="text-xs text-slate-400">
-                  <strong className="text-slate-700">18+ merchants</strong> already growing with Good Circles
+                  <strong className="text-slate-700">Be a founding merchant</strong> — help build Good Circles from day one
                 </p>
               </div>
             </motion.div>
@@ -294,26 +294,18 @@ export const MerchantLandingPage: React.FC<MerchantLandingProps> = ({ onSignUp, 
         </div>
       </section>
 
-      {/* ── Testimonial / Social Proof ────────────────── */}
+      {/* ── Why merchants join (value props — no fabricated testimonials pre-launch) ── */}
       <section className="py-20 bg-gradient-to-r from-[#7851A9] to-[#CA9CE1]">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { quote: "I switched from Etsy and saved over $400/month in fees. My customers love the 10% discount — it's brought in so many repeat buyers.", name: "Marco R.", business: "The Harvest Table", stars: 5 },
-              { quote: "The fact that my store automatically supports the Community Food Bank with every sale? That's marketing you can't buy. My customers tell their friends about it.", name: "Sarah K.", business: "Farm Fresh Co.", stars: 5 },
-              { quote: "I was skeptical about the 1% fee — how do they sustain it? But it's been 6 months and the platform works beautifully. The co-op buying alone has saved me thousands.", name: "Lisa M.", business: "Fix-It Local Plumbing", stars: 5 },
-            ].map((testimonial, i) => (
+              { headline: "Keep more of every sale", body: "A flat 1% platform fee — versus the 3–8% many marketplaces and card processors take. You keep the difference on every order." },
+              { headline: "Marketing you can't buy", body: "Every sale automatically funds a community-elected nonprofit. Customers see the local impact and tell their neighbors." },
+              { headline: "Buy together, save together", body: "Co-op group buying lets local merchants pool orders for better wholesale pricing — built right into the platform." },
+            ].map((card, i) => (
               <motion.div key={i} {...fadeUp(i * 0.1)} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-white">
-                <div className="flex gap-1 mb-4">
-                  {Array.from({ length: testimonial.stars }).map((_, j) => (
-                    <Star key={j} size={16} className="text-[#C2A76F] fill-[#C2A76F]" />
-                  ))}
-                </div>
-                <p className="text-sm text-white/90 leading-relaxed italic">"{testimonial.quote}"</p>
-                <div className="mt-4 pt-4 border-t border-white/10">
-                  <p className="text-sm font-black">{testimonial.name}</p>
-                  <p className="text-[10px] text-white/50 uppercase tracking-widest">{testimonial.business}</p>
-                </div>
+                <p className="text-base font-black mb-3">{card.headline}</p>
+                <p className="text-sm text-white/90 leading-relaxed">{card.body}</p>
               </motion.div>
             ))}
           </div>

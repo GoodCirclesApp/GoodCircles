@@ -338,13 +338,9 @@ export const getPayouts = async (req: AuthRequest, res: Response) => {
   }
 
   try {
-    // Mock payouts for now as there's no Payout model in schema
-    res.json([
-      { id: 'p1', amount: 4500, date: '2026-03-15', status: 'PAID', method: 'Stripe •••• 4242' },
-      { id: 'p2', amount: 3200, date: '2026-02-15', status: 'PAID', method: 'Stripe •••• 4242' },
-      { id: 'p3', amount: 2800, date: '2026-01-15', status: 'PAID', method: 'Stripe •••• 4242' },
-      { id: 'p4', amount: 1500, date: '2026-04-15', status: 'PENDING', method: 'Stripe •••• 4242' },
-    ]);
+    // No payout history yet: there is no Payout model and Stripe Connect disbursement
+    // is not wired (money-out is gated). Return an honest empty list, never fabricated payouts.
+    res.json([]);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

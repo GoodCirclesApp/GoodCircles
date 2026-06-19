@@ -33,9 +33,7 @@ export function useGoodCirclesStore() {
   const globalStats: GlobalStats = useMemo(() => {
     const uniqueMerchants = new Set(inventory.products.map(p => p.merchantId));
     const uniqueNonprofits = new Set(ledger.orders.map(o => o.selectedNonprofitId));
-    // Add mock nonprofits that might not have orders yet
-    MOCK_NONPROFITS.forEach(np => uniqueNonprofits.add(np.id));
-    
+
     return {
       ...ledger.treasuryStats,
       merchantCount: uniqueMerchants.size,

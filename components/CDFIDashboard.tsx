@@ -145,13 +145,16 @@ export const CDFIDashboard: React.FC = () => {
   // ── Data fetching ─────────────────────────────────────────────────────────
 
   const fetchApplications = useCallback(async () => {
+    // No CDFI account = unauthenticated preview, where the demo set is clearly labeled.
     if (!cdfiId) { setApplications(DEMO_APPLICATIONS); return; }
+    // A REAL CDFI partner must see only real applications — never fabricated loan apps
+    // (and never a fabricated AI underwriting memo they could approve capital against).
     try {
       const res = await fetch(`/api/cdfi/${cdfiId}/applications`, { headers: authHeaders() });
       const data = await res.json();
-      setApplications(Array.isArray(data) && data.length > 0 ? data : DEMO_APPLICATIONS);
+      setApplications(Array.isArray(data) ? data : []);
     } catch {
-      setApplications(DEMO_APPLICATIONS);
+      setApplications([]);
     }
   }, [cdfiId]);
 
@@ -216,7 +219,8 @@ export const CDFIDashboard: React.FC = () => {
       });
       setEvaluation(await res.json());
     } catch {
-      setEvaluation(DEMO_EVALUATION);
+      // Real partner, real evaluation: on failure show nothing rather than a fabricated memo.
+      setEvaluation(null);
     } finally {
       setIsEvaluating(false);
     }

@@ -53,64 +53,23 @@ interface PlatformStats {
   categoryBreakdown: { name: string; value: number }[];
 }
 
-// Demo stats for beta (replaced by real API data in production)
-// Numbers reflect the actual 10/10/1 model:
-//   grossAmount = listed price; consumer pays grossAmount - discountAmount
-//   discountAmount = 10% of grossAmount (consumer savings)
-//   platformFee ≈ 1% of (grossAmount - discountAmount)
-//   merchantNet = (grossAmount - discountAmount) - platformFee - nonprofitShare
-//   nonprofitShare = 10% of merchantNet (before nonprofit deduction, i.e. ~9.1% of what consumer paid)
-//   localRetention = merchantNet + nonprofitShare (money staying in the local economy)
-function generateDemoStats(): PlatformStats {
-  // Derived from 1,842 transactions averaging $51.17 listed price
-  // grossVolume = 94,250  |  consumer pays 90% = 84,825
-  // discountAmount = 9,425 (10%)
-  // platformFee = 848 (1% of 84,825)
-  // merchantNet before nonprofit = 84,825 - 848 = 83,977
-  // nonprofitShare = 10% of merchantNet = 8,398
-  // merchantNet after nonprofit = 83,977 - 8,398 = 75,579
-  // localRetention = merchantNet + nonprofitShare = 75,579 + 8,398 = 83,977
-  const months = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'];
-  return {
-    totalUsers: 247,
-    totalMerchants: 18,
-    totalNonprofits: 6,
-    totalTransactions: 1842,
-    totalVolume: 94250,
-    totalConsumerSavings: 9425,
-    totalNonprofitFunding: 8398,
-    totalLocalRetention: 83977,
-    monthlyGrowthData: months.map((m, i) => {
-      const monthlyGross = Math.round(8000 + i * 6000 + (i * 1337) % 3000);
-      return {
-        month: m,
-        users: Math.round(12 + i * 28 + (i * 7) % 15),
-        volume: monthlyGross,
-        donations: Math.round(monthlyGross * 0.089),
-      };
-    }),
-    topNonprofits: [
-      { name: 'Community Food Bank', received: 3192 },
-      { name: 'Youth Scholars Alliance', received: 2541 },
-      { name: 'Green Cleanup Initiative', received: 1687 },
-      { name: 'Local Arts Foundation', received: 978 },
-    ],
-    topMerchants: [
-      { name: 'The Harvest Table', transactions: 412 },
-      { name: 'Farm Fresh Co.', transactions: 356 },
-      { name: 'Fix-It Local Plumbing', transactions: 298 },
-      { name: 'TutorZone', transactions: 245 },
-      { name: 'Justice Law', transactions: 189 },
-    ],
-    categoryBreakdown: [
-      { name: 'Food & Dining', value: 33840 },
-      { name: 'Home Services', value: 21230 },
-      { name: 'Education', value: 17480 },
-      { name: 'Professional', value: 14560 },
-      { name: 'Other', value: 7140 },
-    ],
-  };
-}
+// Pre-launch (N=0) the API returns real zeros; on any API failure we fall back to these
+// same honest zeros. We never fabricate users, transactions, nonprofits, or merchants —
+// trust at N=0 depends on the public impact numbers being real.
+const EMPTY_STATS: PlatformStats = {
+  totalUsers: 0,
+  totalMerchants: 0,
+  totalNonprofits: 0,
+  totalTransactions: 0,
+  totalVolume: 0,
+  totalConsumerSavings: 0,
+  totalNonprofitFunding: 0,
+  totalLocalRetention: 0,
+  monthlyGrowthData: [],
+  topNonprofits: [],
+  topMerchants: [],
+  categoryBreakdown: [],
+};
 
 interface PublicImpactProps {
   onClose?: () => void;
@@ -132,13 +91,13 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
           if (data && typeof data.totalUsers === 'number') {
             setStats(data);
           } else {
-            setStats(generateDemoStats());
+            setStats(EMPTY_STATS);
           }
         } else {
-          setStats(generateDemoStats());
+          setStats(EMPTY_STATS);
         }
       } catch {
-        setStats(generateDemoStats());
+        setStats(EMPTY_STATS);
       } finally {
         setIsLoading(false);
       }
@@ -336,6 +295,7 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
                     <div className="text-5xl font-black text-[#7851A9]">68%</div>
                     <div className="text-sm text-slate-500 mt-2">of every dollar stays in the community</div>
                     <div className="text-xs text-slate-400 mt-1">vs. 35% through traditional retail</div>
+                    <div className="text-[10px] text-slate-300 mt-2 italic">Illustrative model — not measured platform data</div>
                   </div>
                   <div className="grid grid-cols-3 gap-3 text-center">
                     <div className="p-3 bg-[#C2A76F]/10 rounded-xl">
@@ -523,6 +483,7 @@ export const PublicImpactDashboard: React.FC<PublicImpactProps> = ({ onClose, on
             </div>
 
             {/* Comparison */}
+            <p className="text-[11px] text-slate-400 italic mb-4 text-center">Illustrative comparison of where each dollar tends to go — modeled figures, not measured platform results.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { title: 'Traditional Retail', local: '35%', fee: '3-5%', donation: '$0', highlight: false },

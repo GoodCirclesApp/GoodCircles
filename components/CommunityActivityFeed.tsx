@@ -49,10 +49,10 @@ export const CommunityFeedCompact: React.FC<{ maxItems?: number }> = ({ maxItems
 
   const fetchFeed = async () => {
     try {
-      const data = await apiClient.get<FeedItem[]>('/feed', { limit: maxItems });
-      setItems(data);
-    } catch (err) {
-      setItems(generateDemoFeed(maxItems));
+      const data = await apiClient.get<any[]>('/feed', { limit: maxItems });
+      setItems(normalizeFeed(data));
+    } catch {
+      setItems([]); // honest empty — never fabricated activity
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +67,10 @@ export const CommunityFeedCompact: React.FC<{ maxItems?: number }> = ({ maxItems
         </div>
       ))}
     </div>
+  );
+
+  if (items.length === 0) return (
+    <p className="text-[11px] text-slate-400 italic px-3 py-4">No community activity yet.</p>
   );
 
   return (
@@ -118,10 +122,10 @@ export const CommunityActivityFeed: React.FC<{ expanded?: boolean }> = ({ expand
 
   const fetchFeed = async () => {
     try {
-      const data = await apiClient.get<FeedItem[]>('/feed', { limit: 30 });
-      setItems(data);
-    } catch (err) {
-      setItems(generateDemoFeed(20));
+      const data = await apiClient.get<any[]>('/feed', { limit: 30 });
+      setItems(normalizeFeed(data));
+    } catch {
+      setItems([]); // honest empty — never fabricated activity
     } finally {
       setIsLoading(false);
     }
@@ -188,6 +192,11 @@ export const CommunityActivityFeed: React.FC<{ expanded?: boolean }> = ({ expand
               </div>
             ))}
           </div>
+        ) : displayItems.length === 0 ? (
+          <div className="px-5 py-12 text-center">
+            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No activity yet</p>
+            <p className="text-[11px] text-slate-400 mt-1">Community purchases and donations appear here in real time as they happen.</p>
+          </div>
         ) : (
           <AnimatePresence mode="popLayout">
             {displayItems.map((item, i) => {
@@ -252,10 +261,10 @@ export const ActivityTicker: React.FC = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const data = await apiClient.get<FeedItem[]>('/feed', { limit: 10 });
-        setItems(data);
+        const data = await apiClient.get<any[]>('/feed', { limit: 10 });
+        setItems(normalizeFeed(data));
       } catch {
-        setItems(generateDemoFeed(10));
+        setItems([]); // honest empty — never fabricated activity
       }
     };
     fetchItems();
@@ -314,58 +323,36 @@ export const ActivityTicker: React.FC = () => {
   );
 };
 
-// ── Demo data generator (used when API endpoint isn't ready) ─
-function generateDemoFeed(count: number): FeedItem[] {
-  const firstNames = ['Sarah', 'Marcus', 'Elena', 'James', 'Priya', 'David', 'Maria', 'Alex', 'Grace', 'Henry', 'Carol', 'Frank', 'Lisa', 'Bob', 'Emma', 'Dan', 'Alice', 'Jack', 'Iris', 'Tom'];
-  const merchants = ['The Harvest Table', 'Fix-It Local Plumbing', 'Farm Fresh Co.', 'TutorZone', 'Justice Law', 'Sunset Bakery', 'Green Garden Market', 'Blue Ridge Coffee'];
-  const nonprofits = ['Community Food Bank', 'Youth Scholars Alliance', 'Green Cleanup Initiative', 'Local Arts Foundation', 'Shelter of Hope'];
-  const products = ['Organic Tomatoes', 'Plumbing Repair', 'Math Tutoring', 'Fresh Bread', 'Legal Consultation', 'Coffee Beans', 'Garden Tools', 'Cooking Class'];
-
-  const templates: (() => FeedItem)[] = [
-    () => {
-      const name = firstNames[Math.floor(Math.random() * firstNames.length)];
-      const merchant = merchants[Math.floor(Math.random() * merchants.length)];
-      const product = products[Math.floor(Math.random() * products.length)];
-      const amount = Math.round((15 + Math.random() * 85) * 100) / 100;
-      return { id: crypto.randomUUID(), type: 'PURCHASE', message: `${name} purchased ${product} from ${merchant}`, detail: `10% discount applied • nonprofit donation included`, amount, timestamp: randomRecentDate() };
-    },
-    () => {
-      const name = firstNames[Math.floor(Math.random() * firstNames.length)];
-      const nonprofit = nonprofits[Math.floor(Math.random() * nonprofits.length)];
-      const amount = Math.round((2 + Math.random() * 15) * 100) / 100;
-      return { id: crypto.randomUUID(), type: 'DONATION', message: `${name}'s purchase generated a donation to ${nonprofit}`, detail: `Automatic 10/10/1 donation from shopping`, amount, timestamp: randomRecentDate() };
-    },
-    () => {
-      const merchant = merchants[Math.floor(Math.random() * merchants.length)];
-      return { id: crypto.randomUUID(), type: 'MERCHANT_JOIN', message: `${merchant} joined the Good Circles marketplace`, detail: `New local business ready to serve the community`, timestamp: randomRecentDate() };
-    },
-    () => {
-      const nonprofit = nonprofits[Math.floor(Math.random() * nonprofits.length)];
-      return { id: crypto.randomUUID(), type: 'NONPROFIT_JOIN', message: `${nonprofit} is now receiving donations on Good Circles`, detail: `Community impact partner`, timestamp: randomRecentDate() };
-    },
-    () => {
-      const name = firstNames[Math.floor(Math.random() * firstNames.length)];
-      return { id: crypto.randomUUID(), type: 'SIGNUP', message: `${name} joined the Good Circles community`, detail: `Welcome to the circle!`, timestamp: randomRecentDate() };
-    },
-    () => {
-      const count = Math.floor(50 + Math.random() * 200);
-      return { id: crypto.randomUUID(), type: 'MILESTONE', message: `Community milestone: ${count} transactions this week!`, detail: `The local economy is thriving`, timestamp: randomRecentDate() };
-    },
-    () => {
-      const name = firstNames[Math.floor(Math.random() * firstNames.length)];
-      const referred = firstNames[Math.floor(Math.random() * firstNames.length)];
-      return { id: crypto.randomUUID(), type: 'REFERRAL', message: `${name} referred ${referred} to Good Circles`, detail: `Referral bonus earned`, amount: 5, timestamp: randomRecentDate() };
-    },
-  ];
-
-  return Array.from({ length: count }, () => {
-    const template = templates[Math.floor(Math.random() * templates.length)];
-    return template();
-  }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-}
-
-function randomRecentDate(): string {
-  const now = Date.now();
-  const hoursAgo = Math.random() * 72; // within last 3 days
-  return new Date(now - hoursAgo * 3600000).toISOString();
+// ── Normalize backend /feed rows into the FeedItem display shape ─
+// The live endpoint returns transaction rows ({ neighborLabel, merchantName, productName,
+// grossAmount, nonprofitName, location, createdAt }). This builds the human-readable
+// message/amount/timestamp the UI renders — from real data only, never synthesized.
+function normalizeFeed(raw: any): FeedItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((r: any): FeedItem => {
+    // Already in display shape (some callers may pre-format).
+    if (typeof r?.message === 'string') {
+      return {
+        id: String(r.id ?? ''),
+        type: (r.type as FeedItem['type']) ?? 'PURCHASE',
+        message: r.message,
+        detail: r.detail,
+        amount: typeof r.amount === 'number' ? r.amount : undefined,
+        timestamp: r.timestamp ?? r.createdAt ?? '',
+      };
+    }
+    const who = r?.neighborLabel ?? 'A community member';
+    const product = r?.productName ?? 'an item';
+    const merchant = r?.merchantName ?? 'a local merchant';
+    const supports = r?.nonprofitName ? `Supports ${r.nonprofitName}` : undefined;
+    const detail = [supports, r?.location].filter(Boolean).join(' • ') || undefined;
+    return {
+      id: String(r?.id ?? ''),
+      type: (r?.type as FeedItem['type']) ?? 'PURCHASE',
+      message: `${who} purchased ${product} from ${merchant}`,
+      detail,
+      amount: typeof r?.grossAmount === 'number' ? r.grossAmount : undefined,
+      timestamp: r?.createdAt ?? r?.timestamp ?? '',
+    };
+  });
 }
