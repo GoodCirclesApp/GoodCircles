@@ -8,7 +8,7 @@ import { ProductDetailModal } from './components/ProductDetailModal';
 import { BrandLogo } from './components/BrandAssets';
 import { ActivityTicker } from './components/CommunityActivityFeed';
 import { useGoodCirclesStore } from './hooks/useGoodCirclesStore';
-import { MOCK_NONPROFITS, MOCK_USERS } from './constants';
+import { MOCK_NONPROFITS } from './constants';
 import { Nonprofit, Order, Review } from './types';
 import { WishlistDrawer } from './components/WishlistDrawer';
 import { PersonalShopper } from './components/PersonalShopper';
@@ -116,9 +116,8 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!localStorage.getItem('gc_mock_users')) {
-      localStorage.setItem('gc_mock_users', JSON.stringify(MOCK_USERS));
-    }
+    // Clean launch: never seed demo login accounts into the browser; shed any legacy seed.
+    localStorage.removeItem('gc_mock_users');
     const savedReviews = localStorage.getItem('gc_reviews');
     if (savedReviews) setReviews(JSON.parse(savedReviews));
     const savedWishlist = localStorage.getItem('gc_wishlist');

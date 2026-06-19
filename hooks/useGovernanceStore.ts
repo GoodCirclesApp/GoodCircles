@@ -8,51 +8,19 @@ export function useGovernanceStore(currentUser: User | null, onUpdateUser: (u: U
   const [waivedFundsLog, setWaivedFundsLog] = useState<WaivedFundLog[]>([]);
 
   useEffect(() => {
+    // Clean launch: governance starts EMPTY — no fabricated proposals or vote counts.
+    // One-time purge of the legacy seeded proposals earlier builds wrote to localStorage.
+    const GOV_SEED = 'clean-v1';
+    if (localStorage.getItem('gc_governance_seed') !== GOV_SEED) {
+      localStorage.removeItem('gc_governance_proposals');
+      localStorage.setItem('gc_governance_seed', GOV_SEED);
+    }
+
     const savedProposals = localStorage.getItem('gc_governance_proposals');
+    if (savedProposals) setProposals(JSON.parse(savedProposals));
+
     const savedLog = localStorage.getItem('gc_waived_funds_log');
-
-    if (savedProposals) {
-      setProposals(JSON.parse(savedProposals));
-    } else {
-      const initial: GovernanceProposal[] = [
-        {
-          id: 'prop-constit-1',
-          type: 'RATE_ADJUSTMENT',
-          title: 'Emergency Grocery Support Rate',
-          description: 'Proposed decrease in Grocery platform fee to 0.25% for the winter season to lower staple costs.',
-          proposerId: 'u-admin',
-          proposerName: 'Economic Steward',
-          stakeAmount: 500,
-          votesFor: 850,
-          votesAgainst: 120,
-          status: 'VOTING',
-          expiryDate: new Date(Date.now() + 86400000 * 5).toISOString(),
-          consensusThreshold: 0.60,
-          votes: []
-        },
-        {
-          id: 'prop-init-2',
-          type: 'STREET_INITIATIVE',
-          title: 'Main St. Modular Planters',
-          description: 'Allocating $2k from the regional common fund for high-velocity street beautification.',
-          proposerId: 'neighbor-1',
-          proposerName: 'Community Lead',
-          stakeAmount: 200,
-          votesFor: 2100,
-          votesAgainst: 50,
-          status: 'PASSED',
-          expiryDate: new Date(Date.now() - 86400000).toISOString(),
-          consensusThreshold: 0.51,
-          votes: []
-        }
-      ];
-      setProposals(initial);
-      localStorage.setItem('gc_governance_proposals', JSON.stringify(initial));
-    }
-
-    if (savedLog) {
-      setWaivedFundsLog(JSON.parse(savedLog));
-    }
+    if (savedLog) setWaivedFundsLog(JSON.parse(savedLog));
   }, []);
 
   const castVote = (proposalId: string, direction: 'FOR' | 'AGAINST') => {

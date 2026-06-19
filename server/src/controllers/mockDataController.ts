@@ -247,15 +247,16 @@ export const unloadMockData = async (req: AuthRequest, res: Response) => {
 };
 
 // ─── Wipe Legacy ─────────────────────────────────────────────────────────────
-// One-time cleanup: removes ALL non-admin users and their data.
-// Used to clear the old Los Angeles seed data before loading Central MS demo.
+// Cleanup: removes ALL users except the platform admin + admin-viewer and their data.
+// Use this to reset prod to a fresh, clean marketplace (no products, no transactions,
+// no demo/seed accounts) while keeping the two operating accounts that should stay live.
 
 export const wipeLegacyData = async (req: AuthRequest, res: Response) => {
   if (!req.user || req.user.role !== 'PLATFORM') {
     return res.status(403).json({ error: 'Admin access required' });
   }
   try {
-    const adminEmails = ['admin@goodcircles.org'];
+    const adminEmails = ['admin@goodcircles.org', 'viewer@goodcircles.org'];
     const nonAdminUsers = await prisma.user.findMany({
       where: { email: { notIn: adminEmails } },
       select: { id: true },
@@ -285,7 +286,7 @@ export const wipeLegacyData = async (req: AuthRequest, res: Response) => {
     await prisma.nonprofit.deleteMany({ where: { userId: { in: userIds } } });
     await prisma.user.deleteMany({ where: { id: { in: userIds } } });
 
-    res.json({ success: true, message: 'Legacy data wiped. Admin credentials preserved.', deleted: userIds.length });
+    res.json({ success: true, message: 'Reset complete. Admin + viewer accounts preserved; all other users and their data removed.', deleted: userIds.length });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

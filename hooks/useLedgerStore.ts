@@ -2,7 +2,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Order, PayoutBatch, TreasuryStats, DisputeStatus } from '../types';
 import { AccountingService } from '../services/accountingService';
-import { MOCK_ORDERS } from '../constants';
 
 export function useLedgerStore() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -10,13 +9,18 @@ export function useLedgerStore() {
   const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<Order | null>(null);
 
   useEffect(() => {
-    const savedOrders = localStorage.getItem('gc_orders');
-    if (savedOrders) {
-      setOrders(JSON.parse(savedOrders));
-    } else {
-      setOrders(MOCK_ORDERS);
-      localStorage.setItem('gc_orders', JSON.stringify(MOCK_ORDERS));
+    // Clean launch: the ledger starts EMPTY — no fabricated transaction history.
+    // One-time purge of the legacy MOCK_ORDERS seed (and its batches) that earlier
+    // builds wrote into localStorage, so returning sessions also start clean.
+    const LEDGER_SEED = 'clean-v1';
+    if (localStorage.getItem('gc_orders_seed') !== LEDGER_SEED) {
+      localStorage.removeItem('gc_orders');
+      localStorage.removeItem('gc_batches');
+      localStorage.setItem('gc_orders_seed', LEDGER_SEED);
     }
+
+    const savedOrders = localStorage.getItem('gc_orders');
+    if (savedOrders) setOrders(JSON.parse(savedOrders));
 
     const savedBatches = localStorage.getItem('gc_batches');
     if (savedBatches) setBatches(JSON.parse(savedBatches));

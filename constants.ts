@@ -532,7 +532,7 @@ export const PRODUCT_CATEGORIES = [
 ];
 
 export const MOCK_COMMUNITIES: Community[] = [
-  { id: 'msa-cjx', name: 'Central Mississippi — Jackson Metro', memberCount: 1847, fiscalPolicy: { ...DEFAULT_POLICY, taxRate: 0.07 } },
+  { id: 'msa-cjx', name: 'Central Mississippi — Jackson Metro', memberCount: 0, fiscalPolicy: { ...DEFAULT_POLICY, taxRate: 0.07 } },
   { id: 'msa-njx', name: 'North Mississippi — Oxford/Tupelo', memberCount: 0, fiscalPolicy: { ...DEFAULT_POLICY, taxRate: 0.07 } },
   { id: 'msa-sjx', name: 'South Mississippi — Hattiesburg/Biloxi', memberCount: 0, fiscalPolicy: { ...DEFAULT_POLICY, taxRate: 0.07 } },
 ];
@@ -544,16 +544,7 @@ export const MOCK_NONPROFITS: Nonprofit[] = [
     description: "Mississippi's largest food bank, serving 43,000 people per week across all 82 counties through 500+ partner agencies.",
     category: 'Food Security',
     logoUrl: 'https://picsum.photos/seed/msfoodnet/100/100',
-    impactStories: [
-      {
-        id: 'st-1',
-        nonprofitId: 'np-1',
-        title: 'Summer Feeding Program Expansion',
-        description: 'Good Circles funding helped us add 3 new summer feeding sites in Hinds County, reaching 420 additional children.',
-        imageUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=400',
-        date: '2025-07-10'
-      }
-    ]
+    impactStories: []
   },
   {
     id: 'np-2',
@@ -561,16 +552,7 @@ export const MOCK_NONPROFITS: Nonprofit[] = [
     description: 'Providing after-school programs, summer camps, and youth development for children in Hinds, Rankin, and Madison counties.',
     category: 'Youth Development',
     logoUrl: 'https://picsum.photos/seed/bgcms/100/100',
-    impactStories: [
-      {
-        id: 'st-2',
-        nonprofitId: 'np-2',
-        title: 'STEM Lab Renovation — Brandon Club',
-        description: 'Community shopping dollars funded new computers and robotics kits for 85 Brandon-area youth.',
-        imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=400',
-        date: '2025-09-05'
-      }
-    ]
+    impactStories: []
   },
   {
     id: 'np-3',
@@ -578,16 +560,7 @@ export const MOCK_NONPROFITS: Nonprofit[] = [
     description: 'Building and renovating affordable homes alongside low-income families in the Jackson metro area.',
     category: 'Housing',
     logoUrl: 'https://picsum.photos/seed/habitatms/100/100',
-    impactStories: [
-      {
-        id: 'st-3',
-        nonprofitId: 'np-3',
-        title: 'West Jackson Rehab Project',
-        description: 'Four homes fully renovated in West Jackson using Good Circles neighborhood funding.',
-        imageUrl: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80&w=400',
-        date: '2025-11-01'
-      }
-    ]
+    impactStories: []
   }
 ];
 
