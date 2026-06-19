@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { shareImpact } from '../utils/shareImpact';
+import { showToast } from '../hooks/toast';
 
 interface Props {
   isVisible: boolean;
@@ -90,6 +92,11 @@ export const PurchaseImpactAnimation: React.FC<Props> = ({
   }, [isVisible]);
 
   const fmt = (n: number) => `$${n.toFixed(2)}`;
+
+  const handleShare = async () => {
+    const r = await shareImpact({ donated: nonprofitDonation, nonprofitName });
+    if (r === 'copied') showToast('Copied! Paste it anywhere to share your impact.', 'success');
+  };
 
   return (
     <AnimatePresence>
@@ -465,20 +472,35 @@ export const PurchaseImpactAnimation: React.FC<Props> = ({
                 )}
               </AnimatePresence>
 
-              {/* Continue Button */}
+              {/* Actions — Share (armed at the peak moment) + Continue */}
               <AnimatePresence>
                 {phase === 'COMPLETE' && (
-                  <motion.button
-                    onClick={onClose}
-                    className="mt-5 w-full bg-black text-white py-5 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-colors duration-300 shadow-xl"
+                  <motion.div
+                    className="mt-5 space-y-3"
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.4, ease: 'easeOut' }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                   >
-                    ✦ Continue Shopping
-                  </motion.button>
+                    <motion.button
+                      onClick={handleShare}
+                      className="w-full bg-[#C2A76F] text-black py-5 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#b3955a] transition-colors duration-300 shadow-xl flex items-center justify-center gap-2"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                      Share my impact
+                    </motion.button>
+                    <motion.button
+                      onClick={onClose}
+                      className="w-full bg-black text-white py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#7851A9] transition-colors duration-300"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      ✦ Continue Shopping
+                    </motion.button>
+                  </motion.div>
                 )}
               </AnimatePresence>
 

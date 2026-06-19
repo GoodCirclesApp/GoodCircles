@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { neighborService } from '../services/neighborService';
 import { BrandSubmark } from '../components/BrandAssets';
 import { showToast } from '../hooks/toast';
+import { shareImpact } from '../utils/shareImpact';
 
 export const ImpactDashboardView: React.FC = () => {
   const [impactData, setImpactData] = useState<any>(null);
@@ -44,6 +45,11 @@ export const ImpactDashboardView: React.FC = () => {
   const internalTxCount = impactData?.internalTransactionCount ?? 0;
   const favoriteCategories: string[] = impactData?.favoriteCategories ?? [];
   const hasActivity = txCount > 0;
+
+  const handleShare = async () => {
+    const r = await shareImpact({ donated: totalContributed, saved: totalSaved });
+    if (r === 'copied') showToast('Impact link copied — paste it anywhere to share!', 'success');
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-12 animate-in fade-in duration-700">
@@ -144,7 +150,7 @@ export const ImpactDashboardView: React.FC = () => {
             <BrandSubmark size={80} variant="WHITE" showCrown={true} />
             <h4 className="text-3xl font-black italic uppercase tracking-tighter">Your Good Circle is growing.</h4>
             <p className="text-white/60 text-lg font-medium leading-relaxed">Every transaction strengthens the local economy and supports the causes you care about most. Keep going.</p>
-            <button onClick={() => showToast('Impact sharing coming soon.', 'info')} className="bg-[#C2A76F] text-black px-10 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all mt-4">Share My Impact</button>
+            <button onClick={handleShare} className="bg-[#C2A76F] text-black px-10 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all mt-4">Share My Impact</button>
           </div>
         )}
       </div>
