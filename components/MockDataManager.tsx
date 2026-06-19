@@ -72,7 +72,7 @@ export const MockDataManager: React.FC = () => {
   };
 
   const handleWipeLegacy = async () => {
-    if (!confirm('PERMANENT: Wipe all legacy (Los Angeles) seed data? Admin credentials will be preserved. This cannot be undone.')) return;
+    if (!confirm('PERMANENT: Reset to a clean marketplace? This removes ALL users and their products, transactions, and listings EXCEPT the admin and viewer accounts. This cannot be undone.')) return;
     setIsWiping(true);
     setMessage(null);
     try {
@@ -205,11 +205,11 @@ export const MockDataManager: React.FC = () => {
           <div className="flex items-start gap-3">
             <AlertTriangle size={20} className="text-red-500 shrink-0 mt-0.5" />
             <div>
-              <h4 className="text-sm font-black text-red-700">Wipe Legacy Data (One-Time)</h4>
+              <h4 className="text-sm font-black text-red-700">Reset to Clean Marketplace</h4>
               <p className="text-xs text-red-600 mt-1 max-w-lg">
-                Permanently removes the old Los Angeles seed data (Harvest Table, Fix-It Plumbing, etc.)
-                from the database. Admin credentials are preserved. Run this once before your first
-                Central Mississippi demo. Cannot be undone.
+                Permanently removes every user and all their products, transactions, and listings —
+                EXCEPT the admin and viewer accounts — leaving a fresh, empty marketplace for launch.
+                Demo data (Enable Demo Mode) is separate and reversible. Cannot be undone.
               </p>
             </div>
           </div>
@@ -220,7 +220,7 @@ export const MockDataManager: React.FC = () => {
           >
             {isWiping
               ? <><Loader2 size={14} className="animate-spin" /> Wiping...</>
-              : <><Trash2 size={14} /> Wipe Legacy Data</>}
+              : <><Trash2 size={14} /> Reset to Clean</>}
           </button>
         </div>
       </div>
