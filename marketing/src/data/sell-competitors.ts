@@ -194,8 +194,10 @@ export interface Competitor {
   verified: string; // YYYY-MM-DD
   /** Honest margin-aware verdict for the segmentation copy. */
   verdict: Verdict;
-  /** Whether a dedicated /sell/<key>/ deep-dive page exists yet (controls internal linking). */
+  /** Whether a dedicated deep-dive page exists yet (controls internal linking). */
   hasPage?: boolean;
+  /** Override the page URL when it isn't /sell/<key> (e.g. a prettier slug). */
+  pagePath?: string;
 }
 
 // All figures verified 2026-06-22 (US sellers; marketplace fees are often
@@ -379,6 +381,8 @@ export const COMPETITORS: Competitor[] = [
     source: "shopify.com/pricing, squareup.com/us/en/pricing",
     verified: "2026-06-22",
     verdict: "redistribution",
+    hasPage: true,
+    pagePath: "/sell/own-store",
   },
 ];
 

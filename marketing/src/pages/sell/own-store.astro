@@ -1,0 +1,162 @@
+---
+// /sell/own-store — for sellers who already run a Shopify/Square store. Static
+// (bespoke honest framing: your own store has the LOWEST fees, so this is not a
+// "we're cheaper" pitch — it's "your store needs you to bring every customer;
+// Good Circles brings local customers at no ad cost"). Uses the %-fee calculator
+// (ownstore preset) which has the ad-spend input that drives this story.
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHero from "../../components/PageHero.astro";
+import FaqList from "../../components/FaqList.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import WhatYouKeepCalculator from "../../components/WhatYouKeepCalculator.astro";
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from "../../lib/faq";
+import { SITE_URL } from "../../data/site";
+import { goodCircles, competitor } from "../../data/sell-competitors";
+
+const TITLE = "Shopify / Own-Store Alternative — Get Local Customers (2026) · Good Circles";
+const DESCRIPTION =
+  "Your own Shopify or Square store has the lowest fees — but you pay to find every customer. Good Circles brings local customers at no ad cost, customers save ~10%, and every sale funds a local nonprofit.";
+
+const g = goodCircles(100, 60, 0.25); // $100 sale, $60 cost, 25% tax
+const os0 = competitor(100, 60, 3, 0.25, 0); // own store, organic traffic (no ad spend)
+const os15 = competitor(100, 60, 3, 0.25, 15); // own store, ~15% ad spend to drive traffic
+
+const FAQS: Faq[] = [
+  {
+    q: "Is Good Circles cheaper than running my own Shopify or Square store?",
+    a: "Not on transaction fees - your own store is the lowest, around 2.9% + $0.30 processing plus a monthly subscription, and Good Circles passes ~10% to your customer. The difference is customers: a self-hosted store needs you to bring all the traffic yourself (ads, SEO, social), while Good Circles brings local customers at no ad cost, with your customer saving ~10% and a local nonprofit funded.",
+  },
+  {
+    q: "Should I close my store and move to Good Circles?",
+    a: "No - keep your store. Good Circles isn't a store builder; it's a local customer channel. Run your Shopify or Square store for your own-brand sales, and add Good Circles to reach local customers who shop local and fund a cause - with no ad spend, no monthly subscription, and a 1% fee on profit.",
+  },
+  {
+    q: "What does Good Circles cost compared to Shopify's plans?",
+    a: "Good Circles is free to join with a 1% fee on profit per sale and no monthly subscription. Shopify and Square charge a monthly plan plus payment processing whether you sell or not. Good Circles' per-sale economics include the ~10% your customer saves, but there's no recurring fee and no cost to acquire the customer.",
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/sell/own-store"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: "Home", url: `${SITE_URL}/` },
+      { name: "Sell", url: `${SITE_URL}/sell/` },
+      { name: "Own-store / Shopify", url: `${SITE_URL}/sell/own-store/` },
+    ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "Shopify / own-store alternative — get local customers (2026)",
+      description: DESCRIPTION,
+      datePublished: "2026-06-23",
+      dateModified: "2026-06-23",
+      author: { "@type": "Organization", name: "Good Circles" },
+      publisher: { "@type": "Organization", name: "Good Circles", logo: { "@type": "ImageObject", url: `${SITE_URL}/og.png` } },
+      mainEntityOfPage: `${SITE_URL}/sell/own-store/`,
+    },
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="Have a Shopify or Square store?"
+      badge="First 200 Mississippi businesses are Founding Merchants"
+      h1="Your own store has the lowest fees. Good Circles brings the customers."
+    >
+      <p slot="answer">
+        We'll be straight with you: a self-hosted store (Shopify, Square) has the <strong>lowest fees anywhere</strong> —
+        roughly 2.9% + $0.30 processing plus a monthly plan. Good Circles isn't a cheaper store builder. It's a
+        <strong>customer channel</strong>: it brings <strong>local customers at no ad cost</strong>, your customer
+        <strong>saves ~10%</strong>, a local nonprofit is funded, and the fee is <strong>1% of profit</strong> with no
+        subscription. The catch with your own store isn't the fee — it's that you pay to find every customer.
+      </p>
+      <Fragment slot="ctas">
+        <a href="/#mirror-section" data-cta-audience="MERCHANT" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Become a Founding Merchant (free) →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">A $100 sale — it's about traffic, not fees</h2>
+        <p class="text-slate-600 leading-relaxed mb-8" style="font-family:'Fira Sans',sans-serif">
+          A $100 sale with $60 of cost, at a 25% tax rate. With <em>free</em> traffic your own store keeps you the most.
+          But the moment you pay to acquire the customer — which is most of the work — the math flips.
+        </p>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Per $100 sale</th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Your store (free traffic)</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Your store (~15% ad spend)</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Customer pays</td><td class="p-3 font-bold" style="color:#241247">${g.customerPays.toFixed(2)} (saves ${g.customerSaves.toFixed(2)})</td><td class="p-3 text-slate-500">$100.00</td><td class="p-3 text-slate-500">$100.00</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Cost of goods</td><td class="p-3 font-bold" style="color:#241247">($60.00)</td><td class="p-3 text-slate-500">($60.00)</td><td class="p-3 text-slate-500">($60.00)</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Card processing</td><td class="p-3 font-bold" style="color:#241247">$0 (customer pays if card)</td><td class="p-3 text-slate-500">(${os0.fee.toFixed(2)})</td><td class="p-3 text-slate-500">(${os15.fee.toFixed(2)})</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Ad spend to get the customer</td><td class="p-3 font-bold" style="color:#241247">$0 (local nonprofits)</td><td class="p-3 text-slate-500">$0</td><td class="p-3 text-slate-500">(${os15.marketing.toFixed(2)})</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Good Circles fee · donation</td><td class="p-3 font-bold" style="color:#241247">(${g.platformFee.toFixed(2)}) · (${g.donation.toFixed(2)})</td><td class="p-3 text-slate-500">—</td><td class="p-3 text-slate-500">—</td></tr>
+              <tr style="border-top:2px solid #cbd5e1"><td class="p-3 font-black text-slate-900">Pre-tax profit</td><td class="p-3 font-black" style="color:#241247">${g.preTaxProfit.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${os0.preTaxProfit.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${os15.preTaxProfit.toFixed(2)}</td></tr>
+              <tr style="background:#f7f3fc"><td class="p-3 font-black text-slate-900">After-tax profit (25%)</td><td class="p-3 font-black" style="color:#241247">${g.afterTaxProfit.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${os0.afterTaxProfit.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${os15.afterTaxProfit.toFixed(2)}</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 text-slate-500 text-xs">Customer saves / community funded</td><td class="p-3 text-slate-500 text-xs">${g.customerSaves.toFixed(2)} / ${g.donation.toFixed(2)}</td><td class="p-3 text-slate-500 text-xs">$0 / $0</td><td class="p-3 text-slate-500 text-xs">$0 / $0</td></tr>
+              <tr style="background:#f7f3fc"><td class="p-3 font-black text-slate-900">Total local value created</td><td class="p-3 font-black" style="color:#241247">${g.totalLocalValue.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${os0.totalLocalValue.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${os15.totalLocalValue.toFixed(2)}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-slate-400" style="font-family:'Fira Sans',sans-serif">
+          Own-store processing ~2.9% + $0.30 (shown as ~$3.00) plus a monthly plan (~$39/mo Shopify, not shown per-sale —
+          which makes the free-traffic column slightly optimistic). Ad spend varies; ~10–15% of sales is common to drive
+          store traffic. Good Circles has no subscription, no ad spend, and no merchant card cost (the customer pays
+          processing if they use a card). Sources: shopify.com/pricing, squareup.com (verified 2026-06-22). Illustration, not tax advice.
+        </p>
+      </div>
+    </section>
+
+    <WhatYouKeepCalculator defaultKey="ownstore" heading="Run your store's numbers" />
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The cheapest fees, the hardest part
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          Owning your store is the right call for your own-brand sales — you keep control and the fees are the lowest
+          around. But a store is a destination, not a crowd: every customer has to be found, and finding them is the
+          expensive part, whether you pay in ad dollars or in hours of marketing. The monthly subscription runs whether
+          you sell or not.
+        </p>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          Good Circles is the crowd. Local customers come through nonprofits and their supporters at no ad cost, your
+          customer saves ~10%, and a local cause is funded on every sale — for a 1% fee on profit and no subscription.
+          Keep your store; add Good Circles as your local channel. See
+          <a href="/sell/marketplace-fees-comparison" class="font-bold underline" style="color:#7851A9">the full comparison &raquo;</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Your own store vs Good Circles — FAQ" />
+
+    <CtaBand
+      heading="Keep your store. Add the customers."
+      text="Free to join. A 1% fee on profit only when you sell. The first 200 Mississippi businesses are Founding Merchants."
+      label="Become a Founding Merchant (free) →"
+      href="/#mirror-section"
+      audience="MERCHANT"
+      secondaryLabel="Compare every platform"
+      secondaryHref="/sell/marketplace-fees-comparison"
+    />
+  </main>
+  <Footer />
+</Base>
