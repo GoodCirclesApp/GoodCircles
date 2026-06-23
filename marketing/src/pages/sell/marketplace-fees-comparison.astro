@@ -25,6 +25,16 @@ const winsCash = COMPETITORS.filter((c) => c.verdict === "win");
 const depends = COMPETITORS.filter((c) => c.verdict === "depends");
 const redistribution = COMPETITORS.filter((c) => c.verdict === "redistribution");
 
+// Service-pro platforms that don't take a % of the sale (different fee models),
+// so they get their own table rather than fake numbers in the one above.
+const SERVICE_PRO = [
+  { name: "Thumbtack", path: "/sell/thumbtack", model: "Pay-per-lead (charged win or lose)", take: "~$150 in lead fees to win one job (varies by trade)" },
+  { name: "Angi", path: "/sell/angi", model: "Pay-per-lead + membership/ads, annual contract", take: "~$225+ in lead fees per job won, plus fees" },
+  { name: "StyleSeat", path: "/sell/styleseat", model: "Booking: ~$35/mo + processing + new-client fee", take: "30% of a new client's first visit (capped $50)" },
+  { name: "Booksy", path: "/sell/booksy", model: "Booking: ~$29.99/mo + processing + Boost", take: "30% of a Boost new client's first visit (capped $100)" },
+  { name: "Vagaro", path: "/sell/vagaro", model: "Booking: ~$30/mo + processing", take: "No new-client fee — but it won't bring you new clients" },
+];
+
 const FAQS: Faq[] = [
   {
     q: "Which marketplace has the lowest seller fees?",
@@ -143,6 +153,42 @@ const FAQS: Faq[] = [
           See <a href="/sell/styleseat" class="font-bold underline" style="color:#7851A9">StyleSeat</a>,
           <a href="/sell/booksy" class="font-bold underline" style="color:#7851A9">Booksy</a>, and
           <a href="/sell/vagaro" class="font-bold underline" style="color:#7851A9">Vagaro</a> — subscription + new-client fees.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-16 px-6 bg-white" style="border-top:1px solid #eee">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Service-pro platforms (different fee models)</h2>
+        <p class="lead">Lead-generation and booking apps don't take a percentage of the sale, so they don't belong in the table above — but here's how they actually cost you, with a full after-tax breakdown and calculator on each page.</p>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Platform</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Model</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">What it typically costs you</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              <tr style="border-bottom:2px solid #C2A76F;background:#f7f3fc">
+                <td class="p-3 font-black" style="color:#241247">Good Circles</td>
+                <td class="p-3 text-slate-600">Local marketplace</td>
+                <td class="p-3 font-bold" style="color:#241247">1% of profit — no lead fee, no subscription, no acquisition fee</td>
+              </tr>
+              {SERVICE_PRO.map((s) => (
+                <tr style="border-bottom:1px solid #E7DCF2">
+                  <td class="p-3 font-bold text-slate-900"><a href={s.path} class="underline" style="color:#7851A9">{s.name}</a></td>
+                  <td class="p-3 text-slate-500">{s.model}</td>
+                  <td class="p-3 text-slate-600">{s.take}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-slate-400" style="font-family:'Fira Sans',sans-serif">
+          Reported terms verified 2026-06-22; lead and subscription costs vary by trade and market. Each platform's page
+          has the full after-tax comparison and a calculator for your own numbers.
         </p>
       </div>
     </section>
