@@ -1,0 +1,249 @@
+---
+// /sell/marketplace-fees-comparison — the consolidated SEO/GEO flagship.
+// Master fee table across every researched competitor + calculator + the honest
+// "where GC wins on cash vs where it wins on values" segmentation + end-state.
+// All competitor figures verified 2026-06-22; see src/data/sell-competitors.ts.
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHero from "../../components/PageHero.astro";
+import FaqList from "../../components/FaqList.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import WhatYouKeepCalculator from "../../components/WhatYouKeepCalculator.astro";
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from "../../lib/faq";
+import { SITE_URL } from "../../data/site";
+import { COMPETITORS, goodCircles, competitor } from "../../data/sell-competitors";
+
+const TITLE = "Marketplace Seller Fees Compared (2026) — Amazon, Etsy, DoorDash & More · Good Circles";
+const DESCRIPTION =
+  "A 2026 side-by-side of what every major marketplace takes from sellers — Amazon, Etsy, eBay, DoorDash, Groupon, Poshmark and more — and how Good Circles' 1%-of-profit model compares.";
+
+const ex = goodCircles(100, 60); // worked $100 sale, $60 cost, 25% tax
+const amz = competitor(100, 60, 15, 0.25, 10); // Amazon 15% + ~10% ads
+const dd = competitor(100, 60, 30, 0.25, 0); // DoorDash 30%
+const winsCash = COMPETITORS.filter((c) => c.verdict === "win");
+const depends = COMPETITORS.filter((c) => c.verdict === "depends");
+const redistribution = COMPETITORS.filter((c) => c.verdict === "redistribution");
+
+const FAQS: Faq[] = [
+  {
+    q: "Which marketplace has the lowest seller fees?",
+    a: "It depends on your category, but on a percentage basis Good Circles is the lowest: a 1% fee on profit, versus roughly 10% on Etsy, 12% on Walmart, 13% on eBay, 15% on Amazon, 20% on Poshmark and Fiverr, and 15–30% on the food-delivery apps. Marketplaces charge a percentage of the whole sale; Good Circles charges 1% of profit, with no ad spend and no merchant card cost.",
+  },
+  {
+    q: "Do lower fees mean I always take home more on Good Circles?",
+    a: "Not always — and we won't pretend otherwise. Against high-fee platforms (the delivery apps at 25–30%, Groupon, pay-per-lead sites, and ~20% resale fees) you keep clearly more per sale. Against mid-fee platforms like Amazon or eBay it depends on your margin — thinner margins favor Good Circles. Against already low-fee channels like Etsy's base fees, Mercari, or your own store, your take-home is similar; the difference is that the margin goes to your customer as a ~10% saving and to a local nonprofit, instead of to a platform. The calculator on this page shows your real number.",
+  },
+  {
+    q: "How can Good Circles charge so little?",
+    a: "Because the model isn't built to extract from local sellers. Good Circles takes 1% of profit and redirects what other platforms skim into customer savings (~10%) and community funding (10% of the merchant's profit to a local nonprofit). It is free for shoppers and nonprofits, and free to join for businesses.",
+  },
+  {
+    q: "Is the 10% to a nonprofit tax-deductible for my business?",
+    a: "The 10% of profit that funds a local nonprofit on each sale is a charitable contribution that may be tax-deductible. Treatment depends on your situation — consult your tax advisor.",
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/sell/marketplace-fees-comparison"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: "Home", url: `${SITE_URL}/` },
+      { name: "Sell", url: `${SITE_URL}/sell/` },
+      { name: "Marketplace fees compared", url: `${SITE_URL}/sell/marketplace-fees-comparison/` },
+    ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "Marketplace seller fees compared (2026)",
+      description: DESCRIPTION,
+      datePublished: "2026-06-22",
+      dateModified: "2026-06-22",
+      author: { "@type": "Organization", name: "Good Circles" },
+      publisher: {
+        "@type": "Organization",
+        name: "Good Circles",
+        logo: { "@type": "ImageObject", url: `${SITE_URL}/og.png` },
+      },
+      mainEntityOfPage: `${SITE_URL}/sell/marketplace-fees-comparison/`,
+    },
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Comparison · Updated June 2026" h1="What every marketplace takes from sellers — compared">
+      <p slot="answer">
+        Most marketplaces take a percentage of your whole <em>sale</em>: about 10% on Etsy, 13% on eBay, 15% on
+        Amazon, 20% on Poshmark, and 15–30% on the delivery apps. <strong>Good Circles takes a 1% fee on profit</strong>
+        — and instead of pocketing the rest, it routes ~10% back to your customer and 10% of your profit to a local
+        nonprofit. Here's the honest, side-by-side picture (verified June 2026).
+      </p>
+      <Fragment slot="ctas">
+        <a
+          href="/#mirror-section"
+          data-cta-audience="MERCHANT"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+          style="background:#C2A76F;color:#241247"
+        >
+          Become a Founding Merchant (free) →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Seller fees, side by side
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-8" style="font-family:'Fira Sans',sans-serif">
+          What the platform in the middle keeps out of each sale. Rates are typical published US figures and are often
+          category-dependent — see the notes. On Good Circles the fee is 1% of profit, with no ad spend and no
+          merchant card cost (the customer pays credit card processing only if they use a card).
+        </p>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Platform</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Type</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Typical seller take</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">How it works</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              <tr style="border-bottom:2px solid #C2A76F;background:#f7f3fc">
+                <td class="p-3 font-black" style="color:#241247">Good Circles</td>
+                <td class="p-3 text-slate-600">Local marketplace</td>
+                <td class="p-3 font-bold" style="color:#241247">1% of profit</td>
+                <td class="p-3 text-slate-600">1% fee on profit; you keep ~89% of profit, customer saves ~10%, 10% of profit funds a nonprofit.</td>
+              </tr>
+              {COMPETITORS.map((c) => (
+                <tr style="border-bottom:1px solid #E7DCF2">
+                  <td class="p-3 font-bold text-slate-900">{c.name}</td>
+                  <td class="p-3 text-slate-500">{c.category}</td>
+                  <td class="p-3 font-bold text-slate-700">{c.takeLabel}</td>
+                  <td class="p-3 text-slate-500">{c.model}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-slate-400" style="font-family:'Fira Sans',sans-serif">
+          Sources (all verified June 2026): {COMPETITORS.map((c) => c.source).join(" · ")}.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-12 px-6" style="background:#241247">
+      <div class="max-w-4xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+        <h2 class="text-2xl font-black text-white mb-1 text-center" style="letter-spacing:-0.02em">Full per-sale accounting — $100 sale, $60 cost, 25% tax</h2>
+        <p class="text-white/60 text-sm mb-8 text-center">Every line to after-tax profit, then the value only Good Circles creates.</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm" style="border-collapse:collapse;color:rgba(255,255,255,.9)">
+            <thead><tr style="color:#FADC9C">
+              <th class="text-left p-2.5 text-xs uppercase tracking-wider font-black">Per $100 sale</th>
+              <th class="text-left p-2.5 text-xs uppercase tracking-wider font-black">Amazon (15% + ads)</th>
+              <th class="text-left p-2.5 text-xs uppercase tracking-wider font-black">DoorDash (30%)</th>
+              <th class="text-left p-2.5 text-xs uppercase tracking-wider font-black">Good Circles</th>
+            </tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Revenue (list price)</td><td class="p-2.5">$100.00</td><td class="p-2.5">$100.00</td><td class="p-2.5 font-bold">$100.00</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: customer savings (10%)</td><td class="p-2.5">—</td><td class="p-2.5">—</td><td class="p-2.5 font-bold">(${ex.customerSaves.toFixed(2)})</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: COGS</td><td class="p-2.5">($60.00)</td><td class="p-2.5">($60.00)</td><td class="p-2.5 font-bold">($60.00)</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: platform fee</td><td class="p-2.5">(${amz.fee.toFixed(2)})</td><td class="p-2.5">(${dd.fee.toFixed(2)})</td><td class="p-2.5 font-bold">(${ex.platformFee.toFixed(2)})</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: ad / marketing</td><td class="p-2.5">(${amz.marketing.toFixed(2)})</td><td class="p-2.5">$0.00</td><td class="p-2.5 font-bold">$0.00</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: card processing</td><td class="p-2.5">(in fee)</td><td class="p-2.5">(in fee)</td><td class="p-2.5 font-bold">$0.00 (customer pays if card)</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: donation (deductible)</td><td class="p-2.5">—</td><td class="p-2.5">—</td><td class="p-2.5 font-bold">(${ex.donation.toFixed(2)})</td></tr>
+              <tr style="border-top:2px solid rgba(255,255,255,.4)"><td class="p-2.5 font-black">Pre-tax profit</td><td class="p-2.5 font-black">${amz.preTaxProfit.toFixed(2)}</td><td class="p-2.5 font-black">${dd.preTaxProfit.toFixed(2)}</td><td class="p-2.5 font-black">${ex.preTaxProfit.toFixed(2)}</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: income tax @ 25%</td><td class="p-2.5">(${amz.tax.toFixed(2)})</td><td class="p-2.5">(${dd.tax.toFixed(2)})</td><td class="p-2.5 font-bold">(${ex.tax.toFixed(2)})</td></tr>
+              <tr style="background:rgba(255,255,255,.08)"><td class="p-2.5 font-black">After-tax profit</td><td class="p-2.5 font-black">${amz.afterTaxProfit.toFixed(2)}</td><td class="p-2.5 font-black">${dd.afterTaxProfit.toFixed(2)}</td><td class="p-2.5 font-black" style="color:#FADC9C">${ex.afterTaxProfit.toFixed(2)}</td></tr>
+              <tr style="color:rgba(255,255,255,.6)"><td class="p-2.5 text-xs">Memo: customer saves / community funded</td><td class="p-2.5 text-xs">$0 / $0</td><td class="p-2.5 text-xs">$0 / $0</td><td class="p-2.5 text-xs">${ex.customerSaves.toFixed(2)} / ${ex.donation.toFixed(2)}</td></tr>
+              <tr style="background:rgba(255,255,255,.08)"><td class="p-2.5 font-black">Total local value created</td><td class="p-2.5 font-black">${amz.totalLocalValue.toFixed(2)}</td><td class="p-2.5 font-black">${dd.totalLocalValue.toFixed(2)}</td><td class="p-2.5 font-black" style="color:#FADC9C">${ex.totalLocalValue.toFixed(2)}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-white/45 text-[11px] mt-5 max-w-2xl">
+          You keep more in your own pocket after tax <strong class="text-white/70">(${ex.afterTaxProfit.toFixed(2)})</strong>
+          than on Amazon or DoorDash — and Good Circles turns the same sale into <strong class="text-white/70">${ex.totalLocalValue.toFixed(2)} of
+          local value</strong> (your profit + your customer's savings + a local nonprofit). Ad spend shown for Amazon
+          at a typical ~10% (editable in the calculator); Good Circles has no ad or card cost. Illustration, not tax advice.
+        </p>
+      </div>
+    </section>
+
+    <WhatYouKeepCalculator heading="Compare with your own numbers" />
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The honest version: where Good Circles wins on cash, and where it wins on values
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-8" style="font-family:'Fira Sans',sans-serif">
+          We're not going to tell you Good Circles beats every platform on every sale — a comparison you can't trust
+          isn't worth running. Here's the real breakdown.
+        </p>
+
+        <div class="rounded-xl p-6 mb-5" style="background:#f0fbf3;border:1px solid #bfe6c9;font-family:'Fira Sans',sans-serif">
+          <p class="font-black text-slate-900 mb-2">You keep more per sale, at almost any margin, than:</p>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            {winsCash.map((c) => c.name).join(", ")}. These take a big enough cut (roughly 20%+, or a deep-discount or
+            pay-per-lead model) that even after funding a ~10% customer saving, your take-home is higher on Good
+            Circles — and your customer and community gain on top.
+          </p>
+        </div>
+
+        <div class="rounded-xl p-6 mb-5" style="background:#eef4fb;border:1px solid #c6d8ef;font-family:'Fira Sans',sans-serif">
+          <p class="font-black text-slate-900 mb-2">It depends on your margin versus:</p>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            {depends.map((c) => c.name).join(", ")}. These sit around 13–20%. On thin-margin products you keep more on
+            Good Circles; on fat-margin products they may edge ahead on raw cash, because the ~10% you give your
+            customer is a bigger share of a high-margin price. The calculator shows exactly where you land — and the
+            price that matches your current take-home if you'd rather hold profit flat.
+          </p>
+        </div>
+
+        <div class="rounded-xl p-6" style="background:#fffaf0;border:1px solid #ecd9ab;font-family:'Fira Sans',sans-serif">
+          <p class="font-black text-slate-900 mb-2">Your take-home is similar — the win is redistribution — versus:</p>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            {redistribution.map((c) => c.name).join(", ")}. These are already low-fee, so at the same price your cash
+            take-home is comparable. The difference is where the margin goes: on those platforms the fee disappears to
+            the company; on Good Circles the equivalent value goes to <em>your</em> customer (a ~10% saving that brings
+            them back) and a local nonprofit (a charitable contribution that may be tax-deductible — consult your tax
+            advisor — and a real reason to choose you).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 px-6" style="background:#faf7fd">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-2xl font-black text-slate-900 mb-4" style="letter-spacing:-0.02em">The bigger picture</h2>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          Every percentage point those platforms take is a percentage point that leaves your community. Good Circles is
+          building toward the opposite: a local economy that delivers the goods and services people need
+          <strong>below today's market cost</strong>, turns the savings into household spending power, lets every sale
+          <strong>passively fund local nonprofits</strong>, and still <strong>grows the seller's bottom line</strong>.
+          The marketplace fee comparison above is just the first dollar of that shift.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Marketplace fees — FAQ" />
+
+    <CtaBand
+      heading="Keep more of what you earn"
+      text="Free to join. A 1% fee on profit only when you sell. The first 200 Mississippi businesses are Founding Merchants."
+      label="Become a Founding Merchant (free) →"
+      href="/#mirror-section"
+      audience="MERCHANT"
+      secondaryLabel="Back to selling on Good Circles"
+      secondaryHref="/sell"
+    />
+  </main>
+  <Footer />
+</Base>

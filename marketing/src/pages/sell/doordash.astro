@@ -1,0 +1,194 @@
+---
+// /sell/doordash — switch page for restaurants on the delivery apps.
+// Competitor terms verified 2026-06-22 (merchants.doordash.com pricing): Basic
+// 15% / Plus 25% / Premier 30% marketplace commission; processing bundled.
+// This is a clear per-sale win at the Plus/Premier tiers most restaurants run.
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHero from "../../components/PageHero.astro";
+import FaqList from "../../components/FaqList.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import WhatYouKeepCalculator from "../../components/WhatYouKeepCalculator.astro";
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from "../../lib/faq";
+import { SITE_URL } from "../../data/site";
+import { goodCircles, competitor } from "../../data/sell-competitors";
+
+const TITLE = "DoorDash Fee Alternative for Restaurants (2026) · Good Circles";
+const DESCRIPTION =
+  "DoorDash, Uber Eats, and Grubhub take 15–30% of every order. Good Circles charges 1% of profit, customers save ~10%, and each order funds a local nonprofit. The 2026 comparison.";
+
+const g = goodCircles(100, 30); // $100 order, $30 food cost, 25% tax
+const plus = competitor(100, 30, 25, 0.25, 0); // DoorDash Plus 25%
+const prem = competitor(100, 30, 30, 0.25, 0); // DoorDash Premier 30%
+
+const FAQS: Faq[] = [
+  {
+    q: "How much does Good Circles cost a restaurant compared to DoorDash?",
+    a: "DoorDash's marketplace commission is 15% (Basic), 25% (Plus), or 30% (Premier) of every order. Good Circles charges a 1% fee on profit — with no ad spend and no merchant card cost, and no setup, monthly, or listing fees. If you don't sell, you don't pay.",
+  },
+  {
+    q: "Will I actually keep more than on the delivery apps?",
+    a: "Yes. On a $100 order with $30 of food cost you keep about $53 pre-tax (roughly $40 after tax) on Good Circles, versus $45 (Plus) or $40 (Premier) pre-tax on DoorDash — and your customer saves ~10% while a local nonprofit gets funded, neither of which happens on DoorDash. Even against DoorDash's 15% Basic tier you come out ahead once you count the ad spend and card fees Good Circles doesn't charge.",
+  },
+  {
+    q: "Don't my customers pay more on the delivery apps too?",
+    a: "Yes. The delivery apps commonly mark up your menu prices and add delivery and service fees, so your customer pays a premium. On Good Circles the customer saves about 10% — so switching is better for the person ordering, not just for you.",
+  },
+  {
+    q: "How do my orders get fulfilled on Good Circles?",
+    a: "You fulfill orders the way you do today — pickup or your own delivery. Good Circles is the local marketplace and customer relationship, not a 30% middleman between you and your own neighbors.",
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/sell/doordash"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: "Home", url: `${SITE_URL}/` },
+      { name: "Sell", url: `${SITE_URL}/sell/` },
+      { name: "DoorDash alternative", url: `${SITE_URL}/sell/doordash/` },
+    ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "DoorDash fee alternative for restaurants (2026)",
+      description: DESCRIPTION,
+      datePublished: "2026-06-22",
+      dateModified: "2026-06-22",
+      author: { "@type": "Organization", name: "Good Circles" },
+      publisher: { "@type": "Organization", name: "Good Circles", logo: { "@type": "ImageObject", url: `${SITE_URL}/og.png` } },
+      mainEntityOfPage: `${SITE_URL}/sell/doordash/`,
+    },
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="Switch from the delivery apps"
+      badge="First 200 Mississippi businesses are Founding Merchants"
+      h1="The delivery apps take up to 30%. Good Circles takes 1% of profit."
+    >
+      <p slot="answer">
+        DoorDash, Uber Eats, and Grubhub charge <strong>15–30% on every order</strong> — and mark your menu up to your
+        customers on top of it. Good Circles charges a <strong>1% fee on profit</strong>, so you keep about
+        <strong>89% of your profit</strong>, your customer <strong>saves ~10%</strong>, and a local nonprofit gets
+        funded on every order. Free to join.
+      </p>
+      <Fragment slot="ctas">
+        <a href="/#mirror-section" data-cta-audience="MERCHANT" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Become a Founding Merchant (free) →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">A $100 order, side by side</h2>
+        <p class="text-slate-600 leading-relaxed mb-8" style="font-family:'Fira Sans',sans-serif">
+          Take a $100 order with $30 of food cost — and compare the tier most restaurants actually run.
+        </p>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider"></th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">DoorDash (Plus 25%)</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">DoorDash (Premier 30%)</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Customer pays</td>
+                <td class="p-3 font-bold" style="color:#241247">${g.customerPays.toFixed(2)} (saves ${g.customerSaves.toFixed(2)})</td>
+                <td class="p-3 text-slate-500">$100+ (markup + fees)</td>
+                <td class="p-3 text-slate-500">$100+ (markup + fees)</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Platform fee · ads · card</td>
+                <td class="p-3 font-bold" style="color:#241247">${g.platformFee.toFixed(2)} · $0 · $0</td>
+                <td class="p-3 text-slate-500">$25.00 · — · in fee</td>
+                <td class="p-3 text-slate-500">$30.00 · — · in fee</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Donation to a local nonprofit (deductible)</td>
+                <td class="p-3 font-bold" style="color:#241247">${g.donation.toFixed(2)}</td>
+                <td class="p-3 text-slate-500">—</td>
+                <td class="p-3 text-slate-500">—</td>
+              </tr>
+              <tr style="border-top:2px solid #cbd5e1">
+                <td class="p-3 font-black text-slate-900">Pre-tax profit</td>
+                <td class="p-3 font-black" style="color:#241247">${g.preTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">${plus.preTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">${prem.preTaxProfit.toFixed(2)}</td>
+              </tr>
+              <tr style="background:#f7f3fc">
+                <td class="p-3 font-black text-slate-900">After-tax profit (25%)</td>
+                <td class="p-3 font-black" style="color:#241247">${g.afterTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">${plus.afterTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">${prem.afterTaxProfit.toFixed(2)}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 text-slate-500 text-xs">Customer saves / community funded</td>
+                <td class="p-3 text-slate-500 text-xs">${g.customerSaves.toFixed(2)} / ${g.donation.toFixed(2)}</td>
+                <td class="p-3 text-slate-500 text-xs">$0 / $0</td>
+                <td class="p-3 text-slate-500 text-xs">$0 / $0</td>
+              </tr>
+              <tr style="background:#f7f3fc">
+                <td class="p-3 font-black text-slate-900">Total local value created</td>
+                <td class="p-3 font-black" style="color:#241247">${g.totalLocalValue.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">${plus.totalLocalValue.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">${prem.totalLocalValue.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-slate-400" style="font-family:'Fira Sans',sans-serif">
+          DoorDash commission tiers Basic 15% / Plus 25% / Premier 30%, processing bundled (verified 2026-06-22,
+          merchants.doordash.com). Good Circles takes a 1% fee on profit, with no ad spend and no merchant card cost
+          (the customer pays credit card processing if they use a card). Restaurants win here on both your own after-tax
+          profit and total local value. Illustration, not tax advice.
+        </p>
+      </div>
+    </section>
+
+    <WhatYouKeepCalculator defaultKey="doordash" heading="Run your restaurant's numbers" />
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          A 30% commission isn't marketing — it's your margin leaving town
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          On a thin-margin restaurant ticket, a 25–30% commission can turn a profitable order into a break-even one —
+          and the apps mark your prices up to the customer on top of it, so the person ordering pays more too. The
+          delivery platforms made themselves the most expensive part of a local meal.
+        </p>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          Good Circles flips it: the platform takes 1% of profit, your customer saves about 10%, and a local nonprofit
+          your customer chooses gets funded with every order. Same kitchen, different rails — and the value stays in
+          your community. See the full picture on <a href="/for-business/for-restaurants" class="font-bold underline" style="color:#7851A9">Good Circles for restaurants »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="DoorDash vs Good Circles — FAQ" />
+
+    <CtaBand
+      heading="Keep your margin. Lose the 30%."
+      text="Free to join. A 1% fee on profit only when you sell. The first 200 Mississippi businesses are Founding Merchants."
+      label="Become a Founding Merchant (free) →"
+      href="/#mirror-section"
+      audience="MERCHANT"
+      secondaryLabel="Compare every platform"
+      secondaryHref="/sell/marketplace-fees-comparison"
+    />
+  </main>
+  <Footer />
+</Base>

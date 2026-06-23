@@ -1,0 +1,288 @@
+// Single source of truth for the merchant-acquisition ("/sell") funnel.
+//
+// GOOD CIRCLES MATH — mirrors the production engine exactly
+// (server/src/services/transactionService.ts calculateDistribution +
+//  server/src/lib/splitRates.ts), verified 2026-06-22:
+//   • consumer pays list × 0.90 (the ~10% saving is a real price reduction the
+//     merchant funds — default discountMode = PRICE_REDUCTION);
+//   • net profit  = (0.90 × list) − COGS;
+//   • of net profit: nonprofit 10%, platform 1%, merchant keeps 89% (residual);
+//   • the customer discount AND the nonprofit donation are both deductible through
+//     the commercial co-venture, so both reduce the merchant's taxable income;
+//   • NO merchant card cost (the customer pays credit card processing if they use a
+//     card), NO platform commission on the sale, and NO ad spend (demand comes from
+//     nonprofit supporters). Comparisons run to AFTER-TAX profit + total local value.
+//
+// ACCURACY CONTRACT (see src/data/site.ts): shoppers save ~10%; a nonprofit gets
+// 10% of the merchant's NET PROFIT; merchants keep 89% of profit on a 1% fee.
+//
+// HONESTY NOTE: Good Circles does NOT out-earn every competitor on raw per-sale
+// cash. It clearly wins vs high-extraction platforms (delivery apps, Groupon,
+// Amazon, lead-gen). Against genuinely low-fee channels (Etsy base, Mercari,
+// a merchant's own store) the merchant's take-home is comparable or slightly
+// lower — the difference is REDISTRIBUTED to the customer (~10% saving) and the
+// community (the charitable share), instead of vanishing to a platform. Pages
+// must frame each competitor on the truthful axis. Never claim a universal
+// per-sale win.
+
+export const CONSUMER_DISCOUNT = 0.1; // ~10% the customer saves (lowers taxable revenue)
+export const NONPROFIT_RATE = 0.1; // 10% of net profit → chosen nonprofit (deductible)
+export const PLATFORM_RATE = 0.01; // 1% of net profit → Good Circles
+export const MERCHANT_PROFIT_RATE = 0.89; // of net profit → merchant
+export const DEFAULT_TAX_RATE = 0.25; // illustrative combined marginal rate (editable)
+// No merchant card cost on Good Circles — the customer pays credit card processing
+// if they choose to pay by card. No platform commission on the sale, no ad spend.
+
+export const round2 = (n: number) => Math.round(n * 100) / 100;
+
+export interface GcResult {
+  listPrice: number;
+  customerPays: number;
+  customerSaves: number;
+  netProfit: number;
+  donation: number;
+  platformFee: number;
+  preTaxProfit: number;
+  tax: number;
+  afterTaxProfit: number;
+  communityFunded: number;
+  afterTaxCostOfGiving: number;
+  totalLocalValue: number;
+}
+
+/** Good Circles per-sale accounting. Revenue is the list price; the customer
+ *  discount and the deductible nonprofit donation both reduce taxable income.
+ *  No card-processing or ad cost to the merchant. */
+export function goodCircles(price: number, cogs: number, taxRate: number = DEFAULT_TAX_RATE): GcResult {
+  const customerSaves = round2(price * CONSUMER_DISCOUNT);
+  const customerPays = round2(price - customerSaves);
+  const netProfit = round2(customerPays - cogs);
+  const donation = round2(netProfit * NONPROFIT_RATE);
+  const platformFee = round2(netProfit * PLATFORM_RATE);
+  const preTaxProfit = round2(customerPays - cogs - donation - platformFee);
+  const afterTaxProfit = round2(preTaxProfit * (1 - taxRate));
+  const tax = round2(preTaxProfit - afterTaxProfit);
+  const afterTaxCostOfGiving = round2((customerSaves + donation) * (1 - taxRate));
+  const totalLocalValue = round2(afterTaxProfit + customerSaves + donation);
+  return {
+    listPrice: price, customerPays, customerSaves, netProfit, donation, platformFee,
+    preTaxProfit, tax, afterTaxProfit, communityFunded: donation, afterTaxCostOfGiving, totalLocalValue,
+  };
+}
+
+export interface CompResult {
+  fee: number; marketing: number; preTaxProfit: number; tax: number;
+  afterTaxProfit: number; totalLocalValue: number;
+}
+
+/** Competitor per-sale accounting at an all-in fee rate (+ optional ad spend). */
+export function competitor(
+  price: number, cogs: number, feePct: number,
+  taxRate: number = DEFAULT_TAX_RATE, marketingPct: number = 0,
+): CompResult {
+  const fee = round2(price * (feePct / 100));
+  const marketing = round2(price * (marketingPct / 100));
+  const preTaxProfit = round2(price - cogs - fee - marketing);
+  const afterTaxProfit = round2(preTaxProfit * (1 - taxRate));
+  const tax = round2(preTaxProfit - afterTaxProfit);
+  return { fee, marketing, preTaxProfit, tax, afterTaxProfit, totalLocalValue: afterTaxProfit };
+}
+
+// Honest, margin-aware verdict (the win depends on competitor fee AND the
+// merchant's margin — break-even is fee > ~23% − 11%×(COGS/price)):
+//   "win"            — high-fee/punitive: GC keeps more across realistic margins
+//                      (delivery apps at 25–30%, Groupon, lead-gen, ~20% resale)
+//   "depends"        — mid-fee (~13–20%): thin margins favor GC, fat margins favor them
+//   "redistribution" — already low-fee (≤~12%): take-home is similar; GC's win is
+//                      that the margin goes to the customer + community, not a platform
+export type Verdict = "win" | "depends" | "redistribution";
+
+export interface Competitor {
+  key: string;
+  /** Brand name as displayed. */
+  name: string;
+  category: "Goods" | "Food delivery" | "Services" | "Resale" | "Freelance" | "Booking" | "Own store";
+  /** Typical all-in % the intermediary keeps (processing included) — prefills the calculator. */
+  typicalFeePct: number;
+  /** Short label for the headline take in the master table. */
+  takeLabel: string;
+  /** How the model works, plain English. */
+  model: string;
+  /** Verified detail string for the per-page "Sources" block. */
+  detail: string;
+  source: string;
+  verified: string; // YYYY-MM-DD
+  /** Honest margin-aware verdict for the segmentation copy. */
+  verdict: Verdict;
+  /** Whether a dedicated /sell/<key>/ deep-dive page exists yet (controls internal linking). */
+  hasPage?: boolean;
+}
+
+// All figures verified 2026-06-22 (US sellers; marketplace fees are often
+// category-dependent — ranges are stated, not collapsed into false precision).
+export const COMPETITORS: Competitor[] = [
+  {
+    key: "doordash",
+    name: "DoorDash",
+    category: "Food delivery",
+    typicalFeePct: 30,
+    takeLabel: "15–30% per order",
+    model: "Per-order commission by plan (Basic 15% / Plus 25% / Premier 30%); pickup 6%.",
+    detail:
+      "Marketplace commission tiers Basic 15% / Plus 25% / Premier 30% (pickup 6%); payment processing is bundled into the commission on Marketplace orders. Most restaurants run Plus or Premier for visibility.",
+    source: "merchants.doordash.com/en-us/blog/doordash-pricing-products",
+    verified: "2026-06-22",
+    verdict: "win",
+    hasPage: true,
+  },
+  {
+    key: "ubereats",
+    name: "Uber Eats",
+    category: "Food delivery",
+    typicalFeePct: 30,
+    takeLabel: "20–30% per order",
+    model: "Per-order commission by plan (Lite 20% / Plus 25% / Premium 30%; self-delivery 15%).",
+    detail:
+      "Marketplace commission Lite 20% (raised from 15% in 2026) / Plus 25% / Premium 30%; self-delivery 15%. The 2.5% + $0.29 rate applies to own-site Webshop orders, not Marketplace.",
+    source: "merchants.ubereats.com/us/en/pricing/",
+    verified: "2026-06-22",
+    verdict: "win",
+  },
+  {
+    key: "grubhub",
+    name: "Grubhub",
+    category: "Food delivery",
+    typicalFeePct: 25,
+    takeLabel: "~15–30% per order",
+    model: "Marketing commission (5–20%) + delivery (~10%) + processing.",
+    detail:
+      "Grubhub does not publish named-tier percentages; the ~15–30% range is built from its official components (5–20% marketing + ~10% delivery + processing).",
+    source: "get.grubhub.com/faq/what-fees-does-grubhub-charge-restaurants/",
+    verified: "2026-06-22",
+    verdict: "win",
+  },
+  {
+    key: "groupon",
+    name: "Groupon",
+    category: "Services",
+    typicalFeePct: 75,
+    takeLabel: "~75% of list value",
+    model: "Customer buys a deep-discount voucher, then Groupon splits the voucher revenue (~50/50).",
+    detail:
+      "The merchant typically discounts ~50% AND then splits the voucher revenue with Groupon (commonly ~50/50, negotiable), so the merchant often nets only ~25% of the original list value — frequently below cost.",
+    source: "groupon.com/merchant/frequently-asked-questions",
+    verified: "2026-06-22",
+    verdict: "win",
+  },
+  {
+    key: "amazon",
+    name: "Amazon",
+    category: "Goods",
+    typicalFeePct: 15,
+    takeLabel: "~15% referral",
+    model: "Referral fee 5–45% by category (most 15%) + $39.99/mo Pro plan; FBA extra if used.",
+    detail:
+      "Referral fee 5–45% by category, most categories 15%, $0.30 minimum; +$39.99/mo Professional plan (or $0.99/item Individual); FBA fulfilment fees on top if Amazon ships. Processing is bundled.",
+    source: "sell.amazon.com/pricing",
+    verified: "2026-06-22",
+    verdict: "depends",
+  },
+  {
+    key: "ebay",
+    name: "eBay",
+    category: "Goods",
+    typicalFeePct: 13.6,
+    takeLabel: "~13.25% + $0.40",
+    model: "Final value fee ~13.25% (most categories) + $0.40 per order; +1.65% international.",
+    detail:
+      "Final value fee 13.25% for most categories (range ~9–15%) + $0.40 per order; +1.65% for international buyers; optional Promoted Listings add a seller-set 1–20%.",
+    source: "ebay.com/help/selling/fees-credits-invoices/selling-fees",
+    verified: "2026-06-22",
+    verdict: "depends",
+  },
+  {
+    key: "walmart",
+    name: "Walmart Marketplace",
+    category: "Goods",
+    typicalFeePct: 12,
+    takeLabel: "~6–15% referral",
+    model: "Referral fee 2.35–20% by category (most goods 6–15%); no monthly or listing fee.",
+    detail:
+      "Referral fee ranges 2.35–20% by category; most goods fall in 6–15%. No monthly, listing, or setup fee; processing is bundled.",
+    source: "marketplacelearn.walmart.com (Referral fee schedule)",
+    verified: "2026-06-22",
+    verdict: "redistribution",
+  },
+  {
+    key: "poshmark",
+    name: "Poshmark",
+    category: "Resale",
+    typicalFeePct: 20,
+    takeLabel: "20% ($15+)",
+    model: "Flat $2.95 under $15; 20% commission on sales of $15 and over.",
+    detail: "Flat $2.95 on sales under $15; 20% commission on sales $15 and over. No listing, monthly, or separate processing fee.",
+    source: "poshmark.com seller terms",
+    verified: "2026-06-22",
+    verdict: "win",
+  },
+  {
+    key: "mercari",
+    name: "Mercari",
+    category: "Resale",
+    typicalFeePct: 10,
+    takeLabel: "10% selling fee",
+    model: "10% selling fee; no separate seller processing or cashout fee (since Jan 2025).",
+    detail:
+      "10% selling fee on item price + buyer-paid shipping. Seller payment-processing and cashout fees were eliminated Jan 6, 2025 (a 3.6% Buyer Protection fee is charged to the buyer, not the seller).",
+    source: "mercari.com/us/help_center/article/169",
+    verified: "2026-06-22",
+    verdict: "redistribution",
+  },
+  {
+    key: "etsy",
+    name: "Etsy",
+    category: "Goods",
+    typicalFeePct: 9.95,
+    takeLabel: "~10% (up to ~25% w/ ads)",
+    model: "$0.20 listing + 6.5% transaction + 3% + $0.25 processing; Offsite Ads 12–15% when attributed.",
+    detail:
+      "$0.20 listing + 6.5% transaction fee + (3% + $0.25) US payment processing = ~10% all-in on a $100 sale. Offsite Ads add 12–15% on ad-attributed orders (mandatory above $10k/yr in sales).",
+    source: "etsy.com/sell",
+    verified: "2026-06-22",
+    verdict: "redistribution",
+    hasPage: true,
+  },
+  {
+    key: "fiverr",
+    name: "Fiverr",
+    category: "Freelance",
+    typicalFeePct: 20,
+    takeLabel: "20% to the seller",
+    model: "Flat 20% seller commission (plus a buyer-side service fee).",
+    detail: "Flat 20% commission on the freelancer's earnings (including tips); buyers pay an additional ~5.5% service fee.",
+    source: "fiverr.com (Payment Terms of Service)",
+    verified: "2026-06-22",
+    verdict: "depends",
+  },
+  {
+    key: "ownstore",
+    name: "Your own store (Shopify / Square)",
+    category: "Own store",
+    typicalFeePct: 3,
+    takeLabel: "~2.9% + $0.30 card only",
+    model: "Card processing only (~2.9% + $0.30); plus a monthly platform subscription.",
+    detail:
+      "A self-hosted store (Shopify/Square) charges roughly card processing (~2.9% + $0.30) plus a monthly subscription. Low fees — but you bring 100% of the traffic and there is no built-in customer discount or community funding.",
+    source: "shopify.com/pricing, squareup.com/us/en/pricing",
+    verified: "2026-06-22",
+    verdict: "redistribution",
+  },
+];
+
+/** Lightweight config the calculator serialises into the page (no functions). */
+export const CALC_PLATFORMS = COMPETITORS.map((c) => ({
+  key: c.key,
+  label: c.name,
+  pct: c.typicalFeePct,
+  note: c.takeLabel,
+}));

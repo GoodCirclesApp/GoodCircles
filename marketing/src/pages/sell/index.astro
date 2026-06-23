@@ -1,0 +1,223 @@
+---
+// /sell — merchant-acquisition funnel hub. Targets vendors paying double-digit
+// fees on other marketplaces. Honest framing: clear per-sale win vs high-fee
+// platforms; redistribution + loyalty story where fees are already low.
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHero from "../../components/PageHero.astro";
+import FaqList from "../../components/FaqList.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import WhatYouKeepCalculator from "../../components/WhatYouKeepCalculator.astro";
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from "../../lib/faq";
+import { serviceJsonLd, SITE_URL } from "../../data/site";
+
+const TITLE = "Sell on Good Circles — Keep More, Give Your Customers 10% Back · Good Circles";
+const DESCRIPTION =
+  "The low-fee local marketplace for businesses. Pay 1% of profit instead of 15–30% commissions, give customers ~10% back, and fund a local nonprofit on every sale. Free to join.";
+
+const SERVICE = serviceJsonLd({
+  name: "Good Circles for sellers — a low-fee local marketplace",
+  serviceType: "Online marketplace for local businesses",
+  description:
+    "A community marketplace where local businesses sell goods and services on a 1% fee on profit, customers save about 10%, and 10% of the merchant's profit funds a local nonprofit.",
+});
+
+const FAQS: Faq[] = [
+  {
+    q: "What does it cost to sell on Good Circles?",
+    a: "It is free to join — no setup, monthly, or listing fees. You pay a 1% fee on profit only when you make a sale. That replaces the 15–30% commissions most marketplaces and delivery apps charge on the full price of every order.",
+  },
+  {
+    q: "Will I really keep more than on Amazon, Etsy, or DoorDash?",
+    a: "It depends on what you sell and where. Against high-fee platforms like the delivery apps, Groupon, Amazon, or lead-generation sites, you almost always keep more per sale on Good Circles. Against already low-fee channels like Etsy's base fees or your own store, your take-home is similar — the difference is that the margin goes to your customer (about 10% off) and a local nonprofit instead of to a platform. Use the calculator with your own numbers to see your real figure.",
+  },
+  {
+    q: "How do my customers and community benefit?",
+    a: "Customers save about 10% on local purchases, which is real spending power that stays in the local economy. And 10% of the merchant's profit on every sale funds a local nonprofit your customer chooses — a charitable contribution that may be tax-deductible (consult your tax advisor).",
+  },
+  {
+    q: "Who can sell — only product businesses?",
+    a: "Both goods and services. Restaurants, makers, retailers, tradespeople, salons, and service providers can all sell on Good Circles. We are launching in the Jackson, Mississippi metro in September 2026, and the first 200 Mississippi businesses become Founding Merchants.",
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/sell"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    SERVICE,
+    breadcrumbJsonLd([
+      { name: "Home", url: `${SITE_URL}/` },
+      { name: "Sell", url: `${SITE_URL}/sell/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="For local businesses"
+      badge="First 200 Mississippi businesses are Founding Merchants"
+      h1="Stop paying 15–30% to sell. Keep more, and give it back to your community."
+    >
+      <p slot="answer">
+        Every other marketplace takes a cut of your <em>sale</em> — 15% on Amazon, ~20% on Etsy with ads, up to 30%
+        on the delivery apps. Good Circles takes a <strong>1% fee on profit</strong>, so you keep about
+        <strong>89% of your profit</strong>. The money those platforms were extracting goes instead to your customer
+        (they <strong>save ~10%</strong>) and to a <strong>local nonprofit</strong> they choose — turning every sale
+        into loyalty and community impact. Free to join.
+      </p>
+      <Fragment slot="ctas">
+        <a
+          href="/#mirror-section"
+          data-cta-audience="MERCHANT"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+          style="background:#C2A76F;color:#241247"
+        >
+          Become a Founding Merchant (free) →
+        </a>
+        <a
+          href="/sell/marketplace-fees-comparison"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
+          style="border:1px solid rgba(255,255,255,0.35)"
+        >
+          Compare every platform →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The fee isn't the cost — the extraction is
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          A 15–30% platform cut isn't a marketing expense — it's margin leaving your community for a server farm in
+          another state. The marketplaces in the middle have made themselves the most expensive part of a local sale,
+          while the people who actually make and sell the goods keep less and less. Good Circles is built on the
+          opposite premise: the intermediary should be the <em>cheapest</em> part of the transaction, not the
+          costliest.
+        </p>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          So we take 1% of profit and redirect what the other platforms were skimming into two places that actually
+          grow your business: your <strong>customer's pocket</strong> (about 10% back, which brings them back) and a
+          <strong>local nonprofit</strong> (which gives your store a reason to be chosen). Same sale, different rails —
+          and the value stays local.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-12 px-6" style="background:#241247">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-black text-white text-center mb-2" style="letter-spacing:-0.02em">
+          Where every dollar of a $100 sale goes
+        </h2>
+        <p class="text-center text-white/60 text-sm mb-8" style="font-family:'Fira Sans',sans-serif">
+          Example: a $100 sale with $60 of cost. The platform's cut is what leaves your community.
+        </p>
+        <div class="grid sm:grid-cols-3 gap-4" style="font-family:'Fira Sans',sans-serif">
+          <div class="rounded-xl p-5 bg-white/5" style="border:1px solid rgba(255,255,255,.12)">
+            <p class="text-xs font-black uppercase tracking-wider mb-3" style="color:#FADC9C">Amazon (15%)</p>
+            <p class="text-white/85 text-sm leading-relaxed">
+              <strong class="text-white">$15.00</strong> to the platform<br />
+              <strong class="text-white">$0</strong> to your customer<br />
+              <strong class="text-white">$0</strong> to your community<br />
+              <span class="text-white/60">You keep $25.00 profit</span>
+            </p>
+          </div>
+          <div class="rounded-xl p-5 bg-white/5" style="border:1px solid rgba(255,255,255,.12)">
+            <p class="text-xs font-black uppercase tracking-wider mb-3" style="color:#FADC9C">DoorDash (30%)</p>
+            <p class="text-white/85 text-sm leading-relaxed">
+              <strong class="text-white">$30.00</strong> to the platform<br />
+              <strong class="text-white">$0</strong> to your customer<br />
+              <strong class="text-white">$0</strong> to your community<br />
+              <span class="text-white/60">You keep $10.00 profit</span>
+            </p>
+          </div>
+          <div class="rounded-xl p-5" style="background:linear-gradient(135deg,#4B2E84,#7851A9);border:1px solid rgba(255,255,255,.25)">
+            <p class="text-xs font-black uppercase tracking-wider mb-3" style="color:#FADC9C">Good Circles</p>
+            <p class="text-white/90 text-sm leading-relaxed">
+              <strong class="text-white">$0.30</strong> to the platform<br />
+              <strong class="text-white">$10.00</strong> to your customer<br />
+              <strong class="text-white">$3.00</strong> to your community<br />
+              <span class="text-white/75">You keep $26.70 profit (pre-tax)</span>
+            </p>
+          </div>
+        </div>
+        <p class="text-center text-white/55 text-sm mt-6 max-w-2xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+          You keep more here than on Amazon ($25.00) or DoorDash ($10.00) — and the $15–$30 those platforms pocket
+          becomes $10 for your customer and $3 for a local nonprofit. No ad spend, no credit card processing cost to
+          you, and the community giving is tax-deductible. Run your own numbers (and the after-tax view) in the
+          calculator below.
+        </p>
+        <p class="text-center text-white/40 text-[11px] mt-3" style="font-family:'Fira Sans',sans-serif">
+          Pre-tax profit shown. Figures from the published fee schedules (verified 2026-06-22) and the Good Circles
+          10% / 10% / 1% model.
+        </p>
+      </div>
+    </section>
+
+    <WhatYouKeepCalculator heading="See what you'd keep" />
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-8" style="letter-spacing:-0.02em">
+          Switching from a specific platform?
+        </h2>
+        <div class="grid sm:grid-cols-2 gap-4" style="font-family:'Fira Sans',sans-serif">
+          <a href="/sell/doordash" class="block rounded-xl p-5 transition-transform hover:scale-[1.01]" style="border:1px solid #E7DCF2;background:#faf7fd">
+            <p class="font-black text-slate-900 mb-1">Leaving DoorDash, Uber Eats, or Grubhub →</p>
+            <p class="text-sm text-slate-500">Keep your restaurant margin instead of handing over 15–30% per order.</p>
+          </a>
+          <a href="/sell/etsy" class="block rounded-xl p-5 transition-transform hover:scale-[1.01]" style="border:1px solid #E7DCF2;background:#faf7fd">
+            <p class="font-black text-slate-900 mb-1">Selling on Etsy →</p>
+            <p class="text-sm text-slate-500">Turn the fees you pay into customer savings and local impact.</p>
+          </a>
+          <a href="/sell/marketplace-fees-comparison" class="block rounded-xl p-5 transition-transform hover:scale-[1.01]" style="border:1px solid #E7DCF2;background:#faf7fd">
+            <p class="font-black text-slate-900 mb-1">Compare every marketplace →</p>
+            <p class="text-sm text-slate-500">Amazon, eBay, Groupon, Poshmark, Mercari, Walmart and more, side by side.</p>
+          </a>
+          <a href="/for-business" class="block rounded-xl p-5 transition-transform hover:scale-[1.01]" style="border:1px solid #E7DCF2;background:#faf7fd">
+            <p class="font-black text-slate-900 mb-1">How it works for business →</p>
+            <p class="text-sm text-slate-500">The full picture: fees, sales tax, founding status, and getting set up.</p>
+          </a>
+        </div>
+        <p class="text-sm text-slate-400 mt-6" style="font-family:'Fira Sans',sans-serif">
+          More platform comparisons are being added. In the meantime, the
+          <a href="/sell/marketplace-fees-comparison" class="font-bold underline" style="color:#7851A9">full comparison</a>
+          covers them all.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-16 px-6" style="background:#faf7fd">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-2xl font-black text-slate-900 mb-4" style="letter-spacing:-0.02em">Where this is going</h2>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          The goal is bigger than a cheaper marketplace. Good Circles is building toward a local economy that provides
+          every good and service people need <strong>below today's market cost</strong>, while the savings become
+          household spending power, a slice of every sale <strong>passively funds local nonprofits</strong>, and the
+          business <strong>keeps more of what it earns</strong>. When enough of a community's spending runs on these
+          rails, the money that used to leak out compounds at home instead. You don't just sell on Good Circles — you
+          help build that.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Selling on Good Circles — FAQ" />
+
+    <CtaBand
+      heading="Claim your Founding Merchant spot"
+      text="Free to join. A 1% fee on profit only when you sell. The first 200 Mississippi businesses are Founding Merchants — permanently."
+      label="Become a Founding Merchant (free) →"
+      href="/#mirror-section"
+      audience="MERCHANT"
+      secondaryLabel="Compare every platform"
+      secondaryHref="/sell/marketplace-fees-comparison"
+    />
+  </main>
+  <Footer />
+</Base>

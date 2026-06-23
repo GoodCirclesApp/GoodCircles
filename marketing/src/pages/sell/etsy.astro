@@ -1,0 +1,203 @@
+---
+// /sell/etsy — switch page for Etsy sellers. THE HONEST CASE: Etsy's base fees
+// (~10%) are genuinely low, so this is NOT a "you'll earn more per sale" pitch.
+// It's redistribution (the fee becomes customer savings + community funding),
+// the Offsite Ads trap (mandatory 12–15% above $10k/yr), and local loyalty.
+// Etsy terms verified 2026-06-22 (etsy.com/sell).
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHero from "../../components/PageHero.astro";
+import FaqList from "../../components/FaqList.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import WhatYouKeepCalculator from "../../components/WhatYouKeepCalculator.astro";
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from "../../lib/faq";
+import { SITE_URL } from "../../data/site";
+import { goodCircles, competitor } from "../../data/sell-competitors";
+
+const TITLE = "Etsy Fees Alternative — Sell Handmade & Keep More Local (2026) · Good Circles";
+const DESCRIPTION =
+  "An honest look at Etsy's seller fees vs Good Circles. Etsy's base fees are low — so the real difference is where they go: on Good Circles they become customer savings and local funding.";
+
+const g = goodCircles(100, 40); // $100 item, $40 cost, 25% tax
+const etsyBase = competitor(100, 40, 9.95, 0.25, 0); // Etsy base (~10%), no ads
+const etsyAds = competitor(100, 40, 22, 0.25, 0); // Etsy + Offsite Ads (~22%)
+
+const FAQS: Faq[] = [
+  {
+    q: "Are Etsy's fees actually lower than Good Circles?",
+    a: "At Etsy's base fees, yes — about 10% all-in ($0.20 listing + 6.5% transaction + 3% + $0.25 processing), versus Good Circles' 1% fee on profit (with no ad spend and no merchant card cost). We're not going to pretend otherwise. The honest difference is where your fees go and what they buy you — and what happens once Etsy's Offsite Ads kick in.",
+  },
+  {
+    q: "What is Etsy's Offsite Ads fee?",
+    a: "Etsy charges an Offsite Ads fee of 15% (or 12% once you pass $10,000 in trailing-year sales) on any order it attributes to an ad it placed — and enrollment becomes mandatory above $10,000/year. That can push your all-in Etsy cost to roughly 22–25% on those orders. Good Circles has no ad fee, so on ad-attributed sales you keep clearly more.",
+  },
+  {
+    q: "Will I make more selling on Good Circles than on Etsy?",
+    a: "On base fees your take-home per sale is similar — sometimes slightly lower on Good Circles, because the ~10% you give your customer is real. But the value isn't lost: it goes to your customer (a saving that brings them back) and a local nonprofit, instead of to Etsy, and it lowers your taxable income. The moment you'd be paying Etsy's Offsite Ads (mandatory above $10k/yr), you come out ahead on Good Circles on every line.",
+  },
+  {
+    q: "Can I sell on both Etsy and Good Circles?",
+    a: "Yes. Many makers keep an Etsy shop for national reach and use Good Circles to sell to their local community at better economics, with customer savings and nonprofit funding built in. They run side by side.",
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/sell/etsy"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: "Home", url: `${SITE_URL}/` },
+      { name: "Sell", url: `${SITE_URL}/sell/` },
+      { name: "Etsy alternative", url: `${SITE_URL}/sell/etsy/` },
+    ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "Etsy fees alternative — sell handmade and keep more local (2026)",
+      description: DESCRIPTION,
+      datePublished: "2026-06-22",
+      dateModified: "2026-06-22",
+      author: { "@type": "Organization", name: "Good Circles" },
+      publisher: { "@type": "Organization", name: "Good Circles", logo: { "@type": "ImageObject", url: `${SITE_URL}/og.png` } },
+      mainEntityOfPage: `${SITE_URL}/sell/etsy/`,
+    },
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="Selling on Etsy?"
+      badge="First 200 Mississippi businesses are Founding Merchants"
+      h1="Etsy's fees are low. The question is where they go."
+    >
+      <p slot="answer">
+        We'll be straight with you: Etsy's base fees (~10%) are genuinely low, so this isn't a "you'll earn more per
+        sale" pitch. On Good Circles the comparable margin doesn't vanish to a platform — it becomes a
+        <strong>~10% saving for your customer</strong> and <strong>funding for a local nonprofit</strong>, the platform
+        takes just <strong>1% of profit</strong>, and there's no Offsite Ads fee. Same craft, kept local.
+      </p>
+      <Fragment slot="ctas">
+        <a href="/#mirror-section" data-cta-audience="MERCHANT" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Become a Founding Merchant (free) →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">A $100 sale, honestly</h2>
+        <p class="text-slate-600 leading-relaxed mb-8" style="font-family:'Fira Sans',sans-serif">
+          A $100 handmade item with $40 of materials and cost. We're showing you the case where Etsy looks good — base
+          fees, no ads — and the case where it doesn't.
+        </p>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider"></th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Etsy (base)</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Etsy + Offsite Ads</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Customer pays</td>
+                <td class="p-3 font-bold" style="color:#241247">${g.customerPays.toFixed(2)} (saves ${g.customerSaves.toFixed(2)})</td>
+                <td class="p-3 text-slate-500">$100.00</td>
+                <td class="p-3 text-slate-500">$100.00</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Platform fee · ads · card</td>
+                <td class="p-3 font-bold" style="color:#241247">${g.platformFee.toFixed(2)} · $0 · $0</td>
+                <td class="p-3 text-slate-500">~$9.95 · $0 · in fee</td>
+                <td class="p-3 text-slate-500">~$22 · ads · in fee</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Donation to a local nonprofit (deductible)</td>
+                <td class="p-3 font-bold" style="color:#241247">${g.donation.toFixed(2)}</td>
+                <td class="p-3 text-slate-500">—</td>
+                <td class="p-3 text-slate-500">—</td>
+              </tr>
+              <tr style="border-top:2px solid #cbd5e1">
+                <td class="p-3 font-black text-slate-900">Pre-tax profit</td>
+                <td class="p-3 font-black" style="color:#241247">${g.preTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">~${etsyBase.preTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">~${etsyAds.preTaxProfit.toFixed(2)}</td>
+              </tr>
+              <tr style="background:#f7f3fc">
+                <td class="p-3 font-black text-slate-900">After-tax profit (25%)</td>
+                <td class="p-3 font-black" style="color:#241247">${g.afterTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">~${etsyBase.afterTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">~${etsyAds.afterTaxProfit.toFixed(2)}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 text-slate-500 text-xs">Customer saves / community funded</td>
+                <td class="p-3 text-slate-500 text-xs">${g.customerSaves.toFixed(2)} / ${g.donation.toFixed(2)}</td>
+                <td class="p-3 text-slate-500 text-xs">$0 / $0</td>
+                <td class="p-3 text-slate-500 text-xs">$0 / $0</td>
+              </tr>
+              <tr style="background:#f7f3fc">
+                <td class="p-3 font-black text-slate-900">Total local value created</td>
+                <td class="p-3 font-black" style="color:#241247">${g.totalLocalValue.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">~${etsyBase.totalLocalValue.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">~${etsyAds.totalLocalValue.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-sm text-slate-600 leading-relaxed mb-2" style="font-family:'Fira Sans',sans-serif">
+          The honest read: on Etsy's <strong>base</strong> fees with zero ad spend, your personal after-tax cash is a
+          bit higher (~${etsyBase.afterTaxProfit.toFixed(2)} vs ${g.afterTaxProfit.toFixed(2)}). But Good Circles
+          creates <strong>more total local value (${g.totalLocalValue.toFixed(2)})</strong>, your customer saves
+          ${g.customerSaves.toFixed(2)}, and a nonprofit is funded tax-efficiently. The moment you run any ads on Etsy —
+          and Offsite Ads are mandatory above $10k/yr — Good Circles wins on every line.
+        </p>
+        <p class="text-[11px] text-slate-400" style="font-family:'Fira Sans',sans-serif">
+          Etsy: $0.20 listing + 6.5% transaction + (3% + $0.25) US processing ≈ ~10% all-in; Offsite Ads add 12–15% on
+          ad-attributed orders, mandatory above $10k/yr (verified 2026-06-22, etsy.com/sell). Good Circles has no ad
+          spend and no merchant card cost (the customer pays credit card processing if they use a card). Illustration,
+          not tax advice.
+        </p>
+      </div>
+    </section>
+
+    <WhatYouKeepCalculator defaultKey="etsy" heading="Run your shop's numbers" />
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The real difference isn't the fee — it's who it's for
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          On Etsy, your ~10% goes to Etsy and your customer is Etsy's, not yours. On Good Circles, that same margin
+          goes to <em>your</em> customer as a saving that brings them back, and to a local nonprofit that gives people
+          a reason to choose your shop. You're building a local following, not renting traffic — and you dodge the
+          Offsite Ads fee that quietly doubles many sellers' costs.
+        </p>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          Keep your Etsy shop for national reach if it's working — and use Good Circles to own your local community at
+          better economics. See the full picture on <a href="/for-business" class="font-bold underline" style="color:#7851A9">Good Circles for business »</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Etsy vs Good Circles — FAQ" />
+
+    <CtaBand
+      heading="Turn your fees into customer savings and local impact"
+      text="Free to join. A 1% fee on profit only when you sell. The first 200 Mississippi businesses are Founding Merchants."
+      label="Become a Founding Merchant (free) →"
+      href="/#mirror-section"
+      audience="MERCHANT"
+      secondaryLabel="Compare every platform"
+      secondaryHref="/sell/marketplace-fees-comparison"
+    />
+  </main>
+  <Footer />
+</Base>

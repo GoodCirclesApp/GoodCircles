@@ -1,0 +1,198 @@
+---
+// Honest "What You Keep" calculator — full after-tax accounting. Uses the
+// merchant's own price, cost, tax rate, and current ad spend to show after-tax
+// profit on their platform vs Good Circles, plus the deductible community
+// funding and the total local value of each sale. Zero framework — inline JS.
+//
+// Methodology mirrors src/data/sell-competitors.ts:
+//   Good Circles: revenue = list price; the 10% customer discount and the 10%
+//   deductible nonprofit donation both reduce taxable income; NO merchant card
+//   cost (customer pays card processing if used), NO commission on the sale, NO
+//   ad spend. Competitor: revenue − COGS − fee − ad spend, then tax.
+import { CALC_PLATFORMS, CONSUMER_DISCOUNT, NONPROFIT_RATE, PLATFORM_RATE, DEFAULT_TAX_RATE } from "../data/sell-competitors";
+
+interface Props {
+  defaultKey?: string;
+  heading?: string;
+}
+const { defaultKey = CALC_PLATFORMS[0].key, heading = "Run your own full accounting" } = Astro.props;
+const CFG = { PLATFORMS: CALC_PLATFORMS, defaultKey, DISC: CONSUMER_DISCOUNT, NP: NONPROFIT_RATE, PF: PLATFORM_RATE, TAX: DEFAULT_TAX_RATE };
+---
+
+<section class="py-16 px-6" style="background:#faf7fd">
+  <div class="max-w-3xl mx-auto">
+    <p class="text-center text-xs font-black uppercase tracking-widest mb-3" style="color:#C2A76F">Calculator</p>
+    <h2 class="text-3xl font-black text-center text-slate-900 mb-3" style="letter-spacing:-0.02em">{heading}</h2>
+    <p class="text-center text-slate-600 mb-10 max-w-xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+      Your price, cost, tax rate, and current ad spend. This uses your numbers — not a sales pitch — to show your
+      after-tax profit on each platform and the total local value of every sale.
+    </p>
+
+    <div class="rounded-2xl bg-white p-6 sm:p-8" style="border:1px solid #E7DCF2;box-shadow:0 10px 40px rgba(120,81,169,.08)">
+      <div class="grid sm:grid-cols-3 gap-5" style="font-family:'Fira Sans',sans-serif">
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your current platform</span>
+          <select id="wyk-platform" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0;background:#fff">
+            {CALC_PLATFORMS.map((p) => <option value={p.key}>{p.label}</option>)}
+          </select>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Their fee / commission (%)</span>
+          <input id="wyk-fee" type="number" min="0" max="100" step="0.1" inputmode="decimal" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+          <span id="wyk-fee-note" class="block text-[11px] text-slate-400 mt-1"></span>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your ad spend there (%)</span>
+          <input id="wyk-mkt" type="number" min="0" max="60" step="0.5" inputmode="decimal" value="10" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+          <span class="block text-[11px] text-slate-400 mt-1">Good Circles is $0 — demand comes from nonprofit supporters</span>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your combined tax rate (%)</span>
+          <input id="wyk-tax" type="number" min="0" max="60" step="1" inputmode="decimal" value="25" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+          <span class="block text-[11px] text-slate-400 mt-1">income + self-employment + state — ask your CPA</span>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your price ($)</span>
+          <input id="wyk-price" type="number" min="0" step="0.01" inputmode="decimal" value="100" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your cost — COGS ($)</span>
+          <input id="wyk-cogs" type="number" min="0" step="0.01" inputmode="decimal" value="60" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+        <label class="block sm:col-span-3">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Sales per month (to project a year)</span>
+          <input id="wyk-vol" type="number" min="0" step="1" inputmode="numeric" value="100" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mt-8">
+        <div class="rounded-xl p-5 text-center" style="background:#f4f1f7;border:1px solid #E7DCF2">
+          <p class="text-xs font-black uppercase tracking-wider text-slate-500 mb-1" id="wyk-comp-label">Your platform</p>
+          <p class="text-3xl font-black text-slate-700" id="wyk-comp-after">$0.00</p>
+          <p class="text-[11px] text-slate-400 mt-1">after-tax profit / sale</p>
+        </div>
+        <div class="rounded-xl p-5 text-center text-white" style="background:linear-gradient(135deg,#4B2E84,#7851A9)">
+          <p class="text-xs font-black uppercase tracking-wider mb-1" style="color:#FADC9C">Good Circles</p>
+          <p class="text-3xl font-black" id="wyk-gc-after">$0.00</p>
+          <p class="text-[11px] text-white/70 mt-1">after-tax profit / sale</p>
+        </div>
+      </div>
+      <p id="wyk-delta" class="text-center font-bold mt-5" style="font-family:'Fira Sans',sans-serif"></p>
+
+      <div class="mt-5 rounded-xl p-5 text-center" style="background:#241247;font-family:'Fira Sans',sans-serif">
+        <p class="text-xs font-black uppercase tracking-wider mb-1" style="color:#FADC9C">Total local value created per sale</p>
+        <p class="text-2xl font-black text-white"><span id="wyk-gc-value">$0.00</span> on Good Circles <span class="text-white/50">vs</span> <span id="wyk-comp-value">$0.00</span> on <span id="wyk-comp-vname">your platform</span></p>
+        <p class="text-[11px] text-white/60 mt-1">your after-tax profit + your customer's savings + community funding</p>
+      </div>
+
+      <h3 class="font-black text-slate-900 mt-7 mb-2" style="font-size:1rem">Line-by-line, per sale</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" style="border-collapse:collapse;font-family:'Fira Sans',sans-serif">
+          <thead>
+            <tr style="background:#faf7fd">
+              <th class="text-left p-2.5 font-black text-slate-500 text-xs uppercase tracking-wider">Per sale</th>
+              <th class="text-left p-2.5 font-black text-slate-500 text-xs uppercase tracking-wider" id="wyk-c-name">Platform</th>
+              <th class="text-left p-2.5 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Revenue (list price)</td><td class="p-2.5 text-slate-600" id="wyk-c-rev"></td><td class="p-2.5 font-bold" style="color:#241247" id="wyk-g-rev"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: customer savings (10%)</td><td class="p-2.5 text-slate-600" id="wyk-c-disc"></td><td class="p-2.5" style="color:#241247" id="wyk-g-disc"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: COGS</td><td class="p-2.5 text-slate-600" id="wyk-c-cogs"></td><td class="p-2.5" style="color:#241247" id="wyk-g-cogs"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: platform fee</td><td class="p-2.5 text-slate-600" id="wyk-c-fee"></td><td class="p-2.5" style="color:#241247" id="wyk-g-fee"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: ad / marketing</td><td class="p-2.5 text-slate-600" id="wyk-c-mkt"></td><td class="p-2.5" style="color:#241247" id="wyk-g-mkt"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: card processing</td><td class="p-2.5 text-slate-600" id="wyk-c-card"></td><td class="p-2.5" style="color:#241247" id="wyk-g-card"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: donation (deductible)</td><td class="p-2.5 text-slate-600" id="wyk-c-char"></td><td class="p-2.5" style="color:#241247" id="wyk-g-char"></td></tr>
+            <tr style="border-top:2px solid #cbd5e1"><td class="p-2.5 font-black text-slate-900">Taxable / pre-tax profit</td><td class="p-2.5 font-black text-slate-700" id="wyk-c-pre"></td><td class="p-2.5 font-black" style="color:#241247" id="wyk-g-pre"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: income tax</td><td class="p-2.5 text-slate-600" id="wyk-c-tax"></td><td class="p-2.5" style="color:#241247" id="wyk-g-tax"></td></tr>
+            <tr style="background:#f3eefb"><td class="p-2.5 font-black text-slate-900">After-tax profit</td><td class="p-2.5 font-black text-slate-700" id="wyk-c-after2"></td><td class="p-2.5 font-black" style="color:#241247" id="wyk-g-after2"></td></tr>
+            <tr style="background:#fcfbfe"><td class="p-2.5 text-slate-500 text-xs">Memo: customer saves</td><td class="p-2.5 text-slate-500 text-xs" id="wyk-c-save"></td><td class="p-2.5 text-slate-500 text-xs" id="wyk-g-save"></td></tr>
+            <tr style="background:#fcfbfe"><td class="p-2.5 text-slate-500 text-xs">Memo: community funded</td><td class="p-2.5 text-slate-500 text-xs" id="wyk-c-comm"></td><td class="p-2.5 text-slate-500 text-xs" id="wyk-g-comm"></td></tr>
+            <tr style="background:#fcfbfe"><td class="p-2.5 text-slate-500 text-xs">Memo: your after-tax cost to deliver that value</td><td class="p-2.5 text-slate-500 text-xs">—</td><td class="p-2.5 text-slate-500 text-xs" id="wyk-g-cost"></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-5 rounded-xl p-4 text-center text-sm" style="background:#f7f3fc;border:1px solid #E7DCF2;color:#4a3570;font-family:'Fira Sans',sans-serif" id="wyk-annual"></div>
+
+      <div class="mt-5 rounded-xl p-4 text-sm" style="background:#fffaf0;border:1px solid #ecd9ab;color:#5b4a1f;font-family:'Fira Sans',sans-serif">
+        <strong>Why it's tax-smart.</strong> Good Circles charges a 1% fee on profit, costs you nothing in ads (your
+        customers come from local nonprofits and their supporters), and passes credit card processing to the customer
+        who chooses to use a card. And because it's a commercial co-venture, the 10% that funds a local nonprofit is
+        deductible as a business expense — against your business and self-employment income, without the caps on a
+        personal charitable gift — while the ~10% you give your customer is simply untaxed.
+      </div>
+      <p class="text-[11px] text-slate-400 mt-4 leading-relaxed">
+        Illustration only — <strong>not tax advice</strong>. Deductibility depends on your entity, income, and how the
+        arrangement is characterized; confirm with your CPA. Competitor "fee" is the typical published all-in rate
+        (verified 2026-06-22); set the fee and your ad spend to your real numbers.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ CFG }}>
+  (function () {
+    var P = CFG.PLATFORMS, el = function (i) { return document.getElementById(i); };
+    var sel = el("wyk-platform"), fee = el("wyk-fee"), mkt = el("wyk-mkt"), tax = el("wyk-tax"),
+        price = el("wyk-price"), cogs = el("wyk-cogs"), vol = el("wyk-vol");
+    if (!sel) return;
+    var r2 = function (n) { return Math.round(n * 100) / 100; };
+    var m = function (n) { var v = isFinite(n) ? n : 0; return (v < 0 ? "(" : "") + "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (v < 0 ? ")" : ""); };
+    var d0 = function (n) { return "$" + Math.round(isFinite(n) ? n : 0).toLocaleString("en-US"); };
+    var neg = function (n) { return n > 0 ? "(" + m(n).replace(/[()]/g, "") + ")" : "$0.00"; };
+    var byKey = function (k) { for (var i = 0; i < P.length; i++) if (P[i].key === k) return P[i]; return P[0]; };
+
+    function comp(pr, cg, f, t, mk) {
+      var fee = r2(pr * f / 100), mktg = r2(pr * mk / 100), pre = r2(pr - cg - fee - mktg),
+          aft = r2(pre * (1 - t / 100)), tx = r2(pre - aft);
+      return { rev: pr, fee: fee, mkt: mktg, pre: pre, tax: tx, after: aft, value: aft };
+    }
+    function gc(pr, cg, t) {
+      var disc = r2(pr * CFG.DISC), net = r2((pr - disc) - cg), char = r2(net * CFG.NP), fee = r2(net * CFG.PF),
+          pre = r2(pr - disc - cg - fee - char), aft = r2(pre * (1 - t / 100)), tx = r2(pre - aft),
+          cost = r2((disc + char) * (1 - t / 100)), value = r2(aft + disc + char);
+      return { rev: pr, disc: disc, fee: fee, char: char, pre: pre, tax: tx, after: aft, save: disc, comm: char, cost: cost, value: value };
+    }
+
+    function setPlatform() {
+      var p = byKey(sel.value);
+      fee.value = p.pct;
+      el("wyk-fee-note").textContent = "Typical: " + p.note + " — edit to your rate";
+      el("wyk-comp-label").textContent = p.label;
+      el("wyk-c-name").textContent = p.label;
+      el("wyk-comp-vname").textContent = p.label;
+      render();
+    }
+    function render() {
+      var pr = parseFloat(price.value) || 0, cg = parseFloat(cogs.value) || 0, f = parseFloat(fee.value) || 0,
+          t = parseFloat(tax.value) || 0, mk = parseFloat(mkt.value) || 0, v = parseFloat(vol.value) || 0;
+      var c = comp(pr, cg, f, t, mk), g = gc(pr, cg, t);
+      el("wyk-comp-after").textContent = m(c.after); el("wyk-gc-after").textContent = m(g.after);
+      el("wyk-gc-value").textContent = m(g.value); el("wyk-comp-value").textContent = m(c.value);
+      el("wyk-c-rev").textContent = m(c.rev); el("wyk-g-rev").textContent = m(g.rev);
+      el("wyk-c-disc").textContent = "—"; el("wyk-g-disc").textContent = neg(g.disc);
+      el("wyk-c-cogs").textContent = neg(cg); el("wyk-g-cogs").textContent = neg(cg);
+      el("wyk-c-fee").textContent = neg(c.fee); el("wyk-g-fee").textContent = neg(g.fee) + " (1% of profit)";
+      el("wyk-c-mkt").textContent = neg(c.mkt); el("wyk-g-mkt").textContent = "$0.00";
+      el("wyk-c-card").textContent = "(in fee)"; el("wyk-g-card").textContent = "$0.00 (customer pays if card)";
+      el("wyk-c-char").textContent = "—"; el("wyk-g-char").textContent = neg(g.char);
+      el("wyk-c-pre").textContent = m(c.pre); el("wyk-g-pre").textContent = m(g.pre);
+      el("wyk-c-tax").textContent = neg(c.tax); el("wyk-g-tax").textContent = neg(g.tax);
+      el("wyk-c-after2").textContent = m(c.after); el("wyk-g-after2").textContent = m(g.after);
+      el("wyk-c-save").textContent = "$0"; el("wyk-g-save").textContent = m(g.save);
+      el("wyk-c-comm").textContent = "$0"; el("wyk-g-comm").textContent = m(g.comm);
+      el("wyk-g-cost").textContent = m(g.cost);
+      var diff = r2(g.after - c.after), dv = r2(g.value - c.value), dl = el("wyk-delta");
+      if (diff > 0.005) dl.innerHTML = "You keep <span style=\"color:#2f9e44\">" + m(diff) + " more after tax</span> per sale — plus " + m(dv) + " more total local value.";
+      else if (diff < -0.005) dl.innerHTML = "Your after-tax cash is <span style=\"color:#b4690e\">" + m(-diff) + " lower</span> per sale — but you create <strong>" + m(dv) + " more total local value</strong>, and fund your community tax-efficiently.";
+      else dl.textContent = "About the same after-tax — but you create more total local value and fund your community tax-efficiently.";
+      var yr = v * 12;
+      el("wyk-annual").innerHTML = "At " + (v || 0) + " sales/month: <strong style=\"color:#7851A9\">" + d0(dv * yr) + "</strong> more total local value per year — <strong style=\"color:#7851A9\">" + d0(g.save * yr) + "</strong> back to customers and <strong style=\"color:#7851A9\">" + d0(g.comm * yr) + "</strong> to local nonprofits annually, with your own after-tax profit " + (diff >= 0 ? "up " : "within ") + "<strong style=\"color:#7851A9\">" + d0(Math.abs(diff * yr)) + "</strong>" + (diff >= 0 ? "" : " of your current platform") + ".";
+    }
+    sel.addEventListener("change", setPlatform);
+    [fee, mkt, tax, price, cogs, vol].forEach(function (i) { i.addEventListener("input", render); });
+    sel.value = CFG.defaultKey;
+    setPlatform();
+  })();
+</script>
