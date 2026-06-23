@@ -124,7 +124,7 @@ const FAQS: Faq[] = [
               </tr>
               {COMPETITORS.map((c) => (
                 <tr style="border-bottom:1px solid #E7DCF2">
-                  <td class="p-3 font-bold text-slate-900">{c.name}</td>
+                  <td class="p-3 font-bold text-slate-900">{c.hasPage ? <a href={`/sell/${c.key}`} class="underline" style="color:#7851A9">{c.name}</a> : c.name}</td>
                   <td class="p-3 text-slate-500">{c.category}</td>
                   <td class="p-3 font-bold text-slate-700">{c.takeLabel}</td>
                   <td class="p-3 text-slate-500">{c.model}</td>

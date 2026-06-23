@@ -147,6 +147,7 @@ export const COMPETITORS: Competitor[] = [
     source: "merchants.ubereats.com/us/en/pricing/",
     verified: "2026-06-22",
     verdict: "win",
+    hasPage: true,
   },
   {
     key: "grubhub",
@@ -160,6 +161,7 @@ export const COMPETITORS: Competitor[] = [
     source: "get.grubhub.com/faq/what-fees-does-grubhub-charge-restaurants/",
     verified: "2026-06-22",
     verdict: "win",
+    hasPage: true,
   },
   {
     key: "groupon",
@@ -187,6 +189,7 @@ export const COMPETITORS: Competitor[] = [
     source: "sell.amazon.com/pricing",
     verified: "2026-06-22",
     verdict: "depends",
+    hasPage: true,
   },
   {
     key: "ebay",
@@ -200,6 +203,7 @@ export const COMPETITORS: Competitor[] = [
     source: "ebay.com/help/selling/fees-credits-invoices/selling-fees",
     verified: "2026-06-22",
     verdict: "depends",
+    hasPage: true,
   },
   {
     key: "walmart",
@@ -213,6 +217,7 @@ export const COMPETITORS: Competitor[] = [
     source: "marketplacelearn.walmart.com (Referral fee schedule)",
     verified: "2026-06-22",
     verdict: "redistribution",
+    hasPage: true,
   },
   {
     key: "poshmark",
@@ -225,6 +230,7 @@ export const COMPETITORS: Competitor[] = [
     source: "poshmark.com seller terms",
     verified: "2026-06-22",
     verdict: "win",
+    hasPage: true,
   },
   {
     key: "mercari",
@@ -238,6 +244,7 @@ export const COMPETITORS: Competitor[] = [
     source: "mercari.com/us/help_center/article/169",
     verified: "2026-06-22",
     verdict: "redistribution",
+    hasPage: true,
   },
   {
     key: "etsy",
@@ -264,6 +271,7 @@ export const COMPETITORS: Competitor[] = [
     source: "fiverr.com (Payment Terms of Service)",
     verified: "2026-06-22",
     verdict: "depends",
+    hasPage: true,
   },
   {
     key: "ownstore",
