@@ -173,6 +173,7 @@ export const COMPETITORS: Competitor[] = [
     source: "groupon.com/merchant/frequently-asked-questions",
     verified: "2026-06-22",
     verdict: "win",
+    hasPage: true,
   },
   {
     key: "amazon",

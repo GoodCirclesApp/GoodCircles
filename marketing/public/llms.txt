@@ -28,6 +28,7 @@ A merchant-acquisition section for businesses currently paying high fees on othe
 - [Sell on Good Circles](https://goodcircles.org/sell): the hub — keep more, give customers ~10% back, fund a local nonprofit on every sale; free to join.
 - [Marketplace seller fees compared](https://goodcircles.org/sell/marketplace-fees-comparison): a 2026 side-by-side of what Amazon, Etsy, eBay, DoorDash, Uber Eats, Grubhub, Groupon, Poshmark, Mercari, Walmart and Fiverr take from sellers, with an interactive "what you keep" calculator. All competitor fees verified 2026-06-22 against the platforms' own pages.
 - [DoorDash fee alternative for restaurants](https://goodcircles.org/sell/doordash): delivery apps take 15–30% per order; Good Circles takes 1% of profit while the customer saves ~10%.
+- [Groupon alternative for small business](https://goodcircles.org/sell/groupon): Groupon often keeps ~75% of a deal (a ~50%-off voucher plus a ~50/50 split), frequently below cost; Good Circles takes 1% of profit while the customer saves ~10% and a local nonprofit is funded.
 - [Etsy fees alternative](https://goodcircles.org/sell/etsy): an honest comparison — Etsy's base fees are low, so the difference is that on Good Circles the fee becomes customer savings and local funding, with no Offsite Ads fee.
 
 ## Nonprofit Resource Hub (free, comprehensive education for nonprofits)
