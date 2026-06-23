@@ -211,4 +211,27 @@ export const SELL_PAGES: SellPage[] = [
       { q: "Is Good Circles for service providers, not just products?", a: "Both. Good Circles is a local marketplace for goods and services - tradespeople, creatives, and service providers can all sell to their local community with customer savings and nonprofit funding built in." },
     ],
   },
+  {
+    key: "upwork",
+    title: "Upwork Fee Alternative for Freelancers (2026) · Good Circles",
+    description:
+      "Upwork takes ~10-13% from freelancers and adds a client-side fee. Good Circles' fees are comparable, but it brings you LOCAL clients, your customer saves ~10%, and every sale funds a local nonprofit.",
+    eyebrow: "Selling on Upwork?",
+    h1: "Upwork's fees are lower now. The question is which clients you want.",
+    answerHtml:
+      "Upwork's freelancer fee dropped to a variable ~10-13% in 2025, so this is an honest comparison, not a 'you'll earn far more' pitch. On Good Circles your per-job cash is comparable, but your client is <strong>local</strong> (not a global low-bid race), your customer <strong>saves ~10%</strong> instead of paying Upwork's client-side markup, a local nonprofit is funded, and the platform takes <strong>1% of profit</strong>. No ad spend, no merchant card cost.",
+    example: { price: 100, cogs: 15, mkt: 0 },
+    compCustomerPays: "$100.00 + client fee",
+    intro: {
+      h2: "The honest version",
+      p1: "We won't pretend Upwork is expensive anymore - since 2025 the freelancer fee is a variable 0-15% (reported blended ~10-13%), lower than Fiverr's flat 20%. On a high-margin service, that fee plus the ~10% Good Circles passes to your customer means your per-job cash can be a little higher on Upwork.",
+      p2Html:
+        "The difference is the clients and the model: Upwork is a global low-bid marketplace where the client also pays a markup, while Good Circles brings you LOCAL clients who save ~10% (no client-side fee), funds a local nonprofit, and lowers your taxable income through the co-venture. You create far more total local value per job. <strong>Run your real numbers in the calculator below.</strong>",
+    },
+    faqs: [
+      { q: "How much does Upwork take from freelancers?", a: "Since May 2025 Upwork's freelancer service fee is variable (0-15% per contract), with a reported blended rate around 10-13%. Clients also pay a marketplace fee (~5% on the Basic plan) plus a one-time contract-initiation fee. Good Circles charges a 1% fee on profit, with no ad spend and no merchant card cost." },
+      { q: "Will I keep more on Good Circles than Upwork?", a: "On a high-margin service it can be close, and Upwork's lower fee may leave slightly more per job on raw cash - because Good Circles passes ~10% to your customer. The difference is that on Good Circles your client is local and saves money (instead of paying Upwork's client markup), a local nonprofit is funded, and you create far more total local value. Run your numbers in the calculator." },
+      { q: "Can I use both Upwork and Good Circles?", a: "Yes. Keep Upwork for global, remote contracts and use Good Circles to win and serve local clients at better economics - with customer savings, community funding, and no global price race. Good Circles is free to join with a 1% fee on profit." },
+    ],
+  },
 ];

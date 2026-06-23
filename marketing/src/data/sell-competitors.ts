@@ -354,6 +354,20 @@ export const COMPETITORS: Competitor[] = [
     hasPage: true,
   },
   {
+    key: "upwork",
+    name: "Upwork",
+    category: "Freelance",
+    typicalFeePct: 12,
+    takeLabel: "~10–13% to the freelancer",
+    model: "Variable freelancer service fee (0–15% per contract; reported blended ~10–13%); plus a client-side marketplace fee.",
+    detail:
+      "The freelancer service fee became variable (0–15% per contract) in May 2025, with a reported blended rate around 10–13%; clients also pay a marketplace fee (~5% on Basic) plus a one-time contract-initiation fee.",
+    source: "support.upwork.com (Freelancer Service Fee)",
+    verified: "2026-06-22",
+    verdict: "redistribution",
+    hasPage: true,
+  },
+  {
     key: "ownstore",
     name: "Your own store (Shopify / Square)",
     category: "Own store",
