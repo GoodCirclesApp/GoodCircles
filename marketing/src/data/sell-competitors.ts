@@ -126,6 +126,48 @@ export const LEAD_GEN_PLATFORMS = [
   { key: "other", label: "Other lead-gen (HomeAdvisor, etc.)", cpl: 35, close: 20, note: "pay per shared lead — set your own numbers" },
 ];
 
+// --- Subscription / booking model (Vagaro, StyleSeat, Booksy) --------------
+// Salon/local-services booking software: a monthly subscription + payment
+// processing, and (StyleSeat/Booksy) a one-time NEW-CLIENT fee of ~30% of the
+// first appointment (capped). Cheap for REPEAT clients; the real cost is the
+// recurring subscription plus acquiring NEW clients. Good Circles brings new
+// local clients at no acquisition fee, no subscription, no merchant card cost.
+export interface SubConfig {
+  monthlySub: number; procPct: number; procFixed: number;
+  newClientPct: number; newClientCap: number; bookingsPerMonth: number;
+}
+export interface SubResult {
+  processing: number; subPerBooking: number; newClientFee: number;
+  preTaxReturning: number; afterTaxReturning: number; totalValueReturning: number;
+  preTaxNew: number; afterTaxNew: number; totalValueNew: number;
+  subscriptionPerYear: number;
+}
+export function subscriptionBooking(
+  price: number, cogs: number, cfg: SubConfig, taxRate: number = DEFAULT_TAX_RATE,
+): SubResult {
+  const processing = round2(price * (cfg.procPct / 100) + cfg.procFixed);
+  const subPerBooking = cfg.bookingsPerMonth > 0 ? round2(cfg.monthlySub / cfg.bookingsPerMonth) : round2(cfg.monthlySub);
+  const newClientFee = round2(Math.min(price * (cfg.newClientPct / 100), cfg.newClientCap));
+  const preTaxReturning = round2(price - cogs - processing - subPerBooking);
+  const afterTaxReturning = round2(preTaxReturning * (1 - taxRate));
+  const preTaxNew = round2(preTaxReturning - newClientFee);
+  const afterTaxNew = round2(preTaxNew * (1 - taxRate));
+  return {
+    processing, subPerBooking, newClientFee,
+    preTaxReturning, afterTaxReturning, totalValueReturning: afterTaxReturning,
+    preTaxNew, afterTaxNew, totalValueNew: afterTaxNew,
+    subscriptionPerYear: round2(cfg.monthlySub * 12),
+  };
+}
+// Reported terms verified 2026-06-22 (vagaro.com/pro/pricing, help.styleseat.com,
+// biz.booksy.com/en-us/pricing). New-client fees are one-time per client.
+export const SUBSCRIPTION_PLATFORMS = [
+  { key: "vagaro", label: "Vagaro", monthlySub: 30, procPct: 2.6, procFixed: 0.1, newClientPct: 0, newClientCap: 0, note: "$30/mo (+$10/employee, cap $90); 2.6% + $0.10 processing; no new-client fee" },
+  { key: "styleseat", label: "StyleSeat", monthlySub: 35, procPct: 2.6, procFixed: 0.3, newClientPct: 30, newClientCap: 50, note: "$35/mo; 2.6% + $0.30 processing; 30% new-client fee on the first visit (capped $50)" },
+  { key: "booksy", label: "Booksy", monthlySub: 29.99, procPct: 2.69, procFixed: 0.3, newClientPct: 30, newClientCap: 100, note: "$29.99/mo (+$20/team member); ~2.69% + $0.30 processing; Boost 30% new-client fee (capped $100)" },
+  { key: "other", label: "Other booking app", monthlySub: 30, procPct: 2.6, procFixed: 0.3, newClientPct: 0, newClientCap: 0, note: "monthly subscription + processing — set your own numbers" },
+];
+
 // Honest, margin-aware verdict (the win depends on competitor fee AND the
 // merchant's margin — break-even is fee > ~23% − 11%×(COGS/price)):
 //   "win"            — high-fee/punitive: GC keeps more across realistic margins

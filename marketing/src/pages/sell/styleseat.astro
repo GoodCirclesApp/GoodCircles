@@ -1,0 +1,159 @@
+---
+// /sell/styleseat — switch page for stylists/salons on StyleSeat. Static
+// (subscription/booking model, not the [competitor] %-fee route). Verified
+// 2026-06-22 (help.styleseat.com, styleseat.com/join/pricing): $35/mo + ~2.6% +
+// $0.30 processing + a one-time 30% new-client fee on the first visit (capped $50).
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHero from "../../components/PageHero.astro";
+import FaqList from "../../components/FaqList.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import SubscriptionCalculator from "../../components/SubscriptionCalculator.astro";
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from "../../lib/faq";
+import { SITE_URL } from "../../data/site";
+import { goodCircles, subscriptionBooking } from "../../data/sell-competitors";
+
+const TITLE = "StyleSeat Alternative for Stylists & Salons (2026) · Good Circles";
+const DESCRIPTION =
+  "StyleSeat charges a monthly fee plus ~30% of every new client's first visit. Good Circles brings new local clients at no acquisition fee, takes a 1% fee on profit, and funds a local nonprofit.";
+
+const g = goodCircles(100, 30, 0.25); // $100 service, $30 cost, 25% tax
+const ss = subscriptionBooking(100, 30, { monthlySub: 35, procPct: 2.6, procFixed: 0.3, newClientPct: 30, newClientCap: 50, bookingsPerMonth: 60 }, 0.25);
+
+const FAQS: Faq[] = [
+  {
+    q: "How does StyleSeat charge stylists?",
+    a: "StyleSeat charges about $35/month plus payment processing (~2.6% + $0.30), and a one-time new-client fee of 30% of the first appointment, capped at $50. Repeat clients only cost you processing, but every new client you book through StyleSeat costs up to $50 on top of the subscription.",
+  },
+  {
+    q: "Will I keep more on Good Circles than StyleSeat?",
+    a: "For repeat clients, StyleSeat's per-visit cash is similar - you give your Good Circles customer ~10% back, which StyleSeat doesn't. The big difference is new clients: StyleSeat takes up to $50 of a new client's first visit, while Good Circles brings new local clients at no acquisition fee. On a $100 first visit you keep about $40 after tax on Good Circles versus about $27 on StyleSeat - plus there's no monthly subscription.",
+  },
+  {
+    q: "Can I use StyleSeat and Good Circles together?",
+    a: "Yes. Many stylists keep a booking app for their calendar and use Good Circles as the channel that brings new local clients - without a 30% first-visit fee, with customers saving ~10%, and with a local nonprofit funded on every appointment. Good Circles is free to join with a 1% fee on profit.",
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/sell/styleseat"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: "Home", url: `${SITE_URL}/` },
+      { name: "Sell", url: `${SITE_URL}/sell/` },
+      { name: "StyleSeat alternative", url: `${SITE_URL}/sell/styleseat/` },
+    ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "StyleSeat alternative for stylists and salons (2026)",
+      description: DESCRIPTION,
+      datePublished: "2026-06-23",
+      dateModified: "2026-06-23",
+      author: { "@type": "Organization", name: "Good Circles" },
+      publisher: { "@type": "Organization", name: "Good Circles", logo: { "@type": "ImageObject", url: `${SITE_URL}/og.png` } },
+      mainEntityOfPage: `${SITE_URL}/sell/styleseat/`,
+    },
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="Switch from StyleSeat"
+      badge="First 200 Mississippi businesses are Founding Merchants"
+      h1="StyleSeat takes ~30% of every new client's first visit. Good Circles takes 1% of profit."
+    >
+      <p slot="answer">
+        StyleSeat is cheap for the clients you already have — but it charges a <strong>monthly subscription</strong> and
+        takes <strong>30% of every new client's first visit</strong> (capped at $50), which is exactly the customer it's
+        supposed to bring you. Good Circles brings <strong>new local clients at no acquisition fee</strong>, with
+        <strong>no subscription</strong>, a <strong>1% fee on profit</strong>, your customer <strong>saving ~10%</strong>,
+        and a local nonprofit funded. Free to join.
+      </p>
+      <Fragment slot="ctas">
+        <a href="/#mirror-section" data-cta-audience="MERCHANT" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Become a Founding Merchant (free) →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">A $100 service, side by side</h2>
+        <p class="text-slate-600 leading-relaxed mb-8" style="font-family:'Fira Sans',sans-serif">
+          A $100 service that costs you $30 to deliver, at a 25% tax rate, assuming 60 bookings a month. Notice the gap
+          isn't on repeat clients — it's on the <strong>new</strong> client StyleSeat charges you ${ss.newClientFee.toFixed(2)} to book.
+        </p>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Per service</th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">StyleSeat (repeat)</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">StyleSeat (new client)</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Customer pays</td><td class="p-3 font-bold" style="color:#241247">${g.customerPays.toFixed(2)} (saves ${g.customerSaves.toFixed(2)})</td><td class="p-3 text-slate-500">$100.00</td><td class="p-3 text-slate-500">$100.00</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Cost to deliver</td><td class="p-3 font-bold" style="color:#241247">($30.00)</td><td class="p-3 text-slate-500">($30.00)</td><td class="p-3 text-slate-500">($30.00)</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Processing · subscription / booking</td><td class="p-3 font-bold" style="color:#241247">$0 · $0</td><td class="p-3 text-slate-500">(${ss.processing.toFixed(2)}) · (${ss.subPerBooking.toFixed(2)})</td><td class="p-3 text-slate-500">(${ss.processing.toFixed(2)}) · (${ss.subPerBooking.toFixed(2)})</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">New-client fee (first visit)</td><td class="p-3 font-bold" style="color:#241247">—</td><td class="p-3 text-slate-500">—</td><td class="p-3 text-slate-500">(${ss.newClientFee.toFixed(2)})</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Good Circles fee · donation</td><td class="p-3 font-bold" style="color:#241247">(${g.platformFee.toFixed(2)}) · (${g.donation.toFixed(2)})</td><td class="p-3 text-slate-500">—</td><td class="p-3 text-slate-500">—</td></tr>
+              <tr style="border-top:2px solid #cbd5e1"><td class="p-3 font-black text-slate-900">Pre-tax profit</td><td class="p-3 font-black" style="color:#241247">${g.preTaxProfit.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${ss.preTaxReturning.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${ss.preTaxNew.toFixed(2)}</td></tr>
+              <tr style="background:#f7f3fc"><td class="p-3 font-black text-slate-900">After-tax profit (25%)</td><td class="p-3 font-black" style="color:#241247">${g.afterTaxProfit.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${ss.afterTaxReturning.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${ss.afterTaxNew.toFixed(2)}</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 text-slate-500 text-xs">Customer saves / community funded</td><td class="p-3 text-slate-500 text-xs">${g.customerSaves.toFixed(2)} / ${g.donation.toFixed(2)}</td><td class="p-3 text-slate-500 text-xs">$0 / $0</td><td class="p-3 text-slate-500 text-xs">$0 / $0</td></tr>
+              <tr style="background:#f7f3fc"><td class="p-3 font-black text-slate-900">Total local value created</td><td class="p-3 font-black" style="color:#241247">${g.totalLocalValue.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${ss.totalValueReturning.toFixed(2)}</td><td class="p-3 font-black text-slate-600">${ss.totalValueNew.toFixed(2)}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-slate-400" style="font-family:'Fira Sans',sans-serif">
+          StyleSeat terms reported/verified 2026-06-22 (help.styleseat.com): ~$35/mo (${ss.subscriptionPerYear.toFixed(0)}/yr) +
+          ~2.6% + $0.30 processing + a one-time 30% new-client fee on the first visit (capped $50). Repeat clients are
+          cheap; the cost is the subscription and acquiring new clients. Good Circles has no subscription, no merchant
+          card cost (the customer pays processing if they use a card), and no acquisition fee. Illustration, not tax advice.
+        </p>
+      </div>
+    </section>
+
+    <SubscriptionCalculator defaultKey="styleseat" heading="Run your salon's numbers" />
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          You pay the most for the customers you most want
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          A booking app is genuinely handy for managing your chair and your regulars. But StyleSeat makes its money on
+          the new client — taking up to $50 of that first visit — which is the one part of your business that's hardest
+          to grow. You're paying a premium precisely where you need help most.
+        </p>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          Good Circles is a customer channel, not a toll booth: new local clients come through nonprofits and their
+          supporters at no acquisition fee, you keep about 89% of your profit, your customer saves ~10%, and a local
+          cause is funded. Keep your booking app if you like it — let Good Circles bring the new faces. See
+          <a href="/sell/marketplace-fees-comparison" class="font-bold underline" style="color:#7851A9">the full comparison &raquo;</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="StyleSeat vs Good Circles — FAQ" />
+
+    <CtaBand
+      heading="Bring new clients without the 30% first-visit fee"
+      text="Free to join. A 1% fee on profit only when you sell. The first 200 Mississippi businesses are Founding Merchants."
+      label="Become a Founding Merchant (free) →"
+      href="/#mirror-section"
+      audience="MERCHANT"
+      secondaryLabel="Compare every platform"
+      secondaryHref="/sell/marketplace-fees-comparison"
+    />
+  </main>
+  <Footer />
+</Base>

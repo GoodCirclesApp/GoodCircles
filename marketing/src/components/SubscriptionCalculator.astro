@@ -1,0 +1,184 @@
+---
+// Subscription/booking "What You Keep" calculator (Vagaro / StyleSeat / Booksy).
+// These charge a monthly subscription + payment processing, and (StyleSeat/Booksy)
+// a one-time ~30% new-client fee on the first visit. Cheap for repeat clients;
+// the cost is the subscription + acquiring NEW clients. Compares per-service
+// economics for a returning AND a new client vs Good Circles (no subscription,
+// no merchant card cost, no acquisition fee; 1% of profit + customer savings +
+// community). Zero framework, inline JS.
+import { SUBSCRIPTION_PLATFORMS, CONSUMER_DISCOUNT, NONPROFIT_RATE, PLATFORM_RATE } from "../data/sell-competitors";
+
+interface Props {
+  defaultKey?: string;
+  heading?: string;
+}
+const { defaultKey = SUBSCRIPTION_PLATFORMS[0].key, heading = "Run your own numbers" } = Astro.props;
+const CFG = { PLATFORMS: SUBSCRIPTION_PLATFORMS, defaultKey, DISC: CONSUMER_DISCOUNT, NP: NONPROFIT_RATE, PF: PLATFORM_RATE };
+---
+
+<section class="py-16 px-6" style="background:#faf7fd">
+  <div class="max-w-3xl mx-auto">
+    <p class="text-center text-xs font-black uppercase tracking-widest mb-3" style="color:#C2A76F">Calculator</p>
+    <h2 class="text-3xl font-black text-center text-slate-900 mb-3" style="letter-spacing:-0.02em">{heading}</h2>
+    <p class="text-center text-slate-600 mb-10 max-w-xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+      Booking apps are cheap for repeat clients but charge a monthly subscription and a fee to acquire new ones. Enter
+      your numbers to see a repeat client and a new client side by side, against Good Circles.
+    </p>
+
+    <div class="rounded-2xl bg-white p-6 sm:p-8" style="border:1px solid #E7DCF2;box-shadow:0 10px 40px rgba(120,81,169,.08)">
+      <div class="grid sm:grid-cols-3 gap-5" style="font-family:'Fira Sans',sans-serif">
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Booking platform</span>
+          <select id="sb-platform" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0;background:#fff">
+            {SUBSCRIPTION_PLATFORMS.map((p) => <option value={p.key}>{p.label}</option>)}
+          </select>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Monthly subscription ($)</span>
+          <input id="sb-sub" type="number" min="0" step="1" inputmode="decimal" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+          <span id="sb-note" class="block text-[11px] text-slate-400 mt-1"></span>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Bookings per month</span>
+          <input id="sb-book" type="number" min="1" step="1" inputmode="numeric" value="60" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+          <span class="block text-[11px] text-slate-400 mt-1">spreads the subscription across bookings</span>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Service price ($)</span>
+          <input id="sb-price" type="number" min="0" step="1" inputmode="decimal" value="100" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your cost to deliver ($)</span>
+          <input id="sb-cogs" type="number" min="0" step="1" inputmode="decimal" value="30" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your tax rate (%)</span>
+          <input id="sb-tax" type="number" min="0" max="60" step="1" inputmode="decimal" value="25" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+      </div>
+
+      <div class="mt-7 rounded-xl p-5" style="background:#fff5f5;border:1px solid #f3c7c7;font-family:'Fira Sans',sans-serif">
+        <p class="text-sm text-slate-700" id="sb-callout"></p>
+      </div>
+
+      <h3 class="font-black text-slate-900 mt-7 mb-2" style="font-size:1rem">Per service, side by side</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" style="border-collapse:collapse;font-family:'Fira Sans',sans-serif">
+          <thead>
+            <tr style="background:#faf7fd">
+              <th class="text-left p-2.5 font-black text-slate-500 text-xs uppercase tracking-wider">Per service</th>
+              <th class="text-left p-2.5 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+              <th class="text-left p-2.5 font-black text-slate-500 text-xs uppercase tracking-wider" id="sb-c1">Platform (repeat)</th>
+              <th class="text-left p-2.5 font-black text-slate-500 text-xs uppercase tracking-wider" id="sb-c2">Platform (new client)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Customer pays</td><td class="p-2.5 font-bold" style="color:#241247" id="sb-g-pays"></td><td class="p-2.5 text-slate-600" id="sb-r-pays"></td><td class="p-2.5 text-slate-600" id="sb-n-pays"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: customer savings (10%)</td><td class="p-2.5" style="color:#241247" id="sb-g-disc"></td><td class="p-2.5 text-slate-600">—</td><td class="p-2.5 text-slate-600">—</td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: cost to deliver</td><td class="p-2.5" style="color:#241247" id="sb-g-cogs"></td><td class="p-2.5 text-slate-600" id="sb-r-cogs"></td><td class="p-2.5 text-slate-600" id="sb-n-cogs"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: payment processing</td><td class="p-2.5" style="color:#241247">$0.00 (customer pays if card)</td><td class="p-2.5 text-slate-600" id="sb-r-proc"></td><td class="p-2.5 text-slate-600" id="sb-n-proc"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: subscription (per booking)</td><td class="p-2.5" style="color:#241247">$0.00</td><td class="p-2.5 text-slate-600" id="sb-r-sub"></td><td class="p-2.5 text-slate-600" id="sb-n-sub"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: new-client fee (first visit)</td><td class="p-2.5" style="color:#241247">—</td><td class="p-2.5 text-slate-600">—</td><td class="p-2.5 text-slate-600" id="sb-n-newfee"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: Good Circles fee (1% of profit)</td><td class="p-2.5" style="color:#241247" id="sb-g-fee"></td><td class="p-2.5 text-slate-600">—</td><td class="p-2.5 text-slate-600">—</td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: donation (deductible)</td><td class="p-2.5" style="color:#241247" id="sb-g-char"></td><td class="p-2.5 text-slate-600">—</td><td class="p-2.5 text-slate-600">—</td></tr>
+            <tr style="border-top:2px solid #cbd5e1"><td class="p-2.5 font-black text-slate-900">Pre-tax profit</td><td class="p-2.5 font-black" style="color:#241247" id="sb-g-pre"></td><td class="p-2.5 font-black text-slate-700" id="sb-r-pre"></td><td class="p-2.5 font-black text-slate-700" id="sb-n-pre"></td></tr>
+            <tr style="background:#f3eefb"><td class="p-2.5 font-black text-slate-900">After-tax profit</td><td class="p-2.5 font-black" style="color:#241247" id="sb-g-after"></td><td class="p-2.5 font-black text-slate-700" id="sb-r-after"></td><td class="p-2.5 font-black text-slate-700" id="sb-n-after"></td></tr>
+            <tr style="background:#fcfbfe"><td class="p-2.5 text-slate-500 text-xs">Memo: customer saves / community</td><td class="p-2.5 text-slate-500 text-xs" id="sb-g-memo"></td><td class="p-2.5 text-slate-500 text-xs">$0 / $0</td><td class="p-2.5 text-slate-500 text-xs">$0 / $0</td></tr>
+            <tr style="background:#f3eefb"><td class="p-2.5 font-black text-slate-900">Total local value created</td><td class="p-2.5 font-black" style="color:#241247" id="sb-g-value"></td><td class="p-2.5 font-black text-slate-700" id="sb-r-value"></td><td class="p-2.5 font-black text-slate-700" id="sb-n-value"></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-5 rounded-xl p-4 text-center text-sm" style="background:#f7f3fc;border:1px solid #E7DCF2;color:#4a3570;font-family:'Fira Sans',sans-serif" id="sb-annual"></div>
+
+      <div class="mt-5 rounded-xl p-4 text-sm" style="background:#fffaf0;border:1px solid #ecd9ab;color:#5b4a1f;font-family:'Fira Sans',sans-serif">
+        <strong>Booking tool vs customer channel.</strong> A booking app manages your calendar and payments — useful, and
+        cheap for clients you already have. But it doesn't bring you customers, and acquiring new ones can cost ~30% of
+        their first visit. Good Circles is a customer channel: new local clients come through nonprofits and their
+        supporters at no acquisition fee and no subscription, you keep about 89% of your profit, your customer saves
+        about 10%, and the 10% that funds a local nonprofit is deductible.
+      </div>
+      <p class="text-[11px] text-slate-400 mt-4 leading-relaxed">
+        Illustration only — <strong>not tax advice</strong>. Subscription, processing, and new-client fees are reported
+        platform terms (verified 2026-06-22) and vary by plan, team size, and market — set the subscription to yours.
+        Good Circles applies its ~10% customer discount to the sale; booking-platform clients pay full price. Confirm
+        tax treatment with your CPA.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ CFG }}>
+  (function () {
+    var P = CFG.PLATFORMS, el = function (i) { return document.getElementById(i); };
+    var sel = el("sb-platform"), sub = el("sb-sub"), book = el("sb-book"), price = el("sb-price"),
+        cogs = el("sb-cogs"), tax = el("sb-tax");
+    if (!sel) return;
+    var r2 = function (n) { return Math.round(n * 100) / 100; };
+    var m = function (n) { var v = isFinite(n) ? n : 0; return (v < 0 ? "(" : "") + "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (v < 0 ? ")" : ""); };
+    var d0 = function (n) { return "$" + Math.round(isFinite(n) ? n : 0).toLocaleString("en-US"); };
+    var neg = function (n) { return n > 0 ? "(" + m(n).replace(/[()]/g, "") + ")" : "$0.00"; };
+    var byKey = function (k) { for (var i = 0; i < P.length; i++) if (P[i].key === k) return P[i]; return P[0]; };
+
+    function plat(pr, cg, s, bk, t, p) {
+      var processing = r2(pr * p.procPct / 100 + p.procFixed);
+      var subPer = bk > 0 ? r2(s / bk) : s;
+      var newFee = r2(Math.min(pr * p.newClientPct / 100, p.newClientCap));
+      var preR = r2(pr - cg - processing - subPer), aftR = r2(preR * (1 - t / 100));
+      var preN = r2(preR - newFee), aftN = r2(preN * (1 - t / 100));
+      return { processing: processing, subPer: subPer, newFee: newFee, preR: preR, aftR: aftR, preN: preN, aftN: aftN, subYear: r2(s * 12) };
+    }
+    function gc(pr, cg, t) {
+      var disc = r2(pr * CFG.DISC), net = r2((pr - disc) - cg), char = r2(net * CFG.NP), fee = r2(net * CFG.PF),
+          pre = r2(pr - disc - cg - fee - char), aft = r2(pre * (1 - t / 100)),
+          value = r2(aft + disc + char);
+      return { pays: r2(pr - disc), disc: disc, fee: fee, char: char, pre: pre, after: aft, save: disc, comm: char, value: value };
+    }
+
+    function setPlatform() {
+      var p = byKey(sel.value);
+      sub.value = p.monthlySub;
+      el("sb-note").textContent = p.note;
+      el("sb-c1").textContent = p.label + " (repeat)";
+      el("sb-c2").textContent = p.label + " (new client)";
+      render();
+    }
+    function render() {
+      var p = byKey(sel.value);
+      var pr = parseFloat(price.value) || 0, cg = parseFloat(cogs.value) || 0, s = parseFloat(sub.value) || 0,
+          bk = parseFloat(book.value) || 0, t = parseFloat(tax.value) || 0;
+      var L = plat(pr, cg, s, bk, t, p), g = gc(pr, cg, t);
+      // callout
+      if (L.newFee > 0)
+        el("sb-callout").innerHTML = "Acquiring a <strong>new</strong> client on " + p.label + " costs <strong>" + m(L.newFee) +
+          "</strong> (its ~30% first-visit fee), and you pay <strong>" + m(L.subYear) + "/year</strong> in subscription whether you're booked solid or slow. Good Circles brings new local clients at <strong>$0 acquisition fee and no subscription</strong>.";
+      else
+        el("sb-callout").innerHTML = p.label + " is booking software, not a customer channel — it won't bring you new clients, and you pay <strong>" + m(L.subYear) +
+          "/year</strong> in subscription regardless. Good Circles brings new local clients at <strong>$0 acquisition fee and no subscription</strong>.";
+      // GC column
+      el("sb-g-pays").textContent = m(g.pays) + " (saves " + m(g.save) + ")";
+      el("sb-g-disc").textContent = neg(g.disc); el("sb-g-cogs").textContent = neg(cg);
+      el("sb-g-fee").textContent = neg(g.fee) + " (1% of profit)"; el("sb-g-char").textContent = neg(g.char);
+      el("sb-g-pre").textContent = m(g.pre); el("sb-g-after").textContent = m(g.after);
+      el("sb-g-memo").textContent = m(g.save) + " / " + m(g.comm); el("sb-g-value").textContent = m(g.value);
+      // platform repeat
+      el("sb-r-pays").textContent = m(pr); el("sb-r-cogs").textContent = neg(cg);
+      el("sb-r-proc").textContent = neg(L.processing); el("sb-r-sub").textContent = neg(L.subPer);
+      el("sb-r-pre").textContent = m(L.preR); el("sb-r-after").textContent = m(L.aftR); el("sb-r-value").textContent = m(L.aftR);
+      // platform new client
+      el("sb-n-pays").textContent = m(pr); el("sb-n-cogs").textContent = neg(cg);
+      el("sb-n-proc").textContent = neg(L.processing); el("sb-n-sub").textContent = neg(L.subPer);
+      el("sb-n-newfee").textContent = L.newFee > 0 ? neg(L.newFee) : "—";
+      el("sb-n-pre").textContent = m(L.preN); el("sb-n-after").textContent = m(L.aftN); el("sb-n-value").textContent = m(L.aftN);
+      // annual
+      var newGain = r2(g.after - L.aftN);
+      el("sb-annual").innerHTML = "Per new client you keep <strong style=\"color:#7851A9\">" + m(newGain) +
+        " more</strong> after tax on Good Circles, plus you avoid the <strong style=\"color:#7851A9\">" + m(L.subYear) +
+        "/year</strong> subscription — and every sale saves your customer ~10% and funds a local nonprofit.";
+    }
+    sel.addEventListener("change", setPlatform);
+    [sub, book, price, cogs, tax].forEach(function (i) { i.addEventListener("input", render); });
+    sel.value = CFG.defaultKey;
+    setPlatform();
+  })();
+</script>
