@@ -1,0 +1,194 @@
+---
+// /sell/thumbtack — switch page for service pros on pay-per-lead Thumbtack.
+// Static (not in the [competitor] %-fee route — lead-gen uses a different model).
+// Verified 2026-06-22 (help.thumbtack.com/article/pay-for-leads): pay per shared
+// lead, charged win or lose; per-lead cost varies widely by trade (reported).
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHero from "../../components/PageHero.astro";
+import FaqList from "../../components/FaqList.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import LeadGenCalculator from "../../components/LeadGenCalculator.astro";
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from "../../lib/faq";
+import { SITE_URL } from "../../data/site";
+import { goodCircles, leadGen } from "../../data/sell-competitors";
+
+const TITLE = "Thumbtack Alternative for Service Pros (2026) · Good Circles";
+const DESCRIPTION =
+  "Thumbtack charges you per shared lead — win or lose — so it can cost $150+ to land one job. Good Circles takes a 1% fee on profit, with no lead fees, while customers save ~10% and fund a local nonprofit.";
+
+const g = goodCircles(400, 150, 0.25); // $400 job, $150 cost to deliver, 25% tax
+const tt = leadGen(400, 150, 30, 20, 0.25); // $30/lead, 20% close → ~$150 to win a job
+
+const FAQS: Faq[] = [
+  {
+    q: "How does Thumbtack charge pros - is there a commission?",
+    a: "Thumbtack doesn't take a job commission - instead you pay for every lead, and the same lead is sent to several pros, so you're charged whether or not you win the work. Per-lead costs vary widely by trade (reported anywhere from about $8 to $200+). Because you pay for losers too, the real cost is your cost per lead divided by your close rate.",
+  },
+  {
+    q: "Will I keep more on Good Circles than on Thumbtack?",
+    a: "In most cases, clearly. On a $400 job that costs you $150 to deliver, winning one job at $30 per lead and a 1-in-5 close rate means about $150 in lead fees - leaving roughly $75 after tax. On Good Circles there are no lead fees: you keep about $140 after tax, your customer saves ~10%, and a local nonprofit is funded. On smaller jobs, lead fees can exceed the job entirely.",
+  },
+  {
+    q: "Will I still get customers without buying leads?",
+    a: "Yes. On Good Circles your customers come through local nonprofits and their supporters, so being matched with a customer costs you nothing - there are no shared leads to bid on and nothing to pay when you don't win. It's free to join, with a 1% fee on profit only when you complete a sale.",
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/sell/thumbtack"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: "Home", url: `${SITE_URL}/` },
+      { name: "Sell", url: `${SITE_URL}/sell/` },
+      { name: "Thumbtack alternative", url: `${SITE_URL}/sell/thumbtack/` },
+    ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "Thumbtack alternative for service pros (2026)",
+      description: DESCRIPTION,
+      datePublished: "2026-06-23",
+      dateModified: "2026-06-23",
+      author: { "@type": "Organization", name: "Good Circles" },
+      publisher: { "@type": "Organization", name: "Good Circles", logo: { "@type": "ImageObject", url: `${SITE_URL}/og.png` } },
+      mainEntityOfPage: `${SITE_URL}/sell/thumbtack/`,
+    },
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="Switch from Thumbtack"
+      badge="First 200 Mississippi businesses are Founding Merchants"
+      h1="Thumbtack charges you per lead — win or lose. Good Circles takes 1% of profit."
+    >
+      <p slot="answer">
+        Thumbtack is pay-per-lead: you buy leads that are <strong>shared with ~4-5 pros</strong> and you're charged
+        <strong>whether or not you win the job</strong>. Win one job in five and a $30 lead becomes
+        <strong>~$150 in lead fees per job</strong> — sometimes more than the job is worth. Good Circles has
+        <strong>no lead fees and no merchant card cost</strong> — a <strong>1% fee on profit</strong>, your customer
+        <strong>saves ~10%</strong>, and a local nonprofit gets funded. Free to join.
+      </p>
+      <Fragment slot="ctas">
+        <a href="/#mirror-section" data-cta-audience="MERCHANT" class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider" style="background:#C2A76F;color:#241247">
+          Become a Founding Merchant (free) →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">A $400 job, side by side</h2>
+        <p class="text-slate-600 leading-relaxed mb-8" style="font-family:'Fira Sans',sans-serif">
+          A $400 job that costs you $150 to deliver, at a 25% tax rate. On Thumbtack, winning it at $30 per lead and a
+          1-in-5 close rate means paying for <strong>{tt.leadsPerWin} leads (~${tt.winCost.toFixed(2)})</strong> — and
+          you're charged for the {Math.round(tt.leadsPerWin - 1)} you lost.
+        </p>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Per job won</th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Thumbtack</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'Fira Sans',sans-serif">
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Customer pays</td>
+                <td class="p-3 font-bold" style="color:#241247">${g.customerPays.toFixed(2)} (saves ${g.customerSaves.toFixed(2)})</td>
+                <td class="p-3 text-slate-500">$400.00</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Cost to deliver</td>
+                <td class="p-3 font-bold" style="color:#241247">($150.00)</td>
+                <td class="p-3 text-slate-500">($150.00)</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Lead fees to win the job</td>
+                <td class="p-3 font-bold" style="color:#241247">$0.00 (no lead cost)</td>
+                <td class="p-3 text-slate-500">(${tt.winCost.toFixed(2)})</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Platform fee</td>
+                <td class="p-3 font-bold" style="color:#241247">(${g.platformFee.toFixed(2)}) — 1% of profit</td>
+                <td class="p-3 text-slate-500">$0.00 (charges per lead)</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 font-bold text-slate-900">Donation (deductible)</td>
+                <td class="p-3 font-bold" style="color:#241247">(${g.donation.toFixed(2)})</td>
+                <td class="p-3 text-slate-500">—</td>
+              </tr>
+              <tr style="border-top:2px solid #cbd5e1">
+                <td class="p-3 font-black text-slate-900">Pre-tax profit</td>
+                <td class="p-3 font-black" style="color:#241247">${g.preTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">${tt.preTaxProfit.toFixed(2)}</td>
+              </tr>
+              <tr style="background:#f7f3fc">
+                <td class="p-3 font-black text-slate-900">After-tax profit (25%)</td>
+                <td class="p-3 font-black" style="color:#241247">${g.afterTaxProfit.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">${tt.afterTaxProfit.toFixed(2)}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E7DCF2">
+                <td class="p-3 text-slate-500 text-xs">Customer saves / community funded</td>
+                <td class="p-3 text-slate-500 text-xs">${g.customerSaves.toFixed(2)} / ${g.donation.toFixed(2)}</td>
+                <td class="p-3 text-slate-500 text-xs">$0 / $0</td>
+              </tr>
+              <tr style="background:#f7f3fc">
+                <td class="p-3 font-black text-slate-900">Total local value created</td>
+                <td class="p-3 font-black" style="color:#241247">${g.totalLocalValue.toFixed(2)}</td>
+                <td class="p-3 font-black text-slate-600">${tt.totalLocalValue.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-slate-400" style="font-family:'Fira Sans',sans-serif">
+          Thumbtack is pay-per-lead with leads shared among several pros and charged win or lose (verified 2026-06-22,
+          help.thumbtack.com); per-lead costs are reported and vary widely by trade, so set your own in the calculator.
+          Good Circles takes a 1% fee on profit, with no lead fees, no ad spend, and no merchant card cost. On smaller
+          jobs, lead fees frequently exceed the job. Illustration, not tax advice.
+        </p>
+      </div>
+    </section>
+
+    <LeadGenCalculator defaultKey="thumbtack" heading="Run your trade's numbers" />
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          You pay for the jobs you lose
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          The hardest part of pay-per-lead isn't the price of one lead — it's that the same lead goes to several pros
+          and you're billed even when someone else wins. Your true cost to land a job is the lead price divided by how
+          often you actually close, and for a lot of trades that math turns small jobs into money-losers.
+        </p>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          Good Circles doesn't sell leads. Your customers come from local nonprofits and the neighbors who support
+          them, so being matched costs you nothing, you keep about 89% of your profit, and every job funds a local
+          cause. See <a href="/sell/marketplace-fees-comparison" class="font-bold underline" style="color:#7851A9">the full marketplace comparison &raquo;</a>
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Thumbtack vs Good Circles — FAQ" />
+
+    <CtaBand
+      heading="Stop paying for leads you lose"
+      text="Free to join. A 1% fee on profit only when you sell. The first 200 Mississippi businesses are Founding Merchants."
+      label="Become a Founding Merchant (free) →"
+      href="/#mirror-section"
+      audience="MERCHANT"
+      secondaryLabel="Compare every platform"
+      secondaryHref="/sell/marketplace-fees-comparison"
+    />
+  </main>
+  <Footer />
+</Base>

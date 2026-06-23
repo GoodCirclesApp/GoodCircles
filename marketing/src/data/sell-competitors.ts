@@ -88,6 +88,44 @@ export function competitor(
   return { fee, marketing, preTaxProfit, tax, afterTaxProfit, totalLocalValue: afterTaxProfit };
 }
 
+// --- Lead-generation model (Thumbtack, Angi) -------------------------------
+// Pay-per-lead, no commission: you buy shared leads and are charged whether or
+// not you win. Cost to win ONE job = cost-per-lead ÷ close-rate, and the lead
+// fees for the jobs you LOST are pure waste. This cost is independent of job
+// value, so it is brutal on lower-value jobs and can exceed the job entirely.
+export interface LeadGenResult {
+  winCost: number; // total lead spend to win one job
+  leadsPerWin: number; // leads paid for per job won
+  wastedOnLosses: number; // lead spend on the jobs you didn't win
+  preTaxProfit: number;
+  tax: number;
+  afterTaxProfit: number;
+  totalLocalValue: number;
+}
+export function leadGen(
+  jobValue: number, cogs: number, costPerLead: number, closeRatePct: number,
+  taxRate: number = DEFAULT_TAX_RATE,
+): LeadGenResult {
+  const leadsPerWin = closeRatePct > 0 ? round2(100 / closeRatePct) : 0;
+  const winCost = round2(costPerLead * leadsPerWin);
+  const preTaxProfit = round2(jobValue - cogs - winCost);
+  const afterTaxProfit = round2(preTaxProfit * (1 - taxRate));
+  const tax = round2(preTaxProfit - afterTaxProfit);
+  return {
+    winCost, leadsPerWin, wastedOnLosses: round2(winCost - costPerLead),
+    preTaxProfit, tax, afterTaxProfit, totalLocalValue: afterTaxProfit,
+  };
+}
+
+// Lead-gen calculator presets (reported ranges — pros set their own; sources:
+// help.thumbtack.com/article/pay-for-leads; Angi has no official price list,
+// figures are reported). Verified 2026-06-22.
+export const LEAD_GEN_PLATFORMS = [
+  { key: "thumbtack", label: "Thumbtack", cpl: 30, close: 20, note: "pay per lead, shared with ~4–5 pros, charged win or lose (reported CPL ~$8–$200+ by trade)" },
+  { key: "angi", label: "Angi", cpl: 45, close: 20, note: "leads + membership/ads on annual contracts (reported CPL ~$15–$120)" },
+  { key: "other", label: "Other lead-gen (HomeAdvisor, etc.)", cpl: 35, close: 20, note: "pay per shared lead — set your own numbers" },
+];
+
 // Honest, margin-aware verdict (the win depends on competitor fee AND the
 // merchant's margin — break-even is fee > ~23% − 11%×(COGS/price)):
 //   "win"            — high-fee/punitive: GC keeps more across realistic margins

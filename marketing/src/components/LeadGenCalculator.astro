@@ -1,0 +1,191 @@
+---
+// Lead-generation "What You Keep" calculator (Thumbtack / Angi / pay-per-lead).
+// Unlike the percentage-fee calculator, the platform cost is a fixed lead spend
+// to WIN one job = cost-per-lead ÷ close-rate, charged win or lose. Compares the
+// after-tax profit per won job vs Good Circles (no lead cost, 1% fee on profit,
+// customer saves ~10%, a local nonprofit is funded). Zero framework, inline JS.
+import { LEAD_GEN_PLATFORMS, CONSUMER_DISCOUNT, NONPROFIT_RATE, PLATFORM_RATE } from "../data/sell-competitors";
+
+interface Props {
+  defaultKey?: string;
+  heading?: string;
+}
+const { defaultKey = LEAD_GEN_PLATFORMS[0].key, heading = "Run your own numbers" } = Astro.props;
+const CFG = { PLATFORMS: LEAD_GEN_PLATFORMS, defaultKey, DISC: CONSUMER_DISCOUNT, NP: NONPROFIT_RATE, PF: PLATFORM_RATE };
+---
+
+<section class="py-16 px-6" style="background:#faf7fd">
+  <div class="max-w-3xl mx-auto">
+    <p class="text-center text-xs font-black uppercase tracking-widest mb-3" style="color:#C2A76F">Calculator</p>
+    <h2 class="text-3xl font-black text-center text-slate-900 mb-3" style="letter-spacing:-0.02em">{heading}</h2>
+    <p class="text-center text-slate-600 mb-10 max-w-xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+      Lead-gen sites charge you per lead — win or lose. Enter your real numbers to see what it actually costs to win
+      one job, and what you'd keep on Good Circles, where customers come from local nonprofits at no lead cost.
+    </p>
+
+    <div class="rounded-2xl bg-white p-6 sm:p-8" style="border:1px solid #E7DCF2;box-shadow:0 10px 40px rgba(120,81,169,.08)">
+      <div class="grid sm:grid-cols-3 gap-5" style="font-family:'Fira Sans',sans-serif">
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Lead-gen platform</span>
+          <select id="lg-platform" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0;background:#fff">
+            {LEAD_GEN_PLATFORMS.map((p) => <option value={p.key}>{p.label}</option>)}
+          </select>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Cost per lead ($)</span>
+          <input id="lg-cpl" type="number" min="0" step="1" inputmode="decimal" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+          <span id="lg-cpl-note" class="block text-[11px] text-slate-400 mt-1"></span>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your close rate (%)</span>
+          <input id="lg-close" type="number" min="1" max="100" step="1" inputmode="decimal" value="20" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+          <span class="block text-[11px] text-slate-400 mt-1">share of paid leads you actually win</span>
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Average job value ($)</span>
+          <input id="lg-job" type="number" min="0" step="1" inputmode="decimal" value="400" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your cost to deliver ($)</span>
+          <input id="lg-cogs" type="number" min="0" step="1" inputmode="decimal" value="150" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+        <label class="block">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Your tax rate (%)</span>
+          <input id="lg-tax" type="number" min="0" max="60" step="1" inputmode="decimal" value="25" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+        <label class="block sm:col-span-3">
+          <span class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-1.5">Jobs won per month (to project a year)</span>
+          <input id="lg-vol" type="number" min="0" step="1" inputmode="numeric" value="10" class="w-full rounded-lg px-3 py-2.5 text-slate-900" style="border:1px solid #cbb8e0" />
+        </label>
+      </div>
+
+      <div class="mt-7 rounded-xl p-5" style="background:#fff5f5;border:1px solid #f3c7c7;font-family:'Fira Sans',sans-serif">
+        <p class="text-sm text-slate-700" id="lg-callout"></p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mt-5">
+        <div class="rounded-xl p-5 text-center" style="background:#f4f1f7;border:1px solid #E7DCF2">
+          <p class="text-xs font-black uppercase tracking-wider text-slate-500 mb-1" id="lg-comp-label">Lead-gen</p>
+          <p class="text-3xl font-black text-slate-700" id="lg-comp-after">$0.00</p>
+          <p class="text-[11px] text-slate-400 mt-1">after-tax profit / job won</p>
+        </div>
+        <div class="rounded-xl p-5 text-center text-white" style="background:linear-gradient(135deg,#4B2E84,#7851A9)">
+          <p class="text-xs font-black uppercase tracking-wider mb-1" style="color:#FADC9C">Good Circles</p>
+          <p class="text-3xl font-black" id="lg-gc-after">$0.00</p>
+          <p class="text-[11px] text-white/70 mt-1">after-tax profit / sale</p>
+        </div>
+      </div>
+      <p id="lg-delta" class="text-center font-bold mt-5" style="font-family:'Fira Sans',sans-serif"></p>
+
+      <div class="mt-5 rounded-xl p-5 text-center" style="background:#241247;font-family:'Fira Sans',sans-serif">
+        <p class="text-xs font-black uppercase tracking-wider mb-1" style="color:#FADC9C">Total local value created per job</p>
+        <p class="text-2xl font-black text-white"><span id="lg-gc-value">$0.00</span> on Good Circles <span class="text-white/50">vs</span> <span id="lg-comp-value">$0.00</span> on lead-gen</p>
+        <p class="text-[11px] text-white/60 mt-1">your after-tax profit + your customer's savings + community funding</p>
+      </div>
+
+      <h3 class="font-black text-slate-900 mt-7 mb-2" style="font-size:1rem">Line-by-line, per job won</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" style="border-collapse:collapse;font-family:'Fira Sans',sans-serif">
+          <thead>
+            <tr style="background:#faf7fd">
+              <th class="text-left p-2.5 font-black text-slate-500 text-xs uppercase tracking-wider">Per job won</th>
+              <th class="text-left p-2.5 font-black text-slate-500 text-xs uppercase tracking-wider" id="lg-c-name">Lead-gen</th>
+              <th class="text-left p-2.5 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Customer pays</td><td class="p-2.5 text-slate-600" id="lg-c-job"></td><td class="p-2.5 font-bold" style="color:#241247" id="lg-g-job"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: customer savings (10%)</td><td class="p-2.5 text-slate-600">—</td><td class="p-2.5" style="color:#241247" id="lg-g-disc"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: cost to deliver</td><td class="p-2.5 text-slate-600" id="lg-c-cogs"></td><td class="p-2.5" style="color:#241247" id="lg-g-cogs"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: lead fees to win the job</td><td class="p-2.5 text-slate-600" id="lg-c-leads"></td><td class="p-2.5" style="color:#241247">$0.00 (no lead cost)</td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: platform fee</td><td class="p-2.5 text-slate-600">$0.00 (charges per lead)</td><td class="p-2.5" style="color:#241247" id="lg-g-fee"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: donation (deductible)</td><td class="p-2.5 text-slate-600">—</td><td class="p-2.5" style="color:#241247" id="lg-g-char"></td></tr>
+            <tr style="border-top:2px solid #cbd5e1"><td class="p-2.5 font-black text-slate-900">Pre-tax profit</td><td class="p-2.5 font-black text-slate-700" id="lg-c-pre"></td><td class="p-2.5 font-black" style="color:#241247" id="lg-g-pre"></td></tr>
+            <tr style="border-bottom:1px solid #E7DCF2"><td class="p-2.5 font-bold text-slate-700">Less: income tax</td><td class="p-2.5 text-slate-600" id="lg-c-tax"></td><td class="p-2.5" style="color:#241247" id="lg-g-tax"></td></tr>
+            <tr style="background:#f3eefb"><td class="p-2.5 font-black text-slate-900">After-tax profit</td><td class="p-2.5 font-black text-slate-700" id="lg-c-after2"></td><td class="p-2.5 font-black" style="color:#241247" id="lg-g-after2"></td></tr>
+            <tr style="background:#fcfbfe"><td class="p-2.5 text-slate-500 text-xs">Memo: customer saves / community funded</td><td class="p-2.5 text-slate-500 text-xs">$0 / $0</td><td class="p-2.5 text-slate-500 text-xs" id="lg-g-memo"></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-5 rounded-xl p-4 text-center text-sm" style="background:#f7f3fc;border:1px solid #E7DCF2;color:#4a3570;font-family:'Fira Sans',sans-serif" id="lg-annual"></div>
+
+      <div class="mt-5 rounded-xl p-4 text-sm" style="background:#fffaf0;border:1px solid #ecd9ab;color:#5b4a1f;font-family:'Fira Sans',sans-serif">
+        <strong>Why Good Circles is different.</strong> There are no lead fees and no ad spend — your customers come from
+        local nonprofits and their supporters, so you're not paying for shared leads you might lose. You keep about 89%
+        of your profit, the platform takes 1% of profit, your customer saves about 10%, and the 10% that funds a local
+        nonprofit is deductible as a business expense.
+      </div>
+      <p class="text-[11px] text-slate-400 mt-4 leading-relaxed">
+        Illustration only — <strong>not tax advice</strong>. Lead costs and close rates vary widely by trade and are
+        reported figures, not official rate cards — set them to your real numbers. Good Circles applies its ~10%
+        customer discount to the sale; lead-gen customers pay full price. Confirm tax treatment with your CPA.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ CFG }}>
+  (function () {
+    var P = CFG.PLATFORMS, el = function (i) { return document.getElementById(i); };
+    var sel = el("lg-platform"), cpl = el("lg-cpl"), close = el("lg-close"), job = el("lg-job"),
+        cogs = el("lg-cogs"), tax = el("lg-tax"), vol = el("lg-vol");
+    if (!sel) return;
+    var r2 = function (n) { return Math.round(n * 100) / 100; };
+    var m = function (n) { var v = isFinite(n) ? n : 0; return (v < 0 ? "(" : "") + "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (v < 0 ? ")" : ""); };
+    var d0 = function (n) { return "$" + Math.round(isFinite(n) ? n : 0).toLocaleString("en-US"); };
+    var neg = function (n) { return n > 0 ? "(" + m(n).replace(/[()]/g, "") + ")" : "$0.00"; };
+    var byKey = function (k) { for (var i = 0; i < P.length; i++) if (P[i].key === k) return P[i]; return P[0]; };
+
+    function lead(jobV, cg, c, cl, t) {
+      var leadsPerWin = cl > 0 ? r2(100 / cl) : 0, winCost = r2(c * leadsPerWin),
+          pre = r2(jobV - cg - winCost), aft = r2(pre * (1 - t / 100)), tx = r2(pre - aft);
+      return { job: jobV, winCost: winCost, leadsPerWin: leadsPerWin, wasted: r2(winCost - c), pre: pre, tax: tx, after: aft, value: aft };
+    }
+    function gc(jobV, cg, t) {
+      var disc = r2(jobV * CFG.DISC), net = r2((jobV - disc) - cg), char = r2(net * CFG.NP), fee = r2(net * CFG.PF),
+          pre = r2(jobV - disc - cg - fee - char), aft = r2(pre * (1 - t / 100)), tx = r2(pre - aft),
+          value = r2(aft + disc + char);
+      return { pays: r2(jobV - disc), disc: disc, fee: fee, char: char, pre: pre, tax: tx, after: aft, save: disc, comm: char, value: value };
+    }
+
+    function setPlatform() {
+      var p = byKey(sel.value);
+      cpl.value = p.cpl; close.value = p.close;
+      el("lg-cpl-note").textContent = p.note;
+      el("lg-comp-label").textContent = p.label;
+      el("lg-c-name").textContent = p.label;
+      render();
+    }
+    function render() {
+      var jobV = parseFloat(job.value) || 0, cg = parseFloat(cogs.value) || 0, c = parseFloat(cpl.value) || 0,
+          cl = parseFloat(close.value) || 0, t = parseFloat(tax.value) || 0, v = parseFloat(vol.value) || 0;
+      var L = lead(jobV, cg, c, cl, t), g = gc(jobV, cg, t);
+      el("lg-callout").innerHTML = "To win <strong>one</strong> job you pay for about <strong>" + (L.leadsPerWin || 0) +
+        " leads</strong> (~<strong>" + m(L.winCost) + "</strong> in lead fees) — and you're charged for the ~" +
+        Math.max(0, Math.round(L.leadsPerWin - 1)) + " you <strong>lost</strong> (about " + m(L.wasted) + " of pure waste). Good Circles charges $0 to be matched with a customer.";
+      el("lg-comp-after").textContent = m(L.after); el("lg-gc-after").textContent = m(g.after);
+      el("lg-gc-value").textContent = m(g.value); el("lg-comp-value").textContent = m(L.value);
+      el("lg-c-job").textContent = m(L.job); el("lg-g-job").textContent = m(g.pays) + " (saves " + m(g.save) + ")";
+      el("lg-g-disc").textContent = neg(g.disc);
+      el("lg-c-cogs").textContent = neg(cg); el("lg-g-cogs").textContent = neg(cg);
+      el("lg-c-leads").textContent = neg(L.winCost);
+      el("lg-g-fee").textContent = neg(g.fee) + " (1% of profit)";
+      el("lg-g-char").textContent = neg(g.char);
+      el("lg-c-pre").textContent = m(L.pre); el("lg-g-pre").textContent = m(g.pre);
+      el("lg-c-tax").textContent = neg(L.tax); el("lg-g-tax").textContent = neg(g.tax);
+      el("lg-c-after2").textContent = m(L.after); el("lg-g-after2").textContent = m(g.after);
+      el("lg-g-memo").textContent = m(g.save) + " / " + m(g.comm);
+      var diff = r2(g.after - L.after), dv = r2(g.value - L.value), dl = el("lg-delta");
+      if (diff > 0.005) dl.innerHTML = "You keep <span style=\"color:#2f9e44\">" + m(diff) + " more after tax</span> per job on Good Circles — with no lead fees, plus customer savings and community funding.";
+      else if (diff < -0.005) dl.innerHTML = "Your after-tax cash is <span style=\"color:#b4690e\">" + m(-diff) + " lower</span> per job — but you create <strong>" + m(dv) + " more total local value</strong> and pay nothing to be matched with a customer.";
+      else dl.textContent = "About the same after-tax — but with no lead fees, plus customer savings and community funding.";
+      var yr = v * 12;
+      el("lg-annual").innerHTML = "At " + (v || 0) + " jobs/month: <strong style=\"color:#7851A9\">" + d0(dv * yr) + "</strong> more total local value per year, <strong style=\"color:#7851A9\">" + d0(g.save * yr) + "</strong> back to customers and <strong style=\"color:#7851A9\">" + d0(g.comm * yr) + "</strong> to local nonprofits — and <strong style=\"color:#7851A9\">" + d0(L.winCost * yr) + "</strong> in lead fees you no longer pay.";
+    }
+    sel.addEventListener("change", setPlatform);
+    [cpl, close, job, cogs, tax, vol].forEach(function (i) { i.addEventListener("input", render); });
+    sel.value = CFG.defaultKey;
+    setPlatform();
+  })();
+</script>
