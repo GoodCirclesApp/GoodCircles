@@ -1,9 +1,9 @@
 ---
-// /cause-marketing — a single, comprehensive Q&A page answering the 40 questions
-// business owners ask about cause marketing, plus a Good Circles section. Zero-JS
-// accordions (reuses the gc-faq styling), a jump-to nav, one H1, and FAQPage +
-// Article + BreadcrumbList schema. Answers render with set:html so internal links
-// work; the FAQPage answer text is the tag-stripped version.
+// /commercial-coventure — single Q&A page answering the 40 questions nonprofits
+// and businesses ask about commercial co-ventures, plus a Good Circles section.
+// Same structure as /cause-marketing: jump nav, zero-JS accordions, one H1,
+// FAQPage + Article + BreadcrumbList schema. Legally dense topic, so the hero and
+// a footer note make clear this is general information, not legal or tax advice.
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
@@ -11,54 +11,54 @@ import PageHero from "../components/PageHero.astro";
 import CtaBand from "../components/CtaBand.astro";
 import { faqJsonLd, breadcrumbJsonLd, type Faq } from "../lib/faq";
 import { SITE_URL } from "../data/site";
-import { CAUSE_MARKETING_QA } from "../data/cause-marketing-qa";
+import { COMMERCIAL_COVENTURE_QA } from "../data/commercial-coventure-qa";
 
-const TITLE = "Cause Marketing: Questions Business Owners Actually Ask · Good Circles";
+const TITLE = "Commercial Co-Ventures: Questions Nonprofits and Businesses Ask · Good Circles";
 const DESCRIPTION =
-  "Straight, practical answers to 40+ real questions about cause marketing: what works, what to avoid, how to choose a cause, and how to build giving into every sale.";
+  "Plain answers to 40+ questions about commercial co-ventures: how they work, the legal and tax rules, finding a partner, and how Good Circles operates one you can join.";
 
 const strip = (html: string) =>
   html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
 
-const allItems = CAUSE_MARKETING_QA.flatMap((c) => c.items);
+const allItems = COMMERCIAL_COVENTURE_QA.flatMap((c) => c.items);
 const FAQS: Faq[] = allItems.map((i) => ({ q: i.q, a: strip(i.a) }));
 
 const ARTICLE = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Cause Marketing: Questions Business Owners Actually Ask",
+  headline: "Commercial Co-Ventures: Questions Nonprofits and Businesses Ask",
   description: DESCRIPTION,
   datePublished: "2026-06-25",
   dateModified: "2026-06-25",
   author: { "@type": "Organization", name: "Good Circles" },
   publisher: { "@type": "Organization", name: "Good Circles", logo: { "@type": "ImageObject", url: `${SITE_URL}/og.png` } },
-  mainEntityOfPage: `${SITE_URL}/cause-marketing/`,
+  mainEntityOfPage: `${SITE_URL}/commercial-coventure/`,
 };
 ---
 
 <Base
   title={TITLE}
   description={DESCRIPTION}
-  path="/cause-marketing"
+  path="/commercial-coventure"
   ogType="article"
   jsonLd={[
     faqJsonLd(FAQS),
     ARTICLE,
     breadcrumbJsonLd([
       { name: "Home", url: `${SITE_URL}/` },
-      { name: "Cause marketing", url: `${SITE_URL}/cause-marketing/` },
+      { name: "Commercial co-ventures", url: `${SITE_URL}/commercial-coventure/` },
     ]),
   ]}
 >
   <Nav solid />
   <main id="main">
-    <PageHero eyebrow="Cause marketing" h1="Cause marketing: the questions business owners actually ask">
+    <PageHero eyebrow="Commercial co-ventures" h1="Commercial co-ventures: questions nonprofits and businesses ask">
       <p slot="answer">
-        Cause marketing ties what a business sells to support for a cause, so that buying becomes a way to give.
-        Done well, it builds trust, loyalty, and differentiation. Done poorly, it reads as a gimmick. The answers
-        below are practical and honest, including where this approach does not fit. Good Circles is not the right
-        tool for every business, but for the large majority that are local and consumer-facing, building giving into
-        every sale is more durable and more affordable than any campaign.
+        A commercial co-venture is an arrangement in which a business advertises that buying its product will benefit
+        a charity, with a defined share of sales contributed. It is how giving can run through everyday commerce, and
+        because the public is involved, most states regulate it. The answers below are practical and plain, including
+        the legal and tax points and where this model does not fit. This page is general information, not legal or tax
+        advice; rules vary by state, so confirm specifics with a nonprofit attorney and your state's charity regulator.
       </p>
       <Fragment slot="ctas">
         <a
@@ -70,19 +70,19 @@ const ARTICLE = {
           Become a Founding Merchant (free) →
         </a>
         <a
-          href="/sell/marketplace-fees-comparison"
+          href="/for-nonprofits"
+          data-cta-audience="NONPROFIT"
           class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
           style="border:1px solid rgba(255,255,255,0.35)"
         >
-          Compare the economics →
+          Free for nonprofits →
         </a>
       </Fragment>
     </PageHero>
 
-    <!-- Jump-to navigation -->
     <nav class="py-8 px-6 bg-white" style="border-bottom:1px solid #eee" aria-label="Jump to a section">
       <div class="max-w-3xl mx-auto flex flex-wrap gap-2.5" style="font-family:'Fira Sans',sans-serif">
-        {CAUSE_MARKETING_QA.map((cat) => (
+        {COMMERCIAL_COVENTURE_QA.map((cat) => (
           <a
             href={`#${cat.id}`}
             class="inline-block px-4 py-2 rounded-full text-sm font-bold transition-colors"
@@ -94,7 +94,7 @@ const ARTICLE = {
       </div>
     </nav>
 
-    {CAUSE_MARKETING_QA.map((cat) => (
+    {COMMERCIAL_COVENTURE_QA.map((cat) => (
       <section id={cat.id} class="py-14 px-6 bg-white" style="border-bottom:1px solid #f1f1f1;scroll-margin-top:80px">
         <div class="max-w-3xl mx-auto">
           <h2 class="text-3xl font-black text-slate-900 mb-2" style="letter-spacing:-0.02em">{cat.title}</h2>
@@ -112,24 +112,28 @@ const ARTICLE = {
     ))}
 
     <CtaBand
-      heading="Build the cause into every sale"
-      text="Free to join. A 1% fee on profit, customers save about 10%, and 10% of your profit funds a local nonprofit your customer chooses."
+      heading="Join a co-venture instead of building one"
+      text="Free to join. A 1% fee on profit for businesses, free for nonprofits, and 10% of each sale's profit funds a local nonprofit the customer chooses."
       label="Become a Founding Merchant (free) →"
       href="/#mirror-section"
       audience="MERCHANT"
-      secondaryLabel="Compare every marketplace"
-      secondaryHref="/sell/marketplace-fees-comparison"
+      secondaryLabel="For nonprofits"
+      secondaryHref="/for-nonprofits"
     />
 
     <section class="py-12 px-6 bg-white">
       <div class="max-w-3xl mx-auto text-sm" style="font-family:'Fira Sans',sans-serif">
         <strong class="text-slate-900">Keep reading:</strong>
-        <a href="/sell" class="ml-3 underline" style="color:#7851A9">Sell on Good Circles</a>
-        <a href="/commercial-coventure" class="ml-3 underline" style="color:#7851A9">Commercial co-ventures</a>
+        <a href="/cause-marketing" class="ml-3 underline" style="color:#7851A9">Cause marketing Q&amp;A</a>
         <a href="/for-business" class="ml-3 underline" style="color:#7851A9">For business</a>
         <a href="/for-nonprofits" class="ml-3 underline" style="color:#7851A9">For nonprofits</a>
-        <a href="/how-it-works" class="ml-3 underline" style="color:#7851A9">How it works</a>
+        <a href="/sell/marketplace-fees-comparison" class="ml-3 underline" style="color:#7851A9">Marketplace fee comparison</a>
         <a href="/resources" class="ml-3 underline" style="color:#7851A9">Nonprofit resources</a>
+        <p class="text-[11px] text-slate-400 mt-6 leading-relaxed">
+          This page is general information about commercial co-ventures and is not legal or tax advice. Requirements
+          vary by state and change over time. Confirm your organization's obligations with a nonprofit attorney and
+          your state's charity regulator before entering any arrangement.
+        </p>
       </div>
     </section>
   </main>
