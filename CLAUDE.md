@@ -386,3 +386,59 @@ keys/webhook secret — gated on the SALT consult + business/service registratio
 **Scale (current):** 43 services · 35 controllers · 97 Prisma models · 17 views · 98 components · the
 Astro marketing site (`marketing/`, live on goodcircles.org) · SEO/GEO docs in `docs/seo/` · NM9t5
 partnership assets in `_partnership/`.
+
+---
+
+## 18. MERCHANT-ACQUISITION FUNNEL & CONTENT PILLARS (2026-06, live on goodcircles.org)
+
+Built and shipped a merchant-acquisition funnel plus three cross-linked Q&A content pillars. All live,
+all pass the marketing build gates (`marketing/` `npm run build` → `check-seo.mjs` + `check-citations.mjs`,
+~2,634 pages / 0 issues). Full running detail in `project_session_resume.md` (memory) and
+`docs/seo/merchant-funnel-architecture.md`.
+
+### The `/sell` funnel — attract vendors off competitor marketplaces
+- **Pages:** `/sell` hub · `/sell/marketplace-fees-comparison` (consolidated; lists all 18 via two tables)
+  · **18 competitor pages** across three economic models.
+  - **%-of-sale** (data-driven `src/pages/sell/[competitor].astro` + `src/data/sell-pages.ts`, except the
+    three hand-built static ones): doordash, etsy, groupon (static) · ubereats, grubhub, amazon, ebay,
+    walmart, poshmark, mercari, fiverr, upwork, own-store.
+  - **Lead-gen** (`LeadGenCalculator.astro`, cost-per-lead ÷ close-rate): thumbtack, angi.
+  - **Subscription/booking** (`SubscriptionCalculator.astro`, subscription + processing + new-client fee):
+    styleseat, booksy, vagaro.
+- **Data + math single source of truth:** `src/data/sell-competitors.ts` — `goodCircles()`, `competitor()`,
+  `leadGen()`, `subscriptionBooking()`; competitor fees verified 2026-06-22 with sources/dates; the
+  `WhatYouKeepCalculator.astro` (%-fee) is the centerpiece.
+- **⚠️ HONEST ECONOMICS — DO NOT REGRESS.** Full after-tax accounting (revised with owner 2026-06-22):
+  revenue at list price; the ~10% customer discount AND the 10% nonprofit donation both reduce taxable
+  income (deductible via the CCV); **NO merchant card cost** (customer pays card processing if they use a
+  card), **NO commission on the sale**, **NO ad spend**. Headline metric = **total local value created**
+  (after-tax profit + customer savings + community funding) — GC wins this in every case; on personal
+  after-tax cash the win is margin-dependent. NEVER claim a universal per-sale win.
+- **LOCKED WORDING:** "a 1% fee on profit" · "no ad spend" · "no credit card processing costs" ·
+  "tax-deductible giving". NEVER "no commission" / "no fees" / "free to sell" / "raise your price" about
+  Good Circles. Tax claims: "may be deductible, consult your CPA" (the §162 deductibility language still
+  needs the tax attorney's sign-off before further expansion — SALT/CCV).
+
+### Three Q&A content pillars (47 Q&As each, jump-nav + zero-JS accordions, FAQPage+Article+Breadcrumb)
+- **`/cause-marketing`** (`src/data/cause-marketing-qa.ts`) — business audience; funnels heavily to `/sell`
+  and the fee comparison.
+- **`/commercial-coventure`** (`src/data/commercial-coventure-qa.ts`) — legal/nonprofit + business; framed
+  as general information, not legal/tax advice; GC described by model mechanics only (no unsettled
+  compliance claims).
+- **`/mississippi-nonprofit-fundraising`** (`src/data/mississippi-nonprofit-fundraising-qa.ts`) — nonprofit
+  audience; links generously into the `/resources` hub + MS state playbook; sector benchmarks hedged.
+- All three honor the positioning "not the right fit for every business, but the best fit for the most"
+  and cross-link each other + the funnel. Reciprocal inbound links from `Nav`/`Footer`, `/for-business`,
+  `/for-restaurants`, `/sell` hub, and `/answers/best-marketplaces-for-local-businesses`; all in `llms.txt`.
+
+### Search Console (export 2026-06-23) + indexing
+- The site is young (~weeks live): organic identity is the **nonprofit resource hub** + **AmazonSmile-
+  alternative** (shopper) + brand; positions are deep (50–90) with near-zero clicks. **No merchant/seller
+  queries yet, and `/sell` had no impressions** (it postdated the export). So `/sell` keywords cannot be
+  tuned from GSC yet — **re-export ~30–60 days out** to tune. Internal-linking pass done to seed discovery.
+- Owner action: GSC "Request Indexing" for the new `/sell` + Q&A URLs (manual, ~10/day quota).
+
+### Pre-launch items still owner/SALT-gated (unchanged)
+Tax-attorney sign-off on the §162 deductibility wording; decision on the `/for-business/for-restaurants`
+sales-tax-facilitator sentence (left as-is per owner); Stripe Connect money-out, refunds, live keys, QR
+Epic 11 — all SALT/Connect-gated.
