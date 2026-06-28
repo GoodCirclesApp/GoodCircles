@@ -102,26 +102,24 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 
 ## 5. LAUNCH CONTEXT
 
-- **Mississippi launch:** September 2026 (founding circle open now at goodcircles.org)
-- **Global launch:** After January 2027
-- **Landing page:** Deployed on Netlify (live)
-- **Backend/API:** Deployed on Railway — goodcircles-production.up.railway.app
-- **Admin portal:** Active — PLATFORM role, accessible via main app
-- **Access token expiry:** 15 minutes (refresh token: 7 days — auto-refresh via apiClient)
-- **Founding circle status:** Open to all 5 roles via landing page waitlist
-- **Video campaign:** 5-role CapCut production package ready (see /Downloads/goodcircles_capcut_package/)
-- **Facebook carousel:** 9-slide Mississippi launch carousel — production-ready prompt completed
-- **Posting cadence:** Week 5–1 before launch, one video per week, Neighbor → Business → Nonprofit → Municipality → CDFI
+- **Mississippi launch:** September 2026 (founding circle open now at goodcircles.org). Global after January 2027.
+- **Marketing site (live, production surface):** Astro static site in `marketing/`, on Netlify at goodcircles.org (~2,600+ pages). Includes the home + 5 role flows, the full SEO/GEO build, the nonprofit Resource Hub (`/resources` — guides, tools, funder DB, bilingual), the `/sell` merchant-acquisition funnel (18 competitor pages + 3 calculators), and three Q&A pillars (`/cause-marketing`, `/commercial-coventure`, `/mississippi-nonprofit-fundraising`). See Sections 17–18.
+- **Legacy:** the original `landing/` Vite SPA is superseded by `marketing/`; keep only until the cutover is confirmed stable, then delete.
+- **Backend/API:** Railway — goodcircles-production.up.railway.app (auto-deploys on push to `main`).
+- **Admin portal:** active (PLATFORM role) in the main app — support inbox, outbound email client, feature flags, error monitor, demo-data manager.
+- **Founding circle:** open to all 5 roles via the homepage signup (`/#mirror-section`). Caps: first 200 MS businesses (Founding Merchants), first 50 MS nonprofits.
+- **Analytics:** GA4 `G-GL2EMC1F1X` live; Google Search Console verified (findings in Section 18).
+- **Creative assets:** 5-role CapCut video package (`/Downloads/goodcircles_capcut_package/`) and a 9-slide Facebook carousel prompt remain available for production.
 
 ---
 
-## 6. ACTIVE PRIORITIES (Updated 2026-05-11)
+## 6. ACTIVE PRIORITIES (Updated 2026-06-27)
 
-1. **Founding circle growth** — Drive waitlist signups across all 5 roles before September 2026 launch
-2. **Video campaign execution** — Produce 5 CapCut vertical videos per production package
-3. **Facebook carousel launch** — Post 9-slide carousel to official GoodCircles Facebook page
-4. **CDFI & Municipal founding-partner pipeline** — Outreach to Treasury-certified CDFIs and Mississippi city/county EDA offices
-5. **Marketing system buildout** — Encode slash commands, skills, and scheduled tasks per Section 6 of marketing directive
+1. **Founding-circle growth** — drive signups across all 5 roles before the September 2026 MS launch; the homepage signup (`/#mirror-section`) is the conversion point.
+2. **Fill the `/sell` funnel** — the build + internal-linking pass are done; next is distribution (merchant outreach/social), GSC "Request Indexing" for the new pages, and a GSC re-export in ~30–60 days to tune keywords (the funnel is too new for query data yet).
+3. **Pre-launch ops (owner actions, non-SALT)** — set `EMAIL_PHYSICAL_ADDRESS` (gates marketing mass-send) and `RESEND_DELIVERY_WEBHOOK_SECRET`; confirm `@goodcircles.org` sender aliases; toggle `enable_internal_banking` OFF; run "Reset to Clean" + `npm run seed:admin`; rotate the prod DB password.
+4. **SALT / tax-attorney consult** — gates the §162 deductibility wording, the for-restaurants sales-tax sentence, Stripe Connect money-out, refunds, live keys, and QR Epic 11.
+5. **Content/SEO depth** — extend the Resource Hub and the Q&A pillars; optional niche competitor pages via the established `/sell` patterns.
 
 ---
 
@@ -129,6 +127,9 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 
 | Date | Decision | Why |
 |------|----------|-----|
+| 2026-06-22 | `/sell` funnel uses full after-tax accounting + locked wording (no "no commission"/"no fees"/"raise price" about GC) | Honest, defensible competitor comparisons; avoids the fabricated-traction trap |
+| 2026-06-18 | Google GenAI removed (Claude-only AI); in-house error monitor + Local Dollar Graph built | Consolidate AI vendors; own the data moat instead of buying it |
+| 2026-06-16 | Prisma migration baseline; `migrate deploy` replaces `db push --accept-data-loss` | Safe, additive prod migrations on boot |
 | 2026-05-11 | Marketing Savant Mode activated | Bootstrapped one-person team needs force-multiplied marketing ops capability built into Claude sessions |
 | 2026-05-11 | SupportInbox raw fetch → apiClient | 15-min token expiry was causing 403 on second email send; apiClient has auto-refresh |
 | 2026-05-10 | Compose email added to support inbox | Admin needed outbound email capability from the portal |
@@ -201,24 +202,24 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 
 | Asset | Location | Status |
 |-------|----------|--------|
-| **Active priorities** | .claude/active_priorities.md | Live — update when priorities shift |
-| **Done archive** | .claude/done.md | Archive completed work here with date + outcome |
+| **Master context (this file)** | CLAUDE.md | Read at session start |
 | **Decisions log** | .claude/decisions_log.md | Append on every meaningful decision |
-| **Slash commands (16)** | .claude/commands/ | All marketing ops workflows |
-| **CapCut production package (5 videos)** | C:\Users\timh2\Downloads\goodcircles_capcut_package\ | Ready — needs editing in CapCut |
-| **Facebook 9-slide carousel prompt** | Conversation context (2026-05-10 session) | Ready — send to Claude Cowork for PNG output |
-| **Landing page — Hero copy** | landing/src/sections/Hero.tsx | Production-ready, live |
-| **Landing page — Role Mirror** | landing/src/sections/RoleMirror.tsx | Production-ready, live |
-| **Landing page — Impact Demo** | landing/src/sections/ImpactDemo.tsx | Production-ready, live |
-| **Landing page — Story pages (5 roles)** | landing/src/sections/stories/ | Production-ready, live, forms operational |
-| **Landing page — FAQ** | landing/src/sections/FAQ.tsx | Production-ready, live |
-| **Landing page — Confirmation + share copy** | landing/src/sections/Confirmation.tsx | Production-ready, live |
-| **Transactional email templates (6)** | server/src/services/emailService.ts | Production-ready, Resend-integrated |
-| **Waitlist email templates** | server/src/services/waitlistEmailService.ts | Production-ready, Resend-integrated |
-| **Context folder** (business plan, exec brief, vendor lists, marketing plan, tax analysis) | ../Context/ (relative to repo root) | Reference |
-| **Memory files** | C:\Users\timh2\.claude\projects\C--Windows-System32\memory\ | Persistent across sessions |
-| **Admin portal** | views/AdminPortalView.tsx | Support inbox + outbound compose operational |
-| **Waitlist controller** | server/src/controllers/waitlistController.ts | All 5 roles operational |
+| **Engineering priorities** | .claude/engineering_priorities.md | P0→P5 engineering track |
+| **Marketing slash commands (16)** | .claude/commands/ | Marketing ops workflows |
+| **Marketing site (live)** | marketing/ (Astro 5 → Netlify) | Production marketing surface, goodcircles.org |
+| **Merchant funnel architecture + backlog** | docs/seo/merchant-funnel-architecture.md | `/sell` spec, locked wording, add-a-competitor pattern |
+| **`/sell` data (single source of math + fees)** | marketing/src/data/sell-competitors.ts | goodCircles/competitor/leadGen/subscriptionBooking; fees verified w/ sources |
+| **`/sell` calculators** | marketing/src/components/{WhatYouKeep,LeadGen,Subscription}Calculator.astro | %-fee · lead-gen · subscription/booking |
+| **Q&A pillar content** | marketing/src/data/{cause-marketing,commercial-coventure,mississippi-nonprofit-fundraising}-qa.ts | 47 Q&As each |
+| **SEO/GEO docs** | docs/seo/ | ADR, keyword map, ops calendar, funnel architecture |
+| **Nonprofit Resource Hub** | marketing/public/resources/ | Guides, tools, funder DB, MS state playbook |
+| **AI / GEO discovery file** | marketing/public/llms.txt | Hand-maintained; lists key pages |
+| **Transactional + waitlist email** | server/src/services/{emailService,waitlistEmailService}.ts | Resend-integrated |
+| **Admin email client** | views/EmailCampaignsManager.tsx | Compose, mass send, delivery tracking |
+| **Context folder** (business plan, exec brief, tax analysis) | ../Context/ | Reference (.docx — ask owner to share contents) |
+| **Memory files** | C:\Users\timh2\.claude\projects\C--Windows-System32\memory\ | Persistent; `project_session_resume.md` = live running state |
+| **Legacy landing SPA** | landing/ | Superseded by marketing/; delete after stable cutover |
+| **CapCut video package** | C:\Users\timh2\Downloads\goodcircles_capcut_package\ | Ready — edit in CapCut |
 
 ---
 
@@ -234,6 +235,7 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 | Auth | JWT + bcryptjs (access token: 15min, refresh: 7 days — auto-refresh via apiClient) |
 | Email | Resend |
 | Deploy | Railway (`railway.toml`, `nixpacks.toml`), Docker |
+| Marketing site | Astro 5 (static) + Tailwind v4 + React islands → Netlify (`marketing/`) |
 | Tests | Vitest |
 
 ---
@@ -258,7 +260,9 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 /services/               # Frontend service layer
 /types/                  # Shared TypeScript types
 /validation/             # Zod schemas
-/landing/                # Separate Vite app — Netlify deployed
+/marketing/              # Astro 5 static marketing site — LIVE on Netlify (goodcircles.org)
+/landing/                # Legacy Vite SPA — superseded by /marketing, delete after cutover
+/docs/seo/               # SEO/GEO docs incl. merchant-funnel-architecture.md
 /.claude/commands/       # Slash commands
 /.claude/decisions_log.md
 ```
@@ -271,8 +275,11 @@ Good Circles is a community marketplace built on a triple-impact economic model.
 npm run dev              # Start dev server (tsx server.ts)
 npm run build            # prisma generate + tsc + vite build
 npm run test             # vitest run
-npm run seed:beta        # Seed beta test accounts
+npm run seed:admin       # Provision admin@ + viewer@ (prod clean-launch model)
 npm run prisma:migrate   # Run DB migrations
+
+# Marketing site (separate app in marketing/):
+cd marketing && npm run build   # build-search-index + astro build + check-seo + check-citations gates
 ```
 
 ---
@@ -295,10 +302,11 @@ npm run prisma:migrate   # Run DB migrations
 - Waitlist / founding circle signup (all 5 roles)
 - Briefing requests (CDFI + Municipal)
 
-### Remaining Pre-Launch (Infrastructure)
-- Railway env var: `VITE_STRIPE_PUBLISHABLE_KEY=pk_live_...`
-- Stripe live mode: switch `sk_test_` → `sk_live_` when ready for real payments
-- Stripe webhook: confirm `STRIPE_WEBHOOK_SECRET` set + `payment_intent.succeeded` enabled
+### Remaining Pre-Launch (Sections 16–18 are the authoritative list)
+- **The real blockers are not just env vars.** Money-out (Stripe Connect disbursement), refund execution, and live keys are SALT/Connect-gated, not mere config — see Section 16.
+- Stripe go-live config (when unblocked): `VITE_STRIPE_PUBLISHABLE_KEY` (pk_live), `sk_test_`→`sk_live_`, `STRIPE_WEBHOOK_SECRET` + `payment_intent.succeeded`/`checkout.session.completed`.
+- Marketing env: `EMAIL_PHYSICAL_ADDRESS` (CAN-SPAM gate for mass send), `RESEND_DELIVERY_WEBHOOK_SECRET`.
+- Prod hygiene: toggle `enable_internal_banking` OFF, run "Reset to Clean" + `npm run seed:admin`, rotate the DB password.
 
 ### Intentionally Deferred
 - JWT frontend expiration handling (now resolved via apiClient auto-refresh)
@@ -308,24 +316,25 @@ npm run prisma:migrate   # Run DB migrations
 
 ---
 
-## 15. PRE-SEEDED BETA ACCOUNTS
+## 15. ACCOUNTS (clean-launch model, updated 2026-06-18)
 
-Password for all: `BetaTest2026!`
+**Production launches CLEAN:** only `admin@goodcircles.org` and `viewer@goodcircles.org` exist, and the
+marketplace is empty (no products/transactions) until demo mode is loaded for a presentation. Provision
+both with `npm run seed:admin` (`ADMIN_PASSWORD` required; optional `VIEWER_PASSWORD`). The deploy runs
+NO seed by design.
 
-| Email | Role |
-|---|---|
-| admin@goodcircles.org | Platform Admin |
-| viewer@goodcircles.org | Platform Viewer (read-only) |
-| alice@beta.test | Consumer |
-| bob@beta.test | Consumer |
-| marco@theharvesttable.com | Merchant |
-| lisa@fixitlocal.com | Merchant |
-| david@justicelaw.com | Merchant |
-| sarah@farmfreshco.com | Merchant |
-| alex@tutorzone.com | Merchant |
-| contact@localfoodbank.org | Nonprofit |
-| info@youthscholars.org | Nonprofit |
-| team@greencleanup.org | Nonprofit |
+| Account | Role | Notes |
+|---|---|---|
+| admin@goodcircles.org | Platform Admin | Provisioned by `seed:admin` |
+| viewer@goodcircles.org | Platform Viewer (read-only) | Provisioned by `seed:admin` |
+
+**Demo presentations:** Admin Portal → Demo Data Manager → "Enable Demo Mode" loads a full Mississippi
+dataset (~12 merchants, 5 nonprofits, ~25 neighbors, ~70 products, ~400 transactions), all on
+`@demo.goodcircles.ms`, password `DemoMS2026!` (e.g. `walkers@`/`cups@`/`mcdades@` merchants, `msfoodnet@`
+nonprofit, `mjohnson@` neighbor). "Disable Demo Mode" / "Reset to Clean" wipes it back to admin+viewer.
+
+**Legacy:** the old `@beta.test` / business-domain seed accounts and the `BetaTest2026!` password are from
+the pre-clean-launch beta seed and are wiped by "Reset to Clean" — do not rely on them.
 
 ---
 
