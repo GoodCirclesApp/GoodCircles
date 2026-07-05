@@ -31,10 +31,16 @@ export const ORGANIZATION_JSONLD = {
   url: SITE_URL,
   logo: `${SITE_URL}/og.png`,
   description: ORG_DESCRIPTION,
-  founder: { '@type': 'Person', name: 'Timothy Franklin' },
+  founder: {
+    '@type': 'Person',
+    name: 'Timothy Franklin',
+    url: `${SITE_URL}/about/timothy-franklin/`,
+  },
   foundingDate: '2026',
   areaServed: { '@type': 'State', name: 'Mississippi' },
   email: 'hello@goodcircles.org',
+  // TODO: add the LinkedIn company-page URL here once the page exists
+  // (keep the Facebook URL — it's the verified live profile).
   sameAs: ['https://www.facebook.com/goodcirclesorg'],
   knowsAbout: [
     'community marketplace',

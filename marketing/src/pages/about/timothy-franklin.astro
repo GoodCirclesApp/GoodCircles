@@ -1,0 +1,99 @@
+---
+// Author/founder page (SEO Sprint 2026-07-05, Task 5b) — E-E-A-T entity anchor
+// for the bylined /learn flagship guides. Facts only: founder confirmed
+// 2026-06-12; no fabricated biographical or legal-entity specifics.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { breadcrumbJsonLd } from '../../lib/faq';
+import { SITE_URL, SITE_NAME } from '../../data/site';
+
+const TITLE = 'Timothy Franklin — Founder of Good Circles';
+const DESCRIPTION =
+  'Timothy Franklin is the founder of Good Circles, the community marketplace where shopping local saves you ~10% and funds a nonprofit you choose. Meet the author.';
+
+const PERSON_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Timothy Franklin',
+  url: `${SITE_URL}/about/timothy-franklin/`,
+  jobTitle: 'Founder',
+  worksFor: {
+    '@type': 'Organization',
+    name: SITE_NAME,
+    url: SITE_URL,
+  },
+  knowsAbout: [
+    'community marketplaces',
+    'shop local',
+    'small business',
+    'nonprofit funding',
+    'Mississippi',
+  ],
+  mainEntityOfPage: `${SITE_URL}/about/timothy-franklin/`,
+};
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/about/timothy-franklin/"
+  jsonLd={[
+    PERSON_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'About', url: `${SITE_URL}/about/` },
+      { name: 'Timothy Franklin', url: `${SITE_URL}/about/timothy-franklin/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Author & founder" h1="Timothy Franklin">
+      <p slot="answer">
+        Timothy Franklin is the founder of <strong>Good Circles</strong>, an independent
+        community marketplace based in Mississippi where shopping local
+        <strong>saves you about 10%</strong>, about <strong>10% of the merchant's net
+        profit</strong> funds a nonprofit you choose, and local businesses
+        <strong>keep 89% of their profit</strong>. Good Circles launches September 2026 in the
+        Jackson, MS metro.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Why he's building Good Circles
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6" style="font-family:'Fira Sans',sans-serif">
+          Most of every dollar spent at a national chain leaves a community the moment it's
+          spent, while local businesses lose 15–30% of each sale to the platforms they depend
+          on. Timothy founded Good Circles in 2026 to change those rails: one purchase that
+          saves the shopper money, funds a local nonprofit, and leaves the business with more of
+          its own profit. Mississippi — his home state for the launch — comes first, then the
+          cities that request it most.
+        </p>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          He writes the flagship guides in the
+          <a href="/learn/" class="font-bold underline" style="color:#7851A9">Good Circles learning hub</a>
+          on shopping local, passive fundraising, and AmazonSmile alternatives. You can read
+          more about the company and the model on the
+          <a href="/about/" class="font-bold underline" style="color:#7851A9">About page</a>.
+        </p>
+      </div>
+    </section>
+
+    <CtaBand
+      heading="See what he's building"
+      text="Free for shoppers and nonprofits, launching September 2026. Founding spots are limited."
+      label="Join free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="How it works"
+      secondaryHref="/how-it-works"
+    />
+  </main>
+  <Footer />
+</Base>

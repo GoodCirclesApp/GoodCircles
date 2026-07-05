@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CITIES, STATE, isCityIndexable } from './src/data/cities';
 import { COUNTIES, COUNTY_ENGINE_ENABLED, isCountyIndexable } from './src/data/counties';
+import { NATIONAL_CITIES, NATIONAL_STATES } from './src/data/national-cities';
 
 const SITE = 'https://goodcircles.org';
 
@@ -30,13 +31,21 @@ function collectResourceUrls() {
 }
 const RESOURCE_URLS = collectResourceUrls();
 
-// Thin-content guardrail: city pages are noindex until they have >=6 real
-// seeded entries (CityPages.md) — keep noindex pages out of the sitemap too.
+// SEO Sprint 2026-07-05: all Mississippi city pages are indexable (launch state;
+// isCityIndexable returns true, so this set is empty — kept for the day the
+// guardrail is ever re-scoped). The noindex guardrail now covers the NON-MS
+// coming-soon pages instead: every /shop-local/[state]/ hub and city page ships
+// noindex,follow, so they must stay out of the sitemap (SEO gate consistency).
 const EXCLUDED_CITY_URLS = new Set(
   CITIES.filter((c) => !isCityIndexable(c)).map(
     (c) => `${SITE}/shop-local/${STATE.slug}/${c.slug}/`
   )
 );
+
+const EXCLUDED_NATIONAL_URLS = new Set([
+  ...NATIONAL_STATES.map((s) => `${SITE}/shop-local/${s.slug}/`),
+  ...NATIONAL_CITIES.map((c) => `${SITE}/shop-local/${c.stateSlug}/${c.slug}/`),
+]);
 
 // Same guardrail for the county engine (no-op while COUNTY_ENGINE_ENABLED=false,
 // since no county pages are generated): keep noindex counties out of the sitemap.
@@ -56,7 +65,10 @@ export default defineConfig({
     react(),
     sitemap({
       customPages: RESOURCE_URLS,
-      filter: (page) => !EXCLUDED_CITY_URLS.has(page) && !EXCLUDED_COUNTY_URLS.has(page),
+      filter: (page) =>
+        !EXCLUDED_CITY_URLS.has(page) &&
+        !EXCLUDED_COUNTY_URLS.has(page) &&
+        !EXCLUDED_NATIONAL_URLS.has(page),
       // Legal pages don't need crawl priority; everything else defaults.
       serialize(item) {
         if (/\/(privacy|terms|cookies)\/?$/.test(item.url)) {

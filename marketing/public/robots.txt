@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /account/
 Disallow: /api/
+Disallow: /resources/search-index.json
 
 # Explicitly welcome AI / generative-engine crawlers (GEO upside).
 User-agent: GPTBot

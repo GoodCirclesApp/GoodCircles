@@ -7,13 +7,14 @@ interface Props {
 }
 const { solid = false } = Astro.props;
 const background = solid ? '#7851A9' : 'rgba(255,255,255,0.08)';
+// Trailing-slash URLs match the canonical form and avoid a 301 redirect hop.
 const links = [
-  { label: 'How it works', href: '/how-it-works' },
-  { label: 'Shoppers', href: '/shoppers' },
-  { label: 'Nonprofits', href: '/for-nonprofits' },
-  { label: 'Resources', href: '/resources' },
-  { label: 'Business', href: '/for-business' },
-  { label: 'Sell', href: '/sell' },
+  { label: 'How it works', href: '/how-it-works/' },
+  { label: 'Shoppers', href: '/shoppers/' },
+  { label: 'Nonprofits', href: '/for-nonprofits/' },
+  { label: 'Resources', href: '/resources/' },
+  { label: 'Business', href: '/for-business/' },
+  { label: 'Sell', href: '/sell/' },
 ];
 ---
 

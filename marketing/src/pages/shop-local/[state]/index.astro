@@ -2,6 +2,8 @@
 // National "coming soon" state hubs (e.g. /shop-local/tennessee/). Lists that
 // state's requestable cities. Mississippi is excluded (it has its own seeded
 // hub at /shop-local/mississippi/), so no routing collision.
+// SEO Sprint 2026-07-05: noindex,follow like the coming-soon city pages —
+// keep the sitemap exclusion in astro.config.mjs in lockstep.
 import Base from '../../../layouts/Base.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
@@ -40,6 +42,7 @@ const FAQS: Faq[] = [
   title={TITLE}
   description={DESCRIPTION}
   path={path}
+  noindex
   jsonLd={[
     faqJsonLd(FAQS),
     partnerMentionJsonLd(`${SITE_URL}${path}`),

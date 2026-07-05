@@ -9,9 +9,10 @@ import CtaBand from '../components/CtaBand.astro';
 import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../lib/faq';
 import { SITE_URL } from '../data/site';
 
-const TITLE = 'The Best AmazonSmile Alternative (2026) — Shop Local & Give Back';
+// Title/meta per the CTR-optimization spec (SEO Sprint 2026-07-05).
+const TITLE = 'AmazonSmile Alternative: Shop Local, Save ~10%, Give (2026)';
 const DESCRIPTION =
-  'Looking for an AmazonSmile replacement? Good Circles lets you shop local, save ~10%, and fund a nonprofit you choose — at no extra cost. Free to join.';
+  'Need an AmazonSmile alternative? Good Circles is local-first: shop local, save about 10%, and ~10% of merchant net profit funds a nonprofit you pick. Free.';
 
 const FAQS: Faq[] = [
   {
@@ -79,11 +80,10 @@ const COMPARISON = [
       h1="The local AmazonSmile alternative — shop local, save ~10%, and give"
     >
       <p slot="answer">
-        Good Circles is a local-first AmazonSmile alternative. Instead of 0.5% on Amazon
-        purchases, you shop the local businesses near you, <strong>save about 10%
-        automatically</strong>, and a share of every sale funds <strong>a nonprofit you
-        choose</strong> — from the merchant's profit, at no extra cost to you. It's free to join,
-        launching September 2026.
+        Good Circles is a local-first AmazonSmile alternative: instead of 0.5% on Amazon
+        purchases, you shop local businesses, <strong>save about 10% automatically</strong>, and
+        about <strong>10% of the merchant's net profit</strong> funds a nonprofit you choose.
+        It's free to join and launches September 2026 in the Jackson, MS metro.
       </p>
       <Fragment slot="ctas">
         <a
@@ -115,7 +115,9 @@ const COMPARISON = [
           nonprofits</strong> — but only at a <strong>0.5%</strong> rate, only on Amazon, with no
           relationship between you and the cause. When it ended, millions of shoppers and
           nonprofits lost the easiest way they had to give. The habit didn't disappear. The tool
-          did.
+          did. Several independent replacements have filled the gap — you can
+          <a href="/compare/best-amazonsmile-alternatives/" class="font-bold underline" style="color:#7851A9">compare
+          the five main alternatives side by side</a>.
         </p>
 
         <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">

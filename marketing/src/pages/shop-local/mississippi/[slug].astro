@@ -2,10 +2,10 @@
 // Programmatic city pages, driven by src/data/cities.ts (generated from the
 // canonical mockups in SEO&GEO/city-pages/). Design follows the mockups.
 //
-// Thin-content guardrails (CityPages.md):
-//  - noindex,follow until a city has >=6 REAL seeded entries (isCityIndexable);
-//    illustrative business tiles never count and never emit LocalBusiness schema.
-//  - Non-indexable cities are also excluded from the sitemap (astro.config.mjs).
+// SEO Sprint 2026-07-05: all Mississippi city pages are INDEXABLE (launch state;
+// isCityIndexable now returns true — the noindex guardrail moved to the non-MS
+// coming-soon pages under shop-local/[state]/). Illustrative business tiles still
+// never emit LocalBusiness schema; realSeededEntries still gates real listings.
 import Base from '../../../layouts/Base.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';

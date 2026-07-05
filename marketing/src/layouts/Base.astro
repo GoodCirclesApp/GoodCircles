@@ -45,6 +45,12 @@ const GA4_ID = (import.meta.env.PUBLIC_GA4_ID as string | undefined) ?? GA4_MEAS
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE_NAME} — Learn & Nonprofit Answers`}
+      href="/rss.xml"
+    />
     {noindex && <meta name="robots" content="noindex, follow" />}
 
     <!-- Open Graph (title intentionally identical to <title>) -->

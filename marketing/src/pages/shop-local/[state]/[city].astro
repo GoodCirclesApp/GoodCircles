@@ -1,6 +1,10 @@
 ---
-// National "coming soon" city pages (CityPages.md §5). Indexable — they exist
-// to rank for "shop local in [city]" and convert intent into expansion votes.
+// National "coming soon" city pages (CityPages.md §5). SEO Sprint 2026-07-05:
+// now noindex,follow — thin coming-soon variants outside the launch state
+// shouldn't be indexed while the seeded Mississippi pages are. They still
+// capture expansion requests; flip noindex off per state as GC launches there.
+// Keep the sitemap exclusion in astro.config.mjs in lockstep (the SEO gate
+// fails if a noindex page appears in the sitemap).
 // Static /shop-local/mississippi/ files take routing priority, and this
 // dynamic route only emits non-MS metros, so there's no collision.
 import Base from '../../../layouts/Base.astro';
@@ -49,6 +53,7 @@ const FAQS: Faq[] = [
   title={TITLE}
   description={DESCRIPTION}
   path={path}
+  noindex
   jsonLd={[
     faqJsonLd(FAQS),
     partnerMentionJsonLd(`${SITE_URL}${path}`),

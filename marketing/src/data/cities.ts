@@ -25,9 +25,14 @@ export interface City {
 
 export const STATE = { name: 'Mississippi', slug: 'mississippi', st: 'MS' } as const;
 
-// Thin-content guardrail (CityPages.md): index only when >=6 real seeded entries.
-export function isCityIndexable(city: City): boolean {
-  return (city.realSeededEntries ?? 0) >= 6;
+// SEO Sprint 2026-07-05: Mississippi is the launch state — all MS city pages are
+// indexable (the old >=6-real-entries guardrail had the whole launch market
+// noindexed while coming-soon states were indexed). The guardrail now applies to
+// the NON-MS coming-soon pages instead (see shop-local/[state]/*). Keep
+// realSeededEntries — it still drives when illustrative tiles get replaced with
+// real listings + LocalBusiness schema.
+export function isCityIndexable(_city: City): boolean {
+  return true;
 }
 
 export const CITIES: City[] = [

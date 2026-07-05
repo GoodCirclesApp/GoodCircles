@@ -5,9 +5,10 @@ import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { ALL_LEARN } from '../../data/learn-all';
 
-const TITLE = 'Learn — Shopping Local, Giving Back & AmazonSmile Alternatives · Good Circles';
+// Title/meta per the CTR-optimization spec (SEO Sprint 2026-07-05).
+const TITLE = 'AmazonSmile Alternatives & Shop-Local Guides | Good Circles';
 const DESCRIPTION =
-  'Guides on shopping local, giving back, passive fundraising, and AmazonSmile alternatives — from Good Circles.';
+  '35+ free guides on shopping local, passive fundraising, and AmazonSmile alternatives — for shoppers, nonprofits, and local businesses. Updated 2026.';
 ---
 
 <Base title={TITLE} description={DESCRIPTION} path="/learn/" ogType="article">
@@ -22,8 +23,11 @@ const DESCRIPTION =
       <h1 class="font-black mb-2" style="color:#2E1B4E;font-size:clamp(1.9rem,4vw,2.7rem);letter-spacing:-1px;line-height:1.15">
         Learn: shop local, give back, raise more
       </h1>
-      <p class="text-sm mb-8" style="color:#6B6577;font-family:'Montserrat',sans-serif;font-weight:600">
-        Guides for shoppers, nonprofits, and local businesses
+      <p class="text-base mb-8 leading-relaxed" style="color:#4a4360;font-family:'Fira Sans',sans-serif;max-width:46rem">
+        This is the Good Circles learning hub: free, plain-English guides on shopping local,
+        passive fundraising, and the best AmazonSmile alternatives since the program ended in
+        2023. Guides are organized for three readers — shoppers who want to save and give,
+        nonprofits that need recurring funding, and local businesses selling online.
       </p>
       <div class="grid sm:grid-cols-2 gap-4 pb-12">
         {ALL_LEARN.map((article) => (

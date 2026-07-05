@@ -23,6 +23,31 @@ const crumb = breadcrumbJsonLd([
   { name: 'Learn', url: `${SITE_URL}/learn/` },
   { name: article.h1, url: `${SITE_URL}/learn/${article.slug}/` },
 ]);
+
+// Flagship guides are bylined to founder Timothy Franklin (SEO Sprint
+// 2026-07-05, Task 5b) — visible byline + Person author in the Article
+// JSON-LD, both linking to /about/timothy-franklin/.
+const AUTHOR_URL = '/about/timothy-franklin/';
+const FLAGSHIP_SLUGS = new Set([
+  'what-happened-to-amazonsmile',
+  'best-amazonsmile-alternatives-for-nonprofits',
+  'what-is-passive-fundraising',
+  'how-small-nonprofits-raise-money-without-grants',
+  'what-is-a-community-marketplace',
+  'why-shopping-local-matters',
+  'start-a-local-business',
+]);
+const bylined = FLAGSHIP_SLUGS.has(article.slug);
+const articleLd = bylined
+  ? {
+      ...(article.articleJsonLd as Record<string, unknown>),
+      author: {
+        '@type': 'Person',
+        name: 'Timothy Franklin',
+        url: `${SITE_URL}${AUTHOR_URL}`,
+      },
+    }
+  : article.articleJsonLd;
 ---
 
 <Base
@@ -30,7 +55,7 @@ const crumb = breadcrumbJsonLd([
   description={article.description}
   path={`/learn/${article.slug}/`}
   ogType="article"
-  jsonLd={[article.articleJsonLd, article.faqJsonLd, crumb]}
+  jsonLd={[articleLd, article.faqJsonLd, crumb]}
 >
   <Nav solid />
   <main id="main" style="background:#FBF7FE">
@@ -45,6 +70,13 @@ const crumb = breadcrumbJsonLd([
       </h1>
       <p class="text-sm mb-6" style="color:#6B6577;font-family:'Montserrat',sans-serif;font-weight:600">
         {article.dateline}
+        {bylined && (
+          <>
+            {' · By '}
+            <a href={AUTHOR_URL} class="underline" style="color:#8A6A2E">Timothy Franklin</a>
+            {', founder of Good Circles'}
+          </>
+        )}
       </p>
       <article class="gc-learn pb-4" set:html={article.articleHtml} />
       {article.articleHtml.includes('data-affiliate') && (
