@@ -105,7 +105,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Biloxi, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Biloxi (South Mississippi (Coast)). Add your name now to be first in and to bring it to Biloxi sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Biloxi (South Mississippi (Coast)). Add your name now to be first in and to bring it to Biloxi sooner."
       },
       {
         "q": "How do I support local Biloxi businesses and give to charity at the same time?",
@@ -183,7 +183,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Brandon, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Brandon (Central Mississippi). Add your name now to be first in and to bring it to Brandon sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Brandon (Central Mississippi). Add your name now to be first in and to bring it to Brandon sooner."
       },
       {
         "q": "How do I support local Brandon businesses and give to charity at the same time?",
@@ -269,7 +269,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Clinton, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Clinton (Central Mississippi). Add your name now to be first in and to bring it to Clinton sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Clinton (Central Mississippi). Add your name now to be first in and to bring it to Clinton sooner."
       },
       {
         "q": "How do I support local Clinton businesses and give to charity at the same time?",
@@ -343,7 +343,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Columbus, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Columbus (North Mississippi (Golden Triangle)). Add your name now to be first in and to bring it to Columbus sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Columbus (North Mississippi (Golden Triangle)). Add your name now to be first in and to bring it to Columbus sooner."
       },
       {
         "q": "How do I support local Columbus businesses and give to charity at the same time?",
@@ -412,7 +412,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Greenville, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Greenville (Mississippi Delta). Add your name now to be first in and to bring it to Greenville sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Greenville (Mississippi Delta). Add your name now to be first in and to bring it to Greenville sooner."
       },
       {
         "q": "How do I support local Greenville businesses and give to charity at the same time?",
@@ -494,7 +494,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Gulfport, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Gulfport (South Mississippi (Coast)). Add your name now to be first in and to bring it to Gulfport sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Gulfport (South Mississippi (Coast)). Add your name now to be first in and to bring it to Gulfport sooner."
       },
       {
         "q": "How do I support local Gulfport businesses and give to charity at the same time?",
@@ -563,7 +563,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Hattiesburg, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Hattiesburg (South Mississippi (Pine Belt)). Add your name now to be first in and to bring it to Hattiesburg sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Hattiesburg (South Mississippi (Pine Belt)). Add your name now to be first in and to bring it to Hattiesburg sooner."
       },
       {
         "q": "How do I support local Hattiesburg businesses and give to charity at the same time?",
@@ -641,7 +641,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Horn Lake, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Horn Lake (North Mississippi (DeSoto)). Add your name now to be first in and to bring it to Horn Lake sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Horn Lake (North Mississippi (DeSoto)). Add your name now to be first in and to bring it to Horn Lake sooner."
       },
       {
         "q": "How do I support local Horn Lake businesses and give to charity at the same time?",
@@ -659,9 +659,9 @@ export const CITIES: City[] = [
     "name": "Jackson",
     "title": "Shop Local in Jackson, MS — Support Local Businesses & Give Back · Good Circles",
     "description": "Shop local in Jackson, save ~10%, and fund a Jackson-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
-    "badge": "First City · Launching September 2026",
+    "badge": "Launch Metro · September 2026",
     "h1": "Shop local in Jackson — and fund a Jackson nonprofit",
-    "answerHtml": "Good Circles lets you shop local businesses in Jackson, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Jackson-area nonprofit you choose</b> — at no extra cost. Jackson is Good Circles' first city, launching September 2026. Join free.",
+    "answerHtml": "Good Circles lets you shop local businesses in Jackson, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Jackson-area nonprofit you choose</b> — at no extra cost. Jackson is the September 2026 launch metro — early access is already underway in Meridian &amp; Lauderdale County. Join free.",
     "introHtml": "Good Circles keeps your spending — and your giving — in Jackson: the capital city, where Fondren's shops and galleries, Belhaven's cafés, and Midtown's makers give Jackson its character. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
     "nonprofits": [
       {
@@ -735,7 +735,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Jackson, MS?",
-        "a": "Yes — Jackson is Good Circles' first metro, launching September 2026. Join free now as a Founding Neighbor and pick the Jackson-area nonprofit your purchases will support."
+        "a": "Jackson is the September 2026 launch metro, and early access is already underway in Meridian and Lauderdale County. Join free now as a Founding Neighbor and pick the Jackson-area nonprofit your purchases will support."
       },
       {
         "q": "How do I support local Jackson businesses and give to charity at the same time?",
@@ -817,7 +817,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Madison, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Madison (Central Mississippi). Add your name now to be first in and to bring it to Madison sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Madison (Central Mississippi). Add your name now to be first in and to bring it to Madison sooner."
       },
       {
         "q": "How do I support local Madison businesses and give to charity at the same time?",
@@ -833,12 +833,12 @@ export const CITIES: City[] = [
   {
     "slug": "meridian",
     "name": "Meridian",
-    "title": "Shop Local in Meridian, MS — Support Local Businesses & Give Back · Good Circles",
-    "description": "Shop local in Meridian, save ~10%, and fund a Meridian-area nonprofit you choose — at no extra cost. East Mississippi. Join Good Circles free.",
-    "badge": "East Mississippi · Coming 2026",
-    "h1": "Shop local in Meridian — and fund a Meridian nonprofit",
-    "answerHtml": "Good Circles lets you shop local businesses in Meridian, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Meridian-area nonprofit you choose</b> — at no extra cost. Good Circles is coming to east Mississippi — add your name and you'll be first in. Join free.",
-    "introHtml": "Good Circles keeps your spending — and your giving — in Meridian: the Queen City, the restored Threefoot building, the MAX museum, and a downtown on the rise. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "title": "Shop Local in Meridian, MS — Early Access Is Underway · Good Circles",
+    "description": "Early access is underway in Meridian & Lauderdale County — the founding community. Shop local, save ~10%, and fund a Meridian-area nonprofit you choose. Join free.",
+    "badge": "Early access — Founding City · Meridian & Lauderdale County",
+    "h1": "Shop local in Meridian — early access is underway",
+    "answerHtml": "<b>Early access is underway in Meridian &amp; Lauderdale County</b> — the founding community for Good Circles. Shop local businesses in Meridian, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Meridian-area nonprofit you choose</b> — at no extra cost. Good Circles launches on schedule in September 2026 in the Jackson metro, but Meridian is first. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Meridian: the Queen City, the restored Threefoot building, the MAX museum, and a downtown on the rise. As the founding early-access community, Meridian &amp; Lauderdale County are where Good Circles begins. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
     "nonprofits": [
       {
         "icon": "🍎",
@@ -885,8 +885,8 @@ export const CITIES: City[] = [
     "nearby": [],
     "faqs": [
       {
-        "q": "Is Good Circles available in Meridian, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Meridian (East Mississippi). Add your name now to be first in and to bring it to Meridian sooner."
+        "q": "Is Good Circles available in Meridian now?",
+        "a": "Yes — early access is underway in Meridian and Lauderdale County, the founding community, ahead of the September 2026 launch in the Jackson metro. Join the waitlist now to take part in early access and be among the first neighbors, businesses, and nonprofits in."
       },
       {
         "q": "How do I support local Meridian businesses and give to charity at the same time?",
@@ -968,7 +968,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Ocean Springs, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Ocean Springs (South Mississippi (Coast)). Add your name now to be first in and to bring it to Ocean Springs sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Ocean Springs (South Mississippi (Coast)). Add your name now to be first in and to bring it to Ocean Springs sooner."
       },
       {
         "q": "How do I support local Ocean Springs businesses and give to charity at the same time?",
@@ -1046,7 +1046,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Olive Branch, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Olive Branch (North Mississippi (DeSoto)). Add your name now to be first in and to bring it to Olive Branch sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Olive Branch (North Mississippi (DeSoto)). Add your name now to be first in and to bring it to Olive Branch sooner."
       },
       {
         "q": "How do I support local Olive Branch businesses and give to charity at the same time?",
@@ -1120,7 +1120,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Oxford, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Oxford (North Mississippi). Add your name now to be first in and to bring it to Oxford sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Oxford (North Mississippi). Add your name now to be first in and to bring it to Oxford sooner."
       },
       {
         "q": "How do I support local Oxford businesses and give to charity at the same time?",
@@ -1198,7 +1198,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Pascagoula, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Pascagoula (South Mississippi (Coast)). Add your name now to be first in and to bring it to Pascagoula sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Pascagoula (South Mississippi (Coast)). Add your name now to be first in and to bring it to Pascagoula sooner."
       },
       {
         "q": "How do I support local Pascagoula businesses and give to charity at the same time?",
@@ -1276,7 +1276,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Pearl, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Pearl (Central Mississippi). Add your name now to be first in and to bring it to Pearl sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Pearl (Central Mississippi). Add your name now to be first in and to bring it to Pearl sooner."
       },
       {
         "q": "How do I support local Pearl businesses and give to charity at the same time?",
@@ -1362,7 +1362,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Ridgeland, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Ridgeland (Central Mississippi). Add your name now to be first in and to bring it to Ridgeland sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Ridgeland (Central Mississippi). Add your name now to be first in and to bring it to Ridgeland sooner."
       },
       {
         "q": "How do I support local Ridgeland businesses and give to charity at the same time?",
@@ -1440,7 +1440,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Southaven, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Southaven (North Mississippi (DeSoto)). Add your name now to be first in and to bring it to Southaven sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Southaven (North Mississippi (DeSoto)). Add your name now to be first in and to bring it to Southaven sooner."
       },
       {
         "q": "How do I support local Southaven businesses and give to charity at the same time?",
@@ -1518,7 +1518,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Starkville, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Starkville (North Mississippi (Golden Triangle)). Add your name now to be first in and to bring it to Starkville sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Starkville (North Mississippi (Golden Triangle)). Add your name now to be first in and to bring it to Starkville sooner."
       },
       {
         "q": "How do I support local Starkville businesses and give to charity at the same time?",
@@ -1600,7 +1600,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Tupelo, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Tupelo (North Mississippi). Add your name now to be first in and to bring it to Tupelo sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Tupelo (North Mississippi). Add your name now to be first in and to bring it to Tupelo sooner."
       },
       {
         "q": "How do I support local Tupelo businesses and give to charity at the same time?",
@@ -1678,7 +1678,7 @@ export const CITIES: City[] = [
     "faqs": [
       {
         "q": "Is Good Circles available in Vicksburg, MS?",
-        "a": "Good Circles launches in Mississippi in September 2026, starting in the Jackson metro, and is expanding to Vicksburg (West-Central Mississippi (River)). Add your name now to be first in and to bring it to Vicksburg sooner."
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Vicksburg (West-Central Mississippi (River)). Add your name now to be first in and to bring it to Vicksburg sooner."
       },
       {
         "q": "How do I support local Vicksburg businesses and give to charity at the same time?",

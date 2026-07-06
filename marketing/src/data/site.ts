@@ -4,7 +4,8 @@
 //   a nonprofit gets 10% of the merchant's NET PROFIT per sale;
 //   merchants keep 89% of profit (1% platform fee on profit);
 //   bridge items carry no discount (~50% of commission → shared DAF pool);
-//   launch September 2026, Jackson MS metro first;
+//   early access underway in Meridian & Lauderdale County (founding community);
+//   launch September 2026 in the Jackson MS metro, then expansion by request;
 //   founding caps: first 200 merchants, first 50 nonprofits.
 
 export const SITE_URL = 'https://goodcircles.org';

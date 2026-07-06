@@ -10,12 +10,12 @@ import { CITIES, STATE } from '../../../data/cities';
 
 const TITLE = 'Shop Local in Mississippi — Support Local Businesses & Give Back · Good Circles';
 const DESCRIPTION =
-  'Shop local across Mississippi, save ~10%, and fund a Mississippi nonprofit you choose. Good Circles launches in the Jackson metro in September 2026. Join free.';
+  'Shop local across Mississippi, save ~10%, and fund a Mississippi nonprofit you choose. Early access in Meridian — September 2026 launch, Jackson metro first.';
 
 const FAQS: Faq[] = [
   {
     q: 'Where is Good Circles launching in Mississippi?',
-    a: 'Good Circles launches in the Jackson metro first in September 2026, then expands to the Gulf Coast, north Mississippi (DeSoto, Oxford, Tupelo, the Golden Triangle), and beyond.',
+    a: 'Early access is underway in Meridian and Lauderdale County — the founding community. Good Circles launches on schedule in September 2026 in the Jackson metro, then expands to the Gulf Coast, north Mississippi (DeSoto, Oxford, Tupelo, the Golden Triangle), and beyond.',
   },
   {
     q: 'How do I support local Mississippi businesses and give back?',
@@ -71,7 +71,7 @@ function article(name: string) {
           class="inline-block px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest text-white mb-6"
           style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25)"
         >
-          Mississippi · Launching September 2026
+          Mississippi · Early access underway · Launching September 2026
         </p>
         <h1 class="font-black text-white mb-6" style="font-size:clamp(2rem,5.5vw,3.2rem);letter-spacing:-0.02em;line-height:1.05">
           Shop local in Mississippi — and fund a Mississippi nonprofit
@@ -82,8 +82,9 @@ function article(name: string) {
         >
           Good Circles lets you shop local businesses across Mississippi, <strong>save about
           10%</strong>, and send a share of every purchase to a <strong>Mississippi nonprofit you
-          choose</strong> — at no extra cost. Launching in the Jackson metro in September 2026,
-          then statewide. Join free.
+          choose</strong> — at no extra cost. <strong>Early access is underway in Meridian &amp;
+          Lauderdale County</strong>, our founding community, and the September 2026 launch
+          starts in the Jackson metro — then statewide. Join free.
         </div>
         <div class="mt-8 flex flex-wrap gap-4">
           <a
@@ -139,11 +140,25 @@ function article(name: string) {
                 <a
                   href={`/shop-local/${STATE.slug}/${city.slug}/`}
                   class="block p-5 rounded-2xl bg-white transition-shadow hover:shadow-lg"
-                  style="border:1px solid #E7DCF2"
+                  style={
+                    city.slug === 'meridian'
+                      ? 'border:2px solid #C2A76F'
+                      : 'border:1px solid #E7DCF2'
+                  }
                 >
+                  {city.slug === 'meridian' && (
+                    <p
+                      class="inline-block px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-2"
+                      style="background:#C2A76F;color:#241247"
+                    >
+                      Early access — Founding City
+                    </p>
+                  )}
                   <p class="font-black text-slate-900 text-lg mb-1">{city.name}</p>
                   <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">
-                    Shop local in {city.name} & fund {article(city.name)} {city.name} nonprofit ›
+                    {city.slug === 'meridian'
+                      ? 'Early access is underway in Meridian & Lauderdale County ›'
+                      : `Shop local in ${city.name} & fund ${article(city.name)} ${city.name} nonprofit ›`}
                   </p>
                 </a>
               ))}

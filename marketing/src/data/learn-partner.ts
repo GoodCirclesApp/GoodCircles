@@ -165,7 +165,7 @@ const DEFS: PartnerDef[] = [
       { q: 'What is the first step to starting a local business?', a: 'Get clear on your stage and your next move before spending on logos or websites. A free tool like the No More 9 to 5 Club Roadmap survey, or simply validating that a few local customers will pay, is a better first step than building infrastructure.' },
       { q: 'How much does it cost to sell on Good Circles?', a: 'A 1% fee on profit per sale — no setup, monthly, or listing fees. If you do not sell, you do not pay. You keep about 89% of your profit, versus the 15–30% national platforms commonly take.' },
       { q: 'Do I need business training before I start selling?', a: 'Not strictly, but training shortens the hardest stages — picking an offer, pricing, and getting first customers. Programs like the No More 9 to 5 Club provide coaching and community for those stages; Good Circles is where you then sell and keep your margin.' },
-      { q: 'When does Good Circles launch?', a: 'Good Circles launches in September 2026 in the Jackson, Mississippi metro, then expands to the cities that request it most. The first 200 businesses become permanent Founding Merchants.' },
+      { q: 'When does Good Circles launch?', a: 'Early access is underway in Meridian and Lauderdale County. Good Circles launches on schedule in September 2026 in the Jackson, Mississippi metro, then expands across Mississippi and to the cities that request it most. The first 200 businesses become permanent Founding Merchants.' },
     ],
     related: [
       { label: 'For local business', href: '/for-business' },

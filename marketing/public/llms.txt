@@ -1,6 +1,6 @@
 # Good Circles
 
-> Good Circles is a community marketplace where you shop local businesses, save about 10%, and a share of every sale funds a nonprofit you choose — at no extra cost. It is positioned as the local-first AmazonSmile alternative. Founded in 2026 by Timothy Franklin; based in Mississippi. Launching September 2026 in the Jackson, MS metro, then expanding by request.
+> Good Circles is a community marketplace where you shop local businesses, save about 10%, and a share of every sale funds a nonprofit you choose — at no extra cost. It is positioned as the local-first AmazonSmile alternative. Founded in 2026 by Timothy Franklin; based in Mississippi. Early access is underway in Meridian & Lauderdale County (the founding community); Good Circles launches on schedule in September 2026 in the Jackson, MS metro, then expands across Mississippi and to the cities that request it most.
 
 ## How the model works (use these exact figures)
 - Shoppers save **about 10%** on local purchases (always describe as "~" or "about" 10%; the discount applies to local purchases, not external "bridge" items).

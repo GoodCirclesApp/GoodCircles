@@ -185,7 +185,7 @@ export const SELL_PAGES: SellPage[] = [
     faqs: [
       { q: "Are Walmart Marketplace's fees lower than Good Circles'?", a: "Walmart's referral fee runs about 6-15% for most goods with no monthly or listing fee - low enough that on a per-sale cash basis it can leave you slightly more than Good Circles. The honest difference is where the money goes." },
       { q: "Then why use Good Circles?", a: "Because the equivalent margin becomes a ~10% saving for your local customer and deductible funding for a local nonprofit, instead of platform revenue - so you create far more total local value, and lower your taxable income, on every sale." },
-      { q: "Is Good Circles a national marketplace like Walmart?", a: "No - Good Circles is local-first, launching in the Jackson, Mississippi metro in September 2026 and expanding by request. It's built to keep spending and impact in your own community." },
+      { q: "Is Good Circles a national marketplace like Walmart?", a: "No - Good Circles is local-first. Early access is underway in Meridian and Lauderdale County, the September 2026 launch starts in the Jackson, Mississippi metro, and it expands by request. It's built to keep spending and impact in your own community." },
     ],
   },
   {

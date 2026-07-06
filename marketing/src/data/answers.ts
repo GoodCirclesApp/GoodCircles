@@ -134,11 +134,11 @@ export const ANSWERS: Answer[] = [
     bodyHtml:
       `<p>Where a conventional marketplace takes a large cut of every sale and routes it to shareholders, a community marketplace realigns the economics locally. Good Circles is one example: shoppers <b>save about 10%</b> on local purchases, local businesses keep <b>89% of their profit</b> on a 1% fee, and <b>10% of the merchant’s profit</b> funds a nonprofit the shopper chooses.</p>` +
       `<p>That structure makes it a local-first alternative to big platforms and a natural successor to programs like AmazonSmile — see <a href="/amazonsmile-alternative">the AmazonSmile alternative</a> and <a href="/compare/best-amazonsmile-alternatives">how it compares</a>. The result is a single purchase that does three things at once: saves the shopper money, funds a local cause, and keeps a local business viable.</p>` +
-      `<p>Good Circles launches in the Jackson, Mississippi metro in September 2026 and expands to the cities that request it most. Learn the model on <a href="/how-it-works">how it works</a>.</p>` +
+      `<p>Early access is underway in Meridian &amp; Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson, Mississippi metro before expanding across Mississippi and to the cities that request it most. Learn the model on <a href="/how-it-works">how it works</a>.</p>` +
       `<p>Good Circles partners with the No More 9 to 5 Club, which trains the entrepreneurs who become local sellers — the people a community marketplace depends on. ${aff('Try the No More 9 to 5 Club (30-day trial)', 'trial', 'what-is-a-community-marketplace')}</p>`,
     faqs: [
       { q: 'How is a community marketplace different from Amazon?', a: 'A community marketplace keeps more of each dollar local: shoppers save about 10%, local businesses keep 89% of their profit, and a share funds a local nonprofit — instead of value flowing out to a distant platform.' },
-      { q: 'Is Good Circles a community marketplace?', a: 'Yes. Good Circles is a community marketplace where shopping local saves you about 10% and a share of every sale funds a nonprofit you choose, launching September 2026 in Jackson, Mississippi.' },
+      { q: 'Is Good Circles a community marketplace?', a: 'Yes. Good Circles is a community marketplace where shopping local saves you about 10% and a share of every sale funds a nonprofit you choose. Early access is underway in Meridian, Mississippi, ahead of the September 2026 launch in the Jackson metro.' },
     ],
     related: [
       { label: 'How it works', href: '/how-it-works' },

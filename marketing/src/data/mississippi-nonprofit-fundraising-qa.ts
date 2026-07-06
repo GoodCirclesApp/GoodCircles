@@ -260,7 +260,7 @@ export const MS_FUNDRAISING_QA: QACategory[] = [
       },
       {
         q: "When does Good Circles launch in Mississippi?",
-        a: `Good Circles is launching in the Jackson, Mississippi metro in September 2026, with the founding cohort open now. The first 50 Mississippi nonprofits to join become founding nonprofits, and the first 200 local businesses become Founding Merchants. Joining early lets your supporters direct their everyday local spending to your organization from the start. See ${forNp} to claim a spot.`,
+        a: `Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson, Mississippi metro, with the founding cohort open now. The first 50 Mississippi nonprofits to join become founding nonprofits, and the first 200 local businesses become Founding Merchants. Joining early lets your supporters direct their everyday local spending to your organization from the start. See ${forNp} to claim a spot.`,
       },
       {
         q: "Where can I find free Mississippi nonprofit guides?",
