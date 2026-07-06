@@ -4,8 +4,12 @@
 # No SPA catch-all: Astro emits one HTML file per route, and Netlify serves
 # dist/404.html with a real 404 status for unknown paths. The www->bare 301
 # lives in marketing/public/_redirects.
+# After a green build, submit new sitemap URLs to IndexNow (Bing/ChatGPT et al.
+# instant indexing). The submitter diffs against the committed snapshot in
+# marketing/scripts/indexnow-submitted.json and always exits 0 — an IndexNow
+# hiccup can never fail a deploy.
 [build]
-  command   = "cd marketing && npm install && npm run build"
+  command   = "cd marketing && npm install && npm run build && node scripts/indexnow-submit.mjs"
   publish   = "marketing/dist"
 
 [build.environment]

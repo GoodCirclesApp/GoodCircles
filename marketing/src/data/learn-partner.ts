@@ -140,13 +140,13 @@ const DEFS: PartnerDef[] = [
         h2: 'Stage 4 — Join the Good Circles Founding Circle',
         html:
           `<p>Once you have an offer and your first customers, where you sell decides how much you keep. National platforms and delivery apps commonly take 15–30% of every sale. Good Circles is built the opposite way: a 1% fee on profit, so you keep <b>89% of your profit</b> — and your customers save about 10% and fund a local nonprofit when they buy from you.</p>` +
-          `<p>The first 200 Mississippi businesses become permanent Founding Merchants ahead of the September 2026 launch. ${gc('Become a Founding Merchant (free)', '/for-business')}</p>`,
+          `<p>The first 200 Mississippi businesses become permanent Founding Merchants ahead of the September 2026 launch. ${gc('Become a Founding Merchant (free)', '/for-business/')}</p>`,
       },
       {
         h2: 'Stage 5 — Sell locally and earn repeat customers',
         html:
           `<p>Local selling rewards relationships. On Good Circles, every sale gives a customer two reasons to come back: they save money, and a share funds a cause they chose. That's a loyalty loop national platforms can't copy. Your job at this stage is consistency — show up, deliver, and let the savings-and-giving math keep customers returning.</p>` +
-          `<p>See exactly how the money moves on a local sale, including a worked $100 example, on <a href="/how-it-works">how it works</a>.</p>`,
+          `<p>See exactly how the money moves on a local sale, including a worked $100 example, on <a href="/how-it-works/">how it works</a>.</p>`,
       },
       {
         h2: 'Stage 6 — Scale to multiple locations or product lines',
@@ -158,7 +158,7 @@ const DEFS: PartnerDef[] = [
         h2: 'How the two fit together',
         html:
           `<p>The simplest way to think about it: <b>No More 9 to 5 trains the entrepreneur; Good Circles gives that entrepreneur a marketplace that keeps 89% of their profit.</b> One builds the operator, the other gives them a place to sell that's actually on their side. If you're earlier in the journey, start with the roadmap; if you're ready to sell locally, claim a Founding Merchant spot.</p>` +
-          `<p>${gc('Claim your Founding Merchant spot', '/for-business')}</p>`,
+          `<p>${gc('Claim your Founding Merchant spot', '/for-business/')}</p>`,
       },
     ],
     faqs: [
@@ -168,9 +168,9 @@ const DEFS: PartnerDef[] = [
       { q: 'When does Good Circles launch?', a: 'Early access is underway in Meridian and Lauderdale County. Good Circles launches on schedule in September 2026 in the Jackson, Mississippi metro, then expands across Mississippi and to the cities that request it most. The first 200 businesses become permanent Founding Merchants.' },
     ],
     related: [
-      { label: 'For local business', href: '/for-business' },
-      { label: 'How it works', href: '/how-it-works' },
-      { label: 'Get ready to launch', href: '/for-business/get-ready-to-launch' },
+      { label: 'For local business', href: '/for-business/' },
+      { label: 'How it works', href: '/how-it-works/' },
+      { label: 'Get ready to launch', href: '/for-business/get-ready-to-launch/' },
     ],
   },
 
@@ -195,13 +195,13 @@ const DEFS: PartnerDef[] = [
         h2: 'Where to get veteran-focused training',
         html:
           `<p>Several reputable programs serve veteran founders. The No More 9 to 5 Club — founded by Navy veteran Jason McNamara — offers free training tailored to veterans and military spouses, mentorship for the transition, and a tight community. ${plain('Access free veteran training', '/veterans-and-military-spouses', 'veterans-starting-a-local-business', 'mid')}</p>` +
-          `<p>For a fuller landscape, see our honest roundup of <a href="/learn/best-resources-for-veteran-entrepreneurs-2026">the best resources for veteran entrepreneurs in 2026</a>, which compares several organizations side by side.</p>`,
+          `<p>For a fuller landscape, see our honest roundup of <a href="/learn/best-resources-for-veteran-entrepreneurs-2026/">the best resources for veteran entrepreneurs in 2026</a>, which compares several organizations side by side.</p>`,
       },
       {
         h2: 'Then sell where you keep your margin',
         html:
           `<p>Training gets you to your first customers; the marketplace you choose decides how much you keep. Good Circles charges a 1% fee on profit — you keep about 89% — while your customers save about 10% and fund a nonprofit they choose. The first 50 nonprofits and 200 businesses in Mississippi become founding members.</p>` +
-          `<p>${gc('Become a Founding Merchant (free)', '/for-business')}</p>`,
+          `<p>${gc('Become a Founding Merchant (free)', '/for-business/')}</p>`,
       },
     ],
     faqs: [
@@ -211,9 +211,9 @@ const DEFS: PartnerDef[] = [
       { q: 'Can military spouses use these programs too?', a: 'Yes. The No More 9 to 5 Club’s veteran track explicitly serves military spouses, and Good Circles is open to any local business owner regardless of background.' },
     ],
     related: [
-      { label: 'For local business', href: '/for-business' },
-      { label: 'Best resources for veteran entrepreneurs', href: '/learn/best-resources-for-veteran-entrepreneurs-2026' },
-      { label: 'Start a local business', href: '/learn/start-a-local-business' },
+      { label: 'For local business', href: '/for-business/' },
+      { label: 'Best resources for veteran entrepreneurs', href: '/learn/best-resources-for-veteran-entrepreneurs-2026/' },
+      { label: 'Start a local business', href: '/learn/start-a-local-business/' },
     ],
   },
 
@@ -243,7 +243,7 @@ const DEFS: PartnerDef[] = [
         h2: 'Sell locally and keep what you earn',
         html:
           `<p>When your offer is local, Good Circles lets you sell it on a 1% fee on profit — keeping about 89% — while your customers save about 10% and fund a cause they choose. Your audience gets a reason to buy from you beyond loyalty: they come out ahead and so does their community.</p>` +
-          `<p>${gc('List your offer (free)', '/for-business')}</p>`,
+          `<p>${gc('List your offer (free)', '/for-business/')}</p>`,
       },
     ],
     faqs: [
@@ -252,9 +252,9 @@ const DEFS: PartnerDef[] = [
       { q: 'Why sell locally instead of only online platforms?', a: 'Local selling builds repeat customers and keeps more money in your community. On Good Circles you also keep about 89% of your profit and your customers fund a local cause, versus 15–30% taken by big platforms.' },
     ],
     related: [
-      { label: 'For local business', href: '/for-business' },
-      { label: 'Start a local business', href: '/learn/start-a-local-business' },
-      { label: 'How it works', href: '/how-it-works' },
+      { label: 'For local business', href: '/for-business/' },
+      { label: 'Start a local business', href: '/learn/start-a-local-business/' },
+      { label: 'How it works', href: '/how-it-works/' },
     ],
   },
 
@@ -284,7 +284,7 @@ const DEFS: PartnerDef[] = [
         h2: 'Sell on rails built for your margin',
         html:
           `<p>When you’re ready to sell locally, Good Circles keeps the economics on your side: a 1% fee on profit, about 89% kept, customers who save about 10% and fund a local cause. It’s a low-risk place to land your first independent revenue.</p>` +
-          `<p>${gc('Become a Founding Merchant (free)', '/for-business')}</p>`,
+          `<p>${gc('Become a Founding Merchant (free)', '/for-business/')}</p>`,
       },
     ],
     faqs: [
@@ -293,9 +293,9 @@ const DEFS: PartnerDef[] = [
       { q: 'What does it cost to start selling on Good Circles?', a: 'Nothing to register and no monthly fee — just a 1% fee on profit when you sell, so you keep about 89% of your profit.' },
     ],
     related: [
-      { label: 'Should you quit your job to start a business?', href: '/learn/should-you-quit-your-job-to-start-a-business' },
-      { label: 'For local business', href: '/for-business' },
-      { label: 'Start a local business', href: '/learn/start-a-local-business' },
+      { label: 'Should you quit your job to start a business?', href: '/learn/should-you-quit-your-job-to-start-a-business/' },
+      { label: 'For local business', href: '/for-business/' },
+      { label: 'Start a local business', href: '/learn/start-a-local-business/' },
     ],
   },
 
@@ -325,7 +325,7 @@ const DEFS: PartnerDef[] = [
         h2: 'Keep more of every sale',
         html:
           `<p>When margins are tight, fees matter. Good Circles charges a 1% fee on profit, so you keep about 89% — and your customers save about 10% and fund a local cause, which makes choosing you easy. It’s free to list and there’s no cost if you don’t sell.</p>` +
-          `<p>${gc('List your business (free)', '/for-business')}</p>`,
+          `<p>${gc('List your business (free)', '/for-business/')}</p>`,
       },
     ],
     faqs: [
@@ -334,9 +334,9 @@ const DEFS: PartnerDef[] = [
       { q: 'Is Good Circles free for a small home business?', a: 'Yes — free to register, no monthly fee, just a 1% fee on profit when you sell. You keep about 89% of your profit and your customers fund a local nonprofit.' },
     ],
     related: [
-      { label: 'For local business', href: '/for-business' },
-      { label: 'Start a local business', href: '/learn/start-a-local-business' },
-      { label: 'How it works', href: '/how-it-works' },
+      { label: 'For local business', href: '/for-business/' },
+      { label: 'Start a local business', href: '/learn/start-a-local-business/' },
+      { label: 'How it works', href: '/how-it-works/' },
     ],
   },
 
@@ -369,8 +369,8 @@ const DEFS: PartnerDef[] = [
       {
         h2: 'When you do go, sell where you keep your margin',
         html:
-          `<p>Whenever you make the move, protect your runway by selling where the fees are low. Good Circles charges a 1% fee on profit — you keep about 89% — while customers save about 10% and fund a local cause. See <a href="/learn/corporate-pros-going-independent">the calmer path out of corporate</a> and <a href="/for-business">Good Circles for business</a>.</p>` +
-          `<p>${gc('See the Founding Circle', '/for-business')}</p>`,
+          `<p>Whenever you make the move, protect your runway by selling where the fees are low. Good Circles charges a 1% fee on profit — you keep about 89% — while customers save about 10% and fund a local cause. See <a href="/learn/corporate-pros-going-independent/">the calmer path out of corporate</a> and <a href="/for-business/">Good Circles for business</a>.</p>` +
+          `<p>${gc('See the Founding Circle', '/for-business/')}</p>`,
       },
     ],
     faqs: [
@@ -379,9 +379,9 @@ const DEFS: PartnerDef[] = [
       { q: 'How do I keep more money when I start selling?', a: 'Sell on a low-fee marketplace. Good Circles charges a 1% fee on profit (you keep about 89%) versus the 15–30% national platforms commonly take.' },
     ],
     related: [
-      { label: 'Corporate pros going independent', href: '/learn/corporate-pros-going-independent' },
-      { label: 'Start a local business', href: '/learn/start-a-local-business' },
-      { label: 'For local business', href: '/for-business' },
+      { label: 'Corporate pros going independent', href: '/learn/corporate-pros-going-independent/' },
+      { label: 'Start a local business', href: '/learn/start-a-local-business/' },
+      { label: 'For local business', href: '/for-business/' },
     ],
   },
 
@@ -411,7 +411,7 @@ const DEFS: PartnerDef[] = [
         h2: 'How to choose',
         html:
           `<p>Pick traditional coaching if you have a specific high-stakes problem and budget for bespoke help. Pick the community model if you want affordable structure, peers, and a clear path while you build. Many founders start with the community model and add specialist coaching later.</p>` +
-          `<p>Whichever you choose, when you’re ready to sell locally, do it where you keep your margin: ${gc('See Good Circles for business', '/for-business')}</p>`,
+          `<p>Whichever you choose, when you’re ready to sell locally, do it where you keep your margin: ${gc('See Good Circles for business', '/for-business/')}</p>`,
       },
     ],
     faqs: [
@@ -420,9 +420,9 @@ const DEFS: PartnerDef[] = [
       { q: 'Can I use both a community and a coach?', a: 'Yes. Many founders start with an affordable community for structure and accountability, then add specialist one-on-one coaching for a specific challenge as they grow.' },
     ],
     related: [
-      { label: 'Best coaching programs for aspiring entrepreneurs', href: '/learn/best-coaching-programs-for-aspiring-entrepreneurs' },
-      { label: 'Start a local business', href: '/learn/start-a-local-business' },
-      { label: 'For local business', href: '/for-business' },
+      { label: 'Best coaching programs for aspiring entrepreneurs', href: '/learn/best-coaching-programs-for-aspiring-entrepreneurs/' },
+      { label: 'Start a local business', href: '/learn/start-a-local-business/' },
+      { label: 'For local business', href: '/for-business/' },
     ],
   },
 
@@ -464,7 +464,7 @@ const DEFS: PartnerDef[] = [
         h2: 'How to choose — and where to sell',
         html:
           `<p>If you want ongoing community and an affordable path, look at the No More 9 to 5 Club. For local networking, Bunker Labs; for mentorship and funding, Warrior Rising; for structured courses, VetToCEO or EBV. These aren’t mutually exclusive — many veterans combine them.</p>` +
-          `<p>Whichever program you choose, when you start selling locally, keep your margin: Good Circles charges a 1% fee on profit, so you keep about 89%. ${gc('See Good Circles for business', '/for-business')}</p>`,
+          `<p>Whichever program you choose, when you start selling locally, keep your margin: Good Circles charges a 1% fee on profit, so you keep about 89%. ${gc('See Good Circles for business', '/for-business/')}</p>`,
       },
     ],
     faqs: [
@@ -473,9 +473,9 @@ const DEFS: PartnerDef[] = [
       { q: 'Where should a veteran sell their products or services?', a: 'For local sales, a low-fee marketplace keeps the most in your pocket. Good Circles charges a 1% fee on profit (you keep about 89%) while customers save about 10% and fund a local cause.' },
     ],
     related: [
-      { label: 'Veterans starting a local business', href: '/learn/veterans-starting-a-local-business' },
-      { label: 'For local business', href: '/for-business' },
-      { label: 'Start a local business', href: '/learn/start-a-local-business' },
+      { label: 'Veterans starting a local business', href: '/learn/veterans-starting-a-local-business/' },
+      { label: 'For local business', href: '/for-business/' },
+      { label: 'Start a local business', href: '/learn/start-a-local-business/' },
     ],
   },
 
@@ -503,12 +503,12 @@ const DEFS: PartnerDef[] = [
       },
       {
         h2: 'Self-paced courses and one-on-one coaches',
-        html: `<p>Courses are cheap and flexible but rely on your own discipline. Private coaches give tailored help at a premium. Both can work; the risk with courses is never finishing, and with coaches it’s cost. See our comparison of <a href="/learn/no-more-9-to-5-club-vs-traditional-business-coaching">community model vs traditional coaching</a>.</p>`,
+        html: `<p>Courses are cheap and flexible but rely on your own discipline. Private coaches give tailored help at a premium. Both can work; the risk with courses is never finishing, and with coaches it’s cost. See our comparison of <a href="/learn/no-more-9-to-5-club-vs-traditional-business-coaching/">community model vs traditional coaching</a>.</p>`,
       },
       {
         h2: 'How to choose — and what comes after',
         html:
-          `<p>If you’re building a local business and want affordable structure, a community ecosystem is usually the best first step. Save accelerators for venture-scale ideas, and add a specialist coach when you hit a specific wall. Then, when you’re ready to sell locally, keep your margin with Good Circles. ${gc('See Good Circles for business', '/for-business')}</p>`,
+          `<p>If you’re building a local business and want affordable structure, a community ecosystem is usually the best first step. Save accelerators for venture-scale ideas, and add a specialist coach when you hit a specific wall. Then, when you’re ready to sell locally, keep your margin with Good Circles. ${gc('See Good Circles for business', '/for-business/')}</p>`,
       },
     ],
     faqs: [
@@ -517,9 +517,9 @@ const DEFS: PartnerDef[] = [
       { q: 'Where do I sell once I’ve started my business?', a: 'For local sales, choose a low-fee marketplace. Good Circles charges a 1% fee on profit, so you keep about 89%, while customers save about 10% and fund a local cause.' },
     ],
     related: [
-      { label: 'NM9t5 vs traditional coaching', href: '/learn/no-more-9-to-5-club-vs-traditional-business-coaching' },
-      { label: 'Start a local business', href: '/learn/start-a-local-business' },
-      { label: 'For local business', href: '/for-business' },
+      { label: 'NM9t5 vs traditional coaching', href: '/learn/no-more-9-to-5-club-vs-traditional-business-coaching/' },
+      { label: 'Start a local business', href: '/learn/start-a-local-business/' },
+      { label: 'For local business', href: '/for-business/' },
     ],
   },
 ];

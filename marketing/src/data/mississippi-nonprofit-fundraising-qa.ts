@@ -18,8 +18,8 @@ export interface QACategory {
   items: QA[];
 }
 
-const forNp = '<a href="/for-nonprofits">Good Circles for nonprofits</a>';
-const hub = '<a href="/resources">free nonprofit resource hub</a>';
+const forNp = '<a href="/for-nonprofits/">Good Circles for nonprofits</a>';
+const hub = '<a href="/resources/">free nonprofit resource hub</a>';
 const ms = '<a href="/resources/states/mississippi/">Mississippi nonprofit playbook</a>';
 const passive = '<a href="/resources/passive-funding/passive-fundraising-explained/">passive fundraising</a>';
 const mix = '<a href="/resources/fundraising/the-funding-mix/">the funding mix</a>';

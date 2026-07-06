@@ -28,11 +28,11 @@ const redistribution = COMPETITORS.filter((c) => c.verdict === "redistribution")
 // Service-pro platforms that don't take a % of the sale (different fee models),
 // so they get their own table rather than fake numbers in the one above.
 const SERVICE_PRO = [
-  { name: "Thumbtack", path: "/sell/thumbtack", model: "Pay-per-lead (charged win or lose)", take: "~$150 in lead fees to win one job (varies by trade)" },
-  { name: "Angi", path: "/sell/angi", model: "Pay-per-lead + membership/ads, annual contract", take: "~$225+ in lead fees per job won, plus fees" },
-  { name: "StyleSeat", path: "/sell/styleseat", model: "Booking: ~$35/mo + processing + new-client fee", take: "30% of a new client's first visit (capped $50)" },
-  { name: "Booksy", path: "/sell/booksy", model: "Booking: ~$29.99/mo + processing + Boost", take: "30% of a Boost new client's first visit (capped $100)" },
-  { name: "Vagaro", path: "/sell/vagaro", model: "Booking: ~$30/mo + processing", take: "No new-client fee — but it won't bring you new clients" },
+  { name: "Thumbtack", path: "/sell/thumbtack/", model: "Pay-per-lead (charged win or lose)", take: "~$150 in lead fees to win one job (varies by trade)" },
+  { name: "Angi", path: "/sell/angi/", model: "Pay-per-lead + membership/ads, annual contract", take: "~$225+ in lead fees per job won, plus fees" },
+  { name: "StyleSeat", path: "/sell/styleseat/", model: "Booking: ~$35/mo + processing + new-client fee", take: "30% of a new client's first visit (capped $50)" },
+  { name: "Booksy", path: "/sell/booksy/", model: "Booking: ~$29.99/mo + processing + Boost", take: "30% of a Boost new client's first visit (capped $100)" },
+  { name: "Vagaro", path: "/sell/vagaro/", model: "Booking: ~$30/mo + processing", take: "No new-client fee — but it won't bring you new clients" },
 ];
 
 const FAQS: Faq[] = [
@@ -134,7 +134,7 @@ const FAQS: Faq[] = [
               </tr>
               {COMPETITORS.map((c) => (
                 <tr style="border-bottom:1px solid #E7DCF2">
-                  <td class="p-3 font-bold text-slate-900">{c.hasPage ? <a href={c.pagePath ?? `/sell/${c.key}`} class="underline" style="color:#7851A9">{c.name}</a> : c.name}</td>
+                  <td class="p-3 font-bold text-slate-900">{c.hasPage ? <a href={c.pagePath ?? `/sell/${c.key}/`} class="underline" style="color:#7851A9">{c.name}</a> : c.name}</td>
                   <td class="p-3 text-slate-500">{c.category}</td>
                   <td class="p-3 font-bold text-slate-700">{c.takeLabel}</td>
                   <td class="p-3 text-slate-500">{c.model}</td>
@@ -148,11 +148,11 @@ const FAQS: Faq[] = [
         </p>
         <p class="text-sm text-slate-600 mt-4" style="font-family:'Fira Sans',sans-serif">
           Service pro on a pay-per-lead site? Those work differently — you pay per shared lead, win or lose. See the
-          lead-gen breakdown for <a href="/sell/thumbtack" class="font-bold underline" style="color:#7851A9">Thumbtack</a>
-          and <a href="/sell/angi" class="font-bold underline" style="color:#7851A9">Angi</a>. On a salon booking app?
-          See <a href="/sell/styleseat" class="font-bold underline" style="color:#7851A9">StyleSeat</a>,
-          <a href="/sell/booksy" class="font-bold underline" style="color:#7851A9">Booksy</a>, and
-          <a href="/sell/vagaro" class="font-bold underline" style="color:#7851A9">Vagaro</a> — subscription + new-client fees.
+          lead-gen breakdown for <a href="/sell/thumbtack/" class="font-bold underline" style="color:#7851A9">Thumbtack</a>
+          and <a href="/sell/angi/" class="font-bold underline" style="color:#7851A9">Angi</a>. On a salon booking app?
+          See <a href="/sell/styleseat/" class="font-bold underline" style="color:#7851A9">StyleSeat</a>,
+          <a href="/sell/booksy/" class="font-bold underline" style="color:#7851A9">Booksy</a>, and
+          <a href="/sell/vagaro/" class="font-bold underline" style="color:#7851A9">Vagaro</a> — subscription + new-client fees.
         </p>
       </div>
     </section>
@@ -296,7 +296,7 @@ const FAQS: Faq[] = [
       href="/#mirror-section"
       audience="MERCHANT"
       secondaryLabel="Back to selling on Good Circles"
-      secondaryHref="/sell"
+      secondaryHref="/sell/"
     />
   </main>
   <Footer />

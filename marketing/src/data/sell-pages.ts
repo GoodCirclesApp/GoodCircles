@@ -42,7 +42,7 @@ export const SELL_PAGES: SellPage[] = [
       h2: "A fifth to a third of every order, gone",
       p1: "Uber Eats positions its commission as the cost of reach, but on a thin-margin restaurant ticket, handing over 20-30% can turn a profitable order into a break-even one - and the customer pays a marked-up menu plus delivery and service fees, so the person ordering loses too.",
       p2Html:
-        "Good Circles is the opposite arrangement: the platform takes 1% of profit, your customer saves about 10%, and a local nonprofit your customer chose gets funded with every order. Same kitchen, different rails - and the value stays in your community. See the full field on <a href=\"/sell/marketplace-fees-comparison\" class=\"font-bold underline\" style=\"color:#7851A9\">the full marketplace comparison &raquo;</a>",
+        "Good Circles is the opposite arrangement: the platform takes 1% of profit, your customer saves about 10%, and a local nonprofit your customer chose gets funded with every order. Same kitchen, different rails - and the value stays in your community. See the full field on <a href=\"/sell/marketplace-fees-comparison/\" class=\"font-bold underline\" style=\"color:#7851A9\">the full marketplace comparison &raquo;</a>",
     },
     faqs: [
       { q: "How much does Good Circles cost compared to Uber Eats?", a: "Uber Eats charges 20-30% of each Marketplace order by plan (Lite 20% / Plus 25% / Premium 30%). Good Circles charges a 1% fee on profit - no ad spend, no merchant card cost, and no monthly or listing fees. If you don't sell, you don't pay." },
@@ -65,7 +65,7 @@ export const SELL_PAGES: SellPage[] = [
       h2: "Three fees in a trench coat",
       p1: "Grubhub doesn't publish simple tier percentages - its take is a marketing commission plus a delivery fee plus processing, which together commonly land in the 15-30% range. The higher you want to rank, the more marketing commission you pay, so visibility is something you rent over and over.",
       p2Html:
-        "Good Circles doesn't sell you back your own visibility. The platform takes 1% of profit, your customer saves about 10%, and a local nonprofit gets funded - and your customers come from local supporters, not paid placement. See <a href=\"/sell/marketplace-fees-comparison\" class=\"font-bold underline\" style=\"color:#7851A9\">the full marketplace comparison &raquo;</a>",
+        "Good Circles doesn't sell you back your own visibility. The platform takes 1% of profit, your customer saves about 10%, and a local nonprofit gets funded - and your customers come from local supporters, not paid placement. See <a href=\"/sell/marketplace-fees-comparison/\" class=\"font-bold underline\" style=\"color:#7851A9\">the full marketplace comparison &raquo;</a>",
     },
     faqs: [
       { q: "What does Grubhub actually charge restaurants?", a: "Grubhub's published components are a marketing commission (5-20%) plus a delivery fee (around 10%) plus payment processing, which commonly total 15-30% of an order. Good Circles charges a 1% fee on profit, with no ad spend and no merchant card cost." },
@@ -134,7 +134,7 @@ export const SELL_PAGES: SellPage[] = [
       h2: "A flat fifth of every sale",
       p1: "Poshmark's 20% is simple, but it's a fifth of your sale price - not your profit - gone on every item over $15. For sellers with real cost in their inventory, that's a serious bite out of a thin resale margin.",
       p2Html:
-        "Good Circles charges 1% of profit instead of 20% of the sale, your customer saves about 10%, and a local nonprofit gets funded. You keep meaningfully more per sale and create far more local value. See <a href=\"/sell/marketplace-fees-comparison\" class=\"font-bold underline\" style=\"color:#7851A9\">the full comparison &raquo;</a>",
+        "Good Circles charges 1% of profit instead of 20% of the sale, your customer saves about 10%, and a local nonprofit gets funded. You keep meaningfully more per sale and create far more local value. See <a href=\"/sell/marketplace-fees-comparison/\" class=\"font-bold underline\" style=\"color:#7851A9\">the full comparison &raquo;</a>",
     },
     faqs: [
       { q: "How much lower are Good Circles' fees than Poshmark's?", a: "Poshmark keeps 20% of any sale of $15 or more (a flat $2.95 under $15). Good Circles charges 1% of profit - so on a $100 sale Poshmark keeps $20 while Good Circles' fee is pennies on your profit, with no ad spend and no merchant card cost." },

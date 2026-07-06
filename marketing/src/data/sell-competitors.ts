@@ -382,7 +382,7 @@ export const COMPETITORS: Competitor[] = [
     verified: "2026-06-22",
     verdict: "redistribution",
     hasPage: true,
-    pagePath: "/sell/own-store",
+    pagePath: "/sell/own-store/",
   },
 ];
 

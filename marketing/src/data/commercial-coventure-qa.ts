@@ -24,12 +24,12 @@ export interface QACategory {
   items: QA[];
 }
 
-const how = '<a href="/how-it-works">how Good Circles works</a>';
-const forNp = '<a href="/for-nonprofits">Good Circles for nonprofits</a>';
-const forBiz = '<a href="/for-business">Good Circles for business</a>';
-const sell = '<a href="/sell">Good Circles for sellers</a>';
-const compare = '<a href="/sell/marketplace-fees-comparison">marketplace fee comparison</a>';
-const cause = '<a href="/cause-marketing">cause marketing</a>';
+const how = '<a href="/how-it-works/">how Good Circles works</a>';
+const forNp = '<a href="/for-nonprofits/">Good Circles for nonprofits</a>';
+const forBiz = '<a href="/for-business/">Good Circles for business</a>';
+const sell = '<a href="/sell/">Good Circles for sellers</a>';
+const compare = '<a href="/sell/marketplace-fees-comparison/">marketplace fee comparison</a>';
+const cause = '<a href="/cause-marketing/">cause marketing</a>';
 const reg = '<a href="/resources/governance-compliance/charitable-solicitation-registration/">charitable solicitation registration</a>';
 const coi = '<a href="/resources/governance-compliance/conflict-of-interest-policy/">conflict-of-interest policy</a>';
 const partners = '<a href="/resources/fundraising/corporate-partnerships/">corporate partnerships</a>';

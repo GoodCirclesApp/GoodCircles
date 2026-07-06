@@ -41,6 +41,38 @@ function money(n) {
 }
 function tier(assets) { assets = Number(assets) || 0; if (assets >= 1e8) return 'one of the largest'; if (assets >= 1e7) return 'a large'; if (assets >= 1e6) return 'a mid-sized'; return 'a smaller'; }
 
+// SEO title fitting (Ahrefs audit 2026-07-05): titles must be <=65 chars.
+// Shorten the funder name progressively — drop leading "The", corporate
+// suffixes, and "Charitable" duplication — then truncate at a word boundary.
+function shortTitleName(name, budget) {
+  let n = name;
+  if (n.length <= budget) return n;
+  n = n.replace(/^The\s+/i, '');
+  if (n.length <= budget) return n;
+  n = n.replace(/[,\s]+(Incorporated|Inc\.?|Corporation|Corp\.?|LLC|Ltd\.?)$/i, '');
+  if (n.length <= budget) return n;
+  n = n.replace(/\bCharitable\s+(Foundation|Trust|Tr|Fund)\b/i, '$1');
+  if (n.length <= budget) return n;
+  n = n.replace(/\s+(Charitable|Foundation|Fund)$/i, '');
+  if (n.length <= budget) return n;
+  const cut = n.slice(0, budget).replace(/\s+\S*$/, '');
+  return cut || n.slice(0, budget);
+}
+
+// Meta description <=155 chars, built from the data (type, city/state, assets).
+function funderMeta(f, focusShort, fy) {
+  const type = focusShort.charAt(0).toUpperCase() + focusShort.slice(1);
+  const hasAssets = fy.assets != null && !isNaN(Number(fy.assets));
+  const assets = hasAssets
+    ? ` IRS Form 990 financials: ~${money(fy.assets)} assets.`
+    : ' IRS Form 990 financials and filing history.';
+  let d = `${type} in ${f.city}, ${f.state}.${assets} Grant focus, how to apply, and research links.`;
+  if (d.length > 155) d = `${type} in ${f.city}, ${f.state}.${assets} Grant focus and research links.`;
+  if (d.length > 155) d = `${type} in ${f.city}, ${f.state}.${assets}`;
+  if (d.length > 155) d = d.slice(0, 152).replace(/\s+\S*$/, '') + '…';
+  return d;
+}
+
 const SHARE = `<div class="sharebar"><span class="lbl">Share</span><a href="javascript:void(0)" onclick="gcShare('facebook')" aria-label="Share on Facebook"><svg viewBox="0 0 24 24"><path d="M13 22v-8h3l1-4h-4V8c0-1 .5-2 2-2h2V2h-3c-3 0-5 2-5 5v3H6v4h3v8z"/></svg>Facebook</a><a href="javascript:void(0)" onclick="gcShare('x')" aria-label="Share on X"><svg viewBox="0 0 24 24"><path d="M18 2h3l-7 8 8 12h-6l-5-7-6 7H2l8-9L2 2h6l4 6zm-1 18h2L8 4H6z"/></svg>X</a><a href="javascript:void(0)" onclick="gcShare('linkedin')" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M4 4a2 2 0 110 4 2 2 0 010-4zM3 9h3v12H3zM9 9h3v2c.5-1 2-2 4-2 3 0 4 2 4 5v7h-3v-6c0-2-1-3-2-3s-2 1-2 3v6H9z"/></svg>LinkedIn</a><a href="javascript:void(0)" onclick="gcShare('email')" aria-label="Share by email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg>Email</a><button onclick="gcCopy(this)" aria-label="Copy link"><svg viewBox="0 0 24 24"><path d="M9 7h9v12H9zM5 3h9v2H7v10H5z"/></svg><span class="t">Copy link</span></button></div>`;
 function head(title, canon, desc, ld) {
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -55,26 +87,28 @@ function head(title, canon, desc, ld) {
 <link rel="stylesheet" href="/resources/resources.css">
 ${ld.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join('\n')}
 </head><body>
-<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/funders/">Funders</a><a href="/resources/grants/funder-directory/">Directory</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits" style="padding:9px 16px">For nonprofits</a></div></div></nav>`;
+<nav class="nav"><div class="wrap"><a class="brand" href="/resources/"><img src="/brand/gc-main-white.svg" alt="Good Circles"></a><div class="links"><a href="/resources/">Resources</a><a href="/resources/funders/">Funders</a><a href="/resources/grants/funder-directory/">Directory</a><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits/" style="padding:9px 16px">For nonprofits</a></div></div></nav>`;
 }
 const FOOT = `<footer><div class="wrap">
   <div class="ftag">Save. Give. Stay local.</div>
-  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/funders/">Funder database</a> · <a href="https://goodcircles.org/for-nonprofits">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
+  <div class="fnav"><a href="/resources/">Resources</a> · <a href="/resources/funders/">Funder database</a> · <a href="https://goodcircles.org/for-nonprofits/">For nonprofits</a> · <a href="https://goodcircles.org">goodcircles.org</a></div>
   <p class="muted">goodcircles.org · The community marketplace · Launching September 2026</p>
 </div></footer>
 <script src="/resources/share.js"></script>
 </body></html>
 `;
-const ATTRIB = `<div class="callout"><h4>Sources &amp; tools</h4><p style="margin:0 0 6px">This is a <b>research profile</b> built from public records — not an endorsement, and not an application portal. Always confirm current priorities, deadlines, and how to apply with the funder before reaching out.</p><ul><li><a href="REPLACE_PP" target="_blank" rel="noopener">IRS Form 990 filings on ProPublica Nonprofit Explorer</a> — see every year of this organization's public tax filings.</li><li><a href="https://apps.irs.gov/app/eos/" target="_blank" rel="noopener">IRS Tax Exempt Organization Search</a> — confirm exempt status and pull determination letters.</li><li><a href="/resources/grants/grant-prospect-research/">How to research a funder</a> · <a href="/resources/grants/how-to-find-grants/">How to find grants</a></li></ul><p class="muted" style="margin-top:8px">Source: the organization's IRS Form 990 filings (public record) via ProPublica Nonprofit Explorer. Figures are from its most recent available filing and may not reflect current activity. Last verified ${DATE}.</p></div>`;
+const ATTRIB = `<div class="callout"><h4>Sources &amp; tools</h4><p style="margin:0 0 6px">This is a <b>research profile</b> built from public records — not an endorsement, and not an application portal. Always confirm current priorities, deadlines, and how to apply with the funder before reaching out.</p><ul><li><a href="REPLACE_PP" target="_blank" rel="noopener">IRS Form 990 filings on ProPublica Nonprofit Explorer</a> — see every year of this organization's public tax filings.</li><li><a href="https://apps.irs.gov/app/eos" target="_blank" rel="noopener">IRS Tax Exempt Organization Search</a> — confirm exempt status and pull determination letters.</li><li><a href="/resources/grants/grant-prospect-research/">How to research a funder</a> · <a href="/resources/grants/how-to-find-grants/">How to find grants</a></li></ul><p class="muted" style="margin-top:8px">Source: the organization's IRS Form 990 filings (public record) via ProPublica Nonprofit Explorer. Figures are from its most recent available filing and may not reflect current activity. Last verified ${DATE}.</p></div>`;
 
-function renderFunder(f) {
+function renderFunder(f, stateList, idx) {
   const stslug = STATES[f.state] || 'other'; const stname = STATEN[f.state] || f.state;
   const sl = f.slug;
   const canon = `${SITE}/resources/funders/${stslug}/${sl}/`;
   const [focusShort, focusLong] = focus(f.ntee);
   const fy = f.filings[0] || {};
-  const title = `${f.name} — Grants, Financials & 990 (${esc(f.city)}, ${f.state}) · Good Circles`;
-  const desc = `${f.name} is ${focusShort} in ${f.city}, ${f.state} (EIN ${f.ein}). See its IRS Form 990 financials — about ${money(fy.assets)} in assets, ${money(fy.revenue)} revenue (FY${fy.year}) — and how to research this funder.`.slice(0, 250);
+  // Title <=65 chars, no "· Good Circles" suffix on funder profiles (Ahrefs audit).
+  const titleTail = ` — 990 & Grants (${f.city}, ${f.state})`;
+  const title = `${shortTitleName(f.name, Math.max(65 - titleTail.length, 12))}${titleTail}`;
+  const desc = funderMeta(f, focusShort, fy);
   const addr = { '@type': 'PostalAddress', addressLocality: f.city, addressRegion: f.state, postalCode: f.zip || undefined, addressCountry: 'US' };
   const ngo = { '@context': 'https://schema.org', '@type': 'NGO', name: f.name, identifier: { '@type': 'PropertyValue', propertyID: 'EIN', value: f.ein }, address: addr, url: f.ppUrl, areaServed: stname, nonprofitStatus: 'Nonprofit501c3' };
   const faqs = [
@@ -98,6 +132,19 @@ function renderFunder(f) {
   ].map((r) => `<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td></tr>`).join('');
   const hist = f.filings.map((x) => `<tr><td>${x.year}</td><td style="text-align:right">${money(x.revenue)}</td><td style="text-align:right">${money(x.expenses)}</td><td style="text-align:right">${money(x.assets)}</td></tr>`).join('');
   const faqHtml = faqs.map((x) => `<div class="faq"><h4>${esc(x.q)}</h4><p>${esc(x.a)}</p></div>`).join('\n');
+  // "More funders" internal links (Ahrefs audit: most profiles had one incoming
+  // link). Assets-rank neighbors FIRST — that guarantees every profile receives
+  // links from its neighbors — then same city, then same NTEE focus, 4-6 total.
+  const rel = [];
+  const addRel = (g) => { if (g && g !== f && !rel.includes(g) && rel.length < 6) rel.push(g); };
+  addRel(stateList[idx - 1]); addRel(stateList[idx + 1]);
+  stateList.filter((g) => g !== f && g.city === f.city).slice(0, 3).forEach(addRel);
+  const nteeP = (f.ntee || '').slice(0, 3);
+  if (nteeP) stateList.filter((g) => g !== f && (g.ntee || '').slice(0, 3) === nteeP).slice(0, 4).forEach(addRel);
+  addRel(stateList[idx - 2]); addRel(stateList[idx + 2]);
+  const moreFunders = rel.length
+    ? `\n  <h2 id="more-funders">More ${esc(stname)} funders to research</h2>\n  <div class="related"><b>Similar and nearby funders:</b><br>\n    ${rel.map((g) => `<a href="/resources/funders/${stslug}/${g.slug}/">${esc(g.name)} (${esc(g.city)})</a>`).join('\n    ')}\n  </div>\n`
+    : '';
   return head(title, canon, desc, [ngo, faqLd, crumb]) + `
 <div class="wrap"><header class="hero">
   <div class="crumb"><a href="/resources/">Resources</a> › <a href="/resources/funders/">Funders</a> › <a href="/resources/funders/${stslug}/">${stname}</a> › ${esc(f.name)}</div>
@@ -121,7 +168,7 @@ function renderFunder(f) {
   <table class="tbl"><thead><tr><th>Fiscal year</th><th style="text-align:right">Revenue</th><th style="text-align:right">Expenses</th><th style="text-align:right">Total assets</th></tr></thead><tbody>${hist}</tbody></table>
   <p class="muted">Figures from the organization's public IRS Form 990 filings (most recent first). For a grantmaking foundation, annual expenses largely reflect grants made plus operating costs.</p>
 
-  <div class="gcbox"><span class="tagpill">Funding that doesn't depend on a grant cycle</span><h3>Diversify beyond grants with recurring, unrestricted support</h3><p>Researching funders is smart — but grants are competitive and slow. <b>Good Circles</b> builds a base of <b>recurring, unrestricted</b> funding alongside your grant strategy: supporters pick your cause once, then a share of their everyday local spending funds you automatically — about <b>10% of each merchant's net profit</b>, conservatively <b>~$72 per active supporter per year</b> (an estimate), free for your nonprofit. Good Circles launches in ${esc(stname === 'Mississippi' ? 'Mississippi' : 'the South')} first (September 2026).</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a></div>
+  <div class="gcbox"><span class="tagpill">Funding that doesn't depend on a grant cycle</span><h3>Diversify beyond grants with recurring, unrestricted support</h3><p>Researching funders is smart — but grants are competitive and slow. <b>Good Circles</b> builds a base of <b>recurring, unrestricted</b> funding alongside your grant strategy: supporters pick your cause once, then a share of their everyday local spending funds you automatically — about <b>10% of each merchant's net profit</b>, conservatively <b>~$72 per active supporter per year</b> (an estimate), free for your nonprofit. Good Circles launches in ${esc(stname === 'Mississippi' ? 'Mississippi' : 'the South')} first (September 2026).</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits/">Claim a Founding Nonprofit spot →</a></div>
 
   ${ATTRIB.replace('REPLACE_PP', esc(f.ppUrl))}
 
@@ -129,7 +176,7 @@ function renderFunder(f) {
 
   <h2 id="faq">FAQ</h2>
   ${faqHtml}
-
+${moreFunders}
   <div class="related"><b>Related:</b><br>
     <a href="/resources/funders/${stslug}/">All ${esc(stname)} foundations</a>
     <a href="/resources/grants/funder-directory/">Curated funder directory</a>
@@ -148,8 +195,9 @@ function appAdvice(f, focusShort) {
 function renderStateIndex(st, list) {
   const stslug = STATES[st]; const stname = STATEN[st];
   const canon = `${SITE}/resources/funders/${stslug}/`;
-  const title = `${stname} Grantmaking Foundations — ${list.length} Funders & 990 Data · Good Circles`;
-  const desc = `A free, searchable directory of ${list.length} ${stname} grantmaking foundations with IRS Form 990 financials — assets, revenue, focus area, and location. Research funders for your nonprofit.`;
+  // <=65-char title / <=155-char meta (Ahrefs audit 2026-07-05).
+  const title = `${stname} Foundations — ${list.length} Funders & 990 Data`;
+  const desc = `Free directory of ${list.length} ${stname} grantmaking foundations with IRS Form 990 financials — assets, revenue, focus area, and location.`;
   const totalAssets = list.reduce((s, f) => s + (Number(f.filings[0]?.assets) || 0), 0);
   const collection = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: `${stname} Grantmaking Foundations`, description: desc, url: canon, isPartOf: { '@type': 'WebSite', name: 'Good Circles', url: SITE } };
   const dataset = { '@context': 'https://schema.org', '@type': 'Dataset', name: `${stname} grantmaking foundations (IRS 990 data)`, description: `${list.length} grantmaking foundations and philanthropic organizations in ${stname}, with IRS Form 990 financials.`, url: canon, isAccessibleForFree: true, creator: { '@type': 'Organization', name: 'Good Circles' }, keywords: [`${stname} foundations`, `${stname} grants`, 'grantmaking foundations', 'nonprofit funders', 'IRS 990'], dateModified: DATE };
@@ -168,7 +216,7 @@ function renderStateIndex(st, list) {
   <p id="ffc" style="font-family:'Montserrat';font-weight:800;color:var(--purple);font-size:.84rem;margin:0 0 4px"></p>
   <table class="tbl"><thead><tr><th>Foundation</th><th>City</th><th>Focus</th><th style="text-align:right">Assets</th></tr></thead><tbody id="fft">${rows}</tbody></table>
 
-  <div class="gcbox" style="margin-top:18px"><span class="tagpill">Free for ${stname} nonprofits</span><h3>Build recurring, unrestricted funding alongside grants</h3><p><b>Good Circles</b> helps ${stname} nonprofits earn from everyday local spending — about 10% of each merchant's net profit, conservatively ~$72 per active supporter per year (an estimate), recurring and free for your nonprofit.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">See how it works →</a></div>
+  <div class="gcbox" style="margin-top:18px"><span class="tagpill">Free for ${stname} nonprofits</span><h3>Build recurring, unrestricted funding alongside grants</h3><p><b>Good Circles</b> helps ${stname} nonprofits earn from everyday local spending — about 10% of each merchant's net profit, conservatively ~$72 per active supporter per year (an estimate), recurring and free for your nonprofit.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits/">See how it works →</a></div>
 
   ${SHARE}
   <div class="related"><b>Related:</b><br>
@@ -189,8 +237,9 @@ ${FOOT}`;
 
 function renderHub(byState, total) {
   const canon = `${SITE}/resources/funders/`;
-  const title = `Nonprofit Funder Database — ${total} Grantmaking Foundations (IRS 990 Data) · Good Circles`;
-  const desc = `A free database of ${total} grantmaking foundations across the Deep South — Mississippi, Alabama, Arkansas, Louisiana, and Tennessee — with IRS Form 990 financials, focus areas, and research links.`;
+  // <=65-char title / <=155-char meta (Ahrefs audit 2026-07-05).
+  const title = `Nonprofit Funder Database — ${total} Foundations (IRS 990)`;
+  const desc = `A free database of ${total} grantmaking foundations across 13 Southern states, with IRS Form 990 financials, focus areas, and research links.`;
   const collection = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Nonprofit Funder Database', description: desc, url: canon, isPartOf: { '@type': 'WebSite', name: 'Good Circles', url: SITE } };
   const dataset = { '@context': 'https://schema.org', '@type': 'Dataset', name: 'Deep South grantmaking foundations (IRS 990 data)', description: desc, url: canon, isAccessibleForFree: true, creator: { '@type': 'Organization', name: 'Good Circles' }, keywords: ['grantmaking foundations', 'nonprofit funders', 'Mississippi foundations', 'Deep South grants', 'IRS 990'], dateModified: DATE };
   const crumb = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [ { '@type': 'ListItem', position: 1, name: 'Good Circles', item: SITE }, { '@type': 'ListItem', position: 2, name: 'Resources', item: `${SITE}/resources/` }, { '@type': 'ListItem', position: 3, name: 'Funders', item: canon } ] };
@@ -208,7 +257,7 @@ function renderHub(byState, total) {
 ${cards}
   <div class="callout"><h4>How this database works</h4><p style="margin:0">Built from the free <a href="https://projects.propublica.org/nonprofits/" target="_blank" rel="noopener">ProPublica Nonprofit Explorer</a> API (public IRS Form 990 data). Each profile is a research starting point, not an endorsement or application portal — always confirm current priorities and how to apply with the funder. Refreshed periodically. <span class="muted">Last verified ${DATE}.</span></p></div>
 
-  <div class="gcbox"><span class="tagpill">Free for nonprofits</span><h3>Diversify beyond grants with Good Circles</h3><p>Supporters pick your cause once, then a share of their everyday local spending funds you automatically — about 10% of each merchant's net profit, conservatively ~$72 per active supporter per year (an estimate), recurring and free for your nonprofit.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits">Claim a Founding Nonprofit spot →</a></div>
+  <div class="gcbox"><span class="tagpill">Free for nonprofits</span><h3>Diversify beyond grants with Good Circles</h3><p>Supporters pick your cause once, then a share of their everyday local spending funds you automatically — about 10% of each merchant's net profit, conservatively ~$72 per active supporter per year (an estimate), recurring and free for your nonprofit.</p><a class="btn btn-gold" href="https://goodcircles.org/for-nonprofits/">Claim a Founding Nonprofit spot →</a></div>
 
   ${SHARE}
   <div class="related"><b>Related:</b><br>
@@ -233,7 +282,7 @@ for (const st of Object.keys(byStateList)) {
   const list = byStateList[st].sort((a, b) => (Number(b.filings[0]?.assets) || 0) - (Number(a.filings[0]?.assets) || 0));
   const used = new Set();
   for (const f of list) { let s = slug(f.name) || 'funder'; let i = 2; while (used.has(s)) s = slug(f.name) + '-' + i++; used.add(s); f.slug = s; }
-  for (const f of list) { const dir = join(PUBLIC, 'resources', 'funders', STATES[st], f.slug); mkdirSync(dir, { recursive: true }); writeFileSync(join(dir, 'index.html'), renderFunder(f)); n++; }
+  list.forEach((f, i) => { const dir = join(PUBLIC, 'resources', 'funders', STATES[st], f.slug); mkdirSync(dir, { recursive: true }); writeFileSync(join(dir, 'index.html'), renderFunder(f, list, i)); n++; });
   const sdir = join(PUBLIC, 'resources', 'funders', STATES[st]); mkdirSync(sdir, { recursive: true }); writeFileSync(join(sdir, 'index.html'), renderStateIndex(st, list));
   byStateCount[st] = list.length;
 }

@@ -23,11 +23,11 @@ export interface QACategory {
   items: QA[];
 }
 
-const sell = '<a href="/sell">Good Circles for sellers</a>';
-const compare = '<a href="/sell/marketplace-fees-comparison">marketplace fee comparison</a>';
-const how = '<a href="/how-it-works">how it works</a>';
-const forBiz = '<a href="/for-business">Good Circles for business</a>';
-const forNp = '<a href="/for-nonprofits">Good Circles for nonprofits</a>';
+const sell = '<a href="/sell/">Good Circles for sellers</a>';
+const compare = '<a href="/sell/marketplace-fees-comparison/">marketplace fee comparison</a>';
+const how = '<a href="/how-it-works/">how it works</a>';
+const forBiz = '<a href="/for-business/">Good Circles for business</a>';
+const forNp = '<a href="/for-nonprofits/">Good Circles for nonprofits</a>';
 
 export const CAUSE_MARKETING_QA: QACategory[] = [
   {
@@ -255,7 +255,7 @@ export const CAUSE_MARKETING_QA: QACategory[] = [
       },
       {
         q: "Do my customers actually benefit, or just the nonprofit?",
-        a: `Both do. Customers save about ten percent on local purchases, which is real money returned to them, and that saving sits alongside the contribution to a local nonprofit they choose. The business keeps the large majority of its profit, the customer pays less, and the community gains, which is why the model is framed as a local circle rather than a one-directional donation. The customer's side is covered on the <a href="/shoppers">shoppers</a> page.`,
+        a: `Both do. Customers save about ten percent on local purchases, which is real money returned to them, and that saving sits alongside the contribution to a local nonprofit they choose. The business keeps the large majority of its profit, the customer pays less, and the community gains, which is why the model is framed as a local circle rather than a one-directional donation. The customer's side is covered on the <a href="/shoppers/">shoppers</a> page.`,
       },
       {
         q: "Is the donation tax-deductible for my business?",
