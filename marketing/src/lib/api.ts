@@ -64,3 +64,48 @@ export async function getWaitlistCount(): Promise<number> {
     return 2847;
   }
 }
+
+// ── Meridian early-access elections (2026-07-06) ────────────────────────────
+// The seeds payload contains names/categories ONLY — the API never exposes
+// counts, rankings, or any traction signal publicly (honesty rules).
+
+export interface SeedNonprofit {
+  id: string;
+  name: string;
+  category: string;
+}
+
+export interface SeedBusiness {
+  id: string;
+  name: string;
+  category: string;
+  area: string | null;
+}
+
+export async function getElectionSeeds(): Promise<{ nonprofits: SeedNonprofit[]; businesses: SeedBusiness[] }> {
+  const res = await fetch(`${BASE}/api/election/seeds`);
+  if (!res.ok) throw new Error('Could not load the ballot.');
+  return res.json();
+}
+
+export interface ElectionPayload {
+  email: string;
+  firstName?: string;
+  zip: string;
+  nonprofitId: string;
+  businessIds: string[];
+  suggestion?: { type: 'nonprofit' | 'business'; rawName: string; note?: string };
+}
+
+export async function submitElection(payload: ElectionPayload): Promise<{ ok: boolean; nonprofitName: string }> {
+  const res = await fetch(`${BASE}/api/election/submit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error((body as any).error ?? 'Could not record your election. Please try again.');
+  }
+  return res.json();
+}

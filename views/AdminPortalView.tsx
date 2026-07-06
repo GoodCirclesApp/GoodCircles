@@ -56,7 +56,8 @@ import { MockDataManager } from '../components/MockDataManager';
 import { AdminAffiliateDashboard } from '../components/AdminAffiliateDashboard';
 import { ComplianceDashboard } from '../components/ComplianceDashboard';
 import AdminIntegrityTest from '../components/AdminIntegrityTest';
-import { Scale } from 'lucide-react';
+import { Scale, Vote } from 'lucide-react';
+import { MeridianDemandManager } from '../components/MeridianDemandManager';
 import { AlertTriangle, Network } from 'lucide-react';
 import EmailCampaignsManager from '../components/EmailCampaignsManager';
 import { ErrorMonitor } from '../components/ErrorMonitor';
@@ -1883,7 +1884,8 @@ type AdminSubView =
   | 'DASHBOARD' | 'USERS' | 'TRANSACTIONS' | 'FINANCIALS'
   | 'COOPS' | 'FUND' | 'MUNICIPAL' | 'DATA' | 'HEALTH'
   | 'DEMO' | 'MOCK_DATA' | 'AFFILIATE' | 'SENTINEL' | 'COMPLIANCE' | 'CDFI_MGMT'
-  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST' | 'BRIEFINGS' | 'INBOX' | 'EMAIL' | 'ERRORS' | 'LDG';
+  | 'AUDIT_LOG' | 'SETTINGS' | 'INTEGRITY' | 'WAITLIST' | 'BRIEFINGS' | 'INBOX' | 'EMAIL' | 'ERRORS' | 'LDG'
+  | 'MERIDIAN';
 
 export const AdminPortalView: React.FC = () => {
   const [activeSubView, setActiveSubView] = useState<AdminSubView>('DASHBOARD');
@@ -1909,6 +1911,7 @@ export const AdminPortalView: React.FC = () => {
     { id: 'COMPLIANCE', label: 'L3C Compliance', icon: Scale },
     { id: 'CDFI_MGMT', label: 'CDFI Partners', icon: Landmark },
     { id: 'WAITLIST',   label: 'Waitlist',           icon: ListChecks },
+    { id: 'MERIDIAN',   label: 'Meridian Demand',    icon: Vote },
     { id: 'BRIEFINGS',  label: 'Briefing Requests',  icon: ClipboardList },
     { id: 'INBOX',      label: 'Support Inbox',      icon: Inbox },
     { id: 'EMAIL',      label: 'Email Campaigns',    icon: Send },
@@ -1936,6 +1939,7 @@ export const AdminPortalView: React.FC = () => {
       case 'COMPLIANCE': return <ComplianceDashboard />;
       case 'CDFI_MGMT': return <CdfiManagement isViewer={isViewer} />;
       case 'WAITLIST':   return <WaitlistManagement />;
+      case 'MERIDIAN':   return <MeridianDemandManager isViewer={isViewer} />;
       case 'BRIEFINGS':  return <BriefingRequests isViewer={isViewer} />;
       case 'INBOX':      return <SupportInbox isViewer={isViewer} />;
       case 'EMAIL':      return <EmailCampaignsManager isViewer={isViewer} />;

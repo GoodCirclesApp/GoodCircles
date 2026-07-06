@@ -1740,11 +1740,27 @@ model WaitlistEntry {
   redeemedAt       DateTime?
   redeemedUserId   String?
 
+  // Meridian early-access election (2026-07-06). All nullable/additive.
+  // ZIP reuses the existing zipCode field above. A member elects exactly ONE
+  // nonprofit (scalar FK = hard max one); business votes live in
+  // MemberBusinessVote (1–10, enforced in the controller). Elections and
+  // votes COUNT only once verifiedAt is set via the emailed verify link.
+  // firstName is optional, collected for admin outreach exports only.
+  firstName          String?
+  electedNonprofitId String?
+  verifiedAt         DateTime?
+  verifyToken        String?   @unique
+
+  electedNonprofit SeedNonprofit?       @relation(fields: [electedNonprofitId], references: [id], onDelete: SetNull)
+  businessVotes    MemberBusinessVote[]
+  suggestions      EntitySuggestion[]
+
   createdAt DateTime @default(now())
 
   @@index([role])
   @@index([state, city])
   @@index([createdAt])
+  @@index([electedNonprofitId])
 }
 
 model WaitlistOverflow {
@@ -1990,4 +2006,87 @@ model LocalDollarEdge {
   @@index([neighborId])
   @@index([isQIA])
   @@index([paymentMethod])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MERIDIAN EARLY-ACCESS ELECTIONS (2026-07-06). Curated seed lists power the
+// /meridian election form dropdowns — free text NEVER enters these tables
+// directly; EntitySuggestion is the moderated path (admin promotes manually).
+// All demand data (election/vote counts) is PRIVATE — admin endpoints only,
+// never rendered publicly.
+// ─────────────────────────────────────────────────────────────────────────────
+
+model SeedNonprofit {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  category  String // arts | youth | food | health | housing | animals | faith-based-service | other
+  city      String
+  source    String? // verification URL (public record / official site)
+  notes     String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  electors WaitlistEntry[]
+
+  @@index([category])
+  @@index([active])
+}
+
+model SeedBusiness {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  category      String // restaurant | coffee | retail | services | salon-spa | fitness | auto | entertainment | other
+  area          String?
+  ownershipType String? // independent | local-franchise (corporate chains excluded at curation)
+  source        String?
+  notes         String?
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  votes MemberBusinessVote[]
+
+  @@index([category])
+  @@index([active])
+}
+
+// One row per (member, business): a member's vote to see a business on the
+// platform. The 1–10-votes-per-member rule is enforced in the controller;
+// the unique constraint prevents duplicate votes for the same business.
+model MemberBusinessVote {
+  id              String   @id @default(uuid())
+  waitlistEntryId String
+  seedBusinessId  String
+  createdAt       DateTime @default(now())
+
+  member   WaitlistEntry @relation(fields: [waitlistEntryId], references: [id], onDelete: Cascade)
+  business SeedBusiness  @relation(fields: [seedBusinessId], references: [id], onDelete: Cascade)
+
+  @@unique([waitlistEntryId, seedBusinessId])
+  @@index([seedBusinessId])
+}
+
+// Log of weekly admin election digests (prevents double-sends across
+// restarts; mirrors NonprofitDigestLog).
+model ElectionDigestLog {
+  id     String   @id @default(uuid())
+  sentAt DateTime @default(now())
+  meta   Json?
+}
+
+// Moderation queue for "don't see yours?" free-text suggestions. Approved
+// entries are promoted into the seed tables MANUALLY by an admin — never
+// automatically.
+model EntitySuggestion {
+  id              String   @id @default(uuid())
+  waitlistEntryId String?
+  type            String // nonprofit | business
+  rawName         String
+  note            String?
+  status          String   @default("pending") // pending | approved | rejected
+  createdAt       DateTime @default(now())
+
+  member WaitlistEntry? @relation(fields: [waitlistEntryId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([type])
 }

@@ -41,6 +41,9 @@ import searchRoutes from './server/src/routes/searchRoutes';
 import complianceRoutes from './server/src/routes/complianceRoutes';
 import testRoutes from './server/src/routes/testRoutes';
 import waitlistRoutes from './server/src/routes/waitlistRoutes';
+import electionRoutes from './server/src/routes/electionRoutes';
+import { runElectionWeeklyDigest } from './server/src/controllers/electionController';
+import { ensureMeridianSeeds } from './server/src/services/seedImportService';
 import inboundEmailRoutes from './server/src/routes/inboundEmailRoutes';
 
 import { ReferralService } from './server/src/services/referralService';
@@ -183,6 +186,7 @@ async function startServer() {
   app.use('/api/compliance', complianceRoutes);
   app.use('/api/admin/test', testRoutes);
   app.use('/api/waitlist', waitlistRoutes);
+  app.use('/api/election', electionRoutes);
   app.use('/api/inbound', inboundEmailRoutes);
 
   app.get('/api/health', (req, res) => {
@@ -487,6 +491,18 @@ async function startServer() {
       runNonprofitDigest();
       setInterval(runNonprofitDigest, 24 * 60 * 60 * 1000);
     }, 10_000);
+
+    // Meridian election weekly ADMIN digest (private demand data). The runner
+    // checks ElectionDigestLog and no-ops if one was sent within the last
+    // week, so the daily tick is restart-safe and still weekly-cadenced.
+    setTimeout(() => {
+      runElectionWeeklyDigest();
+      setInterval(runElectionWeeklyDigest, 24 * 60 * 60 * 1000);
+    }, 20_000);
+
+    // Meridian seed lists: populate from the committed CSVs when the tables
+    // are empty (first deploy) so the /meridian ballot works immediately.
+    setTimeout(() => { ensureMeridianSeeds(); }, 5_000);
 
     // Regional Metrics: Monthly Aggregation
     setInterval(async () => {

@@ -1,0 +1,157 @@
+---
+// Meridian early-access landing page (2026-07-06) — the short URL for QR
+// codes and flyers. Conversion-focused and HONEST: founding-member framing,
+// no signup counts, no vote totals, no momentum language anywhere, and an
+// explicit statement that listed organizations haven't endorsed Good Circles
+// (neighbors elect them). The election form's dropdowns are the only way
+// entities appear — suggestions go to a moderated queue.
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import FaqList from '../components/FaqList.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../lib/faq';
+import { SITE_URL } from '../data/site';
+import MeridianElectionForm from '../components/react/MeridianElectionForm';
+
+const TITLE = 'Good Circles Meridian — Early Access | Shop Local & Give';
+const DESCRIPTION =
+  'Early access is underway in Meridian & Lauderdale County. Shop local, save about 10%, and elect the Meridian nonprofit your shopping supports.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What does early access in Meridian mean?',
+    a: 'Meridian & Lauderdale County is the founding community for Good Circles. Early access means neighbors here go first: you elect the nonprofit your shopping will support and pick the local businesses you want on the platform, ahead of the September 2026 launch in the Jackson metro.',
+  },
+  {
+    q: 'Does it cost anything to join?',
+    a: 'No. Joining is free for shoppers and nonprofits — no membership, subscription, or hidden fees. You’ll save about 10% on local purchases once shopping opens. Local businesses pay only a 1% fee on profit.',
+  },
+  {
+    q: 'How do elections work?',
+    a: 'You pick one Meridian-area nonprofit from the ballot — that’s your election. About 10% of the merchant’s net profit on every local purchase you make will fund it, automatically. You confirm your email so every election is one real neighbor, and you can change your election later.',
+  },
+  {
+    q: 'Did these organizations endorse Good Circles?',
+    a: 'No — and that’s by design. The nonprofits and businesses listed on the ballot have not endorsed Good Circles. They’re listed because they serve Meridian & Lauderdale County, and they are elected by neighbors like you. We share that interest with them privately as it becomes real.',
+  },
+];
+
+// Worked example fixed by the accuracy contract ($100 item, $40 cost) — the
+// same numbers as /how-it-works.
+const MATH = [
+  { label: 'You pay', amount: '$90', note: 'about 10% off, automatic at checkout' },
+  { label: 'Your nonprofit gets', amount: '$5', note: "10% of the merchant's profit ($50 profit after $40 cost)" },
+  { label: 'Platform fee', amount: '$0.50', note: '1% of profit — how Good Circles runs' },
+  { label: 'The business keeps', amount: '$84.50', note: '89% of its profit, plus its costs' },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/meridian/"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Meridian early access', url: `${SITE_URL}/meridian/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <header class="px-6 pt-12 pb-16" style="background:linear-gradient(150deg,#241247 0%,#4B2E84 58%,#7851A9 100%)">
+      <div class="max-w-3xl mx-auto">
+        <p
+          class="inline-block px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest mb-6"
+          style="background:#C2A76F;color:#241247"
+        >
+          Early access — Founding City · Meridian &amp; Lauderdale County
+        </p>
+        <h1 class="font-black text-white mb-6" style="font-size:clamp(2rem,5.5vw,3.2rem);letter-spacing:-0.02em;line-height:1.05">
+          Early access is underway in Meridian
+        </h1>
+        <div
+          class="text-white/90 text-lg leading-relaxed rounded-2xl p-6"
+          style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);font-family:'Fira Sans',sans-serif"
+        >
+          Good Circles begins here. Be an early member in Meridian: <strong>elect the nonprofit
+          your shopping will support</strong> and <strong>pick the local businesses</strong> you
+          want on the platform. When shopping opens, you'll <strong>save about 10%</strong> on
+          local purchases and about <strong>10% of the merchant's net profit</strong> will fund
+          your nonprofit — automatically, at no extra cost. Free to join.
+        </div>
+        <div class="mt-8">
+          <a
+            href="#elect"
+            data-cta-audience="NEIGHBOR"
+            class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+            style="background:#C2A76F;color:#241247"
+          >
+            Make your election ↓
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <section class="py-14 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">The model</p>
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">
+          One purchase, three wins — the math on a $100 local purchase
+        </h2>
+        <div class="grid sm:grid-cols-3 gap-4 mb-8">
+          <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="text-3xl font-black mb-1" style="color:#7851A9">~10%</p>
+            <p class="font-black text-slate-900 mb-1">You save</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">Automatic at checkout on local purchases.</p>
+          </div>
+          <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="text-3xl font-black mb-1" style="color:#C2A76F">10%</p>
+            <p class="font-black text-slate-900 mb-1">Funds your cause</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">10% of the merchant's net profit goes to the nonprofit you elect.</p>
+          </div>
+          <div class="p-6 rounded-2xl text-center" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <p class="text-3xl font-black mb-1" style="color:#241247">89%</p>
+            <p class="font-black text-slate-900 mb-1">Stays with the shop</p>
+            <p class="text-sm text-slate-500" style="font-family:'Fira Sans',sans-serif">The business keeps 89% of its profit on a 1% fee.</p>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <tbody>
+              {MATH.map((row) => (
+                <tr style="border-bottom:1px solid #E7DCF2">
+                  <td class="p-3 font-bold text-slate-900">{row.label}</td>
+                  <td class="p-3 font-black" style="color:#7851A9">{row.amount}</td>
+                  <td class="p-3 text-slate-500" style="font-family:'Fira Sans',sans-serif">{row.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-4 text-sm" style="font-family:'Fira Sans',sans-serif">
+          <a href="/how-it-works/" class="font-bold underline" style="color:#7851A9">See the full model »</a>
+        </p>
+      </div>
+    </section>
+
+    <section id="elect" class="py-14 px-6" style="background:#FBF7FE">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">Your election</p>
+        <h2 class="text-3xl font-black text-slate-900 mb-2" style="letter-spacing:-0.02em">
+          Be an early member in Meridian
+        </h2>
+        <p class="text-slate-600 mb-8" style="font-family:'Fira Sans',sans-serif">
+          Two minutes: elect your nonprofit, pick the businesses you want on Good Circles, and
+          confirm your email. Organizations on the ballot are <strong>elected by neighbors</strong> —
+          being listed isn't an endorsement of Good Circles.
+        </p>
+        <MeridianElectionForm client:load />
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Meridian early access — FAQ" eyebrow="Questions" />
+  </main>
+  <Footer />
+</Base>
