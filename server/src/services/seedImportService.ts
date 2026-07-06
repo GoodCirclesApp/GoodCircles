@@ -1,9 +1,11 @@
-// Boot-time Meridian seed import (2026-07-06). If the seed tables are EMPTY,
-// load the curated CSVs committed at prisma/seed-data/ so the /meridian
-// election dropdowns work on a fresh deploy without a manual step.
-// Conservative by design: runs ONLY when a table has zero rows, so it can
-// never clobber admin edits (deactivations, approved suggestions). For
-// updates/re-imports use scripts/import-seeds.mjs (idempotent upsert by name).
+// Boot-time Meridian seed sync (2026-07-06). Loads the curated CSVs committed
+// at prisma/seed-data/ so the /meridian election dropdowns work on a fresh
+// deploy AND pick up newly curated entries on later deploys.
+// ADDITIVE-ONLY by design (createMany + skipDuplicates on the unique name):
+// existing rows are never updated or deleted, so admin edits — deactivations,
+// suggestion-promoted entries — are never clobbered, and a deactivated entry
+// is never resurrected. For field updates/re-imports run
+// scripts/import-seeds.mjs (idempotent upsert by name) manually.
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { prisma } from '../lib/prisma';
@@ -39,9 +41,9 @@ export async function ensureMeridianSeeds(): Promise<void> {
     const npFile = join(dir, 'seed-meridian-nonprofits.csv');
     const bizFile = join(dir, 'seed-meridian-businesses.csv');
 
-    if ((await prisma.seedNonprofit.count()) === 0 && existsSync(npFile)) {
+    if (existsSync(npFile)) {
       const rows = parseCsv(readFileSync(npFile, 'utf8')).filter((r) => r.name);
-      await prisma.seedNonprofit.createMany({
+      const res = await prisma.seedNonprofit.createMany({
         data: rows.map((r) => ({
           name: r.name,
           category: r.category || 'other',
@@ -51,12 +53,12 @@ export async function ensureMeridianSeeds(): Promise<void> {
         })),
         skipDuplicates: true,
       });
-      console.log(`[Seeds] Imported ${rows.length} Meridian nonprofits (table was empty).`);
+      if (res.count > 0) console.log(`[Seeds] Added ${res.count} new Meridian nonprofit(s) from CSV (${rows.length} in file).`);
     }
 
-    if ((await prisma.seedBusiness.count()) === 0 && existsSync(bizFile)) {
+    if (existsSync(bizFile)) {
       const rows = parseCsv(readFileSync(bizFile, 'utf8')).filter((r) => r.name);
-      await prisma.seedBusiness.createMany({
+      const res = await prisma.seedBusiness.createMany({
         data: rows.map((r) => ({
           name: r.name,
           category: r.category || 'other',
@@ -67,7 +69,7 @@ export async function ensureMeridianSeeds(): Promise<void> {
         })),
         skipDuplicates: true,
       });
-      console.log(`[Seeds] Imported ${rows.length} Meridian businesses (table was empty).`);
+      if (res.count > 0) console.log(`[Seeds] Added ${res.count} new Meridian business(es) from CSV (${rows.length} in file).`);
     }
   } catch (err: any) {
     console.error('[Seeds] Meridian seed import error (non-fatal):', err.message);

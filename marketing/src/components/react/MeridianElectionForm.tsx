@@ -16,6 +16,8 @@ const NP_CATEGORY_LABELS: Record<string, string> = {
   housing: 'Housing & shelter',
   animals: 'Animals',
   'faith-based-service': 'Faith-based service',
+  church: 'Churches & congregations',
+  'civic-association': 'Civic clubs & associations',
   other: 'Community & more',
 };
 
@@ -24,10 +26,14 @@ const BIZ_CATEGORY_LABELS: Record<string, string> = {
   coffee: 'Coffee & cafés',
   retail: 'Retail & shops',
   services: 'Services & trades',
-  'salon-spa': 'Salons & spas',
-  fitness: 'Fitness',
+  'salon-spa': 'Salons, spas & barbers',
+  fitness: 'Fitness & movement',
   auto: 'Auto',
-  entertainment: 'Entertainment',
+  entertainment: 'Entertainment & recreation',
+  'health-wellness': 'Health & wellness',
+  'home-garden': 'Home & garden',
+  'grocery-market': 'Groceries & markets',
+  'home-trades': 'Home services & trades',
   other: 'More local favorites',
 };
 
@@ -89,6 +95,15 @@ export default function MeridianElectionForm() {
     setBusinessIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : prev.length >= 10 ? prev : [...prev, id],
     );
+  }
+
+  // Opens the moderated-suggestion box prefilled from a no-match search —
+  // suggestions never enter the live ballot directly (admin reviews first).
+  function openSuggestion(type: 'nonprofit' | 'business', name: string) {
+    setSuggestType(type);
+    if (name.trim()) setSuggestName(name.trim());
+    setSuggestOpen(true);
+    setTimeout(() => document.getElementById('suggest-box')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -232,9 +247,16 @@ export default function MeridianElectionForm() {
                   </div>
                 ))}
                 {npFiltered.length === 0 && (
-                  <p className="p-3 text-sm text-slate-400" style={{ fontFamily: "'Fira Sans',sans-serif" }}>
-                    No match — you can suggest it below.
-                  </p>
+                  <div className="p-3">
+                    <p className="text-sm text-slate-400 mb-2" style={{ fontFamily: "'Fira Sans',sans-serif" }}>
+                      No match on the ballot yet.
+                    </p>
+                    <button type="button" onClick={() => openSuggestion('nonprofit', npSearch)}
+                      className="px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider"
+                      style={{ background: '#7851A9', color: '#fff' }}>
+                      Suggest {npSearch.trim() ? `"${npSearch.trim()}"` : 'an organization'} →
+                    </button>
+                  </div>
                 )}
               </div>
             )}
@@ -282,15 +304,22 @@ export default function MeridianElectionForm() {
             </div>
           ))}
           {bizFiltered.length === 0 && (
-            <p className="p-2 text-sm text-slate-400" style={{ fontFamily: "'Fira Sans',sans-serif" }}>
-              No match — you can suggest it below.
-            </p>
+            <div className="p-2">
+              <p className="text-sm text-slate-400 mb-2" style={{ fontFamily: "'Fira Sans',sans-serif" }}>
+                No match on the ballot yet.
+              </p>
+              <button type="button" onClick={() => openSuggestion('business', bizSearch)}
+                className="px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider"
+                style={{ background: '#7851A9', color: '#fff' }}>
+                Suggest {bizSearch.trim() ? `"${bizSearch.trim()}"` : 'a business'} →
+              </button>
+            </div>
           )}
         </div>
       </div>
 
       {/* Optional suggestion — files to a moderated queue, never straight to the ballot */}
-      <div>
+      <div id="suggest-box">
         {!suggestOpen ? (
           <button type="button" onClick={() => setSuggestOpen(true)}
             className="text-sm font-bold underline" style={{ color: '#7851A9', fontFamily: "'Fira Sans',sans-serif" }}>
