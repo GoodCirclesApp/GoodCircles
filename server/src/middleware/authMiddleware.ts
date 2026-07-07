@@ -30,6 +30,25 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
   }
 };
 
+/** Optional authentication: attaches req.user when a VALID Bearer token is
+ *  present; proceeds as an anonymous guest when the token is absent or
+ *  invalid (a stale token in localStorage must not break guest-permitted
+ *  actions like affiliate click tracking). Never use this to guard
+ *  privileged routes — it never rejects. */
+export const optionalAuthenticateToken = (req: AuthRequest, _res: Response, next: NextFunction) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token) {
+    try {
+      const decoded = verifyAccessToken(token) as any;
+      req.user = { id: decoded.sub, role: decoded.role, email: decoded.email };
+    } catch {
+      // invalid/expired token → treat as guest
+    }
+  }
+  next();
+};
+
 export const authorizeRole = (roles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user || !roles.includes(req.user.role)) {

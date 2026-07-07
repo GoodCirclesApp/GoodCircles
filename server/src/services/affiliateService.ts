@@ -112,6 +112,9 @@ export class AffiliateService {
   }
 
   // ── Conversions ───────────────────────────────────────────────────────────
+  // Lifecycle: PENDING (manual entry / partner report) → CONFIRMED (admin
+  // verifies the partner paid out; CDFI first-loss allocation happens HERE,
+  // exactly once) or VOID (returned/cancelled order; excluded from all stats).
 
   static async recordConversion(data: {
     listingId: string;
@@ -132,7 +135,9 @@ export class AffiliateService {
     const cdfiShare    = commTotal.mul(CDFI_SPLIT);     // 5%
     const platformShare = commTotal.mul(PLATFORM_SPLIT); // 45%
 
-    const conversion = await prisma.affiliateConversion.create({
+    // Created PENDING — money-side effects (CDFI allocation) run only on
+    // confirmation, never on creation.
+    return prisma.affiliateConversion.create({
       data: {
         listingId: data.listingId,
         clickId: data.clickId ?? null,
@@ -143,18 +148,49 @@ export class AffiliateService {
         cdfiShare,
         platformShare,
         externalRef: data.externalRef ?? null,
-        status: 'CONFIRMED',
-        confirmedAt: new Date(),
+        status: 'PENDING',
+        confirmedAt: null,
       },
     });
+  }
 
-    // Allocate exact CDFI share to first-loss pool (fire-and-forget)
+  /** PENDING → CONFIRMED. Triggers the CDFI first-loss allocation exactly
+   *  once (the status guard in the atomic update prevents double-allocation
+   *  on repeated calls). */
+  static async confirmConversion(id: string) {
+    const { count } = await prisma.affiliateConversion.updateMany({
+      where: { id, status: 'PENDING' },
+      data: { status: 'CONFIRMED', confirmedAt: new Date() },
+    });
+    if (count === 0) {
+      const existing = await prisma.affiliateConversion.findUnique({ where: { id }, select: { status: true } });
+      if (!existing) throw new Error('Conversion not found');
+      throw new Error(`Conversion is ${existing.status}, not PENDING — nothing to confirm`);
+    }
+    const conversion = await prisma.affiliateConversion.findUniqueOrThrow({ where: { id } });
+
+    // Allocate exact CDFI share to the first-loss pool (fire-and-forget).
     CdfiPackagingService.allocateFirstLossContribution(
       conversion.id,
-      Number(cdfiShare),
+      Number(conversion.cdfiShare),
     ).catch(err => console.error('[Affiliate] First-loss allocation error:', err));
 
     return conversion;
+  }
+
+  /** PENDING → VOID (returned/cancelled order). VOID conversions never hit
+   *  stats and never trigger allocations. */
+  static async voidConversion(id: string) {
+    const { count } = await prisma.affiliateConversion.updateMany({
+      where: { id, status: 'PENDING' },
+      data: { status: 'VOID' },
+    });
+    if (count === 0) {
+      const existing = await prisma.affiliateConversion.findUnique({ where: { id }, select: { status: true } });
+      if (!existing) throw new Error('Conversion not found');
+      throw new Error(`Conversion is ${existing.status}, not PENDING — only pending conversions can be voided`);
+    }
+    return prisma.affiliateConversion.findUniqueOrThrow({ where: { id } });
   }
 
   static getConversions() {
@@ -169,8 +205,11 @@ export class AffiliateService {
 
   // ── Stats ─────────────────────────────────────────────────────────────────
 
+  // VOID conversions are excluded from every figure below: confirmed sums
+  // only aggregate CONFIRMED rows, pending sums only PENDING rows, and the
+  // conversion rate counts CONFIRMED conversions only.
   static async getStats() {
-    const [confirmed, pending, totalClicks, totalConversions] = await Promise.all([
+    const [confirmed, pending, totalClicks, confirmedCount, pendingCount, voidCount] = await Promise.all([
       prisma.affiliateConversion.aggregate({
         where: { status: 'CONFIRMED' },
         _sum: { commTotal: true, dafShare: true, cdfiShare: true, platformShare: true, saleAmount: true },
@@ -181,6 +220,8 @@ export class AffiliateService {
       }),
       prisma.affiliateClick.count(),
       prisma.affiliateConversion.count({ where: { status: 'CONFIRMED' } }),
+      prisma.affiliateConversion.count({ where: { status: 'PENDING' } }),
+      prisma.affiliateConversion.count({ where: { status: 'VOID' } }),
     ]);
 
     return {
@@ -190,8 +231,11 @@ export class AffiliateService {
       cdfiContributions:   Number(confirmed._sum.cdfiShare     ?? 0),
       platformRevenue:     Number(confirmed._sum.platformShare ?? 0),
       pendingCommissions:  Number(pending._sum.commTotal       ?? 0),
+      confirmedCount,
+      pendingCount,
+      voidCount,
       totalClicks,
-      conversionRate: totalClicks > 0 ? (totalConversions / totalClicks) : 0,
+      conversionRate: totalClicks > 0 ? (confirmedCount / totalClicks) : 0,
     };
   }
 }

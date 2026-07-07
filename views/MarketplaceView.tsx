@@ -276,7 +276,7 @@ export const MarketplaceView: React.FC<Props> = ({
             <div className="flex-1 h-px bg-slate-100" />
           </div>
           <p className="text-center text-xs text-slate-400 font-medium -mt-2 max-w-xl mx-auto">
-            These categories aren't yet offered by local merchants in your node. External purchases earn affiliate commissions — 50% goes to our donor advised fund, 50% supports platform operations. As our merchant network grows, in-house listings will replace these automatically.
+            These categories aren't yet offered by local merchants. External purchases earn Good Circles a commission: 50% goes to a shared nonprofit pool (donor-advised fund), 5% seeds a local small-business lending safety pool, and 45% supports platform operations. We may earn a commission when you buy through these links. As local merchants join, their products replace these automatically.
           </p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
             {affiliateListings.map(listing => (

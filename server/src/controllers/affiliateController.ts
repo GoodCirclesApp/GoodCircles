@@ -56,6 +56,11 @@ const listingSchema = z.object({
 
 export const getListings = async (req: Request, res: Response) => {
   try {
+    // Global kill switch: until real affiliate accounts exist the marketplace
+    // section must render nothing anywhere, regardless of DB contents.
+    if (process.env.AFFILIATE_MARKETPLACE_ENABLED !== 'true') {
+      return res.json([]);
+    }
     const category = req.query.category as string | undefined;
     const excludeRaw = req.query.excludeCategories as string | undefined;
     const excludeCategories = excludeRaw
@@ -128,6 +133,24 @@ export const getConversions = async (req: AuthRequest, res: Response) => {
   try {
     res.json(await AffiliateService.getConversions());
   } catch (err: any) { res.status(500).json({ error: err.message }); }
+};
+
+export const confirmConversion = async (req: AuthRequest, res: Response) => {
+  try {
+    res.json(await AffiliateService.confirmConversion(String(req.params.id)));
+  } catch (err: any) {
+    const code = /not found/i.test(err.message) ? 404 : /not PENDING/i.test(err.message) ? 409 : 500;
+    res.status(code).json({ error: err.message });
+  }
+};
+
+export const voidConversion = async (req: AuthRequest, res: Response) => {
+  try {
+    res.json(await AffiliateService.voidConversion(String(req.params.id)));
+  } catch (err: any) {
+    const code = /not found/i.test(err.message) ? 404 : /not PENDING/i.test(err.message) ? 409 : 500;
+    res.status(code).json({ error: err.message });
+  }
 };
 
 export const getStats = async (req: AuthRequest, res: Response) => {

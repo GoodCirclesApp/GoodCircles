@@ -101,3 +101,21 @@ Good Circles L3C operates under a triple-impact economic model (10% consumer sav
 - IRS data is free and authoritative — no commercial nonprofit verification API needed.
 - The 10:1 Mission Multiplier (nonprofit share / platform fee) is enforced at the transaction calculation level in `transactionService.ts` and verified quarterly by the Compliance Dashboard Mission Report.
 - Consumer state is captured from User.address field at transaction time for CCV audit trail purposes.
+
+## Affiliate Marketplace Flags
+
+- `AFFILIATE_MARKETPLACE_ENABLED` — global kill switch, **default false/unset**.
+  When not `true`, `GET /api/affiliate/listings` returns `[]` so the affiliate
+  ("Supplement — Partner Products") section renders nothing anywhere,
+  regardless of DB contents. Set to `true` only after real affiliate accounts
+  exist and real tracking tags are entered in Admin Portal → Affiliate
+  Marketplace (`AffiliateProgram.trackingId` is the only place tags live —
+  never hardcode one).
+- `SEED_DEMO_DATA` — the affiliate demo seed (sample program + listings with
+  the fake tag `demo-00`) runs only when `NODE_ENV !== 'production'` **and**
+  this is explicitly `true`. Never set in production. To deactivate demo data
+  the old seed left in a database, run
+  `node scripts/remove-demo-affiliate-data.mjs` (deactivates, never deletes).
+- Commission split (do not restate as 50/50): **50% donor-advised fund, 5%
+  CDFI first-loss pool, 45% platform operations.** Conversions are created
+  `PENDING`; the CDFI allocation fires once, on admin confirmation.

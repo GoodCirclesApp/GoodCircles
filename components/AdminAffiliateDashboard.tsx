@@ -79,7 +79,7 @@ const ProgramsTab = () => {
                 {['AMAZON', 'ETSY', 'CUSTOM'].map(p => <option key={p}>{p}</option>)}
               </select>
             </div>
-            <Field label="Tracking / Associate Tag" value={form.trackingId} onChange={v => setForm(f => ({ ...f, trackingId: v }))} placeholder="goodcircles-20" />
+            <Field label="Tracking / Associate Tag" value={form.trackingId} onChange={v => setForm(f => ({ ...f, trackingId: v }))} placeholder="your-associates-tag" />
             <Field label="Default Commission Rate (0–1)" type="number" value={String(form.baseCommRate)} onChange={v => setForm(f => ({ ...f, baseCommRate: Number(v) }))} placeholder="0.04" />
             <Field label="Logo URL (optional)" value={form.logoUrl} onChange={v => setForm(f => ({ ...f, logoUrl: v }))} placeholder="https://..." />
           </div>
@@ -281,19 +281,38 @@ const ConversionsTab = () => {
     load();
   };
 
+  const confirm = async (id: string) => {
+    try { await apiFetch(`/conversions/${id}/confirm`, { method: 'PATCH' }); } catch (e: any) { setError(e.message); }
+    load();
+  };
+
+  const voidConv = async (id: string) => {
+    if (!window.confirm('Void this conversion (returned/cancelled order)? It will be excluded from all stats.')) return;
+    try { await apiFetch(`/conversions/${id}/void`, { method: 'PATCH' }); } catch (e: any) { setError(e.message); }
+    load();
+  };
+
+  const STATUS_STYLES: Record<string, string> = {
+    PENDING:   'bg-amber-50 text-amber-700 border-amber-200',
+    CONFIRMED: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    VOID:      'bg-slate-100 text-slate-400 border-slate-200 line-through',
+  };
+
   return (
     <div className="space-y-8">
       {error && <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-medium">{error}</div>}
       {stats && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
           <StatCard title="DAF Balance" value={`$${Number(stats.dafBalance).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
-            icon={<Heart size={18} />} sub="50% of commissions → donor advised fund" />
+            icon={<Heart size={18} />} sub="50% of confirmed commissions → donor-advised fund" />
+          <StatCard title="CDFI First-Loss" value={`$${Number(stats.cdfiContributions).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+            icon={<Heart size={18} />} sub="5% of confirmed commissions → lending safety pool" />
           <StatCard title="Platform Revenue" value={`$${Number(stats.platformRevenue).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
-            icon={<DollarSign size={18} />} sub="50% of commissions → operations & scaling" />
-          <StatCard title="Total Commissions" value={`$${Number(stats.totalCommissions).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
-            icon={<TrendingUp size={18} />} sub={`from $${Number(stats.totalSaleVolume).toLocaleString()} in referred sales`} />
+            icon={<DollarSign size={18} />} sub="45% of confirmed commissions → operations & scaling" />
+          <StatCard title="Pending Commissions" value={`$${Number(stats.pendingCommissions).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+            icon={<TrendingUp size={18} />} sub={`${stats.pendingCount ?? 0} awaiting confirmation · ${stats.voidCount ?? 0} void (excluded)`} />
           <StatCard title="Conversion Rate" value={`${(stats.conversionRate * 100).toFixed(1)}%`}
-            icon={<Percent size={18} />} sub={`${stats.totalClicks.toLocaleString()} clicks tracked`} />
+            icon={<Percent size={18} />} sub={`${stats.totalClicks.toLocaleString()} clicks · $${Number(stats.totalSaleVolume).toLocaleString()} confirmed sales`} />
         </div>
       )}
 
@@ -306,7 +325,7 @@ const ConversionsTab = () => {
 
       {showForm && (
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 space-y-4">
-          <p className="text-xs text-amber-700 font-medium">Record a confirmed affiliate sale. Commission is auto-calculated and split 50/50 between the donor advised fund and platform revenue.</p>
+          <p className="text-xs text-amber-700 font-medium">Log a reported affiliate sale. It's created as PENDING — confirm it below once the partner reports the commission as payable. On confirmation the commission splits 50% donor-advised fund / 5% CDFI first-loss pool / 45% platform revenue.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Affiliate Listing</label>
@@ -330,26 +349,46 @@ const ConversionsTab = () => {
         <table className="w-full text-left">
           <thead className="bg-slate-50">
             <tr>
-              {['Product', 'Partner', 'Sale', 'Commission', 'DAF (50%)', 'Platform (50%)', 'Ref', 'Date'].map(h => (
+              {['Product', 'Partner', 'Sale', 'Commission', 'DAF (50%)', 'CDFI (5%)', 'Platform (45%)', 'Status', 'Ref', 'Date', 'Actions'].map(h => (
                 <th key={h} className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {conversions.map(c => (
-              <tr key={c.id} className="hover:bg-slate-50">
+              <tr key={c.id} className={`hover:bg-slate-50 ${c.status === 'VOID' ? 'opacity-50' : ''}`}>
                 <td className="px-5 py-4 font-bold text-sm">{c.listing?.title ?? '—'}</td>
                 <td className="px-5 py-4 text-xs font-black text-amber-600 uppercase">{c.listing?.program?.name ?? '—'}</td>
                 <td className="px-5 py-4 font-bold text-sm">${Number(c.saleAmount).toFixed(2)}</td>
                 <td className="px-5 py-4 text-sm text-slate-600">${Number(c.commTotal).toFixed(2)} <span className="text-slate-400">({(Number(c.commRate) * 100).toFixed(1)}%)</span></td>
                 <td className="px-5 py-4 text-sm font-bold text-rose-600">${Number(c.dafShare).toFixed(2)}</td>
+                <td className="px-5 py-4 text-sm font-bold text-indigo-600">${Number(c.cdfiShare ?? 0).toFixed(2)}</td>
                 <td className="px-5 py-4 text-sm font-bold text-emerald-600">${Number(c.platformShare).toFixed(2)}</td>
+                <td className="px-5 py-4">
+                  <span className={`inline-block px-2 py-1 rounded-lg border text-[10px] font-black uppercase tracking-widest ${STATUS_STYLES[c.status] ?? STATUS_STYLES.PENDING}`}>
+                    {c.status}
+                  </span>
+                </td>
                 <td className="px-5 py-4 text-xs text-slate-400 font-mono">{c.externalRef ?? '—'}</td>
                 <td className="px-5 py-4 text-xs text-slate-400">{new Date(c.createdAt).toLocaleDateString()}</td>
+                <td className="px-5 py-4">
+                  {c.status === 'PENDING' && (
+                    <div className="flex gap-2">
+                      <button onClick={() => confirm(c.id)}
+                        className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500">
+                        Confirm
+                      </button>
+                      <button onClick={() => voidConv(c.id)}
+                        className="px-3 py-1.5 bg-slate-200 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-300">
+                        Void
+                      </button>
+                    </div>
+                  )}
+                </td>
               </tr>
             ))}
             {conversions.length === 0 && (
-              <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-400 text-sm">No conversions recorded yet.</td></tr>
+              <tr><td colSpan={11} className="px-6 py-12 text-center text-slate-400 text-sm">No conversions recorded yet.</td></tr>
             )}
           </tbody>
         </table>
@@ -375,7 +414,7 @@ export const AdminAffiliateDashboard: React.FC = () => {
     <div className="space-y-6">
       <div>
         <p className="text-slate-500 text-sm">
-          Manage external affiliate products shown across all marketplace views. Commissions split 50% to the donor advised fund and 50% to platform revenue.
+          Manage external affiliate products shown across all marketplace views. Commissions split 50% to the donor-advised fund, 5% to the CDFI first-loss pool, and 45% to platform revenue.
         </p>
       </div>
 
