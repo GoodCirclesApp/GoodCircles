@@ -1,0 +1,174 @@
+---
+// Honest comparison: "good circles vs amazon local", "community marketplace
+// vs big platform", "local marketplace alternative to yelp". Framing rules
+// from llms.txt honored: per-sale cash vs Amazon/eBay is MARGIN-DEPENDENT;
+// clear wins vs delivery apps; Yelp is discovery-only vs transactional.
+// NEVER claims universal superiority.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Good Circles vs National Marketplaces: An Honest Comparison';
+const DESCRIPTION =
+  'Where Good Circles genuinely beats Amazon, delivery apps, and Yelp — and where it honestly doesn’t. Margin math, discovery, and community value.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'Is Good Circles better than Amazon for a local business?',
+    a: 'It depends on your margins — we won’t pretend otherwise. Good Circles charges a 1% fee on profit while Amazon takes a referral fee of about 15% of the sale, so on per-sale cash Good Circles usually wins for lower-margin goods and can be comparable for high-margin ones. Where it always differs: local customers, no ad spend to be visible, and community funding from every sale.',
+  },
+  {
+    q: 'How is a community marketplace different from a big platform?',
+    a: 'A big platform maximizes extraction from each transaction; a community marketplace restructures the transaction so value stays local. On Good Circles a sale leaves the shopper saving about 10%, the business keeping 89% of its profit, and about 10% of profit funding a nonprofit the shopper elected — instead of 15–30% of the sale leaving town.',
+  },
+  {
+    q: 'Is Good Circles an alternative to Yelp?',
+    a: 'Partly. Yelp is discovery-only — reviews and listings, with revenue from ads. Good Circles is transactional: customers don’t just find a business, they buy from it, and every purchase carries the savings and nonprofit funding. If you want to be found, Yelp helps; if you want a sale with built-in loyalty, that’s what Good Circles is for.',
+  },
+  {
+    q: 'Does Good Circles beat delivery apps for restaurants?',
+    a: 'On economics, clearly: delivery apps commonly take 15–30% of each order — often most of a restaurant’s margin — while Good Circles takes a 1% fee on profit. What Good Circles doesn’t do is operate a driver fleet; it’s a marketplace and community channel, not a logistics company.',
+  },
+];
+
+const ARTICLE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: TITLE,
+  description: DESCRIPTION,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@type': 'Organization', name: 'Good Circles' },
+  publisher: { '@type': 'Organization', name: 'Good Circles', logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` } },
+  mainEntityOfPage: `${SITE_URL}/compare/good-circles-vs-national-marketplaces/`,
+};
+
+const ROWS = [
+  { dim: 'Fee basis', gc: 'A 1% fee on profit', them: '15–30% of the SALE (Amazon ~15% referral; Etsy ~20% combined; DoorDash up to 30%)' },
+  { dim: 'Shopper price', gc: 'About 10% lower, automatic', them: 'Full price (delivery apps often higher)' },
+  { dim: 'Community funding', gc: '10% of merchant net profit → shopper-elected nonprofit', them: 'None' },
+  { dim: 'Visibility', gc: 'No ad spend — demand arrives via nonprofit supporters', them: 'Pay-to-be-seen ads increasingly required' },
+  { dim: 'Customer relationship', gc: 'Local, repeat, yours', them: 'Owned by the platform' },
+  { dim: 'Reach', gc: 'Local-first (Mississippi, Sept 2026 →)', them: 'National/global — genuinely bigger reach' },
+  { dim: 'Logistics', gc: 'No delivery fleet', them: 'Delivery apps run fleets; Amazon runs FBA' },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/compare/good-circles-vs-national-marketplaces/"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    ARTICLE_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Compare', url: `${SITE_URL}/compare/good-circles-vs-national-marketplaces/` },
+      { name: 'Good Circles vs national marketplaces', url: `${SITE_URL}/compare/good-circles-vs-national-marketplaces/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Updated July 2026" h1="Good Circles vs the national marketplaces — honestly">
+      <p slot="answer">
+        Good Circles is not "better than Amazon at being Amazon" — it's a different structure.
+        National platforms take <strong>15–30% of each sale</strong> and own the customer; Good
+        Circles takes <strong>a 1% fee on profit</strong>, gives the shopper <strong>~10%
+        back</strong>, and routes <strong>10% of profit to a nonprofit the shopper elects</strong>.
+        Where each one wins depends on what you sell, your margins, and whether you want national
+        reach or local loyalty — this page maps it honestly.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-4xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+        <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">Side by side</h2>
+        <div class="overflow-x-auto mb-4">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider"></th>
+                <th class="text-left p-3 font-black text-xs uppercase tracking-wider" style="color:#7851A9">Good Circles</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">National marketplaces</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ROWS.map((r) => (
+                <tr style="border-bottom:1px solid #E7DCF2">
+                  <td class="p-3 font-bold text-slate-900">{r.dim}</td>
+                  <td class="p-3 font-bold" style="color:#241247">{r.gc}</td>
+                  <td class="p-3 text-slate-500">{r.them}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-slate-400 mb-12">
+          Third-party fee figures are the verified numbers maintained on our
+          <a href="/sell/marketplace-fees-comparison/" class="font-bold underline" style="color:#7851A9">marketplace fees comparison</a> (sources and verification dates per platform).
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Vs Amazon and eBay: it depends on your margins</h2>
+        <p class="text-slate-600 leading-relaxed mb-8">
+          Honest answer first: for some high-margin sellers, per-sale cash on Amazon or eBay can
+          be comparable to Good Circles — their referral-fee percentages hit hardest at low
+          margins, gentlest at high ones. What never changes is the structure: on Good Circles
+          you skip pay-to-be-seen advertising, keep the customer relationship, and every sale
+          funds your buyer's elected nonprofit. If reach is what you need — a national audience
+          for a shippable niche product — big marketplaces genuinely deliver that, and we say so.
+          Run your own numbers in
+          <a href="/learn/what-big-platforms-cost-local-businesses/" class="font-bold underline" style="color:#7851A9">what big platforms cost local businesses</a>.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Vs delivery apps: a clear economic win</h2>
+        <p class="text-slate-600 leading-relaxed mb-8">
+          Restaurant economics on 15–30% commissions are brutal — that range often consumes most
+          of an order's margin. Good Circles' 1% fee on profit is a different universe for
+          in-person and pickup business. The honest limit: Good Circles doesn't run a driver
+          fleet. If third-party delivery is core to your volume, apps still do that job — see the
+          per-platform honest math on <a href="/sell/doordash/" class="font-bold underline" style="color:#7851A9">DoorDash</a> and
+          <a href="/sell/ubereats/" class="font-bold underline" style="color:#7851A9">Uber Eats</a>.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">Vs Yelp: discovery vs transaction</h2>
+        <p class="text-slate-600 leading-relaxed mb-8">
+          Yelp answers "where should I go?" — reviews and listings, monetized with ads. Good
+          Circles answers "buy it here, and here's why": an actual transaction with an automatic
+          ~10% saving and nonprofit funding attached. They're not substitutes; a local business
+          can sensibly maintain a Yelp presence for discovery while selling through Good Circles
+          for the sale itself and the loyalty loop that follows it.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">The one metric where local-first always wins</h2>
+        <p class="text-slate-600 leading-relaxed">
+          <strong>Total local value.</strong> Count everything a sale creates — the business's
+          profit, the customer's saving, the nonprofit's funding — and the community marketplace
+          wins in every case we've modeled, because none of it leaves town. That's the honest
+          pitch: not "always more cash per sale," but more value, kept local. See
+          <a href="/answers/what-is-a-community-marketplace/" class="font-bold underline" style="color:#7851A9">what a community marketplace is</a>
+          and <a href="/how-it-works/" class="font-bold underline" style="color:#7851A9">how the model works</a>.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Good Circles vs national platforms — FAQ" />
+
+    <CtaBand
+      heading="Local-first, structurally different"
+      text="Keep 89% of your profit on a 1% fee on profit. Early access in Meridian — September 2026 launch, Jackson metro first."
+      label="Get started as a merchant →"
+      href="/sell/get-started/"
+      audience="MERCHANT"
+      secondaryLabel="For shoppers"
+      secondaryHref="/shoppers/"
+    />
+  </main>
+  <Footer />
+</Base>

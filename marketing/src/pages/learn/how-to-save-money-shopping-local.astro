@@ -1,0 +1,169 @@
+---
+// Cluster page: "how to save money shopping local". Practical, honest guide —
+// Good Circles' ~10% mechanic is ONE section among several real tactics.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'How to Save Money Shopping Local: 7 Real Tactics (2026)';
+const DESCRIPTION =
+  'Shop local without paying more: loyalty programs, seconds, seasonal buying, co-ops, market timing, and automatic savings like Good Circles’ ~10%.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'Is shopping local more expensive?',
+    a: 'Sticker prices at independents sometimes run higher than big-box, but the gap shrinks fast with loyalty programs, seconds, seasonal buying, and service value (repairs, advice, durability). And survey data shows far more of a local purchase — roughly 53% versus 14% — stays working in your community.',
+  },
+  {
+    q: 'How can I save money at local businesses?',
+    a: 'Seven tactics that actually work: join loyalty programs, buy seconds and imperfect goods, shop in season at farmers markets, join co-ops or buying clubs, ask about end-of-day and end-of-season pricing, buy service and repair instead of replacement, and use automatic-savings platforms like Good Circles, which applies about 10% off local purchases at checkout when it launches.',
+  },
+  {
+    q: 'Do farmers markets save money?',
+    a: 'In season, yes — peak-season produce at a market is often cheaper than grocery equivalents, and many markets accept SNAP with matching programs that stretch dollars further. Out of season, buy what’s abundant and preserve it.',
+  },
+  {
+    q: 'How does Good Circles make shopping local cheaper?',
+    a: 'When it launches (September 2026, Jackson metro first), prices at participating local businesses show about 10% lower automatically — no coupons or codes. The model funds it from a restructured sale where the business keeps 89% of its profit and 10% of profit funds a nonprofit you choose.',
+  },
+];
+
+const ARTICLE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: TITLE,
+  description: DESCRIPTION,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@type': 'Organization', name: 'Good Circles' },
+  publisher: { '@type': 'Organization', name: 'Good Circles', logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` } },
+  mainEntityOfPage: `${SITE_URL}/learn/how-to-save-money-shopping-local/`,
+};
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/how-to-save-money-shopping-local/"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    ARTICLE_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Learn', url: `${SITE_URL}/learn/` },
+      { name: 'How to save money shopping local', url: `${SITE_URL}/learn/how-to-save-money-shopping-local/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Updated July 2026" h1="How to save money shopping local">
+      <p slot="answer">
+        Shopping local doesn't have to cost more. <strong>Seven tactics reliably close the price
+        gap:</strong> loyalty programs, seconds and imperfect goods, seasonal buying, co-ops and
+        buying clubs, end-of-day market pricing, repair-over-replace, and automatic-savings
+        platforms. Used together they routinely beat big-box totals — while keeping roughly $53
+        of every $100 working in your community instead of $14.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <div class="space-y-8" style="font-family:'Fira Sans',sans-serif">
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">1. Join the loyalty programs — all of them</h2>
+            <p class="text-slate-600 leading-relaxed">
+              Independent shops run punch cards, points, and member pricing precisely because they
+              can't out-advertise chains — reward rates of 5–10% back are common at local coffee
+              shops, bookstores, and salons. Unlike corporate schemes, local programs rarely
+              expire aggressively, and owners often round in your favor. Ask at the counter; most
+              never advertise it.
+            </p>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">2. Buy seconds, imperfects, and floor models</h2>
+            <p class="text-slate-600 leading-relaxed">
+              Bakeries sell day-olds, boutiques discount samples, plant shops mark down
+              slightly-scuffed pots, furniture makers sell blemished pieces at real discounts.
+              These never make it to a website — you find them by being in the store and asking.
+            </p>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">3. Eat and buy in season</h2>
+            <p class="text-slate-600 leading-relaxed">
+              Peak-season produce at a farmers market is frequently cheaper than the grocery
+              equivalent — and many Mississippi markets accept SNAP with match programs that
+              double buying power on fresh food. The same seasonal logic works for clothing
+              (end-of-season racks at local boutiques) and garden centers (late-season plants).
+            </p>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">4. Join a co-op or buying club</h2>
+            <p class="text-slate-600 leading-relaxed">
+              Food co-ops, CSA farm shares, and neighborhood buying clubs trade a little
+              commitment for wholesale-adjacent pricing. A CSA share often prices produce 20–30%
+              under retail across a season, and co-op member days stack discounts on top.
+            </p>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">5. Time the market — literally</h2>
+            <p class="text-slate-600 leading-relaxed">
+              The last half hour at a farmers market is negotiation time: growers would rather
+              sell cheap than repack. End-of-season and end-of-line goods at local retailers work
+              the same way. Polite question, real savings: "any deals if I take the last of it?"
+            </p>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">6. Repair beats replace — and local shops repair</h2>
+            <p class="text-slate-600 leading-relaxed">
+              Cobblers, tailors, jewelers, guitar techs, and small-engine shops extend the life
+              of what you own for a fraction of replacement cost — a category of saving big-box
+              retail simply doesn't offer. Local service is a price advantage chains can't match.
+            </p>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">7. Use automatic savings — the Good Circles ~10%</h2>
+            <p class="text-slate-600 leading-relaxed">
+              Full honesty: this one is ours, and it isn't live everywhere yet. When Good Circles
+              launches (September 2026, Jackson metro first — with
+              <a href="/meridian/" class="font-bold underline" style="color:#7851A9">early access underway in Meridian</a>),
+              prices at participating local businesses show <strong>about 10% lower
+              automatically</strong> — no coupons, no codes — while about 10% of the merchant's
+              net profit funds a nonprofit you choose and the business keeps 89% of its profit.
+              It's free to join; the math is on
+              <a href="/how-it-works/" class="font-bold underline" style="color:#7851A9">how it works</a>.
+            </p>
+          </div>
+        </div>
+
+        <p class="text-slate-600 leading-relaxed mt-10" style="font-family:'Fira Sans',sans-serif">
+          Wondering whether local is worth the effort at all? The recirculation evidence in
+          <a href="/learn/why-shopping-local-matters/" class="font-bold underline" style="color:#7851A9">why shopping local matters</a>
+          and <a href="/learn/the-economic-impact-of-shopping-local/" class="font-bold underline" style="color:#7851A9">the economic impact of shopping local</a>
+          makes the case — and if you're in the Jackson area, our
+          <a href="/learn/best-local-businesses-jackson-ms/" class="font-bold underline" style="color:#7851A9">guide to Jackson's best local businesses</a>
+          is a practical place to start.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Saving money locally — FAQ" />
+
+    <CtaBand
+      heading="Save ~10% automatically — and fund a cause"
+      text="Free for shoppers. Early access in Meridian — September 2026 launch, Jackson metro first."
+      label="Join free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="How it works"
+      secondaryHref="/how-it-works/"
+    />
+  </main>
+  <Footer />
+</Base>

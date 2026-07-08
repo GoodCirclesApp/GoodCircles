@@ -1,0 +1,157 @@
+---
+// Branded onboarding lander: "founding nonprofit good circles", "nonprofit
+// good circles account", "free nonprofit fundraising platform". Factual
+// founding-50 program; elections explained via /meridian; resource hub as
+// immediate value. CTA wires to the existing signup flow.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Become a Founding Nonprofit — Good Circles (First 50, Free)';
+const DESCRIPTION =
+  'The Founding Nonprofit program: first 50 Mississippi nonprofits, free forever, recurring funding from neighbor elections, plus a 90+ guide resource hub.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What is a Good Circles Founding Nonprofit?',
+    a: 'One of the first 50 Mississippi nonprofits to claim a spot. Founding status is permanent and includes recognition across the platform, first availability on the election ballot as communities open, and a voice in how nonprofit tools are built. Joining is free — there is no fee on distributions.',
+  },
+  {
+    q: 'How do I create a nonprofit account on Good Circles?',
+    a: 'Claim a founding spot through the signup flow (choose "Nonprofit") with your organization name and EIN. Full nonprofit accounts activate with the marketplace launch in September 2026; claiming now reserves founding status and gets you onboarding first.',
+  },
+  {
+    q: 'Is Good Circles really a free fundraising platform for nonprofits?',
+    a: 'Yes — free to join, no subscription, and no fee on distributions to your organization. The model is funded by a 1% fee on profit that businesses pay. Your organization receives about 10% of the merchant’s net profit on every purchase made by supporters who elected you.',
+  },
+  {
+    q: 'How do neighbor elections work?',
+    a: 'Supporters pick your organization once, and their everyday local shopping funds you automatically from then on. In Meridian and Lauderdale County — the founding community — early access is underway and neighbors are already electing the nonprofits their shopping will support.',
+  },
+  {
+    q: 'What do we get before launch?',
+    a: 'Immediate value: the free Good Circles nonprofit resource hub — 90+ plain-English guides, 12 interactive tools, 23 downloadable templates, a funder database, and a Mississippi legal playbook. No login, no cost, no catch.',
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/for-nonprofits/founding-nonprofit/"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'For nonprofits', url: `${SITE_URL}/for-nonprofits/` },
+      { name: 'Founding Nonprofit', url: `${SITE_URL}/for-nonprofits/founding-nonprofit/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="Founding program"
+      badge="First 50 Mississippi nonprofits · Free forever"
+      h1="Become a Founding Nonprofit"
+    >
+      <p slot="answer">
+        The <strong>Founding Nonprofit program</strong> reserves permanent founding status for the
+        <strong>first 50 Mississippi nonprofits</strong> on Good Circles. It's free to join and
+        stays free — no subscription, no fee on distributions. Once the marketplace opens
+        (September 2026, Jackson metro first), supporters who <strong>elect</strong> your
+        organization fund it automatically: about <strong>10% of the merchant's net profit</strong>
+        on every local purchase they make.
+      </p>
+      <Fragment slot="ctas">
+        <a
+          href="/#mirror-section"
+          data-cta-audience="NONPROFIT"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+          style="background:#C2A76F;color:#241247"
+        >
+          Claim your founding spot →
+        </a>
+        <a
+          href="/resources/"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
+          style="border:1px solid rgba(255,255,255,0.35)"
+        >
+          Browse the free resource hub
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          What founding status includes
+        </h2>
+        <ul class="mb-10 space-y-3 text-slate-600" style="font-family:'Fira Sans',sans-serif">
+          <li><strong>Permanent recognition</strong> — Founding Nonprofit status and badge never expire.</li>
+          <li><strong>First on the ballot</strong> — as each community opens, founding organizations are available for neighbor elections from day one.</li>
+          <li><strong>No cost, ever</strong> — free to join, no subscription, no fee on distributions; the platform is funded by a 1% fee on profit paid by businesses.</li>
+          <li><strong>A voice in the build</strong> — founding organizations shape the nonprofit dashboard, payout reporting, and supporter tools.</li>
+        </ul>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          How neighbor elections fund you
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Good Circles doesn't ask your supporters to give more — it redirects value from
+          shopping they already do. A supporter elects your organization once; from then on,
+          about <strong>10% of the merchant's net profit</strong> on every local purchase they
+          make routes to you automatically, while they save about 10% and the business keeps 89%
+          of its profit. Conservatively that's roughly <strong>$72 per active supporter per
+          year</strong> — recurring and unrestricted. Elections are real and verified:
+          in <a href="/meridian/" class="font-bold underline" style="color:#7851A9">Meridian &amp; Lauderdale County</a>,
+          the founding community, early access is underway and neighbors are electing the
+          organizations their shopping will support. For the fundraising-strategy view, see
+          <a href="/learn/passive-nonprofit-funding/" class="font-bold underline" style="color:#7851A9">the definitive guide to passive nonprofit funding</a>.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Free value you can use today
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          You don't have to wait for launch to get something from Good Circles. The
+          <a href="/resources/" class="font-bold underline" style="color:#7851A9">nonprofit resource hub</a>
+          is free and open now: 90+ guides across governance, grants, fundraising, and
+          operations, <a href="/resources/tools/" class="font-bold underline" style="color:#7851A9">12 interactive tools</a>,
+          23 downloadable templates, a
+          <a href="/resources/funders/" class="font-bold underline" style="color:#7851A9">funder database</a> built from IRS data,
+          and a <a href="/resources/states/mississippi/" class="font-bold underline" style="color:#7851A9">Mississippi legal playbook</a>.
+          No login. No email wall.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Who qualifies
+        </h2>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          Any IRS-verified 501(c)(3) serving Mississippi communities — from food banks and
+          shelters to schools' foundations, arts organizations, animal rescues, and churches'
+          charitable programs. Distributions are verified against IRS records at payout. Claiming
+          a spot takes two minutes and creates no obligation.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Founding Nonprofit FAQ" />
+
+    <CtaBand
+      heading="50 spots. Permanent status. Free forever."
+      text="Early access in Meridian — September 2026 launch, Jackson metro first."
+      label="Claim your founding spot →"
+      href="/#mirror-section"
+      audience="NONPROFIT"
+      secondaryLabel="How it works for nonprofits"
+      secondaryHref="/for-nonprofits/"
+    />
+  </main>
+  <Footer />
+</Base>

@@ -1,0 +1,156 @@
+---
+// Cluster page: "how to pick a local nonprofit" / "support local nonprofits" /
+// "donate to local charity". A genuinely useful chooser framework linking the
+// resource hub's donor guides and free verification tools.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'How to Choose a Local Nonprofit to Support (2026 Guide)';
+const DESCRIPTION =
+  'A practical framework for picking a local nonprofit: verify 501(c)(3) status, read the Form 990, weigh local vs national, and match giving to your goals.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How do I pick a local nonprofit to support?',
+    a: 'Use a four-step framework: (1) name the change you want to see in your community, (2) shortlist local organizations doing that work, (3) verify each one — 501(c)(3) status on the IRS Tax Exempt Organization Search, financials on ProPublica Nonprofit Explorer or Candid, (4) match your support (money, time, voice, or everyday shopping) to what the organization actually needs.',
+  },
+  {
+    q: 'How can I verify a charity is legitimate?',
+    a: 'Two free checks: the IRS Tax Exempt Organization Search confirms current 501(c)(3) status, and ProPublica Nonprofit Explorer shows the organization’s public Form 990 filings — revenue, expenses, and assets. A real local nonprofit will appear in both (very small ones may file the simpler 990-N).',
+  },
+  {
+    q: 'Is it better to give to local or national charities?',
+    a: 'They do different jobs. National organizations bring scale to big problems; local nonprofits see needs in your community that national ones never will, and your gift is a larger share of their budget — often the difference between a program running or not. Many donors split: a national cause they believe in, plus a local organization where their support is visibly felt.',
+  },
+  {
+    q: 'What matters more — overhead ratio or results?',
+    a: 'Results. The "overhead myth" — judging charities purely on admin percentages — is rejected by the major evaluators themselves, because underpaying for staff and systems undermines impact. Ask instead: can the organization say clearly what changed because of its work last year?',
+  },
+  {
+    q: 'How can I support a local nonprofit without donating money?',
+    a: 'Volunteer skills (bookkeeping, marketing, and legal help are chronically scarce), join a board or committee, amplify their asks, donate goods they actually request — and route your everyday shopping to them where programs exist: on Good Circles, electing a nonprofit sends about 10% of merchant net profit from your local purchases to it automatically.',
+  },
+];
+
+const ARTICLE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: TITLE,
+  description: DESCRIPTION,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@type': 'Organization', name: 'Good Circles' },
+  publisher: { '@type': 'Organization', name: 'Good Circles', logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` } },
+  mainEntityOfPage: `${SITE_URL}/learn/how-to-choose-a-local-nonprofit/`,
+};
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/how-to-choose-a-local-nonprofit/"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    ARTICLE_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Learn', url: `${SITE_URL}/learn/` },
+      { name: 'How to choose a local nonprofit', url: `${SITE_URL}/learn/how-to-choose-a-local-nonprofit/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Updated July 2026" h1="How to choose a local nonprofit to support">
+      <p slot="answer">
+        Choosing a local nonprofit comes down to four steps: <strong>name the change you want to
+        see, shortlist local organizations doing that work, verify them with free public records
+        (IRS status + Form 990s), and match your support to what they actually need.</strong>
+        Fifteen minutes of homework turns a guilt-driven donation into a durable relationship
+        with an organization you trust.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Step 1 — Start with the change, not the charity
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-8">
+          "I should give somewhere" produces one-time gifts that fade. "I want fewer hungry kids
+          in my county" produces commitment. Name the specific local change you care about —
+          food security, youth programs, animal welfare, housing, the arts — and let that filter
+          everything else. If several causes pull at you, pick the one where you'd happily
+          volunteer an afternoon; that instinct predicts staying power.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Step 2 — Build a shortlist the local way
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-8">
+          Skip the national rankings; ask locally. Librarians, pastors, teachers, and community
+          foundation staff know which organizations actually deliver. Search ProPublica's
+          Nonprofit Explorer by your city to see every registered organization near you — our
+          free <a href="/resources/funders/" class="font-bold underline" style="color:#7851A9">Mississippi nonprofit and funder database</a>
+          is built from the same IRS records. Three to five candidates is plenty.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Step 3 — Verify with public records (15 minutes, free)
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          Every legitimate 501(c)(3) leaves a paper trail you can check without asking anyone:
+        </p>
+        <ul class="space-y-3 text-slate-600 mb-8">
+          <li><strong>IRS status:</strong> the <a href="https://apps.irs.gov/app/eos" target="_blank" rel="noopener" class="font-bold underline" style="color:#7851A9">IRS Tax Exempt Organization Search</a> confirms the organization currently holds tax-exempt status with the IRS.</li>
+          <li><strong>Financials:</strong> <a href="https://projects.propublica.org/nonprofits/" target="_blank" rel="noopener" class="font-bold underline" style="color:#7851A9">ProPublica Nonprofit Explorer</a> serves the public Form 990s — look at revenue trend, program expenses, and whether the story the org tells matches the numbers. <a href="https://www.candid.org/" target="_blank" rel="noopener" class="font-bold underline" style="color:#7851A9">Candid</a> adds profiles many small orgs maintain themselves.</li>
+          <li><strong>The overhead trap:</strong> don't reduce an org to its admin ratio — the sector's own evaluators call that the "overhead myth." Underfunded operations sink programs. Judge stated results instead: what changed last year?</li>
+          <li><strong>Tiny-org note:</strong> genuinely small nonprofits (under $50k revenue) file a one-line 990-N — absence of a full 990 isn't a red flag by itself. Our resource hub explains <a href="/resources/governance-compliance/form-990-explained/" class="font-bold underline" style="color:#7851A9">how to read a Form 990</a>.</li>
+        </ul>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Step 4 — Match your support to their need
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          Money is the most flexible gift — unrestricted, recurring gifts beat one-time
+          restricted ones for nearly every small nonprofit (the donor-side view of what our
+          <a href="/resources/donor-development/" class="font-bold underline" style="color:#7851A9">donor development guides</a>
+          teach organizations). But it isn't the only currency: skilled volunteering, board
+          service, and advocacy often matter as much. And increasingly, <strong>your everyday
+          shopping can be part of it</strong> — on Good Circles, you elect one local nonprofit
+          and about 10% of the merchant's net profit on every local purchase you make funds it
+          automatically, at no extra cost to you. In
+          <a href="/meridian/" class="font-bold underline" style="color:#7851A9">Meridian's early access</a>,
+          neighbors are making exactly that election now, from a ballot of more than a hundred
+          verified local organizations.
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          However you give, tell the organization why you chose them. Small nonprofits steer by
+          those signals — and donors who explain their "why" are the ones who stay. Related
+          reading: <a href="/learn/how-to-choose-a-nonprofit-to-support/" class="font-bold underline" style="color:#7851A9">how to choose a nonprofit to support</a>
+          and <a href="/learn/ways-to-give-back-to-your-community/" class="font-bold underline" style="color:#7851A9">ways to give back to your community</a>.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Choosing a local nonprofit — FAQ" />
+
+    <CtaBand
+      heading="Elect your nonprofit. Fund it by shopping."
+      text="Free for shoppers and nonprofits. Early access in Meridian — September 2026 launch, Jackson metro first."
+      label="Join free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="Browse causes"
+      secondaryHref="/causes/"
+    />
+  </main>
+  <Footer />
+</Base>

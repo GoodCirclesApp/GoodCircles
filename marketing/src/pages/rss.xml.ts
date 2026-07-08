@@ -19,6 +19,41 @@ function decodeEntities(s: string): string {
     .replace(/&gt;/g, '>');
 }
 
+// File-based /learn guides (standalone .astro pages rather than learn-all data
+// entries) — keep in sync when adding new long-form guides.
+const FILE_GUIDES: RSSFeedItem[] = [
+  {
+    title: 'Best Local Businesses to Support in Jackson, MS (2026)',
+    description: 'A verified guide to locally-owned Jackson favorites — Fondren diners, Lemuria Books, Bully’s soul food, local coffee and more — organized by category.',
+    link: '/learn/best-local-businesses-jackson-ms/',
+    pubDate: new Date('2026-07-08'),
+  },
+  {
+    title: 'Passive Nonprofit Funding: Every Honest Option (2026)',
+    description: 'What passive nonprofit funding is and every real way to build it: roundup apps, employer matching, shopping portals, search giving, and local-first models.',
+    link: '/learn/passive-nonprofit-funding/',
+    pubDate: new Date('2026-07-08'),
+  },
+  {
+    title: 'How to Save Money Shopping Local: 7 Real Tactics (2026)',
+    description: 'Loyalty programs, seconds and outlets, seasonal buying, co-ops, market timing, repair-over-replace, and automatic savings.',
+    link: '/learn/how-to-save-money-shopping-local/',
+    pubDate: new Date('2026-07-08'),
+  },
+  {
+    title: 'What Big Platforms Really Cost Local Businesses (2026)',
+    description: 'Marketplace fees decoded: what Amazon, Etsy, DoorDash and lead-gen platforms actually take per sale — and what the percentages hide.',
+    link: '/learn/what-big-platforms-cost-local-businesses/',
+    pubDate: new Date('2026-07-08'),
+  },
+  {
+    title: 'How to Choose a Local Nonprofit to Support (2026 Guide)',
+    description: 'A practical framework: verify 501(c)(3) status, read the Form 990, weigh local vs national, and match your support to the need.',
+    link: '/learn/how-to-choose-a-local-nonprofit/',
+    pubDate: new Date('2026-07-08'),
+  },
+];
+
 export async function GET() {
   // /learn guides come straight from the content data.
   const learnItems: RSSFeedItem[] = ALL_LEARN.map((article) => {
@@ -62,7 +97,7 @@ export async function GET() {
     title: `${SITE_NAME} — Learn & Nonprofit Answers`,
     description: `Guides and answers from ${SITE_NAME}: shopping local, passive fundraising, AmazonSmile alternatives, and practical nonprofit questions. ${ORG_DESCRIPTION}`,
     site: SITE_URL,
-    items: [...learnItems, ...answerItems],
+    items: [...FILE_GUIDES, ...learnItems, ...answerItems],
     customData: '<language>en-us</language>',
   });
 }

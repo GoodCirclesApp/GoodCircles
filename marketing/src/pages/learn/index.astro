@@ -30,6 +30,24 @@ const DESCRIPTION =
         nonprofits that need recurring funding, and local businesses selling online.
       </p>
       <div class="grid sm:grid-cols-2 gap-4 pb-12">
+        {[
+          { slug: 'best-local-businesses-jackson-ms', cardTitle: 'Best Local Businesses to Support in Jackson, MS (2026)', blurb: 'A verified, source-cited guide to locally-owned Jackson favorites — Fondren diners, Lemuria Books, Bully’s, and more…' },
+          { slug: 'passive-nonprofit-funding', cardTitle: 'Passive Nonprofit Funding: Every Honest Option', blurb: 'Roundups, employer matching, shopping portals, search giving, and local-first profit-share — compared honestly…' },
+          { slug: 'how-to-save-money-shopping-local', cardTitle: 'How to Save Money Shopping Local: 7 Real Tactics', blurb: 'Loyalty programs, seconds, seasonal buying, co-ops, market timing, repair-over-replace, and automatic savings…' },
+          { slug: 'what-big-platforms-cost-local-businesses', cardTitle: 'What Big Platforms Really Cost Local Businesses', blurb: 'Fees come off the sale but are paid out of profit — the decoded math behind 15–30% marketplace fees…' },
+          { slug: 'how-to-choose-a-local-nonprofit', cardTitle: 'How to Choose a Local Nonprofit to Support', blurb: 'A four-step chooser framework with free verification tools — IRS status, 990s, and matching support to need…' },
+        ].map((g) => (
+          <a
+            href={`/learn/${g.slug}/`}
+            class="block p-5 rounded-2xl bg-white transition-shadow hover:shadow-lg no-underline"
+            style="border:1px solid #E7DCF2"
+          >
+            <h2 class="font-black mb-2" style="color:#2E1B4E;font-size:1.05rem;font-family:'Montserrat',sans-serif;line-height:1.3">
+              {g.cardTitle}
+            </h2>
+            <p class="text-sm" style="color:#4a4360;font-family:'Fira Sans',sans-serif">{g.blurb}</p>
+          </a>
+        ))}
         {ALL_LEARN.map((article) => (
           <a
             href={`/learn/${article.slug}/`}

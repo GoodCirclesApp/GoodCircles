@@ -1,0 +1,156 @@
+---
+// Audience page: CDFIs. Targets "cdfi small business lending mississippi",
+// "first-loss capital community lending". HONEST framing: the data platform
+// and first-loss pool are IN DEVELOPMENT, launching with the marketplace —
+// no capability is presented as live today. No traction claims.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Good Circles for CDFIs — First-Loss Capital & Live Data';
+const DESCRIPTION =
+  'CDFI small-business lending in Mississippi: a commission-seeded first-loss capital pool and live merchant performance data. In development for Sept 2026.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What is first-loss capital in community lending?',
+    a: 'First-loss capital is money that absorbs the initial losses in a loan pool before other capital is touched. For a CDFI, a first-loss cushion de-risks lending to borrowers who look thin on paper — like young local businesses — letting the same balance sheet responsibly say yes more often.',
+  },
+  {
+    q: 'How does Good Circles seed a first-loss pool?',
+    a: 'From bridge commissions: when a shopper buys an external (non-local) item through the platform, Good Circles earns an affiliate commission and allocates 5% of it to a small-business lending safety pool. It’s a structural, recurring seed that grows with platform activity — designed to sit alongside CDFI capital, not replace it.',
+  },
+  {
+    q: 'What data would a CDFI partner see?',
+    a: 'The platform is designed to give partner CDFIs consented, live visibility into merchant performance in their footprint — revenue trend, transaction volume, and location context in Qualified Investment Areas — replacing stale self-reported PDFs in the pipeline stage. Structured merchant snapshots are being designed to map to TLR-style reporting.',
+  },
+  {
+    q: 'Is this live today?',
+    a: 'No — and we won’t pretend otherwise. The lending-data platform and first-loss pool are in development and launch with the marketplace (September 2026, Jackson metro first). Now is the design phase, which is exactly when a partner CDFI’s input matters most.',
+  },
+  {
+    q: 'Which CDFIs is this for?',
+    a: 'Treasury-certified CDFIs lending to small businesses in Mississippi — banks, credit unions, and loan funds with LMI-area mandates. If your pipeline depends on finding creditworthy local merchants before they walk in the door, this is being built for you.',
+  },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/partners/cdfi/"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Partners', url: `${SITE_URL}/partners/` },
+      { name: 'For CDFIs', url: `${SITE_URL}/partners/cdfi/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="For CDFIs"
+      badge="In development · Launching with the platform, September 2026"
+      h1="Good Circles for CDFIs"
+    >
+      <p slot="answer">
+        Good Circles is building two things for Mississippi CDFI small-business lending:
+        <strong>a first-loss capital pool</strong> seeded automatically from the platform's
+        bridge-commission revenue, and <strong>live, consented merchant performance data</strong>
+        in the communities where you lend. Both are in development and launch with the
+        marketplace — this page explains the design honestly, and how to shape it as a founding
+        partner.
+      </p>
+      <Fragment slot="ctas">
+        <a
+          href="/#mirror-section"
+          data-cta-audience="CDFI"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+          style="background:#C2A76F;color:#241247"
+        >
+          Request a founding partnership briefing →
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The problem, from the loan officer's chair
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-10">
+          CDFI small-business lending in Mississippi runs on stale information: self-reported
+          financials, cold outreach to find creditworthy borrowers, and manual TLR prep at
+          reporting time. The merchants most worth backing — young, growing, LMI-tract local
+          businesses — are precisely the ones whose paper trail understates them. The cost isn't
+          just effort; it's good loans never made.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Design piece 1 — a commission-seeded first-loss pool
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          When a Good Circles shopper buys something no local merchant offers, the purchase
+          bridges to an external retailer and the platform earns an affiliate commission. That
+          commission is split by rule: 50% to a shared nonprofit pool (donor-advised fund),
+          <strong>5% to a small-business lending safety pool</strong>, and 45% to platform
+          operations. The 5% is the first-loss seed: a recurring, activity-driven cushion
+          designed to absorb initial losses ahead of partner capital, so a CDFI can
+          responsibly extend credit to borderline-on-paper local merchants.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-10">
+          We're deliberate about the honest scale here: the pool starts small and grows with
+          platform volume. Its value in year one is structural — a mechanism that deepens
+          automatically — not a headline number, and we'd rather design its governance with
+          partner CDFIs than announce a figure.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Design piece 2 — live merchant data where you lend
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-10">
+          Because Good Circles processes local transactions, partner CDFIs can — with merchant
+          consent — see performance as it happens: revenue trend, transaction volume, repeat
+          customers, and QIA/LMI location context. Pipeline changes from cold outreach to warm
+          introduction; underwriting changes from PDFs to living data; and structured merchant
+          snapshots are being designed to map onto TLR-style reporting from day one. The same
+          transaction rails power the <a href="/partners/municipalities/" class="font-bold underline" style="color:#7851A9">municipal spend-retention dashboards</a>.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          What a founding CDFI partnership looks like
+        </h2>
+        <ul class="space-y-3 text-slate-600 mb-10">
+          <li><strong>Now (design phase):</strong> a briefing, then input on data schemas, consent flows, first-loss governance, and TLR mapping.</li>
+          <li><strong>At launch (September 2026):</strong> visibility into consenting merchants in your footprint as the Jackson metro comes online — with <a href="/meridian/" class="font-bold underline" style="color:#7851A9">Meridian &amp; Lauderdale County</a> already in early access ahead of it.</li>
+          <li><strong>As volume grows:</strong> the first-loss pool accrues automatically, and founding partners shape how it deploys.</li>
+        </ul>
+        <p class="text-slate-600 leading-relaxed">
+          The model that generates all of this is simple and public: shoppers save about 10%,
+          merchants keep 89% of profit on a 1% fee, and 10% of profit funds shopper-elected
+          nonprofits — see <a href="/how-it-works/" class="font-bold underline" style="color:#7851A9">how it works</a>.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="CDFI partnership FAQ" />
+
+    <CtaBand
+      heading="Help design it before it launches"
+      text="Founding partnership briefings for Treasury-certified CDFIs serving Mississippi."
+      label="Request a briefing →"
+      href="/#mirror-section"
+      audience="CDFI"
+      secondaryLabel="For municipalities"
+      secondaryHref="/partners/municipalities/"
+    />
+  </main>
+  <Footer />
+</Base>

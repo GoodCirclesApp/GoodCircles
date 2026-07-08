@@ -573,7 +573,7 @@ const DEFS: LearnDef[] = [
       { q: 'How do I choose a nonprofit to support?', a: 'Start with the cause you care about, confirm the organization is a verified 501(c)(3), and prefer groups that are transparent about their programs and impact.' },
       { q: 'Can I fund a nonprofit without donating money directly?', a: 'Yes. With Good Circles, a share of every local purchase you make funds the nonprofit you choose automatically — and you save about 10%, at no extra cost.' },
     ],
-    related: [R.causes, R.shoppers, R.how],
+    related: [R.causes, R.shoppers, R.how, { label: 'How to choose a LOCAL nonprofit', href: '/learn/how-to-choose-a-local-nonprofit/' }],
   },
   {
     slug: 'how-to-support-nonprofits-for-free',

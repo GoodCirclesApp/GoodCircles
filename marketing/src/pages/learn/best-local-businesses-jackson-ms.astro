@@ -1,0 +1,347 @@
+---
+// ATP flagship: "best local businesses jackson ms" (top AI-visibility pick).
+// EVERY business below is real, locally owned, and web-verified (source link
+// per entry — Visit Jackson directory, official site, or national press).
+// HONESTY RULE: none of these businesses are Good Circles merchants and the
+// page says so explicitly — Good Circles is framed once, as launching
+// September 2026. No traction claims.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Best Local Businesses to Support in Jackson, MS (2026)';
+const DESCRIPTION =
+  'A verified guide to locally-owned Jackson favorites — Fondren diners, Lemuria Books, Bully’s soul food, local coffee and more — organized by category.';
+
+interface Biz {
+  name: string;
+  area: string;
+  blurb: string;
+  sourceLabel: string;
+  sourceUrl: string;
+}
+interface Cat {
+  id: string;
+  heading: string;
+  items: Biz[];
+}
+
+const CATS: Cat[] = [
+  {
+    id: 'diners',
+    heading: 'Classic diners & soda fountains',
+    items: [
+      {
+        name: "Brent's Drugs",
+        area: 'Fondren',
+        blurb:
+          "A working soda fountain and diner since 1946, with the turquoise décor made famous by *The Help* and decades of Vogue and Southern Living write-ups. Milkshakes, burgers, and one of the most photographed counters in Mississippi.",
+        sourceLabel: 'brentsdrugs.com',
+        sourceUrl: 'https://www.brentsdrugs.com/',
+      },
+    ],
+  },
+  {
+    id: 'fine-dining',
+    heading: 'Fine dining',
+    items: [
+      {
+        name: "Walker's Drive-In",
+        area: 'Fondren',
+        blurb:
+          'Opened in 1946 as a true drive-in and reborn as one of Jackson’s most celebrated white-tablecloth restaurants — a Fondren anchor for special occasions.',
+        sourceLabel: 'Visit Jackson directory',
+        sourceUrl: 'https://www.visitjackson.com/directory/walkers-drive-in/',
+      },
+    ],
+  },
+  {
+    id: 'soul-food',
+    heading: 'Soul food',
+    items: [
+      {
+        name: "Bully's Restaurant",
+        area: 'Livingston Road',
+        blurb:
+          'A family-run institution named an “America’s Classic” by the James Beard Foundation in 2016. Oxtails, greens, mac and cheese — soul food cooked the way it has been for generations.',
+        sourceLabel: 'Visit Jackson directory',
+        sourceUrl: 'https://www.visitjackson.com/directory/bullys-restaurant/',
+      },
+    ],
+  },
+  {
+    id: 'bbq-pizza',
+    heading: 'Barbecue & pizza',
+    items: [
+      {
+        name: 'The Pig & Pint',
+        area: 'Fondren',
+        blurb:
+          'Competition-style barbecue with a serious craft-beer list — a Fondren favorite that regularly tops local best-of lists.',
+        sourceLabel: 'Visit Jackson directory',
+        sourceUrl: 'https://www.visitjackson.com/directory/the-pig-and-pint/',
+      },
+      {
+        name: "Sal & Mookie's New York Pizza & Ice Cream Joint",
+        area: 'Belhaven',
+        blurb:
+          'Locally-owned pizza-and-ice-cream joint built for families — a Jackson original from the team behind several beloved local restaurants.',
+        sourceLabel: 'Visit Jackson directory',
+        sourceUrl: 'https://www.visitjackson.com/directory/sal-and-mookies/',
+      },
+    ],
+  },
+  {
+    id: 'bakery',
+    heading: 'Bakeries',
+    items: [
+      {
+        name: "Campbell's Bakery",
+        area: 'Fondren',
+        blurb:
+          'Baking petit fours, tea cakes, and custom cakes on North State Street since 1962 — one of Fondren’s longest-running storefronts.',
+        sourceLabel: 'campbellsbakes.com',
+        sourceUrl: 'https://www.campbellsbakes.com/',
+      },
+    ],
+  },
+  {
+    id: 'coffee',
+    heading: 'Coffee',
+    items: [
+      {
+        name: 'Cups Espresso Café',
+        area: 'Fondren (and other Jackson locations)',
+        blurb:
+          'Jackson’s homegrown coffeehouse for more than 30 years, with the Fondren café as its heart — a longtime supporter of local arts.',
+        sourceLabel: 'cupsespressocafe.com',
+        sourceUrl: 'https://cupsespressocafe.com/locations/fondren/',
+      },
+      {
+        name: 'Cultivate Coffee Project',
+        area: 'Belhaven Town Center',
+        blurb:
+          'A newer local roaster-café across the hall from Fertile Ground Brewery, known for creative signature drinks.',
+        sourceLabel: 'Visit Jackson directory',
+        sourceUrl: 'https://www.visitjackson.com/directory/cultivate-coffee-project/',
+      },
+    ],
+  },
+  {
+    id: 'books',
+    heading: 'Bookstores',
+    items: [
+      {
+        name: 'Lemuria Books',
+        area: 'Banner Hall, I-55 N',
+        blurb:
+          'One of the South’s great independent bookstores, famous for first editions, signed copies, and author events that draw national names to Jackson.',
+        sourceLabel: 'lemuriabooks.com',
+        sourceUrl: 'https://www.lemuriabooks.com/',
+      },
+    ],
+  },
+  {
+    id: 'brewery',
+    heading: 'Breweries',
+    items: [
+      {
+        name: 'Fertile Ground Beer Co.',
+        area: 'Belhaven Town Center',
+        blurb:
+          'Jackson’s own craft brewery and taproom, anchoring the Belhaven Town Center alongside local food and coffee.',
+        sourceLabel: 'Visit Jackson',
+        sourceUrl: 'https://www.visitjackson.com/directory/fertile-ground-beer-co/',
+      },
+    ],
+  },
+  {
+    id: 'music',
+    heading: 'Music & records',
+    items: [
+      {
+        name: 'Fondren Guitars',
+        area: 'Fondren',
+        blurb:
+          'Instruments, lessons, and intimate back-patio concerts in the historic Fondren district.',
+        sourceLabel: 'Visit Jackson — Shop Like a Local',
+        sourceUrl: 'https://www.visitjackson.com/blog/shop-like-a-local/',
+      },
+      {
+        name: 'OffBeat',
+        area: 'Downtown, North State Street',
+        blurb:
+          'Vinyl records, comics, art, and collectibles — a downtown creative hub run by and for Jackson’s art community.',
+        sourceLabel: 'Visit Jackson — Shop Like a Local',
+        sourceUrl: 'https://www.visitjackson.com/blog/shop-like-a-local/',
+      },
+    ],
+  },
+  {
+    id: 'style',
+    heading: 'Local style & streetwear',
+    items: [
+      {
+        name: 'Swell-o-Phonic',
+        area: 'Fondren',
+        blurb:
+          'Sneakers, skate gear, and casual wear from a Fondren shop that has outfitted Jackson for years.',
+        sourceLabel: 'Visit Jackson — Shop Like a Local',
+        sourceUrl: 'https://www.visitjackson.com/blog/shop-like-a-local/',
+      },
+    ],
+  },
+];
+
+const FAQS: Faq[] = [
+  {
+    q: 'What are the best local businesses to support in Jackson, MS?',
+    a: 'Start with the locally-owned classics: Brent’s Drugs and Walker’s Drive-In in Fondren (both since 1946), Bully’s Restaurant (a James Beard America’s Classic), Lemuria Books, Campbell’s Bakery, Cups Espresso Café, The Pig & Pint, Sal & Mookie’s, Fertile Ground Beer Co., Fondren Guitars, OffBeat, and Swell-o-Phonic. Every entry in this guide is independently owned and verifiable.',
+  },
+  {
+    q: 'Why does shopping local in Jackson matter?',
+    a: 'Survey data popularized by Civic Economics and the Institute for Local Self-Reliance shows that roughly 53 cents of every dollar spent at an independent local business recirculates locally, versus about 14 cents at a national chain — local spending keeps money working in Jackson.',
+  },
+  {
+    q: 'Are these businesses on Good Circles?',
+    a: 'No — this is simply an honest guide to great locally-owned Jackson spots. Good Circles launches in the Jackson metro in September 2026; when it does, purchases at participating local businesses will fund a nonprofit the shopper chooses.',
+  },
+  {
+    q: 'What neighborhoods are best for local shopping in Jackson?',
+    a: 'Fondren is the densest cluster of independents (diners, coffee, guitars, streetwear, bakery), with Belhaven Town Center (brewery, coffee) and downtown’s North State Street (records, art) close behind.',
+  },
+];
+
+const ITEMLIST_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Best local businesses to support in Jackson, MS',
+  description: DESCRIPTION,
+  itemListElement: CATS.flatMap((c) => c.items).map((b, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: b.name,
+    url: b.sourceUrl,
+  })),
+};
+
+const ARTICLE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: TITLE,
+  description: DESCRIPTION,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@type': 'Organization', name: 'Good Circles' },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Good Circles',
+    logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` },
+  },
+  mainEntityOfPage: `${SITE_URL}/learn/best-local-businesses-jackson-ms/`,
+};
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/best-local-businesses-jackson-ms/"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    ARTICLE_JSONLD,
+    ITEMLIST_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Learn', url: `${SITE_URL}/learn/` },
+      { name: 'Best local businesses in Jackson, MS', url: `${SITE_URL}/learn/best-local-businesses-jackson-ms/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Updated July 2026" h1="The best local businesses to support in Jackson, MS">
+      <p slot="answer">
+        The best local businesses to support in Jackson are its verifiable, independently-owned
+        institutions: <strong>Brent's Drugs</strong> and <strong>Walker's Drive-In</strong> (both
+        serving Fondren since 1946), James Beard–honored <strong>Bully's Restaurant</strong>,
+        <strong>Lemuria Books</strong>, <strong>Campbell's Bakery</strong>,
+        <strong>Cups Espresso Café</strong>, and the shops of Fondren, Belhaven, and downtown.
+        This guide covers ten categories, every entry sourced — no chains, no filler.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-slate-600 leading-relaxed mb-4" style="font-family:'Fira Sans',sans-serif">
+          Jackson's local economy runs through a handful of walkable districts —
+          <strong>Fondren</strong>, <strong>Belhaven</strong>, <strong>Midtown</strong>, and a
+          reviving downtown — where independent owners have kept storefronts alive for decades.
+          Spending there matters more than it looks: survey data popularized by
+          <a href="https://ilsr.org/articles/key-studies-why-local-matters/" target="_blank" rel="noopener" class="font-bold underline" style="color:#7851A9">Civic Economics and the Institute for Local Self-Reliance</a>
+          finds that roughly <strong>$53 of every $100</strong> spent at an independent local
+          business recirculates in the community, versus about <strong>$14</strong> at a national
+          chain.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          One honest note before the list: <strong>none of the businesses below are Good Circles
+          merchants</strong> — this is simply a guide to great local spots, each verified against
+          its official site or the Visit Jackson directory. Good Circles launches in the Jackson
+          metro in <a href="/shop-local/mississippi/jackson/" class="font-bold underline" style="color:#7851A9">September 2026</a>
+          so that purchases like these can also fund a nonprofit you choose.
+        </p>
+
+        {CATS.map((cat) => (
+          <div class="mb-10">
+            <h2 id={cat.id} class="text-2xl font-black text-slate-900 mb-4" style="letter-spacing:-0.02em">
+              {cat.heading}
+            </h2>
+            {cat.items.map((b) => (
+              <div class="mb-5 p-5 rounded-2xl" style="background:#FBF7FE;border:1px solid #E7DCF2">
+                <p class="font-black text-slate-900">
+                  {b.name} <span class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-2">{b.area}</span>
+                </p>
+                <p class="text-sm text-slate-600 mt-1 leading-relaxed" style="font-family:'Fira Sans',sans-serif" set:html={b.blurb.replace(/\*([^*]+)\*/g, '<em>$1</em>')} />
+                <p class="text-xs mt-2" style="font-family:'Fira Sans',sans-serif">
+                  <a href={b.sourceUrl} target="_blank" rel="noopener" class="font-bold underline" style="color:#7851A9">Source: {b.sourceLabel} →</a>
+                </p>
+              </div>
+            ))}
+          </div>
+        ))}
+
+        <h2 class="text-2xl font-black text-slate-900 mb-4" style="letter-spacing:-0.02em">
+          How to make local spending go further
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-4" style="font-family:'Fira Sans',sans-serif">
+          Supporting these businesses doesn't require spending more — it means redirecting
+          spending you already do. Our guide to
+          <a href="/learn/how-to-save-money-shopping-local/" class="font-bold underline" style="color:#7851A9">saving money while shopping local</a>
+          covers loyalty programs, seasonal buying, and co-ops, and
+          <a href="/learn/why-shopping-local-matters/" class="font-bold underline" style="color:#7851A9">why shopping local matters</a>
+          explains the recirculation math in depth. When Good Circles opens in the Jackson metro,
+          local purchases will also carry an automatic ~10% saving and route about 10% of the
+          merchant's net profit to a nonprofit you elect — <a href="/meridian/" class="font-bold underline" style="color:#7851A9">early access is already underway in Meridian</a>.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Jackson local-business FAQ" />
+
+    <CtaBand
+      heading="Shop local. Fund a Jackson nonprofit. Automatically."
+      text="Free for shoppers and nonprofits. Early access in Meridian — September 2026 launch, Jackson metro first."
+      label="Claim a founding spot →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="See Jackson on Good Circles"
+      secondaryHref="/shop-local/mississippi/jackson/"
+    />
+  </main>
+  <Footer />
+</Base>

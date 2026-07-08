@@ -21,6 +21,8 @@ export interface City {
   region: string;
   /** count of REAL seeded directory entries (merchants + nonprofits from live data). Illustrative tiles do not count. */
   realSeededEntries?: number;
+  /** Optional extra "community impact" section (rendered via set:html) — e.g. Jackson's recirculation section. */
+  communityImpactHtml?: string;
 }
 
 export const STATE = { name: 'Mississippi', slug: 'mississippi', st: 'MS' } as const;
@@ -663,6 +665,7 @@ export const CITIES: City[] = [
     "h1": "Shop local in Jackson — and fund a Jackson nonprofit",
     "answerHtml": "Good Circles lets you shop local businesses in Jackson, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Jackson-area nonprofit you choose</b> — at no extra cost. Jackson is the September 2026 launch metro — early access is already underway in Meridian &amp; Lauderdale County. Join free.",
     "introHtml": "Good Circles keeps your spending — and your giving — in Jackson: the capital city, where Fondren's shops and galleries, Belhaven's cafés, and Midtown's makers give Jackson its character. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "communityImpactHtml": "<h2 id=\"community-impact\" class=\"text-3xl font-black text-slate-900 mb-4\" style=\"letter-spacing:-0.02em\">Community impact shopping in Jackson</h2><p class=\"text-slate-600 leading-relaxed mb-4\" style=\"font-family:'Fira Sans',sans-serif\"><b>Community impact shopping</b> means directing spending you already do so more of it benefits the place you live — and in Jackson the numbers are striking. Survey research popularized by <a href=\"https://ilsr.org/articles/key-studies-why-local-matters/\" target=\"_blank\" rel=\"noopener\" class=\"font-bold underline\" style=\"color:#7851A9\">Civic Economics and the Institute for Local Self-Reliance</a> finds that roughly <b>$53 of every $100</b> spent at an independent local business recirculates in the community — local payroll, local suppliers, local giving — versus about <b>$14 of every $100</b> spent at a national chain. Every redirected dollar nearly quadruples its local work.</p><p class=\"text-slate-600 leading-relaxed\" style=\"font-family:'Fira Sans',sans-serif\">Mississippi's shop-local movement is how that math becomes real: choosing Fondren's diners and bookstores over another big-box run — and, when Good Circles opens the Jackson metro in September 2026, letting every local purchase automatically fund a Jackson nonprofit you elect. Start with our verified <a href=\"/learn/best-local-businesses-jackson-ms/\" class=\"font-bold underline\" style=\"color:#7851A9\">guide to Jackson's best local businesses</a>, and see <a href=\"/learn/the-economic-impact-of-shopping-local/\" class=\"font-bold underline\" style=\"color:#7851A9\">the economic impact of shopping local</a> for the full evidence.</p>",
     "nonprofits": [
       {
         "icon": "🍎",

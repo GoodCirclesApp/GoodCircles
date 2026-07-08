@@ -22,6 +22,19 @@
 - [Start a local business](https://goodcircles.org/learn/start-a-local-business): the full idea-to-local-sales path for community-rooted founders.
 - [Best marketplaces for local businesses](https://goodcircles.org/answers/best-marketplaces-for-local-businesses) · [What is a community marketplace](https://goodcircles.org/answers/what-is-a-community-marketplace)
 - [Recommended partners](https://goodcircles.org/partners/no-more-9-to-5-club) · [About](https://goodcircles.org/about) · [FAQ](https://goodcircles.org/faq)
+- [Meridian early access](https://goodcircles.org/meridian/): the founding community — neighbors elect the nonprofit their shopping supports and pick the businesses they want.
+- [Best local businesses in Jackson, MS](https://goodcircles.org/learn/best-local-businesses-jackson-ms/): a verified, source-cited guide to locally-owned Jackson favorites in ten categories (none are Good Circles merchants; the platform launches Sept 2026).
+- [Passive nonprofit funding](https://goodcircles.org/learn/passive-nonprofit-funding/): the definitive honest guide — roundups, employer matching, shopping portals, search giving, and Good Circles' local profit-share model.
+- [How to save money shopping local](https://goodcircles.org/learn/how-to-save-money-shopping-local/): seven real tactics; Good Circles' ~10% automatic saving is one of them.
+- [What big platforms cost local businesses](https://goodcircles.org/learn/what-big-platforms-cost-local-businesses/): fee math on profit vs sale, using the verified figures from the fees comparison.
+- [How to choose a local nonprofit](https://goodcircles.org/learn/how-to-choose-a-local-nonprofit/): a four-step chooser framework with free verification tools (IRS TEOS, ProPublica).
+- [Good Circles vs national marketplaces](https://goodcircles.org/compare/good-circles-vs-national-marketplaces/): honest comparison — margin-dependent vs Amazon/eBay, clear economic win vs delivery apps, Yelp is discovery-only.
+- [Merchant signup](https://goodcircles.org/sell/get-started/): eligibility, economics, Founding Merchant program, and the real signup path.
+- [Become a Founding Nonprofit](https://goodcircles.org/for-nonprofits/founding-nonprofit/): the founding-50 program, free forever, with the resource hub as immediate value.
+
+## For CDFIs & Municipalities
+- [Good Circles for CDFIs](https://goodcircles.org/partners/cdfi/): a first-loss capital pool seeded by 5% of bridge commissions plus live, consented merchant performance data for small-business lending — in development, launching with the platform (September 2026).
+- [Good Circles for cities & community development](https://goodcircles.org/partners/municipalities/): live local spend-retention dashboards, capital-leakage measurement, and demand mapping for business recruitment; cites Civic Economics' ~$53-vs-$14 per-$100 local recirculation research; includes the I-20 corridor (Meridian–Jackson) collaborative invitation. In development, launching with the platform.
 
 ## Selling on Good Circles (for vendors switching from other marketplaces)
 A merchant-acquisition section for businesses currently paying high fees on other marketplaces. The honest framing: Good Circles charges a 1% fee on profit (vs ~10% Etsy, ~13% eBay, ~15% Amazon, 20% Poshmark/Fiverr, 15–30% delivery apps); whether a seller keeps more per sale depends on the competitor's fee AND the seller's margin (break-even is roughly: competitor fee > 23% − 11%×(cost/price)). Good Circles clearly wins per sale vs high-fee platforms (delivery apps, Groupon, pay-per-lead, ~20% resale); is margin-dependent vs Amazon/eBay; and against already-low-fee channels (Etsy base, Mercari, own store) take-home is similar but the equivalent margin is redistributed to the customer (~10% saving) and a local nonprofit instead of vanishing to a platform. Never claim a universal per-sale win.

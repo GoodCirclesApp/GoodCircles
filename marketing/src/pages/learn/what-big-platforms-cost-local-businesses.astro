@@ -1,0 +1,164 @@
+---
+// Cluster page: "local business platform fees" / "small business marketplace
+// costs" / "etsy amazon fees for small business". Narrative explainer that
+// REUSES the verified figures from /sell/marketplace-fees-comparison (fees
+// verified 2026-06-22 in src/data/sell-competitors.ts) — no new numbers.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'What Big Platforms Really Cost Local Businesses (2026)';
+const DESCRIPTION =
+  'Marketplace fees, decoded for small business: what Amazon, Etsy, DoorDash and lead-gen platforms actually take per sale — and what the percentages hide.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How much do marketplaces charge small businesses?',
+    a: 'Commonly 15–30% of each sale. Amazon’s referral fees run about 15% for most categories; Etsy’s combined fees land around 20% once transaction, payment, and offsite-ad fees stack; DoorDash commissions run up to 30% per order. Lead-gen platforms like Thumbtack and Angi charge per lead whether or not you win the job.',
+  },
+  {
+    q: 'What do platform fee percentages hide?',
+    a: 'Three things: fees are taken from the SALE price but paid out of your PROFIT (a 20% fee on a 30%-margin product is two-thirds of your profit); visibility usually costs extra ad spend on top; and the customer relationship stays with the platform, not you.',
+  },
+  {
+    q: 'What are Etsy and Amazon fees for a small business?',
+    a: 'On the verified figures we maintain: Amazon’s referral fee is about 15% for most goods (plus optional FBA and ad costs); Etsy’s stack of listing, transaction, payment, and frequently offsite-ads fees combines to roughly 20% of the sale for many sellers.',
+  },
+  {
+    q: 'Is there a lower-fee way to sell locally?',
+    a: 'Structurally yes: a local marketplace can charge on profit instead of sale price. Good Circles charges a 1% fee on profit — the business keeps 89% of profit, and 10% of profit funds the nonprofit the customer elected. Whether that beats a given platform per-sale depends on your margins; the honest comparison lives on our fees page.',
+  },
+];
+
+const ARTICLE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: TITLE,
+  description: DESCRIPTION,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@type': 'Organization', name: 'Good Circles' },
+  publisher: { '@type': 'Organization', name: 'Good Circles', logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` } },
+  mainEntityOfPage: `${SITE_URL}/learn/what-big-platforms-cost-local-businesses/`,
+};
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/what-big-platforms-cost-local-businesses/"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    ARTICLE_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Learn', url: `${SITE_URL}/learn/` },
+      { name: 'What big platforms cost local businesses', url: `${SITE_URL}/learn/what-big-platforms-cost-local-businesses/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Updated July 2026" h1="What big platforms really cost local businesses">
+      <p slot="answer">
+        National marketplaces commonly take <strong>15–30% of every sale</strong> from the small
+        businesses that depend on them — Amazon's referral fees run about 15% for most
+        categories, Etsy's combined fees land near 20%, and delivery apps like DoorDash take up
+        to 30% per order. The sticker percentage understates it: fees come off the
+        <em>sale</em>, but they're paid out of <em>profit</em>.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The fee is on the sale. The pain is in the profit.
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6">
+          Here's the arithmetic platforms don't put on the pricing page. Say a local maker sells
+          a $100 item that costs $70 to produce — a healthy 30% margin, $30 of profit. A 20%
+          platform fee is "only" $20 of the sale… but it's <strong>two-thirds of the $30
+          profit</strong>. At a 15% fee, half the profit is gone. That's why fee percentages that
+          sound survivable feel existential to the businesses paying them — and why margin, not
+          fee rate, decides whether a platform works for you.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The verified numbers, platform by platform
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-6">
+          We maintain a <a href="/sell/marketplace-fees-comparison/" class="font-bold underline" style="color:#7851A9">verified fee comparison</a>
+          (sources and dates on every figure) covering eighteen platforms. The short version:
+          <strong>Amazon</strong> charges a referral fee of about 15% for most goods, before
+          optional fulfillment and advertising costs. <strong>Etsy's</strong> stack — listing,
+          transaction, payment processing, and frequently offsite-ads fees — combines to roughly
+          20% of the sale for many sellers. <strong>DoorDash</strong> commissions run up to 30%
+          per order on its higher tiers, and <strong>Uber Eats and Grubhub</strong> occupy the
+          same range. <strong>Lead-gen platforms</strong> (Thumbtack, Angi) work differently but
+          often cost more: you pay per lead, win or lose, which can mean $150–$225+ in lead fees
+          to win a single job. Details and per-platform pages:
+          <a href="/sell/doordash/" class="font-bold underline" style="color:#7851A9">DoorDash</a>,
+          <a href="/sell/etsy/" class="font-bold underline" style="color:#7851A9">Etsy</a>,
+          <a href="/sell/amazon/" class="font-bold underline" style="color:#7851A9">Amazon</a>,
+          <a href="/sell/thumbtack/" class="font-bold underline" style="color:#7851A9">Thumbtack</a>.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The three costs the percentage hides
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          <strong>1. Visibility isn't included.</strong> On most big marketplaces, ranking well
+          means buying ads on top of the fee — sellers routinely spend another 10–15% of revenue
+          on platform advertising just to be seen in search results they used to rank in for free.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          <strong>2. The customer belongs to the platform.</strong> You often can't email your
+          own buyers, can't see who they are, and can't bring them with you if you leave. You're
+          renting demand, not building a customer base.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-6">
+          <strong>3. The dollars leave town.</strong> Fees flow to coastal shareholders, not the
+          local economy. Survey data popularized by Civic Economics shows about $53 of every
+          $100 spent locally recirculates in the community versus about $14 through national
+          channels — platform fees are part of how that gap opens. More in
+          <a href="/learn/the-economic-impact-of-shopping-local/" class="font-bold underline" style="color:#7851A9">the economic impact of shopping local</a>.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The structural alternative: charge on profit, not sales
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          Good Circles inverts the model: <strong>a 1% fee on profit</strong> — not on the sale —
+          with the business keeping <strong>89% of profit</strong> and <strong>10% of profit</strong>
+          funding the nonprofit the customer elected. There's no ad spend to be visible (demand
+          comes from nonprofit supporters seeking local businesses) and no credit card processing
+          costs to the merchant. We'll be equally honest about the limits: whether that beats a
+          given platform on per-sale cash <strong>depends on your margins</strong>, and Good
+          Circles is local-first, not a national storefront. The full worked example is on the
+          <a href="/sell/marketplace-fees-comparison/" class="font-bold underline" style="color:#7851A9">fees comparison</a>,
+          and <a href="/compare/good-circles-vs-national-marketplaces/" class="font-bold underline" style="color:#7851A9">our comparison with national marketplaces</a>
+          spells out where each option genuinely wins.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Platform fees FAQ" />
+
+    <CtaBand
+      heading="Keep 89% of your profit"
+      text="A 1% fee on profit — if you don't sell, you don't pay. First 200 Mississippi businesses become Founding Merchants."
+      label="See how selling works →"
+      href="/sell/get-started/"
+      audience="MERCHANT"
+      secondaryLabel="Verified fee comparison"
+      secondaryHref="/sell/marketplace-fees-comparison/"
+    />
+  </main>
+  <Footer />
+</Base>

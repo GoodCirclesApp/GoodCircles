@@ -122,6 +122,12 @@ const TILE_GRADIENTS = [
       </div>
     </section>
 
+    {city.communityImpactHtml && (
+      <section class="py-14 px-6 bg-white">
+        <div class="max-w-3xl mx-auto" set:html={city.communityImpactHtml} />
+      </section>
+    )}
+
     <section class="py-14 px-6" style="background:#FBF7FE">
       <div class="max-w-3xl mx-auto">
         <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">

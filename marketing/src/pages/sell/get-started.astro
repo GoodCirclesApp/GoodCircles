@@ -1,0 +1,178 @@
+---
+// Branded onboarding lander: "good circles merchant signup", "list business
+// on good circles", "local marketplace for small business mississippi".
+// CTA wires into the EXISTING merchant waitlist flow (/#mirror-section) —
+// there is no in-app signup yet and this page never pretends there is.
+// LOCKED WORDING honored: "a 1% fee on profit", "no ad spend", "no credit
+// card processing costs" — never "no fees"/"free to sell"/"no commission".
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Sell on Good Circles — Merchant Signup & Founding Spots';
+const DESCRIPTION =
+  'How to list your business on Good Circles: eligibility, the keep-89%-of-profit economics on a 1% fee, what Founding Merchants get, and the signup path.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How do I sign up as a Good Circles merchant?',
+    a: 'Claim a founding spot through the signup flow on this page (choose "Business"). That reserves your place and Founding Merchant status; our team follows up with onboarding details ahead of the September 2026 launch. There is no in-app merchant signup yet — the founding flow is the real path.',
+  },
+  {
+    q: 'Can I list my business on Good Circles today?',
+    a: 'Product listings go live with the marketplace at launch, September 2026 in the Jackson metro. Signing up now reserves your founding spot; if you are in Meridian or Lauderdale County, early access is already underway and neighbors are voting for the businesses they want first.',
+  },
+  {
+    q: 'What businesses are eligible?',
+    a: 'Locally-owned Mississippi businesses — independents and locally-owned franchises — selling goods or services: restaurants, retail, trades, salons, fitness, professional services and more. Corporate chains aren’t part of the local marketplace.',
+  },
+  {
+    q: 'What does it cost to sell on Good Circles?',
+    a: 'A 1% fee on profit per sale — if you don’t sell, you don’t pay. You keep 89% of your profit, 10% of profit funds the nonprofit your customer elected, there’s no ad spend to be visible, and no credit card processing costs to you (customers cover card processing when they pay by card).',
+  },
+  {
+    q: 'What do Founding Merchants get?',
+    a: 'The first 200 Mississippi businesses become Founding Merchants: permanent founding status and badge, first placement as the marketplace opens, and input into how the platform serves local businesses. Founding status never expires.',
+  },
+];
+
+const HOWTO_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to become a Good Circles Founding Merchant',
+  step: [
+    { '@type': 'HowToStep', name: 'Claim your founding spot', text: 'Use the signup flow and choose "Business" — the first 200 Mississippi businesses become permanent Founding Merchants.' },
+    { '@type': 'HowToStep', name: 'Tell us about your business', text: 'Share your business name, category, and website so onboarding is ready before launch.' },
+    { '@type': 'HowToStep', name: 'Onboard before September 2026', text: 'Our team follows up with listing setup ahead of the Jackson-metro launch; Meridian-area businesses are first via early access.' },
+  ],
+};
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/sell/get-started/"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    HOWTO_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Sell', url: `${SITE_URL}/sell/` },
+      { name: 'Get started', url: `${SITE_URL}/sell/get-started/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero
+      eyebrow="Merchant signup"
+      badge="Founding Merchant spots · First 200 Mississippi businesses"
+      h1="Sell on Good Circles — get started"
+    >
+      <p slot="answer">
+        Signing up as a Good Circles merchant takes two minutes: claim a founding spot below,
+        choose <strong>"Business"</strong>, and you're in line for onboarding before the
+        September 2026 Jackson-metro launch. You'll keep <strong>89% of your profit</strong> on a
+        <strong>1% fee on profit</strong>, with no ad spend and no credit card processing costs
+        to you — and the first 200 Mississippi businesses become permanent
+        <strong>Founding Merchants</strong>.
+      </p>
+      <Fragment slot="ctas">
+        <a
+          href="/#mirror-section"
+          data-cta-audience="MERCHANT"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider"
+          style="background:#C2A76F;color:#241247"
+        >
+          Claim your Founding Merchant spot →
+        </a>
+        <a
+          href="/sell/marketplace-fees-comparison/"
+          class="inline-block px-8 py-4 rounded-full font-black text-sm uppercase tracking-wider text-white"
+          style="border:1px solid rgba(255,255,255,0.35)"
+        >
+          Compare marketplace fees
+        </a>
+      </Fragment>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Who's eligible
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          Good Circles is the local marketplace for Mississippi small business:
+          <strong>locally-owned independents and locally-owned franchises</strong> selling goods
+          or services — restaurants and food, retail, trades and home services, salons and
+          fitness, professional services, and appointment-based businesses. If a national chain's
+          corporate office owns the location, it isn't a fit; if a Mississippian owns it, it
+          probably is. Not sure you're ready to sell at all yet? Start with
+          <a href="/for-business/get-ready-to-launch/" class="font-bold underline" style="color:#7851A9">get ready to launch</a>.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The economics, plainly
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-4" style="font-family:'Fira Sans',sans-serif">
+          On every sale: you keep <strong>89% of your profit</strong>, <strong>10% of profit</strong>
+          funds the nonprofit your customer elected (that's what brings them to you), and the
+          platform's share is <strong>a 1% fee on profit</strong> — not on the sale price. There's
+          <strong>no ad spend</strong> to be seen (demand comes from nonprofit supporters looking
+          for local businesses) and <strong>no credit card processing costs to you</strong>
+          (customers cover card processing when they pay by card). Compare that with the
+          15–30% of the sale that national platforms commonly take — the full, verified math is
+          on the <a href="/sell/marketplace-fees-comparison/" class="font-bold underline" style="color:#7851A9">marketplace fees comparison</a>
+          and the honest big-picture story is in
+          <a href="/learn/what-big-platforms-cost-local-businesses/" class="font-bold underline" style="color:#7851A9">what big platforms cost local businesses</a>.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-10" style="font-family:'Fira Sans',sans-serif">
+          One honest caveat we always give: whether Good Circles beats a given platform on
+          per-sale cash depends on your margins — where it wins everywhere is
+          <strong>total local value</strong> (your after-tax profit + your customer's savings +
+          your community's funding). We'd rather you see the real math than a slogan.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          What Founding Merchants get
+        </h2>
+        <ul class="mb-10 space-y-3 text-slate-600" style="font-family:'Fira Sans',sans-serif">
+          <li><strong>Permanent founding status</strong> — the badge and recognition never expire.</li>
+          <li><strong>First placement</strong> as the marketplace opens in your area.</li>
+          <li><strong>A voice in the build</strong> — founding businesses shape onboarding, categories, and tools.</li>
+          <li><strong>Demand visibility</strong> — in early-access communities like Meridian, neighbors are already voting for the businesses they want on the platform.</li>
+        </ul>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Timeline to launch
+        </h2>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          <strong>Now:</strong> founding signups open statewide; early access underway in
+          Meridian &amp; Lauderdale County (<a href="/meridian/" class="font-bold underline" style="color:#7851A9">see the Meridian page</a>).
+          <strong>Ahead of September 2026:</strong> onboarding for founding businesses — listings,
+          categories, and setup. <strong>September 2026:</strong> the marketplace opens in the
+          Jackson metro, then expands across Mississippi. Claim your spot below; it costs nothing
+          to reserve and creates no obligation.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Merchant signup FAQ" />
+
+    <CtaBand
+      heading="Be one of the first 200"
+      text="Founding Merchant status is permanent. Early access in Meridian — September 2026 launch, Jackson metro first."
+      label="Claim your Founding Merchant spot →"
+      href="/#mirror-section"
+      audience="MERCHANT"
+      secondaryLabel="Why sell on Good Circles"
+      secondaryHref="/sell/"
+    />
+  </main>
+  <Footer />
+</Base>
