@@ -1690,5 +1690,1235 @@ export const CITIES: City[] = [
       }
     ],
     "region": "West-Central Mississippi"
+  },
+  {
+    "slug": "flowood",
+    "name": "Flowood",
+    "title": "Shop Local in Flowood, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Flowood, save ~10%, and fund a Flowood-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Jackson Metro · Launching September 2026",
+    "h1": "Shop local in Flowood — and fund a Flowood nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Flowood, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Flowood-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Flowood: the Lakeland Drive shops and restaurants, Dogwood's retail, and one of the metro's busiest medical corridors. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Lakeland Dr"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Dogwood"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Flowood Dr"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Lakeland Dr"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Dogwood"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Flowood Dr"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "pearl",
+        "name": "Pearl"
+      },
+      {
+        "slug": "ridgeland",
+        "name": "Ridgeland"
+      },
+      {
+        "slug": "brandon",
+        "name": "Brandon"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Flowood, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Flowood (Central Mississippi). Add your name now to be first in and to bring it to Flowood sooner."
+      },
+      {
+        "q": "How do I support local Flowood businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Flowood nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Flowood nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Flowood area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "byram",
+    "name": "Byram",
+    "title": "Shop Local in Byram, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Byram, save ~10%, and fund a Byram-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Jackson Metro · Launching September 2026",
+    "h1": "Shop local in Byram — and fund a Byram nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Byram, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Byram-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Byram: the old Swinging Bridge over the Pearl River and the businesses along Siwell Road and Terry Road. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Siwell Rd"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Terry Rd"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Downtown"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Siwell Rd"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Terry Rd"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Downtown"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "jackson",
+        "name": "Jackson"
+      },
+      {
+        "slug": "terry",
+        "name": "Terry"
+      },
+      {
+        "slug": "richland",
+        "name": "Richland"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Byram, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Byram (Central Mississippi). Add your name now to be first in and to bring it to Byram sooner."
+      },
+      {
+        "q": "How do I support local Byram businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Byram nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Byram nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Byram area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "canton",
+    "name": "Canton",
+    "title": "Shop Local in Canton, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Canton, save ~10%, and fund a Canton-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Madison County · Launching September 2026",
+    "h1": "Shop local in Canton — and fund a Canton nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Canton, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Canton-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Canton: the historic Courthouse Square, the famous twice-a-year Canton Flea Market, and the Christmas 'City of Lights'. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Courthouse Square"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Peace St"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Hwy 51"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Courthouse Square"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Peace St"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Hwy 51"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "gluckstadt",
+        "name": "Gluckstadt"
+      },
+      {
+        "slug": "madison",
+        "name": "Madison"
+      },
+      {
+        "slug": "flora",
+        "name": "Flora"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Canton, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Canton (Central Mississippi). Add your name now to be first in and to bring it to Canton sooner."
+      },
+      {
+        "q": "How do I support local Canton businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Canton nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Canton nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Canton area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "richland",
+    "name": "Richland",
+    "title": "Shop Local in Richland, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Richland, save ~10%, and fund a Richland-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Jackson Metro · Launching September 2026",
+    "h1": "Shop local in Richland — and fund a Richland nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Richland, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Richland-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Richland: the businesses along the Highway 49 corridor and Old Brandon Road. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Hwy 49"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Old Brandon Rd"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Downtown"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Hwy 49"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Old Brandon Rd"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Downtown"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "pearl",
+        "name": "Pearl"
+      },
+      {
+        "slug": "florence",
+        "name": "Florence"
+      },
+      {
+        "slug": "byram",
+        "name": "Byram"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Richland, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Richland (Central Mississippi). Add your name now to be first in and to bring it to Richland sooner."
+      },
+      {
+        "q": "How do I support local Richland businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Richland nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Richland nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Richland area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "gluckstadt",
+    "name": "Gluckstadt",
+    "title": "Shop Local in Gluckstadt, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Gluckstadt, save ~10%, and fund a Gluckstadt-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Mississippi's Newest City · Launching September 2026",
+    "h1": "Shop local in Gluckstadt — and fund a Gluckstadt nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Gluckstadt, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Gluckstadt-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Gluckstadt: Mississippi's newest city — incorporated in 2021 — with its German roots, the annual GermanFest, and the fast-growing Gluckstadt Road corridor. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Gluckstadt Rd"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Hwy 51"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Calhoun Station"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Gluckstadt Rd"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Hwy 51"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Calhoun Station"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "madison",
+        "name": "Madison"
+      },
+      {
+        "slug": "canton",
+        "name": "Canton"
+      },
+      {
+        "slug": "flora",
+        "name": "Flora"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Gluckstadt, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Gluckstadt (Central Mississippi). Add your name now to be first in and to bring it to Gluckstadt sooner."
+      },
+      {
+        "q": "How do I support local Gluckstadt businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Gluckstadt nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Gluckstadt nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Gluckstadt area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "florence",
+    "name": "Florence",
+    "title": "Shop Local in Florence, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Florence, save ~10%, and fund a Florence-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Rankin County · Launching September 2026",
+    "h1": "Shop local in Florence — and fund a Florence nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Florence, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Florence-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Florence: the shops along Highway 49 South and its small-town Main Street. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Hwy 49"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Main St"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Downtown"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Hwy 49"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Main St"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Downtown"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "richland",
+        "name": "Richland"
+      },
+      {
+        "slug": "pearl",
+        "name": "Pearl"
+      },
+      {
+        "slug": "magee",
+        "name": "Magee"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Florence, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Florence (Central Mississippi). Add your name now to be first in and to bring it to Florence sooner."
+      },
+      {
+        "q": "How do I support local Florence businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Florence nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Florence nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Florence area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "raymond",
+    "name": "Raymond",
+    "title": "Shop Local in Raymond, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Raymond, save ~10%, and fund a Raymond-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Hinds County · Launching September 2026",
+    "h1": "Shop local in Raymond — and fund a Raymond nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Raymond, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Raymond-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Raymond: the historic 1859 courthouse, the Battle of Raymond heritage, and Hinds Community College's main campus. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Courthouse Square"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Main St"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Campus area"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Courthouse Square"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Main St"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Campus area"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "clinton",
+        "name": "Clinton"
+      },
+      {
+        "slug": "byram",
+        "name": "Byram"
+      },
+      {
+        "slug": "terry",
+        "name": "Terry"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Raymond, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Raymond (Central Mississippi). Add your name now to be first in and to bring it to Raymond sooner."
+      },
+      {
+        "q": "How do I support local Raymond businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Raymond nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Raymond nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Raymond area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "terry",
+    "name": "Terry",
+    "title": "Shop Local in Terry, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Terry, save ~10%, and fund a Terry-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Hinds County · Launching September 2026",
+    "h1": "Shop local in Terry — and fund a Terry nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Terry, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Terry-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Terry: its historic railroad-town Main Street just south of Jackson. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Main St"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Downtown"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · I-55 corridor"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Main St"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Downtown"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · I-55 corridor"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "byram",
+        "name": "Byram"
+      },
+      {
+        "slug": "raymond",
+        "name": "Raymond"
+      },
+      {
+        "slug": "crystal-springs",
+        "name": "Crystal Springs"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Terry, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Terry (Central Mississippi). Add your name now to be first in and to bring it to Terry sooner."
+      },
+      {
+        "q": "How do I support local Terry businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Terry nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Terry nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Terry area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "flora",
+    "name": "Flora",
+    "title": "Shop Local in Flora, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Flora, save ~10%, and fund a Flora-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Madison County · Launching September 2026",
+    "h1": "Shop local in Flora — and fund a Flora nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Flora, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Flora-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Flora: the Mississippi Petrified Forest and a compact, walkable Main Street. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Main St"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Downtown"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Hwy 49"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Main St"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Downtown"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Hwy 49"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "gluckstadt",
+        "name": "Gluckstadt"
+      },
+      {
+        "slug": "madison",
+        "name": "Madison"
+      },
+      {
+        "slug": "canton",
+        "name": "Canton"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Flora, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Flora (Central Mississippi). Add your name now to be first in and to bring it to Flora sooner."
+      },
+      {
+        "q": "How do I support local Flora businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Flora nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Flora nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Flora area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "pelahatchie",
+    "name": "Pelahatchie",
+    "title": "Shop Local in Pelahatchie, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Pelahatchie, save ~10%, and fund a Pelahatchie-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Rankin County · Launching September 2026",
+    "h1": "Shop local in Pelahatchie — and fund a Pelahatchie nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Pelahatchie, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Pelahatchie-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Pelahatchie: the annual Muscadine Jubilee and its small-town Main Street. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Main St"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Hwy 80"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Downtown"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Main St"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Hwy 80"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Downtown"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "brandon",
+        "name": "Brandon"
+      },
+      {
+        "slug": "pearl",
+        "name": "Pearl"
+      },
+      {
+        "slug": "florence",
+        "name": "Florence"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Pelahatchie, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Pelahatchie (Central Mississippi). Add your name now to be first in and to bring it to Pelahatchie sooner."
+      },
+      {
+        "q": "How do I support local Pelahatchie businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Pelahatchie nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Pelahatchie nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Pelahatchie area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "yazoo-city",
+    "name": "Yazoo City",
+    "title": "Shop Local in Yazoo City, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Yazoo City, save ~10%, and fund a Yazoo City-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Gateway to the Delta · Launching September 2026",
+    "h1": "Shop local in Yazoo City — and fund a Yazoo City nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Yazoo City, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Yazoo City-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Yazoo City: the famously colorful Main Street storefronts and the hometown Willie Morris wrote about. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Main St"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Broadway"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Downtown"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Main St"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Broadway"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Downtown"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "flora",
+        "name": "Flora"
+      },
+      {
+        "slug": "canton",
+        "name": "Canton"
+      },
+      {
+        "slug": "jackson",
+        "name": "Jackson"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Yazoo City, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Yazoo City (Central Mississippi). Add your name now to be first in and to bring it to Yazoo City sooner."
+      },
+      {
+        "q": "How do I support local Yazoo City businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Yazoo City nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Yazoo City nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Yazoo City area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "crystal-springs",
+    "name": "Crystal Springs",
+    "title": "Shop Local in Crystal Springs, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Crystal Springs, save ~10%, and fund a Crystal Springs-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Copiah County · Launching September 2026",
+    "h1": "Shop local in Crystal Springs — and fund a Crystal Springs nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Crystal Springs, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Crystal Springs-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Crystal Springs: its 'Tomatopolis of the World' tomato-growing heritage and the annual Tomato Festival downtown. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Downtown"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Hwy 51"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Main St"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Downtown"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Hwy 51"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Main St"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "hazlehurst",
+        "name": "Hazlehurst"
+      },
+      {
+        "slug": "terry",
+        "name": "Terry"
+      },
+      {
+        "slug": "byram",
+        "name": "Byram"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Crystal Springs, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Crystal Springs (Central Mississippi). Add your name now to be first in and to bring it to Crystal Springs sooner."
+      },
+      {
+        "q": "How do I support local Crystal Springs businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Crystal Springs nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Crystal Springs nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Crystal Springs area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "hazlehurst",
+    "name": "Hazlehurst",
+    "title": "Shop Local in Hazlehurst, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Hazlehurst, save ~10%, and fund a Hazlehurst-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Copiah County · Launching September 2026",
+    "h1": "Shop local in Hazlehurst — and fund a Hazlehurst nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Hazlehurst, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Hazlehurst-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Hazlehurst: the county-seat square in the town where bluesman Robert Johnson was born. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Downtown"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Hwy 51"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Courthouse Sq"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Downtown"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Hwy 51"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Courthouse Sq"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "crystal-springs",
+        "name": "Crystal Springs"
+      },
+      {
+        "slug": "terry",
+        "name": "Terry"
+      },
+      {
+        "slug": "magee",
+        "name": "Magee"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Hazlehurst, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Hazlehurst (Central Mississippi). Add your name now to be first in and to bring it to Hazlehurst sooner."
+      },
+      {
+        "q": "How do I support local Hazlehurst businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Hazlehurst nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Hazlehurst nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Hazlehurst area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "magee",
+    "name": "Magee",
+    "title": "Shop Local in Magee, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Magee, save ~10%, and fund a Magee-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Simpson County · Launching September 2026",
+    "h1": "Shop local in Magee — and fund a Magee nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Magee, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Magee-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Magee: the Main Street shops along the Highway 49 corridor in Simpson County. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Main St"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Hwy 49"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Downtown"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Main St"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Hwy 49"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Downtown"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "mendenhall",
+        "name": "Mendenhall"
+      },
+      {
+        "slug": "florence",
+        "name": "Florence"
+      },
+      {
+        "slug": "richland",
+        "name": "Richland"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Magee, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Magee (Central Mississippi). Add your name now to be first in and to bring it to Magee sooner."
+      },
+      {
+        "q": "How do I support local Magee businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Magee nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Magee nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Magee area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
+  },
+  {
+    "slug": "mendenhall",
+    "name": "Mendenhall",
+    "title": "Shop Local in Mendenhall, MS — Support Local Businesses & Give Back · Good Circles",
+    "description": "Shop local in Mendenhall, save ~10%, and fund a Mendenhall-area nonprofit you choose — at no extra cost. Central Mississippi. Join Good Circles free.",
+    "badge": "Simpson County · Launching September 2026",
+    "h1": "Shop local in Mendenhall — and fund a Mendenhall nonprofit",
+    "answerHtml": "Good Circles lets you shop local businesses in Mendenhall, MS, <b>save about 10%</b>, and send a share of every purchase to a <b>Mendenhall-area nonprofit you choose</b> — at no extra cost. Early access is underway in Meridian &amp; Lauderdale County, and the September 2026 launch starts in the Jackson metro — add your name and you'll be first in. Join free.",
+    "introHtml": "Good Circles keeps your spending — and your giving — in Mendenhall: the courthouse square in the heart of Simpson County. Most of every dollar spent at a national chain leaves the moment it's spent. Good Circles changes the rails so it stays right here.",
+    "nonprofits": [
+      {
+        "icon": "🍎",
+        "name": "A local food bank",
+        "blurb": "Fights hunger in the community."
+      },
+      {
+        "icon": "🎓",
+        "name": "A school foundation",
+        "blurb": "Funds classrooms and students."
+      },
+      {
+        "icon": "🐾",
+        "name": "An animal rescue",
+        "blurb": "Cares for pets in need."
+      }
+    ],
+    "businesses": [
+      {
+        "name": "Local Coffee Roaster",
+        "cat": "Café · Courthouse Sq"
+      },
+      {
+        "name": "Family Restaurant",
+        "cat": "Restaurant · Downtown"
+      },
+      {
+        "name": "Independent Boutique",
+        "cat": "Retail · Main St"
+      },
+      {
+        "name": "Neighborhood Hardware",
+        "cat": "Home & trades · Courthouse Sq"
+      },
+      {
+        "name": "Local Bakery",
+        "cat": "Food · Downtown"
+      },
+      {
+        "name": "Auto & Tire Shop",
+        "cat": "Services · Main St"
+      }
+    ],
+    "nearby": [
+      {
+        "slug": "magee",
+        "name": "Magee"
+      },
+      {
+        "slug": "florence",
+        "name": "Florence"
+      },
+      {
+        "slug": "pelahatchie",
+        "name": "Pelahatchie"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Is Good Circles available in Mendenhall, MS?",
+        "a": "Early access is underway in Meridian and Lauderdale County, and Good Circles launches on schedule in September 2026 in the Jackson metro — expanding to Mendenhall (Central Mississippi). Add your name now to be first in and to bring it to Mendenhall sooner."
+      },
+      {
+        "q": "How do I support local Mendenhall businesses and give to charity at the same time?",
+        "a": "Shop local through Good Circles: you save about 10%, the business keeps 89% of its profit, and 10% of that profit funds the Mendenhall nonprofit you chose — automatically, at no extra cost."
+      },
+      {
+        "q": "Which Mendenhall nonprofits can I support?",
+        "a": "Any IRS-verified 501(c)(3) in the Mendenhall area you love — from local food banks to schools to animal rescues."
+      }
+    ],
+    "region": "Central Mississippi"
   }
 ];
