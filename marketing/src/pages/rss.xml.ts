@@ -52,6 +52,18 @@ const FILE_GUIDES: RSSFeedItem[] = [
     link: '/learn/how-to-choose-a-local-nonprofit/',
     pubDate: new Date('2026-07-08'),
   },
+  {
+    title: '15 Passive Fundraising Ideas, Ranked by Effort (2026)',
+    description: 'Fifteen passive fundraising ideas ranked by how passive they really are — realistic yield, effort level, and best-fit organization for each.',
+    link: '/learn/passive-fundraising-ideas/',
+    pubDate: new Date('2026-07-08'),
+  },
+  {
+    title: 'Passive Fundraising for Schools: PTA & Booster Guide (2026)',
+    description: 'Why product sales burn out volunteers, the truly passive alternatives ranked, and a realistic worked example for PTAs and booster clubs.',
+    link: '/learn/passive-fundraising-for-schools/',
+    pubDate: new Date('2026-07-08'),
+  },
 ];
 
 export async function GET() {

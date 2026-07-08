@@ -249,7 +249,7 @@ const DEFS: LearnDef[] = [
       { q: 'How can a school fundraise without selling products?', a: 'Use a no-cost program like Good Circles: families shop local the way they already do, and a share of every purchase is routed to your school automatically — no products, no order forms.' },
       { q: 'Is no-sell school fundraising really free?', a: 'Yes. Good Circles is free for schools and families to join, there’s no fee on what your school receives, and families save about 10% on local purchases.' },
     ],
-    related: [R.schools, R.nonprofits, R.how],
+    related: [R.schools, R.nonprofits, R.how, { label: 'Passive fundraising for schools & PTAs', href: '/learn/passive-fundraising-for-schools/' }],
   },
   {
     slug: 'how-to-fundraise-for-a-church',
@@ -321,7 +321,7 @@ const DEFS: LearnDef[] = [
       { q: 'How can a sports team fundraise without selling?', a: 'Use a no-cost program like Good Circles: families shop local the way they already do, and a share of every purchase is routed to your team automatically — no car washes, no products.' },
       { q: 'What can sports team fundraising money be used for?', a: 'Whatever the team needs — uniforms, equipment, travel, tournament fees, or facilities. With Good Circles the funding is recurring and unrestricted.' },
     ],
-    related: [R.teams, R.nonprofits, R.how],
+    related: [R.teams, R.nonprofits, R.how, { label: 'Passive fundraising for schools & teams', href: '/learn/passive-fundraising-for-schools/' }],
   },
   {
     slug: 'what-is-a-marketplace-facilitator',
@@ -825,7 +825,7 @@ const DEFS: LearnDef[] = [
       { q: 'What is the best passive fundraising idea for a nonprofit?', a: 'A no-cost shopping fundraiser is among the best: supporters pick your nonprofit once and a share of every local purchase they make funds you automatically each month, with no event to run.' },
       { q: 'Does passive fundraising actually work?', a: 'Yes, in aggregate. At about $72 per supporter per year, a few hundred engaged supporters can generate tens of thousands of dollars annually — recurring, with little ongoing effort.' },
     ],
-    related: [R.nonprofits, R.amazon, R.schools],
+    related: [R.nonprofits, R.amazon, R.schools, { label: 'The full 15-idea ranked list', href: '/learn/passive-fundraising-ideas/' }],
   },
 ];
 

@@ -1,0 +1,210 @@
+---
+// ATP target: "passive fundraising for schools" / "passive fundraising ideas
+// for schools". Audience: PTAs, PTOs, booster clubs, band/athletics parents.
+// All platform descriptions honest and neutral; the worked example is
+// clearly labeled illustrative; no traction claims.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Passive Fundraising for Schools: PTA & Booster Guide (2026)';
+const DESCRIPTION =
+  'Passive fundraising for schools: why product sales burn out volunteers, the truly passive alternatives ranked, and a realistic worked example for PTAs.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What is passive fundraising for schools?',
+    a: 'Passive fundraising is money a PTA, PTO, or booster club earns from activity families already do — mainly shopping — without selling products or staffing events. Families enroll once, and a share of their everyday purchases flows to the school organization automatically.',
+  },
+  {
+    q: 'How much can a PTA raise with passive fundraising?',
+    a: 'It scales with enrolled families, not volunteer hours. Grocery-loyalty and portal programs typically yield a few dollars per family per year; local profit-share models run higher — Good Circles conservatively estimates about $72 per active supporter per year, so 200 enrolled families is illustratively around $14,400 a year. Real results depend on enrollment and shopping habits.',
+  },
+  {
+    q: 'Should passive fundraising replace our product sales?',
+    a: 'Think floor, not replacement. Passive streams give you steady baseline income with near-zero volunteer time, which lets you run fewer, better product fundraisers instead of a burnout calendar of them. Most healthy programs keep one signature active fundraiser and let passive programs carry the rest.',
+  },
+  {
+    q: 'What is the easiest passive fundraiser for a booster club?',
+    a: 'Enrollment-only programs: register the club with a grocery loyalty program like Kroger Community Rewards, then ask every family to link their card once. After that it runs itself. Shopping-based programs like Good Circles work the same way — supporters elect the club once and their local purchases fund it automatically.',
+  },
+];
+
+const ARTICLE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: TITLE,
+  description: DESCRIPTION,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@type': 'Organization', name: 'Good Circles' },
+  publisher: { '@type': 'Organization', name: 'Good Circles', logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` } },
+  mainEntityOfPage: `${SITE_URL}/learn/passive-fundraising-for-schools/`,
+};
+
+const TABLE = [
+  { idea: 'Grocery loyalty programs (e.g., Kroger Community Rewards)', truly: 'Truly passive', note: 'Families link a card once; store donates a share. Modest per-family yield.' },
+  { idea: 'Shopping profit-share (Good Circles)', truly: 'Truly passive', note: 'Supporters elect your org once; ~10% of merchant net profit on their local purchases funds it. Free to join.' },
+  { idea: 'Round-up apps', truly: 'Truly passive', note: 'Spare change from card purchases, automatically. Small but steady; donor pays.' },
+  { idea: 'Employer matching on gifts', truly: 'Truly passive (after the ask)', note: 'One prompt per donor unlocks matching on gifts they already make.' },
+  { idea: 'Box Tops for Education', truly: 'Sounds passive', note: 'Someone still has to scan receipts every week — light work, but work.' },
+  { idea: 'Spirit-wear web store', truly: 'Sounds passive', note: 'Design, promotion, and reorder management fall on volunteers each season.' },
+  { idea: 'Restaurant spirit nights', truly: 'Not passive', note: 'Real events: promotion, attendance, and a single-night payout.' },
+  { idea: 'Product sales (wrapping paper, candy, discount cards)', truly: 'Not passive', note: 'Weeks of volunteer effort; organizations typically keep only 30–60% of what families spend.' },
+];
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/passive-fundraising-for-schools/"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    ARTICLE_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Learn', url: `${SITE_URL}/learn/` },
+      { name: 'Passive fundraising for schools', url: `${SITE_URL}/learn/passive-fundraising-for-schools/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Updated July 2026" h1="Passive fundraising for schools, PTAs & booster clubs">
+      <p slot="answer">
+        <strong>Passive fundraising lets a school organization earn from what families already do
+        — mostly shopping — instead of what volunteers can endure.</strong> Enroll families once
+        in programs like grocery loyalty, round-ups, or local shopping profit-share, and revenue
+        arrives monthly with no product boxes, order forms, or gym-lobby tables. This guide ranks
+        the real options by how passive they actually are, with an honest worked example.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Why product fundraisers burn everyone out
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          The classic school fundraiser asks the most from the people with the least to spare.
+          Wrapping paper, cookie dough, candy bars, and discount cards mean weeks of selling,
+          order-form wrangling, money collection, and distribution day — all volunteer labor —
+          and the organization typically keeps only <strong>30–60% of what families spend</strong>;
+          the rest goes to the fundraising company. Meanwhile the same three parents run
+          everything until they quit. That's not a funding strategy; it's a volunteer-attrition
+          machine with a bake sale attached.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-10">
+          Passive programs invert the math: near-zero volunteer hours, smaller per-transaction
+          amounts, and — because they run all year — totals that quietly compete with the big
+          push. The playbook for teams is the same; see
+          <a href="/learn/how-to-fundraise-for-a-sports-team/" class="font-bold underline" style="color:#7851A9">how to fundraise for a sports team</a>
+          and <a href="/learn/how-to-fundraise-for-a-school-without-selling/" class="font-bold underline" style="color:#7851A9">how to fundraise for a school without selling</a>.
+        </p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          The passive options, ranked by effort
+        </h2>
+        <ol class="space-y-5 text-slate-600 mb-10 list-decimal pl-5">
+          <li>
+            <strong>Grocery loyalty programs.</strong> Programs like Kroger Community Rewards let
+            families link their loyalty card to your organization once; the store then donates a
+            share of eligible spending. Setup is one registration; yield is modest per family but
+            genuinely zero-effort after enrollment.
+          </li>
+          <li>
+            <strong>Local shopping profit-share (Good Circles).</strong> Families elect your school
+            organization once, then about <strong>10% of the merchant's net profit</strong> on
+            every local purchase they make funds it automatically — while they save about 10% and
+            the business keeps 89% of its profit. Free for the organization, no fee on
+            distributions; launching September 2026 in the Jackson metro, with
+            <a href="/meridian/" class="font-bold underline" style="color:#7851A9">early access underway in Meridian</a>.
+            Any school-affiliated 501(c)(3) — PTA, PTO, booster or band club, or a school's
+            foundation — can be elected; see <a href="/for-nonprofits/" class="font-bold underline" style="color:#7851A9">Good Circles for nonprofits</a>.
+          </li>
+          <li>
+            <strong>Round-up apps.</strong> Supporters connect a card and their spare change is
+            donated automatically. Honest picture: it's the donor's own money (unlike
+            profit-share models), amounts are small ($5–15/month is typical), and the hard part
+            is getting families to install the app.
+          </li>
+          <li>
+            <strong>Employer matching activation.</strong> Not a new stream — a multiplier on the
+            gifts your families already make. One line in every thank-you ("does your employer
+            match?") is the entire program.
+          </li>
+          <li>
+            <strong>Shopping portals for online purchases.</strong> Programs like ShopRaise and
+            iGive donate a percentage (commonly 0.5–3%, varying by retailer) when supporters
+            shop national retailers through the portal. Free and legitimate; the challenge is
+            remembering to use them.
+          </li>
+        </ol>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          Truly passive vs. sounds-passive
+        </h2>
+        <div class="overflow-x-auto mb-10">
+          <table class="w-full text-sm" style="border-collapse:collapse">
+            <thead>
+              <tr style="background:#faf7fd">
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Idea</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">Verdict</th>
+                <th class="text-left p-3 font-black text-slate-500 text-xs uppercase tracking-wider">The honest note</th>
+              </tr>
+            </thead>
+            <tbody>
+              {TABLE.map((r) => (
+                <tr style="border-bottom:1px solid #E7DCF2">
+                  <td class="p-3 font-bold text-slate-900">{r.idea}</td>
+                  <td class="p-3 font-bold" style={`color:${r.truly.startsWith('Truly') ? '#166534' : r.truly.startsWith('Sounds') ? '#92400E' : '#991B1B'}`}>{r.truly}</td>
+                  <td class="p-3 text-slate-500">{r.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-5" style="letter-spacing:-0.02em">
+          A realistic worked example (illustrative)
+        </h2>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          Say your booster club enrolls <strong>200 supporting families</strong> in a local
+          shopping profit-share program. Using Good Circles' conservative estimate of about
+          <strong>$72 per active supporter per year</strong> (10% of merchant net profit on
+          typical local spending), that's illustratively <strong>~$14,400 a year</strong> —
+          recurring, unrestricted, and requiring no volunteer hours after enrollment.
+          <em>These are estimates, not promises:</em> real results depend on how many families
+          enroll, where they shop, and local merchant participation. Layer a grocery-loyalty
+          program and employer matching on top and the passive base grows further — each program
+          taps different spending.
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          The strategy in one sentence: <strong>build the passive floor first, then run one great
+          active fundraiser a year instead of five exhausting ones.</strong> For the full menu of
+          options see <a href="/learn/passive-fundraising-ideas/" class="font-bold underline" style="color:#7851A9">15 passive fundraising ideas, ranked</a>,
+          and for the deep explainer, <a href="/learn/passive-nonprofit-funding/" class="font-bold underline" style="color:#7851A9">the definitive guide to passive nonprofit funding</a>.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Schools & PTA passive fundraising FAQ" />
+
+    <CtaBand
+      heading="A passive floor under your school org"
+      text="Families elect you once — about 10% of merchant net profit funds you automatically. Free for school-affiliated nonprofits."
+      label="Claim a founding spot →"
+      href="/for-nonprofits/founding-nonprofit/"
+      audience="NONPROFIT"
+      secondaryLabel="For schools on Good Circles"
+      secondaryHref="/for-nonprofits/for-schools/"
+    />
+  </main>
+  <Footer />
+</Base>
