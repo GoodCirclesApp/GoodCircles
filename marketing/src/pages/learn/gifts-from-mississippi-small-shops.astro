@@ -1,0 +1,272 @@
+---
+// ATP gift/artisan intent + Shopping-segment demand. Every maker/shop is
+// real, locally owned, and verified (source per entry); online-ordering
+// noted only where the business's own site confirms it; NO participation
+// claims. Structured for seasonal refresh: edit the GIFTS array + the
+// visible Updated date — no rebuild of structure needed.
+// Seeds AI questions: "support local artisans through online purchases" and
+// "which local businesses offer online ordering".
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Unique Gifts from Mississippi Small Shops & Artisans (2026)';
+const DESCRIPTION =
+  'A verified Mississippi gift guide: Delta pottery, Jackson pralines, letterpress art, legendary independent bookstores, and MS-made goods that ship.';
+
+interface Gift {
+  name: string;
+  where: string;
+  what: string;
+  online: string; // verified online-ordering note
+  sourceLabel: string;
+  sourceUrl: string;
+}
+interface GiftCat {
+  heading: string;
+  items: Gift[];
+}
+
+const GIFTS: GiftCat[] = [
+  {
+    heading: 'Pottery & ceramics',
+    items: [
+      {
+        name: "McCarty's Pottery",
+        where: 'Merigold (the Delta)',
+        what: 'Mississippi’s legendary pottery — made in Merigold since 1948, with the signature Delta-river squiggle. A wedding-gift institution across the South.',
+        online: 'Ordering info on their site; many pieces sell through Mississippi retailers.',
+        sourceLabel: 'mccartyspottery.com',
+        sourceUrl: 'https://www.mccartyspottery.com/mccartys-pottery-home-page',
+      },
+      {
+        name: "Peter's Pottery",
+        where: 'Mound Bayou (the Delta)',
+        what: 'Founded by the Woods brothers — McCarty’s alumni — in historic Mound Bayou; beloved bonsai-glazed pieces with deep Mississippi roots.',
+        online: 'Sells by mail order and through Mississippi shops that ship.',
+        sourceLabel: 'Mississippi Folklife',
+        sourceUrl: 'https://mississippifolklife.org/articles/jewel-of-the-jewel-peters-pottery-of-mound-bayou',
+      },
+    ],
+  },
+  {
+    heading: 'Food & candy',
+    items: [
+      {
+        name: "Nandy's Candy",
+        where: 'Jackson (Maywood Mart)',
+        what: 'Handcrafted pralines, chocolates, and Mississippi-made confections behind the red doors since 1980 — second-generation family owned.',
+        online: 'Online shop on their site ships gift boxes.',
+        sourceLabel: 'nandyscandy.com',
+        sourceUrl: 'https://www.nandyscandy.com/',
+      },
+      {
+        name: 'The Mississippi Gift Company',
+        where: 'Greenwood',
+        what: 'The one-stop curator of Mississippi-made food and gifts — cheese straws, sauces, pottery, and gift baskets assembled entirely from state makers.',
+        online: 'Full e-commerce store; ships nationwide.',
+        sourceLabel: 'themississippigiftcompany.com',
+        sourceUrl: 'https://www.themississippigiftcompany.com/',
+      },
+    ],
+  },
+  {
+    heading: 'Art, prints & paper',
+    items: [
+      {
+        name: 'Thimblepress',
+        where: 'Jackson',
+        what: 'Kristin Ley’s letterpress and design studio — Mississippi-landmark prints (including a Square Books print), cards, and confetti-bright gifts.',
+        online: 'Online store ships everywhere.',
+        sourceLabel: 'thimblepress.com',
+        sourceUrl: 'https://thimblepress.com/',
+      },
+      {
+        name: 'The MAX Store',
+        where: 'Meridian (downtown)',
+        what: 'The Mississippi Arts + Entertainment Experience museum’s store — Mississippi-made art, music, and maker goods in the heart of downtown Meridian.',
+        online: 'Shop in person downtown; call for availability.',
+        sourceLabel: 'Downtown Meridian directory',
+        sourceUrl: 'https://downtownmeridian.org/explore/shopping/',
+      },
+    ],
+  },
+  {
+    heading: 'From independent bookstores',
+    items: [
+      {
+        name: 'Lemuria Books',
+        where: 'Jackson (Banner Hall)',
+        what: 'One of the South’s great independents — famous for signed first editions, a serious Mississippi-writers section, and author events.',
+        online: 'Orders and signed editions available through their site.',
+        sourceLabel: 'lemuriabooks.com',
+        sourceUrl: 'https://www.lemuriabooks.com/',
+      },
+      {
+        name: 'Square Books',
+        where: 'Oxford (Courthouse Square)',
+        what: 'The legendary family of bookstores on the Oxford Square since 1979 — flagship, Square Books Jr., and more; a literary landmark of the entire South.',
+        online: 'Orders online, including via their Bookshop.org storefront.',
+        sourceLabel: 'squarebooks.com',
+        sourceUrl: 'https://squarebooks.com/',
+      },
+    ],
+  },
+  {
+    heading: 'Apparel & Mississippi-made goods',
+    items: [
+      {
+        name: 'Crooked Letter',
+        where: 'Meridian (downtown)',
+        what: 'Mississippi makers and goods — state-proud apparel and gifts in downtown Meridian’s historic core.',
+        online: 'Shop in person downtown; check their pages for current online options.',
+        sourceLabel: 'Downtown Meridian directory',
+        sourceUrl: 'https://downtownmeridian.org/explore/shopping/',
+      },
+      {
+        name: 'Swell-o-Phonic',
+        where: 'Jackson (Fondren)',
+        what: 'Fondren’s longtime sneaker-and-streetwear shop — Jackson identity you can wear.',
+        online: 'Shop in person in Fondren.',
+        sourceLabel: 'Visit Jackson — Shop Like a Local',
+        sourceUrl: 'https://www.visitjackson.com/blog/shop-like-a-local/',
+      },
+    ],
+  },
+];
+
+const FAQS: Faq[] = [
+  {
+    q: 'How can I support local artisans through online purchases?',
+    a: 'Buy directly from the maker’s own website first — Mississippi artisans like Thimblepress, Nandy’s Candy, and The Mississippi Gift Company all run their own online stores, and direct orders avoid marketplace fees entirely. Second-best: curated regional shops (The Mississippi Gift Company aggregates dozens of state makers and ships nationwide) and independent bookstores’ online storefronts. Each entry in this guide links the verified source.',
+  },
+  {
+    q: 'Which local businesses offer online ordering?',
+    a: 'In this guide, verified online ordering includes The Mississippi Gift Company (full e-commerce, nationwide shipping), Nandy’s Candy (gift boxes), Thimblepress (prints and paper goods), Square Books and Lemuria Books (online orders, including signed editions). Where a shop is in-person only, we say so — always check the linked site for current options.',
+  },
+  {
+    q: 'What are the best independent bookstores in Mississippi?',
+    a: 'Two nationally famous anchors: Square Books in Oxford (on the Courthouse Square since 1979, a literary landmark) and Lemuria Books in Jackson (signed first editions, Mississippi writers). Both are independently owned and take online orders.',
+  },
+  {
+    q: 'Are these shops part of Good Circles?',
+    a: 'No — none of the makers or shops in this guide are Good Circles participants; they’re listed because they’re genuinely excellent and verifiable. Good Circles launches September 2026 in the Jackson metro, so purchases like these can also fund a Mississippi nonprofit you choose.',
+  },
+];
+
+const ITEMLIST_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Unique gifts from Mississippi small shops and artisans',
+  description: DESCRIPTION,
+  itemListElement: GIFTS.flatMap((c) => c.items).map((g, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: g.name,
+    url: g.sourceUrl,
+  })),
+};
+
+const ARTICLE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: TITLE,
+  description: DESCRIPTION,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@type': 'Organization', name: 'Good Circles' },
+  publisher: { '@type': 'Organization', name: 'Good Circles', logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` } },
+  mainEntityOfPage: `${SITE_URL}/learn/gifts-from-mississippi-small-shops/`,
+};
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/gifts-from-mississippi-small-shops/"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    ARTICLE_JSONLD,
+    ITEMLIST_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Learn', url: `${SITE_URL}/learn/` },
+      { name: 'Gifts from Mississippi small shops', url: `${SITE_URL}/learn/gifts-from-mississippi-small-shops/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Updated July 2026" h1="Unique gifts from Mississippi small shops & artisans">
+      <p slot="answer">
+        Mississippi's best gifts come from its makers: <strong>Delta pottery from McCarty's and
+        Peter's, Jackson pralines from Nandy's Candy, Thimblepress letterpress art, and books
+        from two of the South's legendary independents — Square Books and Lemuria.</strong>
+        Every shop in this guide is verified and independently owned, with online-ordering
+        noted where the business's own site confirms it. No chains, no filler.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+        <p class="text-slate-600 leading-relaxed mb-8">
+          A quick honesty note: <strong>none of these makers or shops are Good Circles
+          participants</strong> — this is a genuine gift guide, each entry sourced to an
+          official site or authoritative directory. Buying from them directly keeps roughly
+          <a href="/learn/benefits-of-shopping-local/" class="font-bold underline" style="color:#7851A9">$53 of every $100 working in Mississippi</a>.
+        </p>
+
+        {GIFTS.map((cat) => (
+          <div class="mb-10">
+            <h2 class="text-2xl font-black text-slate-900 mb-4" style="letter-spacing:-0.02em">
+              {cat.heading === 'From independent bookstores' ? 'Independent bookstores in Mississippi' : cat.heading}
+            </h2>
+            {cat.items.map((g) => (
+              <div class="mb-4 p-5 rounded-2xl" style="background:#FBF7FE;border:1px solid #E7DCF2">
+                <p class="font-black text-slate-900">
+                  {g.name} <span class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-2">{g.where}</span>
+                </p>
+                <p class="text-sm text-slate-600 mt-1 leading-relaxed">{g.what}</p>
+                <p class="text-xs text-slate-500 mt-2"><strong>Online ordering:</strong> {g.online}</p>
+                <p class="text-xs mt-1">
+                  <a href={g.sourceUrl} target="_blank" rel="noopener" class="font-bold underline" style="color:#7851A9">Source: {g.sourceLabel} →</a>
+                </p>
+              </div>
+            ))}
+          </div>
+        ))}
+
+        <h2 class="text-2xl font-black text-slate-900 mb-4" style="letter-spacing:-0.02em">
+          Gift-shopping local, beyond this list
+        </h2>
+        <p class="text-slate-600 leading-relaxed">
+          Farmers markets are gift mines in season — preserves, candles, soaps, and cut flowers
+          straight from the maker (<a href="/learn/mississippi-farmers-markets/" class="font-bold underline" style="color:#7851A9">our verified market guide</a>).
+          In the capital, start with <a href="/learn/best-local-businesses-jackson-ms/" class="font-bold underline" style="color:#7851A9">Jackson's best local businesses</a>;
+          statewide, every one of our <a href="/shop-local/mississippi/" class="font-bold underline" style="color:#7851A9">Mississippi city pages</a>
+          points to the districts where local makers cluster. This guide gets a seasonal refresh
+          — the Updated date above tells you the last pass.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Mississippi gifts & artisans FAQ" />
+
+    <CtaBand
+      heading="Local gifts, local giving — automatically"
+      text="When Good Circles opens, local purchases carry ~10% savings and fund a Mississippi nonprofit you choose. Early access in Meridian."
+      label="Join free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="Benefits of shopping local"
+      secondaryHref="/learn/benefits-of-shopping-local/"
+    />
+  </main>
+  <Footer />
+</Base>

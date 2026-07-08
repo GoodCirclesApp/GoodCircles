@@ -429,7 +429,7 @@ const DEFS: LearnDef[] = [
       { q: 'Why does shopping local help the economy?', a: 'Independent local businesses tend to recirculate more of each dollar in the community — through local wages, suppliers, and taxes — so shifting spending local strengthens the local economy.' },
       { q: 'How does Good Circles keep more money local?', a: 'You save about 10%, the local business keeps 89% of its profit on a 1% fee, and 10% of that profit funds a local nonprofit you choose — so more of every dollar stays in your community.' },
     ],
-    related: [R.shoppers, R.shopLocal, R.how],
+    related: [R.shoppers, R.shopLocal, R.how, { label: 'Benefits of shopping local, by the numbers', href: '/learn/benefits-of-shopping-local/' }, { label: 'Mississippi farmers markets', href: '/learn/mississippi-farmers-markets/' }],
   },
   {
     slug: 'how-to-support-local-restaurants',

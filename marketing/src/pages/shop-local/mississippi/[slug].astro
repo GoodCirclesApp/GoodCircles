@@ -25,6 +25,17 @@ const { city } = Astro.props;
 const path = `/shop-local/${STATE.slug}/${city.slug}/`;
 const indexable = isCityIndexable(city);
 
+// GEO alignment (ATP "shop local" formats, 2026-07-08): every city page
+// carries a "Where can I find local shops in {City}?" FAQ (visible + JSON-LD
+// via the same array) alongside the city's own FAQs.
+const cityFaqs = [
+  ...city.faqs,
+  {
+    q: `Where can I find local shops in ${city.name}?`,
+    a: `Start with ${city.name}'s walkable districts and main commercial streets, the nearest farmers market, and local directories like your chamber of commerce. When Good Circles opens (September 2026, Jackson metro first), its marketplace becomes a single place to find ${city.name}-area local businesses — with about 10% savings and a share of every purchase funding a nonprofit you choose.`,
+  },
+];
+
 const TILE_GRADIENTS = [
   'linear-gradient(135deg,#7851A9,#CA9CE1)',
   'linear-gradient(135deg,#2E1B4E,#7851A9)',
@@ -41,7 +52,7 @@ const TILE_GRADIENTS = [
   path={path}
   noindex={!indexable}
   jsonLd={[
-    faqJsonLd(city.faqs),
+    faqJsonLd(cityFaqs),
     breadcrumbJsonLd([
       { name: 'Shop Local', url: `${SITE_URL}/shop-local/` },
       { name: STATE.name, url: `${SITE_URL}/shop-local/${STATE.slug}/` },
@@ -118,6 +129,34 @@ const TILE_GRADIENTS = [
         </div>
         <p class="mt-6 text-sm" style="font-family:'Fira Sans',sans-serif">
           <a href="/how-it-works/" class="font-bold underline" style="color:#7851A9">How it works »</a>
+        </p>
+      </div>
+    </section>
+
+    {city.districtsHtml && (
+      <section class="py-14 px-6 bg-white">
+        <div class="max-w-3xl mx-auto">
+          <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:#C2A76F">Districts &amp; neighborhoods</p>
+          <div set:html={city.districtsHtml} />
+        </div>
+      </section>
+    )}
+
+    <section class="py-14 px-6 bg-white" style={city.districtsHtml ? 'background:#FBF7FE' : undefined}>
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-black text-slate-900 mb-4" style="letter-spacing:-0.02em">
+          Shop local in {city.name}, MS — where it matters most
+        </h2>
+        <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
+          Coffee shops, barbers, florists, gift shops, bakeries, repair shops — the everyday
+          places where local matters most. These are the purchases you already make somewhere;
+          making them at a {city.name}-owned business keeps roughly four times more of each
+          dollar working locally.
+          {city.slug === 'jackson' ? (
+            <span> Start with our verified <a href="/learn/best-local-businesses-jackson-ms/" class="font-bold underline" style="color:#7851A9">guide to Jackson's best local businesses</a>, and for gift-worthy Mississippi makers, <a href="/learn/gifts-from-mississippi-small-shops/" class="font-bold underline" style="color:#7851A9">gifts from Mississippi small shops</a>.</span>
+          ) : (
+            <span> For finding them, see <a href="/learn/how-to-find-local-businesses-near-you/" class="font-bold underline" style="color:#7851A9">how to find local businesses near you</a> and <a href="/learn/mississippi-farmers-markets/" class="font-bold underline" style="color:#7851A9">Mississippi's farmers markets</a>.</span>
+          )}
         </p>
       </div>
     </section>
@@ -229,7 +268,7 @@ const TILE_GRADIENTS = [
       </div>
     </section>
 
-    <FaqList faqs={city.faqs} heading={`${city.name} FAQ`} />
+    <FaqList faqs={cityFaqs} heading={`${city.name} FAQ`} />
   </main>
   <Footer />
 </Base>

@@ -64,6 +64,24 @@ const FILE_GUIDES: RSSFeedItem[] = [
     link: '/learn/passive-fundraising-for-schools/',
     pubDate: new Date('2026-07-08'),
   },
+  {
+    title: 'The Benefits of Shopping Local, By the Numbers (2026)',
+    description: 'What shopping local does for your wallet, community, and state — with the ~$53-vs-$14 recirculation figure and honest chain trade-offs.',
+    link: '/learn/benefits-of-shopping-local/',
+    pubDate: new Date('2026-07-08'),
+  },
+  {
+    title: 'Mississippi Farmers Markets: A Verified Guide (2026)',
+    description: 'Mississippi farmers markets by region with verified locations, market days, and source links — Jackson, Meridian, the Coast and more.',
+    link: '/learn/mississippi-farmers-markets/',
+    pubDate: new Date('2026-07-08'),
+  },
+  {
+    title: 'Unique Gifts from Mississippi Small Shops & Artisans (2026)',
+    description: 'A verified Mississippi gift guide: Delta pottery, Jackson pralines, letterpress art, legendary independent bookstores, and MS-made goods.',
+    link: '/learn/gifts-from-mississippi-small-shops/',
+    pubDate: new Date('2026-07-08'),
+  },
 ];
 
 export async function GET() {

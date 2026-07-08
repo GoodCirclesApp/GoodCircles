@@ -1,0 +1,265 @@
+---
+// ATP farmers-market intent. A verified directory-style guide: every market
+// listed is real, sourced (MDAC, official/city sites, verified directories);
+// days/seasons stated only where verified, otherwise "check current schedule".
+// Markets are independent community institutions — NO Good Circles
+// affiliation stated or implied; one factual complement paragraph only.
+// Outreach asset: built to earn links from MS food/community sites.
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
+import { SITE_URL } from '../../data/site';
+
+const TITLE = 'Mississippi Farmers Markets: A Verified Guide (2026)';
+const DESCRIPTION =
+  'Mississippi farmers markets by region — Jackson, Meridian, Oxford, Tupelo, the Coast and more — with verified locations, market days, and source links.';
+
+interface Market {
+  name: string;
+  where: string;
+  when: string;
+  note: string;
+  sourceLabel: string;
+  sourceUrl: string;
+}
+interface Region {
+  heading: string;
+  markets: Market[];
+}
+
+const REGIONS: Region[] = [
+  {
+    heading: 'Jackson metro',
+    markets: [
+      {
+        name: 'Mississippi Farmers Market',
+        where: '929 High Street, Jackson (downtown)',
+        when: 'Saturdays 8am–1pm; summer Thursdays 9am–1pm',
+        note: "The state's flagship market, operated by the Mississippi Department of Agriculture & Commerce — produce, meats, dairy, and Mississippi-made goods year-round.",
+        sourceLabel: 'MDAC',
+        sourceUrl: 'https://www.mdac.ms.gov/bureaus-departments/market-development/mississippi-farmers-market/',
+      },
+    ],
+  },
+  {
+    heading: 'East Mississippi (Meridian & Lauderdale County)',
+    markets: [
+      {
+        name: 'Meridian Area Farmers Market',
+        where: 'Front Street at Union Station, downtown Meridian',
+        when: 'Monday–Saturday 7am–1pm (seasonal)',
+        note: 'The Queen City’s produce market under the downtown underpass — sponsored by MSU Extension and the City of Meridian.',
+        sourceLabel: 'Market Facebook page',
+        sourceUrl: 'https://www.facebook.com/p/Meridian-Area-Farmers-Market-100054552696032/',
+      },
+      {
+        name: "Earth's Bounty",
+        where: 'Singing Brakeman Park, downtown Meridian',
+        when: 'Monthly market-day festival in season — check city schedule',
+        note: 'Meridian’s festival-style market morning: produce and artisan vendors with live music and kids’ activities.',
+        sourceLabel: 'City of Meridian',
+        sourceUrl: 'https://meridianms.org/earths-bounty/',
+      },
+      {
+        name: "Shiloh Farmer's Market",
+        where: '4018 Hwy 19 S, Meridian',
+        when: 'Seasonal — check current hours',
+        note: 'A produce market south of town for fruits and vegetables by the basket.',
+        sourceLabel: 'Yelp listing',
+        sourceUrl: 'https://m.yelp.com/biz/shiloh-farmers-market-meridian',
+      },
+    ],
+  },
+  {
+    heading: 'North Mississippi',
+    markets: [
+      {
+        name: 'Hernando Farmers Market',
+        where: '2535 Hwy 51 South, Hernando (courthouse square area)',
+        when: 'Saturdays 8am–1pm (seasonal)',
+        note: 'DeSoto County’s MDAC-certified market — one of the state’s most celebrated Saturday markets.',
+        sourceLabel: 'DeSoto County News / MDAC certification',
+        sourceUrl: 'https://desotocountynews.com/desoto-county-news/hernando-olive-branch-among-certified-mdac-farmers-markets/',
+      },
+      {
+        name: "Downtown Tupelo Farmers' Depot",
+        where: '415 South Spring Street, Tupelo',
+        when: 'Saturdays 8am–12pm (seasonal)',
+        note: 'Tupelo’s downtown market in the historic depot district.',
+        sourceLabel: 'LocalHarvest directory',
+        sourceUrl: 'https://www.localharvest.org/tupelo-ms/farmers-markets',
+      },
+      {
+        name: 'Oxford Community Market',
+        where: 'Oxford',
+        when: 'Weekly in season — check current schedule',
+        note: 'Oxford’s community-run market for Lafayette County growers and makers.',
+        sourceLabel: 'MS Association of Cooperatives directory',
+        sourceUrl: 'https://mississippiassociation.org/farmers-markets',
+      },
+      {
+        name: 'Starkville Community Market',
+        where: 'Fire Station Park, Starkville',
+        when: 'Saturdays 8–11am, summer & fall',
+        note: 'Locally grown food, baked goods, plants, and handmade items near the Cotton District.',
+        sourceLabel: 'Visit Starkville',
+        sourceUrl: 'https://starkville.org/things-to-do/starkville-community-market/',
+      },
+    ],
+  },
+  {
+    heading: 'The Coast & Pine Belt',
+    markets: [
+      {
+        name: 'Ocean Springs Fresh Market',
+        where: 'Ocean Springs Chamber lot, downtown',
+        when: 'Saturdays 9am–1pm',
+        note: 'The arts town’s Saturday market — growers, plants, and makers steps from Government Street.',
+        sourceLabel: 'Visit Mississippi',
+        sourceUrl: 'https://visitmississippi.org/things-to-do/agritourism/ocean-springs-fresh-market/',
+      },
+      {
+        name: 'Hattiesburg Farmers Market',
+        where: 'Hattiesburg',
+        when: 'Weekly in season — check current schedule',
+        note: 'The Hub City’s registered market for Pine Belt growers.',
+        sourceLabel: 'MS Association of Cooperatives directory',
+        sourceUrl: 'https://mississippiassociation.org/farmers-markets',
+      },
+    ],
+  },
+];
+
+const FAQS: Faq[] = [
+  {
+    q: 'Are there farmers markets operating this weekend in Mississippi?',
+    a: 'Almost certainly yes in season (spring through fall) — most Mississippi markets run Saturday mornings: the Mississippi Farmers Market in Jackson (8am–1pm), Hernando (8am–1pm), Tupelo’s Farmers’ Depot (8am–12pm), Ocean Springs Fresh Market (9am–1pm), and Starkville Community Market (8–11am, summer/fall). Schedules shift seasonally, so check the market’s page — each entry in this guide links its official source.',
+  },
+  {
+    q: 'What is the biggest farmers market in Mississippi?',
+    a: 'The state-operated Mississippi Farmers Market at 929 High Street in Jackson, run by the Mississippi Department of Agriculture & Commerce — a year-round, flagship market for produce, meats, and Mississippi-made products.',
+  },
+  {
+    q: 'Do Mississippi farmers markets take SNAP or EBT?',
+    a: 'Many do, and some participate in match programs that stretch SNAP dollars further on fresh produce — but acceptance varies by market and vendor, so check with the individual market before you go.',
+  },
+  {
+    q: 'Are these markets part of Good Circles?',
+    a: 'No — farmers markets are independent community institutions with no Good Circles affiliation. We publish this guide because markets are where shopping local is most alive; when Good Circles launches in September 2026, its local marketplace complements — never replaces — market mornings.',
+  },
+];
+
+const ITEMLIST_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Mississippi farmers markets — verified guide',
+  description: DESCRIPTION,
+  itemListElement: REGIONS.flatMap((r) => r.markets).map((m, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: m.name,
+    url: m.sourceUrl,
+  })),
+};
+
+const ARTICLE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: TITLE,
+  description: DESCRIPTION,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@type': 'Organization', name: 'Good Circles' },
+  publisher: { '@type': 'Organization', name: 'Good Circles', logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` } },
+  mainEntityOfPage: `${SITE_URL}/learn/mississippi-farmers-markets/`,
+};
+---
+
+<Base
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/mississippi-farmers-markets/"
+  ogType="article"
+  jsonLd={[
+    faqJsonLd(FAQS),
+    ARTICLE_JSONLD,
+    ITEMLIST_JSONLD,
+    breadcrumbJsonLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Learn', url: `${SITE_URL}/learn/` },
+      { name: 'Mississippi farmers markets', url: `${SITE_URL}/learn/mississippi-farmers-markets/` },
+    ]),
+  ]}
+>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow="Updated July 2026" h1="Mississippi farmers markets — a verified guide">
+      <p slot="answer">
+        Mississippi's farmers markets run mostly <strong>Saturday mornings, spring through
+        fall</strong>, anchored by the state-operated Mississippi Farmers Market in Jackson
+        (year-round) and strong hometown markets in Meridian, Hernando, Tupelo, Oxford,
+        Starkville, Ocean Springs, and Hattiesburg. Every market below is verified against an
+        official source, grouped by region, with days where confirmable.
+      </p>
+    </PageHero>
+
+    <section class="py-16 px-6 bg-white">
+      <div class="max-w-3xl mx-auto" style="font-family:'Fira Sans',sans-serif">
+        <p class="text-slate-600 leading-relaxed mb-8">
+          One honest note up front: these markets are <strong>independent community
+          institutions</strong> — none are affiliated with Good Circles. Schedules are seasonal
+          and shift year to year, so treat the days below as verified-at-publication and check
+          each market's linked source before a special trip. The statewide umbrella source is the
+          <a href="https://www.mdac.ms.gov/bureaus-departments/market-development/mississippi-farmers-market/" target="_blank" rel="noopener" class="font-bold underline" style="color:#7851A9">Mississippi Department of Agriculture &amp; Commerce</a>.
+        </p>
+
+        {REGIONS.map((region) => (
+          <div class="mb-10">
+            <h2 class="text-2xl font-black text-slate-900 mb-4" style="letter-spacing:-0.02em">{region.heading}</h2>
+            {region.markets.map((m) => (
+              <div class="mb-4 p-5 rounded-2xl" style="background:#FBF7FE;border:1px solid #E7DCF2">
+                <p class="font-black text-slate-900">{m.name}</p>
+                <p class="text-sm text-slate-600 mt-1">{m.where} · <strong>{m.when}</strong></p>
+                <p class="text-sm text-slate-600 mt-1 leading-relaxed">{m.note}</p>
+                <p class="text-xs mt-2">
+                  <a href={m.sourceUrl} target="_blank" rel="noopener" class="font-bold underline" style="color:#7851A9">Source: {m.sourceLabel} →</a>
+                </p>
+              </div>
+            ))}
+          </div>
+        ))}
+
+        <h2 class="text-2xl font-black text-slate-900 mb-4" style="letter-spacing:-0.02em">
+          Markets and Good Circles — how they fit together
+        </h2>
+        <p class="text-slate-600 leading-relaxed">
+          Farmers markets are the original shop-local infrastructure, and nothing about Good
+          Circles changes a market morning. What the platform adds at launch (September 2026,
+          Jackson metro first) is the rest of the week: everyday purchases at participating local
+          businesses carry about 10% automatic savings while about 10% of the merchant's net
+          profit funds a nonprofit you choose. Market for Saturday, marketplace for Monday —
+          both keep dollars in Mississippi. More: <a href="/learn/how-to-save-money-shopping-local/" class="font-bold underline" style="color:#7851A9">saving money shopping local</a>
+          (markets feature in the seasonal-buying tactic) and
+          <a href="/learn/benefits-of-shopping-local/" class="font-bold underline" style="color:#7851A9">the benefits of shopping local</a>.
+        </p>
+      </div>
+    </section>
+
+    <FaqList faqs={FAQS} heading="Mississippi farmers markets FAQ" />
+
+    <CtaBand
+      heading="Keep the market-morning spirit all week"
+      text="Save about 10% shopping local while funding a Mississippi nonprofit you choose. Early access in Meridian — September 2026 launch, Jackson metro first."
+      label="Join free →"
+      href="/#mirror-section"
+      audience="NEIGHBOR"
+      secondaryLabel="Shop local by city"
+      secondaryHref="/shop-local/mississippi/"
+    />
+  </main>
+  <Footer />
+</Base>
