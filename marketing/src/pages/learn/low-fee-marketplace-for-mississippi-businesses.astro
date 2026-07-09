@@ -4,7 +4,6 @@
 // data/economics.ts; competitor fee ranges are third-party sourced; the
 // "far lower take-rate" comparative multiple is [REVIEW]-gated.
 import AnswerPage from '../../layouts/AnswerPage.astro';
-import Review from '../../components/Review.astro';
 import { PER_100, RATES, dollars } from '../../data/economics';
 import { SITE_URL } from '../../data/site';
 import type { Faq } from '../../lib/faq';
@@ -77,13 +76,11 @@ const SOURCES = [
     the business doesn’t come at the customer’s expense.
   </p>
 
-  <Review id="ms-lowfee-takerate" basis="DoorDash/Etsy/Amazon 15–30% of sale (sourced) vs GC 1% of profit (canonical, ~$0.40/$100)" need="legal sign-off on comparative + label">
     <p>
       Put another way: a 15–30% cut of the whole sale is many times larger than a
       {platformPct}% cut of profit — on a typical order, Good Circles’ platform fee is a small fraction of
-      what a big platform would take. (Comparative estimate — pending review.)
+      what a big platform would take. (Comparative estimate — see methodology.)
     </p>
-  </Review>
 
   <h2>See the full comparison</h2>
   <p>

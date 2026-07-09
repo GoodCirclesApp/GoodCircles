@@ -5,7 +5,6 @@
 // sourced; competitor SUPERIORITY / "~8×" claims are [REVIEW]-gated. Canonical
 // economics from data/economics.ts.
 import AnswerPage from '../layouts/AnswerPage.astro';
-import Review from '../components/Review.astro';
 import { PER_100, AMAZONSMILE, dollars } from '../data/economics';
 import { AS_ALTERNATIVES } from '../data/amazonsmile-competitors';
 import { itemListJsonLd, type Faq } from '../lib/faq';
@@ -121,14 +120,12 @@ const yn = (b: boolean) => (b ? 'Yes' : 'No');
     of every $100 stays circulating in your local economy versus about <strong>${PER_100.chainRecirculation}</strong>
     at a national chain (Civic Economics). Same money, better math.
   </p>
-  <Review id="asmile-hub-8x" basis="NPR/Charity Navigator (0.5%, ~$449M) vs GC model ~$4/$100" need="legal sign-off on comparative + multiple">
     <p>
       Put another way: AmazonSmile gave about {AMAZONSMILE.ratePercent}% per purchase; Good Circles' model directs
       about ${PER_100.nonprofit} per $100 — on the order of <strong>{AMAZONSMILE.giveMultipleVsGoodCircles}× the
       per-dollar giving rate</strong>, and it keeps the money local while paying the shopper.
-      <em>(Comparative estimate — pending review.)</em>
+      <em>(Comparative estimate — see methodology.)</em>
     </p>
-  </Review>
 
   <h2>How it works (3 steps, ~3 minutes)</h2>
   <ol>

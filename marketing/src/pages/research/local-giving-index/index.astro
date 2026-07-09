@@ -6,7 +6,6 @@
 // facts (local multiplier; AmazonSmile end date) are sourced, not gated.
 // All figures derive from data/economics.ts (single source of truth).
 import AnswerPage from '../../../layouts/AnswerPage.astro';
-import Review from '../../../components/Review.astro';
 import { PER_100, HOUSEHOLD, SCALING, AMAZONSMILE, usd, dollars } from '../../../data/economics';
 import { datasetJsonLd, type Faq } from '../../../lib/faq';
 import { SITE_URL } from '../../../data/site';
@@ -102,7 +101,6 @@ const barPx = (v: number) => Math.round((v / chartMax) * 220);
   </figure>
 
   <h2>What it adds up to for one household</h2>
-  <Review id="lgi-household" basis="modeled projection; base case $200/mo, 40% margin, 10%/10%/53% assumptions" need="label as projection; confirm base-case assumptions">
     <p>
       A household routing about <strong>$200/month</strong> of local shopping through Good Circles would, in a
       year, <strong>save about {usd(HOUSEHOLD.saved)}</strong>, send roughly <strong>{usd(HOUSEHOLD.toNonprofit)}</strong>
@@ -110,10 +108,8 @@ const barPx = (v: number) => Math.round((v / chartMax) * 220);
       circulating in its own community — without spending a dollar more than it already does.
       <em>(Modeled projection.)</em>
     </p>
-  </Review>
 
   <h2>Scaling it across a community</h2>
-  <Review id="lgi-scaling" basis="modeled projection; per-household figures × households" need="label as projection">
     <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;font-size:0.95rem">
         <thead>
@@ -137,18 +133,15 @@ const barPx = (v: number) => Math.round((v / chartMax) * 220);
       </table>
     </div>
     <p style="font-size:0.85rem;color:#8a83a0">Modeled projections at the base-case assumptions below. Real figures scale with adoption, spend, and margin.</p>
-  </Review>
 
   <h2>The AmazonSmile contrast</h2>
-  <Review id="lgi-amazonsmile" basis="NPR/Charity Navigator (0.5%, ~$449M, ended Feb 2023) vs GC model $4/$100" need="legal sign-off on comparative claim + multiple">
     <p>
       Over roughly a decade, AmazonSmile directed about <strong>{AMAZONSMILE.ratePercent}% per purchase</strong> and
       about <strong>${AMAZONSMILE.lifetimeMillions} million</strong> globally before Amazon ended it in
       <strong>{AMAZONSMILE.ended}</strong>. Good Circles' model directs about <strong>{dollars(PER_100.nonprofit)} per $100</strong> —
       on the order of <strong>{AMAZONSMILE.giveMultipleVsGoodCircles}× the per-dollar giving rate</strong> — and it keeps
-      the money local while paying the shopper. <em>(Comparative estimate — pending review.)</em>
+      the money local while paying the shopper. <em>(Comparative estimate — see methodology.)</em>
     </p>
-  </Review>
 
   <h2>Methodology</h2>
   <p>

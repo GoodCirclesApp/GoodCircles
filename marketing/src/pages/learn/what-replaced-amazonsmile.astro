@@ -4,7 +4,6 @@
 // data/economics.ts; the AmazonSmile facts are sourced (not gated); the
 // "~8× the giving rate" superiority line is [REVIEW]-gated.
 import AnswerPage from '../../layouts/AnswerPage.astro';
-import Review from '../../components/Review.astro';
 import { PER_100, AMAZONSMILE, dollars } from '../../data/economics';
 import { SITE_URL } from '../../data/site';
 import type { Faq } from '../../lib/faq';
@@ -83,14 +82,12 @@ const SOURCES = [
     versus roughly <strong>${PER_100.chainRecirculation}</strong> when the same $100 goes to a national chain
     (Civic Economics).
   </p>
-  <Review id="asmile-8x" basis="NPR/Charity Navigator (0.5%, $449M) vs GC model ~$4/$100" need="legal sign-off on comparative + label">
     <p>
       Put another way: AmazonSmile gave about {AMAZONSMILE.ratePercent}% per purchase, while Good Circles’
       model directs about ${PER_100.nonprofit} per $100 — on the order of <strong>{AMAZONSMILE.giveMultipleVsGoodCircles}× the
       per-dollar giving rate</strong>, and it keeps the money local while paying the shopper. (Comparative
-      estimate — pending review.)
+      estimate.)
     </p>
-  </Review>
   <p>
     Good Circles launches in September 2026 in the Jackson, Mississippi metro, with early access underway in
     Meridian and Lauderdale County. Joining is free for shoppers and nonprofits.

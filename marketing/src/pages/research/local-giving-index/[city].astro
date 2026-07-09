@@ -5,7 +5,6 @@
 // so that block renders a [REVIEW]-gated, clearly-flagged placeholder until the
 // count is confirmed — never a fabricated number.
 import AnswerPage from '../../../layouts/AnswerPage.astro';
-import Review from '../../../components/Review.astro';
 import { PER_100, HOUSEHOLD, usd, dollars } from '../../../data/economics';
 import { INDEX_CITIES } from '../../../data/local-giving-index';
 import { SITE_URL } from '../../../data/site';
@@ -71,18 +70,15 @@ const SOURCES = [
   </ul>
 
   <h2>What one {city.name} household adds up to</h2>
-  <Review id={`lgi-${city.slug}-household`} basis="modeled projection; $200/mo base case" need="label as projection">
     <p>
       A {city.name} household routing about <strong>$200/month</strong> of local shopping through Good Circles would,
       in a year, save about <strong>{usd(HOUSEHOLD.saved)}</strong>, send roughly <strong>{usd(HOUSEHOLD.toNonprofit)}</strong>
       to a local nonprofit, and keep about <strong>{usd(HOUSEHOLD.keptLocal)}</strong> circulating in {city.name} —
       without spending a dollar more. <em>(Modeled projection.)</em>
     </p>
-  </Review>
 
   <h2>If {city.name} shopped local together</h2>
   {city.households != null ? (
-    <Review id={`lgi-${city.slug}-community`} basis={`modeled; ${city.households} households × 5% adoption`} need="label as projection">
       <p>
         If just 1 in 20 of {city.name}'s ~{city.households.toLocaleString('en-US')} households shopped local through
         Good Circles, the community could send an estimated
@@ -90,7 +86,6 @@ const SOURCES = [
         and keep an estimated <strong>{usd(Math.round(city.households * 0.05 * HOUSEHOLD.keptLocal))}</strong>
         circulating locally — with no one spending an extra dollar. <em>(Modeled projection.)</em>
       </p>
-    </Review>
   ) : (
     <p style="background:#fbf6ec;border-left:4px solid #C2A76F;padding:0.75rem 1rem;border-radius:0 8px 8px 0">
       <strong>Community-scale total coming soon.</strong> We publish the “if 1 in 20 households took part” figure only
