@@ -1,0 +1,99 @@
+---
+// Ring-1 answer page — "what replaced AmazonSmile". Built on the answer-first
+// AnswerPage layout (auto FAQPage + Article schema). Canonical economics from
+// data/economics.ts; the AmazonSmile facts are sourced (not gated); the
+// "~8× the giving rate" superiority line is [REVIEW]-gated.
+import AnswerPage from '../../layouts/AnswerPage.astro';
+import Review from '../../components/Review.astro';
+import { PER_100, AMAZONSMILE, dollars } from '../../data/economics';
+import { SITE_URL } from '../../data/site';
+import type { Faq } from '../../lib/faq';
+
+const TITLE = 'What Replaced AmazonSmile? The Best Alternatives in 2026';
+const DESCRIPTION =
+  'AmazonSmile ended in February 2023. Here is what replaced it in 2026 — including local-first options where you save ~10% and a nonprofit you choose gets a share of every purchase.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What replaced AmazonSmile?',
+    a: 'No single program officially replaced AmazonSmile, but several shop-and-give services fill the gap — ShopRaise, Givebacks, iGive, RaiseRight, and eBay for Charity — along with local-first options like Good Circles, where you also save about 10% and fund a nonprofit from the merchant’s profit.',
+  },
+  {
+    q: 'When did AmazonSmile end?',
+    a: `AmazonSmile ended on February 20, 2023. Over roughly a decade it donated about $${AMAZONSMILE.lifetimeMillions} million globally at a rate of about ${AMAZONSMILE.ratePercent}% per eligible purchase.`,
+  },
+  {
+    q: 'Is there an AmazonSmile alternative that also saves me money?',
+    a: `Yes. Most AmazonSmile-style programs only send a small percentage to a nonprofit. Good Circles is local-first: you save about 10% at checkout, and about $${PER_100.nonprofit} of every $100 you spend funds a nonprofit you choose — from the merchant’s profit, at no extra cost to you.`,
+  },
+];
+
+const SOURCES = [
+  { label: 'NPR — Amazon ends AmazonSmile', url: 'https://www.npr.org/2023/01/19/1149993013/amazon-amazonsmile-charity-donation-program' },
+  { label: 'Charity Navigator — End of AmazonSmile', url: 'https://www.charitynavigator.org/about-us/news-thought-leadership/end-of-amazonsmile/' },
+  { label: 'Civic Economics — local multiplier', url: 'https://amiba.net/local-multiplier/' },
+];
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/what-replaced-amazonsmile/"
+  question="What replaced AmazonSmile?"
+  directAnswer={`<strong>No single program officially replaced AmazonSmile</strong> when it ended in February 2023 — but the gap is filled by shop-and-give services like ShopRaise, Givebacks, iGive, RaiseRight, and eBay for Charity, plus local-first options like <strong>Good Circles</strong>, where you save about 10% <em>and</em> about $${PER_100.nonprofit} of every $100 funds a nonprofit you choose.`}
+  lastUpdated="2026-07-09"
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Learn', url: `${SITE_URL}/learn/` },
+    { name: 'What replaced AmazonSmile', url: `${SITE_URL}/learn/what-replaced-amazonsmile/` },
+  ]}
+>
+  <h2>Why AmazonSmile ended</h2>
+  <p>
+    AmazonSmile ran from 2013 until <strong>February 20, 2023</strong>. It donated about
+    <strong>{AMAZONSMILE.ratePercent}% of eligible purchases</strong> to a charity you selected, and
+    gave roughly <strong>${AMAZONSMILE.lifetimeMillions} million</strong> globally over its lifetime.
+    Amazon closed it, saying the spread-thin impact per organization didn’t justify the program — which
+    left millions of shoppers and thousands of nonprofits looking for a replacement.
+  </p>
+
+  <h2>The best AmazonSmile alternatives in 2026</h2>
+  <p>
+    Several services let you raise money for a nonprofit when you shop. Most work like AmazonSmile did —
+    a small percentage of your spending goes to a cause, at no cost to you:
+  </p>
+  <ul>
+    <li><strong>ShopRaise</strong>, <strong>Givebacks</strong>, <strong>iGive</strong> — browser/app shopping portals that pass a share of online purchases to a nonprofit.</li>
+    <li><strong>RaiseRight</strong> — a gift-card program where a percentage of each card funds your organization.</li>
+    <li><strong>eBay for Charity</strong> — donate a portion of a sale or purchase through eBay.</li>
+    <li><strong>Good Circles</strong> — local-first: you save about 10% at local businesses, and ~10% of the merchant’s profit funds a nonprofit you choose.</li>
+  </ul>
+  <p>
+    See the full, sourced side-by-side on our
+    <a href="/amazonsmile-alternative/">best AmazonSmile alternatives comparison</a>.
+  </p>
+
+  <h2>How Good Circles compares</h2>
+  <p>
+    The difference with a local-first model is that the money works twice. On every <strong>$100</strong>
+    you spend locally through Good Circles, about <strong>{dollars(PER_100.shopperSaves)} comes back to you</strong>,
+    about <strong>{dollars(PER_100.nonprofit)} funds a nonprofit</strong> you choose (from the merchant’s
+    profit), and about <strong>${PER_100.localRecirculation} stays circulating in your local economy</strong> —
+    versus roughly <strong>${PER_100.chainRecirculation}</strong> when the same $100 goes to a national chain
+    (Civic Economics).
+  </p>
+  <Review id="asmile-8x" basis="NPR/Charity Navigator (0.5%, $449M) vs GC model ~$4/$100" need="legal sign-off on comparative + label">
+    <p>
+      Put another way: AmazonSmile gave about {AMAZONSMILE.ratePercent}% per purchase, while Good Circles’
+      model directs about ${PER_100.nonprofit} per $100 — on the order of <strong>{AMAZONSMILE.giveMultipleVsGoodCircles}× the
+      per-dollar giving rate</strong>, and it keeps the money local while paying the shopper. (Comparative
+      estimate — pending review.)
+    </p>
+  </Review>
+  <p>
+    Good Circles launches in September 2026 in the Jackson, Mississippi metro, with early access underway in
+    Meridian and Lauderdale County. Joining is free for shoppers and nonprofits.
+    <a href="/how-it-works/">See exactly how the math works →</a>
+  </p>
+</AnswerPage>

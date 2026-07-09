@@ -1,0 +1,39 @@
+---
+// [REVIEW] gate for comparative claims (named competitors / AmazonSmile) and
+// modeled dollar projections. Per the claims policy, such content is BUILT but
+// kept OUT of the live/indexed state until sign-off:
+//   • Production build (default): the wrapped claim is NOT rendered — only a
+//     lightweight HTML-comment marker is emitted, so nothing is indexed/visible.
+//   • Preview build (PUBLIC_SHOW_REVIEW=true): the claim renders, visually flagged,
+//     so reviewers can read it in context before approving.
+// Every use MUST also be logged in the root REVIEW.md manifest (id | file | claim
+// | basis | action needed). Keep each gated block a COMPLETE sentence/element so
+// hiding it never breaks surrounding copy — and never place gated text inside a
+// FAQ answer that feeds FAQPage JSON-LD (it would desync visible vs schema).
+interface Props {
+  id: string;
+  basis?: string;
+  need?: string;
+  /** Render inline (span) vs block (div). */
+  inline?: boolean;
+}
+const { id, basis = '', need = 'legal/marketing sign-off', inline = false } = Astro.props;
+const show = import.meta.env.PUBLIC_SHOW_REVIEW === 'true';
+const Tag = inline ? 'span' : 'div';
+---
+{show ? (
+  <Tag class="gc-review" data-review-id={id} title={`[REVIEW ${id}] ${need}`}>
+    <slot />
+  </Tag>
+) : (
+  <Fragment set:html={`<!-- [REVIEW:${id}] gated (${basis || 'comparative/projection'}) — hidden in production until sign-off; see REVIEW.md -->`} />
+)}
+
+<style>
+  .gc-review {
+    border-left: 3px solid #C2A76F;
+    background: #fbf6ec;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+</style>

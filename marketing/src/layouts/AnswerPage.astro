@@ -1,0 +1,170 @@
+---
+// Answer-first page layout (GEO/AEO). Renders the DIRECT ANSWER as the first body
+// copy in the DOM (the highest-weighted AI-citation signal), then the body, then
+// the FAQ, then a visible + machine-readable "Last updated" and sources. It
+// auto-emits FAQPage + Article (+ BreadcrumbList) JSON-LD from its props, so a new
+// answer page only has to supply content — the structured data is guaranteed.
+//
+// Usage:
+//   <AnswerPage
+//     title="…" description="…" path="/learn/x/"
+//     question="What is the best AmazonSmile alternative in 2026?"
+//     directAnswer="<strong>Good Circles.</strong> It's local-first: you save ~10% …"
+//     lastUpdated="2026-07-09"
+//     sources={[{ label: 'Civic Economics', url: 'https://…' }]}
+//     faqs={FAQS}
+//     breadcrumbs={[{ name: 'Learn', url: '…' }]}
+//   >
+//     …body (Markdown/HTML)…
+//   </AnswerPage>
+import Base from './Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqList from '../components/FaqList.astro';
+import { faqJsonLd, articleJsonLd, breadcrumbJsonLd, type Faq } from '../lib/faq';
+import { SITE_URL } from '../data/site';
+
+interface Source {
+  label: string;
+  url?: string;
+}
+interface Crumb {
+  name: string;
+  url: string;
+}
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  /** The exact question a user asks — renders as the H1. */
+  question: string;
+  /** 1–2 sentence direct answer; rendered FIRST and visually distinct. HTML allowed. */
+  directAnswer: string;
+  /** ISO date (YYYY-MM-DD); shown visibly and as <time datetime> + schema dateModified. */
+  lastUpdated: string;
+  /** Optional publish date for Article schema (defaults to lastUpdated). */
+  datePublished?: string;
+  faqs?: Faq[];
+  faqHeading?: string;
+  sources?: Source[];
+  breadcrumbs?: Crumb[];
+  eyebrow?: string;
+  badge?: string;
+  /** Article headline override (defaults to `question`). */
+  headline?: string;
+  author?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const {
+  title, description, path, question, directAnswer, lastUpdated,
+  datePublished, faqs = [], faqHeading = 'Frequently asked questions',
+  sources = [], breadcrumbs = [], eyebrow = 'Answer', badge, headline,
+  author, ogType = 'article', noindex = false,
+} = Astro.props;
+
+const pageUrl = `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+
+const jsonLd: object[] = [
+  articleJsonLd({
+    headline: headline ?? question,
+    description,
+    url: pageUrl,
+    datePublished: datePublished ?? lastUpdated,
+    dateModified: lastUpdated,
+    author,
+  }),
+];
+if (faqs.length) jsonLd.push(faqJsonLd(faqs));
+if (breadcrumbs.length) {
+  jsonLd.push(
+    breadcrumbJsonLd([{ name: 'Home', url: `${SITE_URL}/` }, ...breadcrumbs]),
+  );
+}
+
+const updatedLabel = new Date(`${lastUpdated}T00:00:00Z`).toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
+});
+---
+
+<Base title={title} description={description} path={path} ogType={ogType} noindex={noindex} jsonLd={jsonLd}>
+  <Nav solid />
+  <main id="main">
+    <PageHero eyebrow={eyebrow} h1={question} badge={badge}>
+      <p slot="answer" set:html={directAnswer} />
+      <slot name="ctas" slot="ctas" />
+    </PageHero>
+
+    <section class="py-14 px-6 bg-white">
+      <div class="max-w-3xl mx-auto answer-body" style="font-family:'Fira Sans',sans-serif">
+        <slot />
+      </div>
+    </section>
+
+    {faqs.length > 0 && <FaqList faqs={faqs} heading={faqHeading} />}
+
+    <section class="py-10 px-6" style="background:#FBF7FE">
+      <div class="max-w-3xl mx-auto text-sm" style="font-family:'Fira Sans',sans-serif;color:#4a4360">
+        <p>
+          <strong>Updated</strong>
+          <time datetime={lastUpdated}>{updatedLabel}</time>
+        </p>
+        {sources.length > 0 && (
+          <p class="mt-2">
+            <strong>Sources:</strong>{' '}
+            {sources.map((s, i) => (
+              <>
+                {i > 0 && ' · '}
+                {s.url ? (
+                  <a href={s.url} rel="nofollow noopener" target="_blank" style="color:#7851A9;text-decoration:underline">{s.label}</a>
+                ) : (
+                  <span>{s.label}</span>
+                )}
+              </>
+            ))}
+          </p>
+        )}
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .answer-body :global(h2) {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    color: #2e1b4e;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    margin: 2rem 0 0.75rem;
+  }
+  .answer-body :global(h3) {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    color: #2e1b4e;
+    font-size: 1.15rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .answer-body :global(p) {
+    color: #4a4360;
+    line-height: 1.75;
+    margin: 0 0 1rem;
+  }
+  .answer-body :global(a) {
+    color: #7851a9;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  .answer-body :global(ul),
+  .answer-body :global(ol) {
+    color: #4a4360;
+    line-height: 1.75;
+    margin: 0 0 1rem 1.25rem;
+  }
+  .answer-body :global(li) {
+    margin-bottom: 0.4rem;
+  }
+</style>
