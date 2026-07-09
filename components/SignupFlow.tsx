@@ -96,7 +96,7 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding, 
     setError(null);
 
     if (!agreedToTerms) {
-      setError('Please agree to the Terms of Service and Privacy Policy to continue.');
+      setError('Please confirm you are 16 or older and agree to the Terms of Service and Privacy Policy to continue.');
       return;
     }
 
@@ -389,7 +389,7 @@ export const SignupFlow: React.FC<Props> = ({ onComplete, onMerchantOnboarding, 
             className="mt-0.5 w-4 h-4 shrink-0 accent-[#7851A9]"
           />
           <span className="text-[11px] font-semibold text-slate-500 leading-snug">
-            I agree to the{' '}
+            I confirm I am 16 or older and agree to the{' '}
             <button type="button" onClick={() => onShowLegal?.('terms')} className="text-[#7851A9] font-black underline">Terms of Service</button>
             {' '}and{' '}
             <button type="button" onClick={() => onShowLegal?.('privacy')} className="text-[#7851A9] font-black underline">Privacy Policy</button>.

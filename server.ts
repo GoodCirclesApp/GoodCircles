@@ -44,6 +44,7 @@ import waitlistRoutes from './server/src/routes/waitlistRoutes';
 import electionRoutes from './server/src/routes/electionRoutes';
 import { runElectionWeeklyDigest } from './server/src/controllers/electionController';
 import { ensureMeridianSeeds } from './server/src/services/seedImportService';
+import { runDataRetention } from './server/src/services/dataRetentionService';
 import inboundEmailRoutes from './server/src/routes/inboundEmailRoutes';
 
 import { ReferralService } from './server/src/services/referralService';
@@ -86,8 +87,28 @@ async function startServer() {
   app.use(requestId);
 
   // ── Security headers ───────────────────────────────────────────
+  // CSP baseline (compliance audit D10). This origin also serves the compiled SPA
+  // in production, so script/style/connect stay intentionally permissive
+  // ('unsafe-inline'/'unsafe-eval'/https:) to avoid breaking the app or Stripe
+  // Elements. The high-value, zero-breakage lock-downs — frame-ancestors 'none'
+  // (anti-clickjacking, stricter than the default X-Frame-Options), object-src
+  // 'none', and base-uri 'self' — are enforced. Tighten script-src to nonces in a
+  // later hardening pass once the SPA's inline-script inventory is pinned.
   app.use(helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https:'],
+        'style-src': ["'self'", "'unsafe-inline'", 'https:'],
+        'img-src': ["'self'", 'data:', 'https:'],
+        'font-src': ["'self'", 'data:', 'https:'],
+        'connect-src': ["'self'", 'https:'],
+        'frame-src': ["'self'", 'https://js.stripe.com', 'https://hooks.stripe.com'],
+        'frame-ancestors': ["'none'"],
+        'base-uri': ["'self'"],
+        'object-src': ["'none'"],
+      },
+    },
     crossOriginEmbedderPolicy: false,
   }));
 
@@ -130,6 +151,22 @@ async function startServer() {
   });
   app.use('/api/auth/login', authLimiter);
   app.use('/api/auth/register', authLimiter);
+  // Refresh mints new tokens from a presented refresh token — brute/abuse surface,
+  // so it gets the strict auth limiter too (compliance audit D7).
+  app.use('/api/auth/refresh', authLimiter);
+
+  // Compliance sync triggers kick off expensive IRS / state-standing downloads
+  // (10–30 min jobs). Even though these are now PLATFORM-only (audit D5), cap them
+  // so a wedged UI or a compromised admin token can't stampede the upstreams (D7).
+  const syncLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: isProd ? 5 : 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Sync already requested recently. Please wait before retrying.' },
+  });
+  app.use('/api/compliance/irs/sync', syncLimiter);
+  app.use('/api/compliance/state-standing/sync', syncLimiter);
 
   // ── Trust proxy (needed behind reverse proxy / Railway / Render) ─
   if (isProd) app.set('trust proxy', 1);
@@ -525,6 +562,30 @@ async function startServer() {
         console.error('[Server] Error pruning error logs:', err);
       }
     }, 24 * 60 * 60 * 1000);
+
+    // Data retention (compliance audit H): daily bounded prune of high-volume,
+    // low-value rows (webhook idempotency keys, unconverted affiliate clicks).
+    // Conservative by design — never touches financial/tax/receipt data. Runs once
+    // shortly after boot, then daily.
+    setTimeout(() => {
+      runDataRetention()
+        .then((r) => {
+          if (r.processedWebhookEvents || r.unconvertedAffiliateClicks) {
+            console.log(`[Server] Data retention: pruned ${r.processedWebhookEvents} webhook events, ${r.unconvertedAffiliateClicks} unconverted clicks.`);
+          }
+        })
+        .catch((err) => console.error('[Server] Data retention error:', err));
+      setInterval(async () => {
+        try {
+          const r = await runDataRetention();
+          if (r.processedWebhookEvents || r.unconvertedAffiliateClicks) {
+            console.log(`[Server] Data retention: pruned ${r.processedWebhookEvents} webhook events, ${r.unconvertedAffiliateClicks} unconverted clicks.`);
+          }
+        } catch (err) {
+          console.error('[Server] Data retention error:', err);
+        }
+      }, 24 * 60 * 60 * 1000);
+    }, 30_000);
 
     // Local Dollar Graph: seed from existing transactions shortly after boot, then
     // self-heal daily — guarantees every settled transaction has an edge regardless

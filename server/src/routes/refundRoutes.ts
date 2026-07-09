@@ -4,6 +4,7 @@ import { RefundService } from '../services/refundService';
 import { z } from 'zod';
 import { AuthRequest } from '../middleware/authMiddleware';
 import { Response } from 'express';
+import { writeAuditLog } from '../utils/auditLog';
 
 const router = Router();
 router.use(authenticateToken);
@@ -18,6 +19,13 @@ router.post('/:transactionId/refund', async (req: AuthRequest, res: Response) =>
       req.user.id,
       req.user.role,
       reason
+    );
+    // Actor-attributed audit trail for a money-moving action (compliance audit D15).
+    await writeAuditLog(
+      req.user.id,
+      'REFUND_TRANSACTION',
+      req.params.transactionId as string,
+      `role=${req.user.role}${reason ? `; reason=${reason}` : ''}`,
     );
     res.status(201).json(refund);
   } catch (err: any) {

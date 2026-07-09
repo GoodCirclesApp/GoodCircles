@@ -1,0 +1,75 @@
+# Compliance & security gate (added by the 2026-07 compliance audit).
+# Complements app-ci.yml (typecheck + unit) and marketing-seo.yml (SEO) with the
+# security/compliance guards: secret scanning, dependency audit (fail-on-high with
+# a logged allowlist), the PCI SAQ-A tripwire, security-header presence, WCAG axe,
+# JSON-LD/dist audit, and the claim-consistency + tax/crypto unit tests.
+name: compliance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  secrets-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks (secret scanning)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  backend-compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - name: Typecheck (tsc --noEmit, strict)
+        run: npx tsc --noEmit
+      - name: PCI SAQ-A guard (no card data on servers)
+        run: node scripts/pci-guard.mjs
+      - name: Compliance unit tests (DB-free)
+        run: >
+          npx vitest run
+          server/src/tests/fieldEncryption.test.ts
+          server/src/tests/taxCalculator.test.ts
+          server/src/tests/claimConsistency.test.ts
+          server/src/tests/emailWebhook.test.ts
+          server/src/tests/transaction.test.ts
+          server/src/tests/affiliate.test.ts
+      - name: Dependency audit (fail on unallowlisted high/critical)
+        run: node scripts/audit-gate.mjs --prod
+
+  marketing-compliance:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: marketing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: marketing/package-lock.json
+      - run: npm ci
+      - name: Build site (runs check-seo + check-citations gates)
+        run: npm run build
+      - name: Security headers present
+        run: node ../scripts/security-headers-check.mjs
+      - name: Dist audit (links, metas, JSON-LD required props)
+        run: node scripts/audit-dist.mjs
+      - name: Accessibility (axe WCAG 2.1 A/AA)
+        run: |
+          npm install --no-save axe-core@4 jsdom@24
+          node scripts/a11y-axe.mjs dist
+      - name: Dependency audit (fail on unallowlisted high/critical)
+        run: node ../scripts/audit-gate.mjs --dir .

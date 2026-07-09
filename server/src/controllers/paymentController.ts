@@ -117,10 +117,18 @@ export const handleWebhook = async (req: Request, res: Response) => {
   const stripe = getStripe();
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  // Fail closed if the signing secret is not configured — never process an
+  // unverifiable payment webhook (compliance audit A2). Explicit guard replaces
+  // the prior non-null assertion so the intent is unmistakable.
+  if (!endpointSecret) {
+    console.error('[Payment] STRIPE_WEBHOOK_SECRET not set — rejecting webhook.');
+    return res.status(503).send('Webhook not configured');
+  }
+
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig as string, endpointSecret!);
+    event = stripe.webhooks.constructEvent(req.body, sig as string, endpointSecret);
   } catch (err: any) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }

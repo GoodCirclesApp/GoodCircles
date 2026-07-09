@@ -333,7 +333,9 @@ export const seedNonprofits = async (req: AuthRequest, res: Response) => {
   if (!req.user || req.user.role !== 'PLATFORM') {
     return res.status(403).json({ error: 'Unauthorized' });
   }
-  const passwordHash = await bcrypt.hash('GoodCircles2026!', 12);
+  // Env-sourced (compliance audit D13) so the seed credential isn't hardcoded;
+  // matches the fallback used by scripts/seed-nonprofits.ts.
+  const passwordHash = await bcrypt.hash(process.env.NONPROFIT_SEED_PASSWORD || 'GoodCircles2026!', 12);
   const results: { orgName: string; status: string }[] = [];
 
   for (const np of SEED_NONPROFITS) {

@@ -35,13 +35,17 @@ export async function sendElectionVerifyEmail(params: ElectionVerifyParams): Pro
     <p style="margin:0;font-size:12px;color:#999;">If you didn't request this, you can ignore this email — nothing is recorded without confirmation.</p>
   `;
 
+  // CAN-SPAM (compliance audit E1): this is a double-opt-in confirmation of a
+  // user-initiated action — a transactional/relationship message, not commercial
+  // email. Classified TRANSACTIONAL (from notifications@, operational footer) so it
+  // is not a marketing send lacking an unsubscribe link / physical address.
   return sendEmail({
     to: email,
     toName: firstName || 'Neighbor',
     subject: 'Confirm your election — Good Circles Meridian early access',
-    from: FROM_ADDRESSES.marketing,
-    html: wrap({ body, footerVariant: 'MARKETING', footerExtra: ELECTION_FOOTER }),
-    meta: { triggerSource: 'ELECTION_VERIFY', layoutVariant: 'MARKETING' },
+    from: FROM_ADDRESSES.transactional,
+    html: wrap({ body, footerVariant: 'TRANSACTIONAL', footerExtra: ELECTION_FOOTER }),
+    meta: { triggerSource: 'ELECTION_VERIFY', layoutVariant: 'TRANSACTIONAL' },
   });
 }
 

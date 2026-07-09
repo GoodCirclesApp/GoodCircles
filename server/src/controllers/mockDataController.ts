@@ -11,7 +11,10 @@ import {
 } from '../data/demoProducts';
 
 const DEMO_DOMAIN = '@demo.goodcircles.ms';
-const DEMO_PASSWORD_HASH = bcrypt.hashSync('DemoMS2026!', 10);
+// Demo accounts only (never seeded in production — see the NODE_ENV/SEED gates on the
+// load routes). Overridable via env so the literal isn't the only credential source
+// (compliance audit D13); falls back to the documented demo password for local use.
+const DEMO_PASSWORD_HASH = bcrypt.hashSync(process.env.DEMO_ACCOUNT_PASSWORD || 'DemoMS2026!', 10);
 
 // ─── Status ──────────────────────────────────────────────────────────────────
 

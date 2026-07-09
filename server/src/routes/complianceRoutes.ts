@@ -1,9 +1,23 @@
 import { Router } from 'express';
+import { Response, NextFunction } from 'express';
 import * as complianceController from '../controllers/complianceController';
-import { authenticateToken } from '../middleware/authMiddleware';
+import { authenticateToken, authorizeRole, AuthRequest } from '../middleware/authMiddleware';
 
 const router = Router();
+
+// SECURITY (compliance audit D5, 2026-07-09): these endpoints expose merchant
+// 1099-K tax data, INFORM Act seller PII, IRS/state syncs and CCV ledgers. They
+// were previously gated by authenticateToken ONLY, so any authenticated user of
+// any role could read them. Restrict to platform staff; PLATFORM_VIEWER is
+// read-only (blocked on every state-changing request, incl. POST sync triggers).
 router.use(authenticateToken);
+router.use(authorizeRole(['PLATFORM', 'PLATFORM_VIEWER']));
+router.use((req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.method !== 'GET' && req.user?.role === 'PLATFORM_VIEWER') {
+    return res.status(403).json({ error: 'View-only account. This action is not permitted.' });
+  }
+  next();
+});
 
 // IRS Verification
 router.get('/irs/check/:ein', complianceController.checkNonprofitStatus);

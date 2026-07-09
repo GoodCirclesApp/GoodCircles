@@ -21,20 +21,28 @@ router.post('/webhook/resend', async (req, res) => {
   try {
     const rawBody = Buffer.isBuffer(req.body) ? req.body.toString() : JSON.stringify(req.body);
 
+    // When the signing secret is configured, HARD-REJECT unsigned or forged
+    // requests (compliance audit A3) so delivery/suppression state cannot be
+    // poisoned by a spoofed payload. Previously this only warned and processed
+    // the event anyway. When the secret is unset (prod webhook not yet
+    // provisioned) we preserve prior best-effort behavior.
     if (WEBHOOK_SECRET) {
+      const svixId        = req.headers['svix-id'] as string;
+      const svixTimestamp = req.headers['svix-timestamp'] as string;
+      const svixSignature = req.headers['svix-signature'] as string;
+      if (!svixId || !svixTimestamp || !svixSignature) {
+        console.warn('[EmailWebhook] rejected: missing Svix signature headers');
+        return res.status(401).json({ error: 'Missing signature' });
+      }
       try {
-        const svixId        = req.headers['svix-id'] as string;
-        const svixTimestamp = req.headers['svix-timestamp'] as string;
-        const svixSignature = req.headers['svix-signature'] as string;
-        if (svixId && svixTimestamp && svixSignature) {
-          resend.webhooks.verify({
-            payload:       rawBody,
-            headers:       { id: svixId, timestamp: svixTimestamp, signature: svixSignature },
-            webhookSecret: WEBHOOK_SECRET,
-          });
-        }
+        resend.webhooks.verify({
+          payload:       rawBody,
+          headers:       { id: svixId, timestamp: svixTimestamp, signature: svixSignature },
+          webhookSecret: WEBHOOK_SECRET,
+        });
       } catch (verifyErr) {
-        console.warn('[EmailWebhook] signature verification failed (continuing):', verifyErr);
+        console.warn('[EmailWebhook] rejected: signature verification failed:', verifyErr);
+        return res.status(401).json({ error: 'Invalid signature' });
       }
     }
 
@@ -50,8 +58,10 @@ router.post('/webhook/resend', async (req, res) => {
 });
 
 // ── Public unsubscribe (no auth) — signed token from marketing footer ────────
-// GET /api/email/unsubscribe?token=...
+// GET  /api/email/unsubscribe?token=...  (human click → confirmation page)
+// POST /api/email/unsubscribe?token=...  (RFC 8058 one-click from List-Unsubscribe)
 router.get('/unsubscribe', ec.getUnsubscribe);
+router.post('/unsubscribe', ec.postUnsubscribe);
 
 // ── Everything below requires authentication ─────────────────────────────────
 router.use(authenticateToken);

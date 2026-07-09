@@ -38,16 +38,18 @@ export const AuthSystem: React.FC<Props> = ({ onLogin, onShowLegal }) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    const users = JSON.parse(localStorage.getItem('gc_mock_users') || '[]');
-    const user = users.find((u: any) => u.email === email);
-    if (user) {
-      const body = await generateRecoveryEmailContent(user.name, email, user.password);
-      await sendRecoveryEmail(email, user.name, body);
+    // SECURITY (compliance audit D2): never read a stored password, never email a
+    // credential, and never reveal whether an account exists (no user enumeration).
+    // Show the same neutral acknowledgement regardless of outcome.
+    try {
+      const body = await generateRecoveryEmailContent(email);
+      await sendRecoveryEmail(email, '', body);
+    } catch {
+      // swallow — the response must not depend on whether the account exists
+    } finally {
       setRecoverySuccess(true);
-    } else {
-      setError('No account found with that email address.');
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const viewTitle: Record<typeof view, string> = {

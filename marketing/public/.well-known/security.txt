@@ -1,0 +1,7 @@
+# Good Circles security contact (RFC 9116)
+# If you have found a security issue, please email us. See /SECURITY.md for policy.
+Contact: mailto:security@goodcircles.org
+Expires: 2027-07-09T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://www.goodcircles.org/.well-known/security.txt
+Policy: https://github.com/GoodCirclesApp/GoodCircles/blob/main/SECURITY.md

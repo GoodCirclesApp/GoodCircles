@@ -33,7 +33,11 @@ export async function isSuppressed(emailAddress: string): Promise<boolean> {
     ]);
     return !!supp || !!unsub;
   } catch {
-    return false; // fail open — never block a send because the suppression check errored
+    // Fail CLOSED (compliance audit E3): if we cannot confirm an address is NOT
+    // suppressed, do not send. This prevents emailing a hard-bounced/complained or
+    // unsubscribed recipient during a transient DB error (a CAN-SPAM/deliverability
+    // hazard). A DB outage already fails recordSend, so availability is unchanged.
+    return true;
   }
 }
 
@@ -363,10 +367,11 @@ export async function sendCampaign(campaignId: string): Promise<{ ok: boolean; s
   if (!campaign) return { ok: false, sent: 0, error: 'Campaign not found' };
   if (campaign.status === 'SENDING' || campaign.status === 'SENT') return { ok: false, sent: 0, error: `Campaign already ${campaign.status}` };
 
-  const massType = campaign.type !== 'INDIVIDUAL';
-
-  if (massType && campaign.layoutVariant === 'MARKETING' && !process.env.EMAIL_PHYSICAL_ADDRESS) {
-    return { ok: false, sent: 0, error: 'Mass marketing send blocked: set EMAIL_PHYSICAL_ADDRESS (CAN-SPAM) before sending.' };
+  // CAN-SPAM (compliance audit E2): a physical postal address is required on ALL
+  // commercial email — individual marketing campaigns are commercial too, so the
+  // guard is no longer limited to mass sends.
+  if (campaign.layoutVariant === 'MARKETING' && !process.env.EMAIL_PHYSICAL_ADDRESS) {
+    return { ok: false, sent: 0, error: 'Marketing send blocked: set EMAIL_PHYSICAL_ADDRESS (CAN-SPAM) before sending.' };
   }
 
   let resolved: ResolvedRecipient[];
@@ -398,7 +403,16 @@ export async function sendCampaign(campaignId: string): Promise<{ ok: boolean; s
 
       const html = renderFor(campaign, r);
       const subject = personalize(campaign.subject, r);
-      const result = await transport(fromFull, { to: r.email, subject, html, replyTo: campaign.replyTo ?? undefined }, withLogo(attachments));
+      // RFC 8058 one-click unsubscribe headers on marketing sends (compliance audit
+      // E4) — the same signed-token URL the footer link uses. Transactional sends
+      // get no List-Unsubscribe (they are not opt-out-able operational mail).
+      const headers = campaign.layoutVariant === 'MARKETING'
+        ? {
+            'List-Unsubscribe': `<${APP_URL}/api/email/unsubscribe?token=${makeUnsubToken(r.email)}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          }
+        : undefined;
+      const result = await transport(fromFull, { to: r.email, subject, html, replyTo: campaign.replyTo ?? undefined, headers }, withLogo(attachments));
       // Record provider id + metadata always; advance status only if a webhook hasn't
       // already moved it past PENDING (forward-only — avoids clobbering a fast delivered).
       await prisma.emailRecipient.update({

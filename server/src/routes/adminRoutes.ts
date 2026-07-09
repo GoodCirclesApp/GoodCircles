@@ -1,11 +1,15 @@
 import { Router } from 'express';
 import * as adminController from '../controllers/adminController';
 import * as mockDataController from '../controllers/mockDataController';
-import { authenticateToken, blockViewOnly, AuthRequest } from '../middleware/authMiddleware';
+import { authenticateToken, authorizeRole, blockViewOnly, AuthRequest } from '../middleware/authMiddleware';
 import { Response, NextFunction } from 'express';
 
 const router = Router();
 router.use(authenticateToken);
+// Defense-in-depth (compliance audit D6): every handler already checks
+// role === 'PLATFORM', but gate the whole router so a future handler that
+// forgets the check is not silently exposed. PLATFORM_VIEWER kept for read-only.
+router.use(authorizeRole(['PLATFORM', 'PLATFORM_VIEWER']));
 
 // Block PLATFORM_VIEWER on all state-changing requests
 router.use((req: AuthRequest, res: Response, next: NextFunction) => {

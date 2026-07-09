@@ -24,7 +24,7 @@ export function withLogo(attachments?: EmailAttachment[]): EmailAttachment[] {
 
 export async function transport(
   from: string,
-  options: { to: string; subject: string; html: string; replyTo?: string },
+  options: { to: string; subject: string; html: string; replyTo?: string; headers?: Record<string, string> },
   attachments: EmailAttachment[],
 ): Promise<{ ok: boolean; id?: string; error?: string }> {
   if (!process.env.RESEND_API_KEY) {
@@ -40,6 +40,9 @@ export async function transport(
   try {
     const payload: any = { from, to: [options.to], subject: options.subject, html: options.html };
     if (options.replyTo) payload.reply_to = options.replyTo;
+    // Custom headers (e.g. RFC 8058 List-Unsubscribe / List-Unsubscribe-Post on
+    // marketing sends — compliance audit E4).
+    if (options.headers && Object.keys(options.headers).length) payload.headers = options.headers;
     if (attachments.length) {
       payload.attachments = attachments.map(a => ({
         filename: a.filename, content: a.content, content_type: a.contentType, content_id: a.contentId,

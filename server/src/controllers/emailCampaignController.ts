@@ -133,3 +133,15 @@ export const getUnsubscribe = async (req: Request, res: Response) => {
     <p style="color:#999;font-size:13px;">You'll still receive essential transactional messages (receipts, account notices).</p>
   </body></html>`);
 };
+
+// RFC 8058 one-click unsubscribe target (compliance audit E4). Mailbox providers
+// (Gmail/Yahoo) POST here with body `List-Unsubscribe=One-Click` when the user hits
+// the native "Unsubscribe" affordance. Same signed token as the GET link; returns a
+// bare 200 with no body (no user-facing page for the automated POST).
+export const postUnsubscribe = async (req: Request, res: Response) => {
+  const token = (req.query.token as string) || (req.body && (req.body.token as string));
+  const email = verifyUnsubToken(token);
+  if (!email) return res.status(400).json({ error: 'Invalid or expired unsubscribe link.' });
+  await applyUnsubscribe(email, null);
+  res.status(200).json({ ok: true });
+};

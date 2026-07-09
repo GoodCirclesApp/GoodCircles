@@ -67,6 +67,7 @@ export default function MeridianElectionForm() {
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [ageOk, setAgeOk] = useState(false); // 16+ attestation (compliance audit F)
   const [done, setDone] = useState<null | { nonprofitName: string }>(null);
   const [verifiedBanner, setVerifiedBanner] = useState<null | 'ok' | 'bad'>(null);
 
@@ -113,6 +114,7 @@ export default function MeridianElectionForm() {
     if (!/^\d{5}(-\d{4})?$/.test(zip)) return setError('Enter your 5-digit ZIP code.');
     if (!nonprofitId) return setError('Choose the nonprofit you want your shopping to support.');
     if (businessIds.length < 1) return setError('Pick at least 1 local business.');
+    if (!ageOk) return setError('Please confirm you are 16 or older.');
     setSubmitting(true);
     try {
       const result = await submitElection({
@@ -352,9 +354,17 @@ export default function MeridianElectionForm() {
         <p role="alert" className="text-sm font-bold text-red-600" style={{ fontFamily: "'Fira Sans',sans-serif" }}>{error}</p>
       )}
 
-      <button type="submit" disabled={submitting}
+      <label className="flex items-start gap-3 cursor-pointer select-none" style={{ fontFamily: "'Fira Sans',sans-serif" }}>
+        <input type="checkbox" checked={ageOk} onChange={(e) => setAgeOk(e.target.checked)}
+          className="mt-1 h-4 w-4 shrink-0" style={{ accentColor: '#7851A9' }} />
+        <span className="text-sm text-slate-600">
+          I confirm I am 16 or older. (Good Circles isn't directed to children under 13.)
+        </span>
+      </label>
+
+      <button type="submit" disabled={submitting || !ageOk}
         className="w-full sm:w-auto px-10 py-4 rounded-full font-black text-sm uppercase tracking-wider"
-        style={{ background: '#C2A76F', color: '#241247', opacity: submitting ? 0.6 : 1 }}>
+        style={{ background: '#C2A76F', color: '#241247', opacity: submitting || !ageOk ? 0.6 : 1 }}>
         {submitting ? 'Recording your election…' : 'Make my election →'}
       </button>
       <p className="text-xs text-slate-400" style={{ fontFamily: "'Fira Sans',sans-serif" }}>

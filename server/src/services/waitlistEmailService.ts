@@ -22,13 +22,16 @@ export async function sendWaitlistOverflowEmail(params: WaitlistOverflowParams):
     ${button('Visit GoodCircles.org →', 'https://www.goodcircles.org')}
   `;
 
+  // CAN-SPAM (compliance audit E1): confirms a user-initiated signup (interest-list
+  // placement) — a transactional/relationship message. Classified TRANSACTIONAL so
+  // it is not a marketing send missing an unsubscribe link / physical address.
   return sendEmail({
     to: email,
     toName: roleLabel,
     subject: "You're on the Good Circles interest list",
-    from: FROM_ADDRESSES.marketing,
-    html: wrap({ body, footerVariant: 'MARKETING', footerExtra: WAITLIST_FOOTER }),
-    meta: { triggerSource: 'WAITLIST_OVERFLOW', layoutVariant: 'MARKETING' },
+    from: FROM_ADDRESSES.transactional,
+    html: wrap({ body, footerVariant: 'TRANSACTIONAL', footerExtra: WAITLIST_FOOTER }),
+    meta: { triggerSource: 'WAITLIST_OVERFLOW', layoutVariant: 'TRANSACTIONAL' },
   });
 }
 
@@ -65,12 +68,15 @@ export async function sendWaitlistConfirmEmail(params: WaitlistConfirmParams): P
     ${button('Grow your Good Circle →', 'https://www.goodcircles.org')}
   `;
 
+  // CAN-SPAM (compliance audit E1): confirms a user-initiated signup and delivers
+  // their founding invite code — primary purpose is transactional. Classified
+  // TRANSACTIONAL so it is not a marketing send missing an unsubscribe / address.
   return sendEmail({
     to: email,
     toName: firstName || roleLabel,
     subject: "You're a founding member of Good Circles — your spot is confirmed",
-    from: FROM_ADDRESSES.marketing,
-    html: wrap({ body, footerVariant: 'MARKETING', footerExtra: WAITLIST_FOOTER }),
-    meta: { triggerSource: 'WAITLIST_CONFIRM', layoutVariant: 'MARKETING' },
+    from: FROM_ADDRESSES.transactional,
+    html: wrap({ body, footerVariant: 'TRANSACTIONAL', footerExtra: WAITLIST_FOOTER }),
+    meta: { triggerSource: 'WAITLIST_CONFIRM', layoutVariant: 'TRANSACTIONAL' },
   });
 }
