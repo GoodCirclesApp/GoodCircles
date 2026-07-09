@@ -1,0 +1,57 @@
+---
+// AI-referral tracking (GEO measurement). AI assistants send visitors with
+// referrers like chatgpt.com / perplexity.ai / gemini.google.com, which GA4 would
+// otherwise bucket under generic "Referral". This inline script detects those
+// sources (by referrer host or an explicit utm_source/ref), fires a distinct
+// `ai_referral` GA4 event, sets an `ai_source` user property, and persists the
+// source to sessionStorage so the later `sign_up` event is attributed to it.
+//
+// Build a saved GA4 segment/exploration on the `ai_referral` event or the
+// `ai_source` user property to see AI traffic + conversions as their own channel
+// (how-to in docs/RUNBOOK.md). No-ops when GA4 isn't configured.
+---
+<script is:inline>
+  (function () {
+    try {
+      var AI = [
+        [/(^|\.)chatgpt\.com$/, 'chatgpt'],
+        [/(^|\.)chat\.openai\.com$/, 'chatgpt'],
+        [/(^|\.)openai\.com$/, 'chatgpt'],
+        [/(^|\.)perplexity\.ai$/, 'perplexity'],
+        [/(^|\.)gemini\.google\.com$/, 'gemini'],
+        [/(^|\.)bard\.google\.com$/, 'gemini'],
+        [/(^|\.)copilot\.microsoft\.com$/, 'copilot'],
+        [/(^|\.)claude\.ai$/, 'claude'],
+      ];
+      function fromHost(h) {
+        for (var i = 0; i < AI.length; i++) if (AI[i][0].test(h)) return AI[i][1];
+        return null;
+      }
+      var src = null;
+      if (document.referrer) {
+        try { src = fromHost(new URL(document.referrer).hostname); } catch (e) {}
+      }
+      if (!src) {
+        var p = new URLSearchParams(location.search);
+        var cand = (p.get('utm_source') || p.get('ref') || '').toLowerCase();
+        if (cand) {
+          if (cand.indexOf('perplex') > -1) src = 'perplexity';
+          else if (cand.indexOf('gemini') > -1 || cand.indexOf('bard') > -1) src = 'gemini';
+          else if (cand.indexOf('copilot') > -1) src = 'copilot';
+          else if (cand.indexOf('claude') > -1) src = 'claude';
+          else if (cand.indexOf('chatgpt') > -1 || cand.indexOf('openai') > -1) src = 'chatgpt';
+          else if (cand.indexOf('googleai') > -1 || cand === 'ai' || cand.indexOf('aimode') > -1) src = 'google-ai';
+        }
+      }
+      if (!src) return;
+      try { sessionStorage.setItem('gc_ai_source', src); } catch (e) {}
+      var fire = function () {
+        if (!window.gtag) return;
+        window.gtag('event', 'ai_referral', { ai_source: src, page: location.pathname });
+        window.gtag('set', 'user_properties', { ai_source: src });
+      };
+      if (window.gtag) fire();
+      else window.addEventListener('load', fire);
+    } catch (e) {}
+  })();
+</script>

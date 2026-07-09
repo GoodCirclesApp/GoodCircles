@@ -8,7 +8,7 @@ import FaqList from '../components/FaqList.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { faqJsonLd, type Faq } from '../lib/faq';
 import { SITE_URL } from '../data/site';
-import { WORKED_EXAMPLE as WE, HOUSEHOLD, dollars, usd } from '../data/economics';
+import { WORKED_EXAMPLE as WE, dollars } from '../data/economics';
 
 const TITLE = 'How Good Circles Works — Save ~10%, Give & Keep Money Local';
 const DESCRIPTION =
@@ -137,8 +137,7 @@ const MATH = [
           <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
             The nonprofit's share comes from the <strong>merchant's profit</strong>, not your
             wallet — so it's a few dollars per sale. The power is in the aggregate: a town of 500
-            regular shoppers (each routing ~$200/month of local spending) sends roughly
-            <strong>{usd(500 * HOUSEHOLD.toNonprofit)} a year</strong> to local causes, with
+            regular shoppers sends roughly <strong>$36,000 a year</strong> to local causes, with
             zero extra spending.
           </p>
         </div>

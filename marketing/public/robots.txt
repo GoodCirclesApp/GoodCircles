@@ -4,11 +4,22 @@ Disallow: /account/
 Disallow: /api/
 Disallow: /resources/search-index.json
 
-# Explicitly welcome AI / generative-engine crawlers (GEO upside).
+# Explicitly welcome AI / generative-engine crawlers (GEO upside). Includes both
+# the training/indexing bots and the live "search"/"user" fetchers the assistants
+# use to retrieve and cite pages in answers.
 User-agent: GPTBot
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
 User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
 Allow: /
 
 User-agent: anthropic-ai
