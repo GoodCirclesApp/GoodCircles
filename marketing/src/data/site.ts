@@ -11,6 +11,12 @@
 export const SITE_URL = 'https://goodcircles.org';
 export const SITE_NAME = 'Good Circles';
 
+// Canonical one-sentence positioning — the single declarative description used in
+// the Organization schema and reused verbatim across pages/entities for AI entity
+// clarity. Kept in one place (data/economics.ts) to prevent drift.
+import { POSITIONING } from './economics';
+export { POSITIONING };
+
 // Google Analytics 4 Measurement ID. This is a PUBLIC identifier (it ships in
 // every page's HTML by design), not a secret — safe to commit. Override per
 // environment with the PUBLIC_GA4_ID env var if ever needed.
@@ -31,7 +37,9 @@ export const ORGANIZATION_JSONLD = {
   name: SITE_NAME,
   url: SITE_URL,
   logo: `${SITE_URL}/og.png`,
-  description: ORG_DESCRIPTION,
+  // Canonical, specific one-sentence description (specificity is what makes an
+  // entity citable by AI engines). ORG_DESCRIPTION is kept for prose contexts.
+  description: POSITIONING,
   founder: {
     '@type': 'Person',
     name: 'Timothy Franklin',
@@ -40,8 +48,12 @@ export const ORGANIZATION_JSONLD = {
   foundingDate: '2026',
   areaServed: { '@type': 'State', name: 'Mississippi' },
   email: 'hello@goodcircles.org',
-  // TODO: add the LinkedIn company-page URL here once the page exists
-  // (keep the Facebook URL — it's the verified live profile).
+  // sameAs drives the AI/knowledge-graph entity. Facebook is the verified live
+  // profile. TODO (see TODO.md): add these once created/claimed — LinkedIn company
+  // page, Crunchbase org, and Wikidata item — then remove this note.
+  //   'https://www.linkedin.com/company/good-circles',
+  //   'https://www.crunchbase.com/organization/good-circles',
+  //   'https://www.wikidata.org/wiki/TODO',
   sameAs: ['https://www.facebook.com/goodcirclesorg'],
   knowsAbout: [
     'community marketplace',

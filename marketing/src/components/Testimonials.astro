@@ -1,0 +1,38 @@
+---
+// Review / AggregateRating component — READY for when real testimonials exist.
+// Pass a `reviews` array; it renders the quotes AND emits Review + AggregateRating
+// JSON-LD (ratings feed AI local recommendations). With no reviews it renders
+// nothing, so it can be dropped into pages now and light up when data arrives.
+//
+// IMPORTANT: only use with REAL, attributable testimonials (no fabricated reviews).
+import { reviewsJsonLd, type ReviewItem } from '../lib/faq';
+
+interface Props {
+  reviews?: ReviewItem[];
+  heading?: string;
+}
+const { reviews = [], heading = 'What our community says' } = Astro.props;
+const schema = reviews.length ? reviewsJsonLd(reviews) : null;
+---
+
+{reviews.length > 0 && schema && (
+  <section class="py-14 px-6 bg-white">
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-black mb-8 text-center" style="color:#2E1B4E;font-family:'Montserrat',sans-serif;letter-spacing:-0.02em">
+        {heading}
+      </h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        {reviews.map((r) => (
+          <figure class="rounded-2xl p-6" style="background:#FBF7FE;border:1px solid #E7DCF2">
+            <div aria-hidden="true" style="color:#C2A76F;letter-spacing:2px">{'★'.repeat(Math.round(r.rating))}</div>
+            <blockquote class="mt-2" style="color:#4a4360;font-family:'Fira Sans',sans-serif;line-height:1.7">
+              “{r.body}”
+            </blockquote>
+            <figcaption class="mt-3 text-sm font-black" style="color:#2E1B4E">— {r.author}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
