@@ -1,0 +1,70 @@
+---
+// Ring-1 answer page — "how to support a nonprofit without spending extra".
+import AnswerPage from '../../layouts/AnswerPage.astro';
+import { PER_100, dollars } from '../../data/economics';
+import { SITE_URL } from '../../data/site';
+import type { Faq } from '../../lib/faq';
+
+const TITLE = 'How to Support a Nonprofit Without Spending Extra (2026)';
+const DESCRIPTION =
+  'You can fund a nonprofit through everyday spending you already do — shopping portals, gift-card programs, and local-first models like Good Circles, where you actually save about 10% while you give.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How can I support a nonprofit without spending extra?',
+    a: 'Route spending you already do through a shop-and-give program: shopping portals (ShopRaise, Givebacks, iGive) donate a percentage of online purchases, gift-card programs (RaiseRight) rebate a percentage, and local-first models like Good Circles direct 10% of the merchant’s profit to a nonprofit you choose — while also saving you about 10%.',
+  },
+  {
+    q: 'Does supporting a nonprofit this way cost me anything?',
+    a: 'No. With shop-and-give programs the donation comes from the retailer, not you, so you pay the same price. With Good Circles you actually pay less — the local price is already about 10% lower — so the giving is genuinely free to you.',
+  },
+  {
+    q: 'What’s the most effective way to give without extra spending?',
+    a: `Give where the money does the most work. On Good Circles, every $100 you spend locally sends about $${PER_100.nonprofit} to a nonprofit, returns about $${PER_100.shopperSaves} to you, and keeps roughly $${PER_100.localRecirculation} circulating in your community versus about $${PER_100.chainRecirculation} at a chain — so the same spending supports a cause, your wallet, and your local economy at once.`,
+  },
+];
+
+const SOURCES = [
+  { label: 'Civic Economics / AMIBA — local multiplier', url: 'https://amiba.net/local-multiplier/' },
+  { label: 'DonorDock — AmazonSmile replacement options', url: 'https://www.donordock.com/articles/amazonsmile-replacement-options' },
+];
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/support-a-nonprofit-without-spending-extra/"
+  question="How can I support a nonprofit without spending extra?"
+  directAnswer={`Route spending you already do through a shop-and-give program. Shopping portals (<strong>ShopRaise, Givebacks, iGive</strong>) donate a percentage of online purchases; <strong>gift-card programs</strong> rebate a share; and local-first models like <strong>Good Circles</strong> direct about $${PER_100.nonprofit} of every $100 to a nonprofit you choose — while also saving you about $${PER_100.shopperSaves}. No extra spending, and often you spend less.`}
+  lastUpdated="2026-07-09"
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Learn', url: `${SITE_URL}/learn/` },
+    { name: 'Support a nonprofit without spending extra', url: `${SITE_URL}/learn/support-a-nonprofit-without-spending-extra/` },
+  ]}
+>
+  <h2>Give through spending you already do</h2>
+  <p>
+    The easiest way to support a cause without a new line item in your budget is to attach the giving to purchases
+    you’d make anyway. Three approaches, from simplest to most impactful:
+  </p>
+  <ul>
+    <li><strong>Shopping portals</strong> (ShopRaise, Givebacks, iGive) — a percentage of online purchases at partner retailers goes to your nonprofit, paid by the retailer.</li>
+    <li><strong>Gift-card programs</strong> (RaiseRight) — buy brand gift cards you’d use anyway; a percentage funds your organization.</li>
+    <li><strong>Local-first models</strong> (Good Circles) — shop local businesses; the price is already ~10% lower, and 10% of the merchant’s profit funds the nonprofit you chose.</li>
+  </ul>
+
+  <h2>Why local-first gives the most — and costs you the least</h2>
+  <p>
+    Most shop-and-give tools ask you to give a small slice of a purchase at no cost. A local-first model does that
+    <em>and</em> puts money back in your pocket: on Good Circles, every <strong>$100</strong> spent locally returns
+    about <strong>{dollars(PER_100.shopperSaves)}</strong> to you, sends about <strong>{dollars(PER_100.nonprofit)}</strong>
+    to a nonprofit you choose, and keeps roughly <strong>${PER_100.localRecirculation}</strong> circulating in your own
+    community. Same spending — supporting a cause, your budget, and your local economy at once.
+  </p>
+  <p>
+    Not sure which nonprofit? See <a href="/learn/how-to-choose-a-local-nonprofit/">how to choose a local nonprofit</a>,
+    or explore <a href="/learn/passive-nonprofit-funding/">every honest passive-funding option</a>.
+  </p>
+</AnswerPage>

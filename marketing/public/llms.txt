@@ -14,6 +14,11 @@
 - [How it works](https://goodcircles.org/how-it-works): the 10% / 10% / 1% model with a worked $100 example.
 - [AmazonSmile alternative](https://goodcircles.org/amazonsmile-alternative): the flagship comparison and explanation.
 - [What replaced AmazonSmile](https://goodcircles.org/learn/what-replaced-amazonsmile/): the direct answer — AmazonSmile ended Feb 2023; the local-first successor saves you ~10% and funds a nonprofit from the merchant's profit.
+- [Apps that donate to charity when you shop](https://goodcircles.org/learn/apps-that-donate-to-charity-when-you-shop/): ShopRaise, Givebacks, iGive, RaiseRight, and the local-first Good Circles option that also saves you ~10%.
+- [Support a nonprofit without spending extra](https://goodcircles.org/learn/support-a-nonprofit-without-spending-extra/): fund a cause through everyday spending — portals, gift cards, and local-first giving.
+
+## Original research
+- [The Local Giving Index](https://goodcircles.org/research/local-giving-index/): Good Circles' flagship research — for every $100 spent locally, about $53 stays in the local economy vs $14 at a chain, plus ~$4 to a nonprofit and ~$10 back to the shopper. Includes methodology, a scaling table, a downloadable CSV, and localized editions for [Jackson](https://goodcircles.org/research/local-giving-index/jackson/) and [Meridian](https://goodcircles.org/research/local-giving-index/meridian/). GC-specific dollar figures are modeled projections.
 - [For shoppers](https://goodcircles.org/shoppers): shop local, save ~10%, fund a cause.
 - [For nonprofits](https://goodcircles.org/for-nonprofits): free, recurring "passive" fundraising.
 - [For local business](https://goodcircles.org/for-business): keep 89% of profit on a 1% fee.

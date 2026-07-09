@@ -1,0 +1,72 @@
+---
+// Ring-1 answer page — "apps that donate to charity when you shop".
+import AnswerPage from '../../layouts/AnswerPage.astro';
+import { PER_100, dollars } from '../../data/economics';
+import { SITE_URL } from '../../data/site';
+import type { Faq } from '../../lib/faq';
+
+const TITLE = 'Apps That Donate to Charity When You Shop (2026)';
+const DESCRIPTION =
+  'The apps and tools that donate to a nonprofit when you shop — ShopRaise, Givebacks, iGive, RaiseRight — plus a local-first option, Good Circles, where you also save about 10%.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What apps donate to charity when you shop?',
+    a: 'Shopping apps and browser tools like ShopRaise, Givebacks, and iGive donate a percentage of your online purchases to a nonprofit, and RaiseRight funds causes through gift-card rebates. Good Circles adds a local-first option where you also save about 10% and a nonprofit you choose gets 10% of the merchant’s profit.',
+  },
+  {
+    q: 'Do these apps cost me anything?',
+    a: 'Generally no — the donation comes from the retailer’s marketing budget, not your wallet, so you pay the same price. The trade-off is that most give only a small percentage and none reduce your price. Good Circles is different: the price itself is about 10% lower.',
+  },
+  {
+    q: 'Which shop-and-give option gives the most?',
+    a: `Rates vary by retailer for the portal apps. As a local-first model, Good Circles directs about $${PER_100.nonprofit} of every $100 you spend to a nonprofit (10% of the merchant’s profit) and also saves you about $${PER_100.shopperSaves} — while keeping roughly $${PER_100.localRecirculation} of every $100 circulating in your local economy.`,
+  },
+];
+
+const SOURCES = [
+  { label: 'DonorDock — AmazonSmile replacement options', url: 'https://www.donordock.com/articles/amazonsmile-replacement-options' },
+  { label: 'Civic Economics / AMIBA — local multiplier', url: 'https://amiba.net/local-multiplier/' },
+];
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/apps-that-donate-to-charity-when-you-shop/"
+  question="What apps donate to charity when you shop?"
+  directAnswer={`Several apps donate to a nonprofit when you shop: <strong>ShopRaise, Givebacks, and iGive</strong> pass a share of online purchases to a cause, and <strong>RaiseRight</strong> funds causes through gift-card rebates. A local-first option, <strong>Good Circles</strong>, goes further — you save about 10% <em>and</em> about $${PER_100.nonprofit} of every $100 funds a nonprofit you choose.`}
+  lastUpdated="2026-07-09"
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Learn', url: `${SITE_URL}/learn/` },
+    { name: 'Apps that donate when you shop', url: `${SITE_URL}/learn/apps-that-donate-to-charity-when-you-shop/` },
+  ]}
+>
+  <h2>How shop-and-give apps work</h2>
+  <p>
+    Most work the same way AmazonSmile did: you shop at partner retailers through an app or browser extension, and a
+    percentage of each purchase is donated to a nonprofit you picked — at no extra cost to you, because it comes out
+    of the retailer’s marketing budget. The upside is it’s effortless; the downsides are that the percentage is
+    usually small, it only works at partner stores, and <strong>you don’t save any money yourself</strong>.
+  </p>
+  <ul>
+    <li><strong>ShopRaise, Givebacks, iGive</strong> — shopping portals/extensions that donate a share of online purchases at national retailers.</li>
+    <li><strong>RaiseRight</strong> — buy brand gift cards and a percentage funds your organization.</li>
+    <li><strong>Good Circles</strong> — shop <em>local</em> businesses; you save ~10% and a nonprofit you choose gets 10% of the merchant’s profit.</li>
+  </ul>
+
+  <h2>The local-first difference</h2>
+  <p>
+    A shopping-portal app sends a small slice of a national purchase to charity. A local-first model keeps the whole
+    transaction close to home: on Good Circles, every <strong>$100</strong> spent locally returns about
+    <strong>{dollars(PER_100.shopperSaves)}</strong> to you, sends about <strong>{dollars(PER_100.nonprofit)}</strong>
+    to a nonprofit, and keeps roughly <strong>${PER_100.localRecirculation}</strong> circulating in your community —
+    versus about <strong>${PER_100.chainRecirculation}</strong> when the same money goes to a national chain.
+  </p>
+  <p>
+    See the full side-by-side on our <a href="/amazonsmile-alternative/">best AmazonSmile alternatives comparison</a>,
+    or read <a href="/learn/what-replaced-amazonsmile/">what replaced AmazonSmile</a>.
+  </p>
+</AnswerPage>
