@@ -1,0 +1,95 @@
+---
+// Ring-2 answer page (Mississippi) — "lowest-fee alternative to DoorDash, Etsy,
+// and Amazon for a Mississippi business". Canonical economics from
+// data/economics.ts; competitor fee ranges are third-party sourced; the
+// "far lower take-rate" comparative multiple is [REVIEW]-gated.
+import AnswerPage from '../../layouts/AnswerPage.astro';
+import Review from '../../components/Review.astro';
+import { PER_100, RATES, dollars } from '../../data/economics';
+import { SITE_URL } from '../../data/site';
+import type { Faq } from '../../lib/faq';
+
+const merchantKeepPct = Math.round(RATES.merchantOfProfit * 100); // 89
+const platformPct = Math.round(RATES.platformOfProfit * 100); // 1
+
+const TITLE = 'Lowest-Fee Marketplace for Mississippi Businesses (2026)';
+const DESCRIPTION =
+  'DoorDash, Etsy, and Amazon take 15–30% of each sale. Good Circles charges a 1% fee on profit, so a Mississippi business keeps 89% of its profit. Here is the honest comparison.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What is the lowest-fee alternative to DoorDash, Etsy, and Amazon for a Mississippi business?',
+    a: `Good Circles is built as a low-fee, local-first marketplace: instead of taking 15–30% of each sale like DoorDash, Etsy, or Amazon, it charges a ${platformPct}% platform fee on profit, so the merchant keeps ${merchantKeepPct}% of its profit. About $${PER_100.nonprofit} of every $100 also funds a local nonprofit the shopper chooses.`,
+  },
+  {
+    q: 'How much do DoorDash, Etsy, and Amazon charge in fees?',
+    a: 'Big platforms typically take 15–30% of each sale once commissions, transaction fees, payment processing, and ad or subscription costs are added up — and that fee comes off the top of the sale, so it is paid out of the merchant’s thin profit, not out of the price.',
+  },
+  {
+    q: 'How does Good Circles keep merchant fees so low?',
+    a: `Good Circles charges its fee on profit, not on the whole sale. On a $100 order at a ~40% margin, the platform fee is about ${dollars(PER_100.platform)} (${platformPct}% of the ~$40 profit), about $${PER_100.nonprofit} funds a nonprofit the shopper chooses, and the business keeps the remaining ${merchantKeepPct}% of profit.`,
+  },
+];
+
+const SOURCES = [
+  { label: 'DoorDash — merchant partnership pricing', url: 'https://get.doordash.com/en-us/products/marketplace' },
+  { label: 'Etsy — fees & payments policy', url: 'https://www.etsy.com/legal/fees' },
+  { label: 'Amazon — selling fees & pricing', url: 'https://sell.amazon.com/pricing' },
+];
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/low-fee-marketplace-for-mississippi-businesses/"
+  question="What's the lowest-fee alternative to DoorDash, Etsy, and Amazon for a Mississippi business?"
+  directAnswer={`<strong>Good Circles</strong> is designed as the low-fee alternative: where DoorDash, Etsy, and Amazon take <strong>15–30% of each sale</strong>, Good Circles charges a <strong>${platformPct}% fee on profit</strong> — so a Mississippi business keeps <strong>${merchantKeepPct}% of its profit</strong>, and about $${PER_100.nonprofit} of every $100 also funds a local nonprofit the shopper chooses.`}
+  lastUpdated="2026-07-09"
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Learn', url: `${SITE_URL}/learn/` },
+    { name: 'Low-fee marketplace for Mississippi businesses', url: `${SITE_URL}/learn/low-fee-marketplace-for-mississippi-businesses/` },
+  ]}
+>
+  <h2>What the big platforms actually cost</h2>
+  <p>
+    Delivery apps, craft marketplaces, and megastores advertise a headline commission, but the real cost adds
+    up: commission plus transaction fees, payment processing, and ad or subscription charges commonly land a
+    seller at <strong>15–30% of each sale</strong>. The catch is <em>where</em> that comes from — the fee is
+    taken off the top of the sale, but it is paid out of the merchant’s profit, which is usually a thin slice
+    of the price. See the decoded math in
+    <a href="/learn/what-big-platforms-cost-local-businesses/">what big platforms really cost local businesses</a>.
+  </p>
+
+  <h2>How Good Circles is different</h2>
+  <p>
+    Good Circles charges its fee on <strong>profit, not on the whole sale</strong>. On a $100 order at a ~40%
+    margin — about $40 of profit — the split is:
+  </p>
+  <ul>
+    <li>about <strong>{dollars(PER_100.platform)}</strong> platform fee ({platformPct}% of profit),</li>
+    <li>about <strong>{dollars(PER_100.nonprofit)}</strong> to a local nonprofit the shopper chooses (10% of profit),</li>
+    <li>and the business keeps the remaining <strong>{merchantKeepPct}% of its profit</strong>.</li>
+  </ul>
+  <p>
+    The shopper also saves about <strong>{dollars(PER_100.shopperSaves)}</strong> per $100 — so a lower fee for
+    the business doesn’t come at the customer’s expense.
+  </p>
+
+  <Review id="ms-lowfee-takerate" basis="DoorDash/Etsy/Amazon 15–30% of sale (sourced) vs GC 1% of profit (canonical, ~$0.40/$100)" need="legal sign-off on comparative + label">
+    <p>
+      Put another way: a 15–30% cut of the whole sale is many times larger than a
+      {platformPct}% cut of profit — on a typical order, Good Circles’ platform fee is a small fraction of
+      what a big platform would take. (Comparative estimate — pending review.)
+    </p>
+  </Review>
+
+  <h2>See the full comparison</h2>
+  <p>
+    Good Circles launches in the Jackson, Mississippi metro in September 2026, with early access underway in
+    Meridian and Lauderdale County. If you run a Mississippi business, start on our
+    <a href="/sell/">sell page</a>, or read the full
+    <a href="/sell/marketplace-fees-comparison/">marketplace fees comparison</a>.
+  </p>
+</AnswerPage>

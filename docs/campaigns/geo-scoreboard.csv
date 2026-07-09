@@ -1,0 +1,53 @@
+# Good Circles — GEO / AI-Search Weekly Scoreboard
+# One row per (prompt x engine). Fill the tracking cells by hand each week (see prompt-tracking-checklist.md).
+# Cited = the AI answer links goodcircles.org (Y/N). Mentioned = names "Good Circles" with or without a link (Y/N).
+# Position = where we appear in the answer: first / mid / footnote (blank if absent). "Competitor cited instead" = which rival got the link/mention when we did not.
+# ROLL-UPS (compute per engine each week, then blend):
+#   Citation Rate  = (# rows Cited=Y)      / (total prompts for that engine)   -> % of answers that LINK us
+#   Mention Rate   = (# rows Mentioned=Y)  / (total prompts for that engine)   -> % of answers that NAME us
+#   Share of Voice = (# rows we are Mentioned=Y) / (# rows any tracked brand [us + ShopRaise + Givebacks + iGive] is mentioned) -> our slice of the category conversation
+# Track SoV specifically against the named competitor set: ShopRaise, Givebacks, iGive. Review every Friday; reallocate effort to whatever engine/ring is gaining.
+# Duplicate this 42-row block per week; set Week to the ISO week (e.g. 2026-W29). Keep one file = full history so trends are visible.
+Week,Ring,Prompt,Engine,Cited (link Y/N),Mentioned (Y/N),Position (first/mid/footnote),Competitor cited instead,Notes,Action
+2026-Www,Ring 1,"best AmazonSmile alternative 2026",Perplexity,,,,,,
+2026-Www,Ring 1,"best AmazonSmile alternative 2026",Google AI Mode,,,,,,
+2026-Www,Ring 1,"best AmazonSmile alternative 2026",ChatGPT,,,,,,
+2026-Www,Ring 1,"what replaced AmazonSmile",Perplexity,,,,,,
+2026-Www,Ring 1,"what replaced AmazonSmile",Google AI Mode,,,,,,
+2026-Www,Ring 1,"what replaced AmazonSmile",ChatGPT,,,,,,
+2026-Www,Ring 1,"apps that donate to charity when you shop",Perplexity,,,,,,
+2026-Www,Ring 1,"apps that donate to charity when you shop",Google AI Mode,,,,,,
+2026-Www,Ring 1,"apps that donate to charity when you shop",ChatGPT,,,,,,
+2026-Www,Ring 1,"how can I support a nonprofit without spending extra",Perplexity,,,,,,
+2026-Www,Ring 1,"how can I support a nonprofit without spending extra",Google AI Mode,,,,,,
+2026-Www,Ring 1,"how can I support a nonprofit without spending extra",ChatGPT,,,,,,
+2026-Www,Ring 1,"passive fundraising ideas for nonprofits 2026",Perplexity,,,,,,
+2026-Www,Ring 1,"passive fundraising ideas for nonprofits 2026",Google AI Mode,,,,,,
+2026-Www,Ring 1,"passive fundraising ideas for nonprofits 2026",ChatGPT,,,,,,
+2026-Www,Ring 2,"shop local and give back in Jackson MS",Perplexity,,,,,,
+2026-Www,Ring 2,"shop local and give back in Jackson MS",Google AI Mode,,,,,,
+2026-Www,Ring 2,"shop local and give back in Jackson MS",ChatGPT,,,,,,
+2026-Www,Ring 2,"support local business and nonprofits Meridian MS",Perplexity,,,,,,
+2026-Www,Ring 2,"support local business and nonprofits Meridian MS",Google AI Mode,,,,,,
+2026-Www,Ring 2,"support local business and nonprofits Meridian MS",ChatGPT,,,,,,
+2026-Www,Ring 2,"low-fee alternative to DoorDash/Etsy/Amazon for local business",Perplexity,,,,,,
+2026-Www,Ring 2,"low-fee alternative to DoorDash/Etsy/Amazon for local business",Google AI Mode,,,,,,
+2026-Www,Ring 2,"low-fee alternative to DoorDash/Etsy/Amazon for local business",ChatGPT,,,,,,
+2026-Www,Ring 2,"how can my Mississippi business fund a nonprofit",Perplexity,,,,,,
+2026-Www,Ring 2,"how can my Mississippi business fund a nonprofit",Google AI Mode,,,,,,
+2026-Www,Ring 2,"how can my Mississippi business fund a nonprofit",ChatGPT,,,,,,
+2026-Www,Ring 2,"how can Mississippi nonprofits raise money without grants",Perplexity,,,,,,
+2026-Www,Ring 2,"how can Mississippi nonprofits raise money without grants",Google AI Mode,,,,,,
+2026-Www,Ring 2,"how can Mississippi nonprofits raise money without grants",ChatGPT,,,,,,
+2026-Www,Ring 3,"what is cause-integrated commerce",Perplexity,,,,,,
+2026-Www,Ring 3,"what is cause-integrated commerce",Google AI Mode,,,,,,
+2026-Www,Ring 3,"what is cause-integrated commerce",ChatGPT,,,,,,
+2026-Www,Ring 3,"how do local marketplaces fund charities",Perplexity,,,,,,
+2026-Www,Ring 3,"how do local marketplaces fund charities",Google AI Mode,,,,,,
+2026-Www,Ring 3,"how do local marketplaces fund charities",ChatGPT,,,,,,
+2026-Www,Ring 3,"what do platform fees cost local economies",Perplexity,,,,,,
+2026-Www,Ring 3,"what do platform fees cost local economies",Google AI Mode,,,,,,
+2026-Www,Ring 3,"what do platform fees cost local economies",ChatGPT,,,,,,
+2026-Www,Ring 3,"commercial co-venture / cause marketing best practices",Perplexity,,,,,,
+2026-Www,Ring 3,"commercial co-venture / cause marketing best practices",Google AI Mode,,,,,,
+2026-Www,Ring 3,"commercial co-venture / cause marketing best practices",ChatGPT,,,,,,

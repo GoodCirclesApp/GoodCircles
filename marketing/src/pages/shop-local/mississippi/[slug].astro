@@ -13,6 +13,8 @@ import FaqList from '../../../components/FaqList.astro';
 import { faqJsonLd, breadcrumbJsonLd } from '../../../lib/faq';
 import { SITE_URL } from '../../../data/site';
 import { CITIES, STATE, isCityIndexable, type City } from '../../../data/cities';
+import { shouldNoindex, wordCount } from '../../../lib/thin-content';
+import { INDEX_CITIES } from '../../../data/local-giving-index';
 
 export function getStaticPaths() {
   return CITIES.map((city) => ({ params: { slug: city.slug }, props: { city } }));
@@ -25,6 +27,12 @@ const { city } = Astro.props;
 const path = `/shop-local/${STATE.slug}/${city.slug}/`;
 const indexable = isCityIndexable(city);
 
+// Local Giving Index cross-link: localized edition where one exists, else the hub.
+const hasLocalIndex = INDEX_CITIES.some((c) => c.slug === city.slug);
+const indexHref = hasLocalIndex
+  ? `/research/local-giving-index/${city.slug}/`
+  : '/research/local-giving-index/';
+
 // GEO alignment (ATP "shop local" formats, 2026-07-08): every city page
 // carries a "Where can I find local shops in {City}?" FAQ (visible + JSON-LD
 // via the same array) alongside the city's own FAQs.
@@ -35,6 +43,22 @@ const cityFaqs = [
     a: `Start with ${city.name}'s walkable districts and main commercial streets, the nearest farmers market, and local directories like your chamber of commerce. When Good Circles opens (September 2026, Jackson metro first), its marketplace becomes a single place to find ${city.name}-area local businesses — with about 10% savings and a share of every purchase funding a nonprofit you choose.`,
   },
 ];
+
+// Thin-content guard: every city page renders a fixed template (answer capsule +
+// "Shop local in {city}" category section + CTA ≈ 200 words) plus its own FAQs and
+// any districts/community/seeded content, so real pages clear the bar comfortably.
+// The guard exists so a future city added with no FAQs and empty content would be
+// noindexed rather than publishing a thin doorway page.
+const TEMPLATE_BASE_WORDS = 200;
+const dynamicContent =
+  (city.districtsHtml ?? '') + (city.communityImpactHtml ?? '') + cityFaqs.map((f) => f.a).join(' ');
+const contentWords = TEMPLATE_BASE_WORDS + wordCount(dynamicContent);
+const contentEntities =
+  cityFaqs.length +
+  (city.districtsHtml ? 1 : 0) +
+  (city.communityImpactHtml ? 1 : 0) +
+  (city.realSeededEntries?.length ?? 0);
+const noindex = !indexable || shouldNoindex({ words: contentWords, entities: contentEntities });
 
 const TILE_GRADIENTS = [
   'linear-gradient(135deg,#7851A9,#CA9CE1)',
@@ -50,7 +74,7 @@ const TILE_GRADIENTS = [
   title={city.title}
   description={city.description}
   path={path}
-  noindex={!indexable}
+  noindex={noindex}
   jsonLd={[
     faqJsonLd(cityFaqs),
     breadcrumbJsonLd([
@@ -173,9 +197,13 @@ const TILE_GRADIENTS = [
           {city.name} businesses on Good Circles
         </p>
         <h2 class="text-3xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">Where your dollars will stay</h2>
-        <p class="text-slate-500 mb-8" style="font-family:'Fira Sans',sans-serif">
+        <p class="text-slate-500 mb-4" style="font-family:'Fira Sans',sans-serif">
           Founding {city.name} merchants will appear here at launch.
           <span class="text-slate-400">(Illustrative — live listings populate from the merchant directory.)</span>
+        </p>
+        <p class="text-slate-600 mb-8" style="font-family:'Fira Sans',sans-serif">
+          Curious how much stays local? See the local-dollar math in the
+          <a href={indexHref} class="font-bold underline" style="color:#7851A9">Good Circles Local Giving Index</a>.
         </p>
         <div class="grid sm:grid-cols-3 gap-4">
           {city.businesses.map((biz, i) => (

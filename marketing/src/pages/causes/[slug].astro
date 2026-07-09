@@ -8,6 +8,7 @@ import CtaBand from '../../components/CtaBand.astro';
 import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../../lib/faq';
 import { SITE_URL } from '../../data/site';
 import { CAUSES, type Cause } from '../../data/causes';
+import { shouldNoindex, wordCount } from '../../lib/thin-content';
 
 export function getStaticPaths() {
   return CAUSES.map((cause) => ({ params: { slug: cause.slug }, props: { cause } }));
@@ -21,6 +22,14 @@ const path = `/causes/${cause.slug}/`;
 const TITLE = `Support ${cause.titleNoun} Nonprofits · Good Circles`;
 const DESCRIPTION = `Fund ${cause.name.toLowerCase()} nonprofits every time you shop local — save ~10% and send a share of every sale to the cause you choose, at no extra cost.`;
 const faqs: Faq[] = cause.faqs;
+
+// Thin-content guard: cause pages carry an answer capsule, a "why" section, FAQs,
+// and enumerated nonprofit types — comfortably above the bar. The guard noindexes
+// any future cause added without real content instead of publishing a thin page.
+const noindex = shouldNoindex({
+  words: wordCount((cause.answerHtml ?? '') + (cause.whyHtml ?? '') + faqs.map((f) => f.a).join(' ')),
+  entities: faqs.length + (cause.exampleTypes?.length ?? 0),
+});
 
 // ItemList enumerates example nonprofit TYPES within the cause (accurate — not
 // fabricated organizations).
@@ -40,6 +49,7 @@ const ITEMLIST_JSONLD = {
   title={TITLE}
   description={DESCRIPTION}
   path={path}
+  noindex={noindex}
   jsonLd={[
     faqJsonLd(faqs),
     ITEMLIST_JSONLD,

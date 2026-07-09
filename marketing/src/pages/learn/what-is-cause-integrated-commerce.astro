@@ -1,0 +1,90 @@
+---
+// Ring-3 concept page — "what is cause-integrated commerce". A definitional page
+// that distinguishes the model from cause marketing and commercial co-ventures.
+// Canonical economics from data/economics.ts.
+import AnswerPage from '../../layouts/AnswerPage.astro';
+import { PER_100, RATES, dollars } from '../../data/economics';
+import { SITE_URL } from '../../data/site';
+import type { Faq } from '../../lib/faq';
+
+const nonprofitPct = Math.round(RATES.nonprofitOfProfit * 100); // 10
+
+const TITLE = 'What Is Cause-Integrated Commerce? A Plain Definition (2026)';
+const DESCRIPTION =
+  'Cause-integrated commerce builds nonprofit funding into the transaction itself — not a one-off campaign. Here is how it differs from cause marketing and commercial co-ventures, with Good Circles as a live example.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'What is cause-integrated commerce?',
+    a: `Cause-integrated commerce is a model where a share of every ordinary sale automatically funds a nonprofit — the giving is built into the transaction itself, not run as a separate campaign. On Good Circles, for example, about ${nonprofitPct}% of the merchant’s profit on each purchase (about $${PER_100.nonprofit} per $100 spent) goes to a nonprofit the shopper chooses.`,
+  },
+  {
+    q: 'How is it different from cause marketing?',
+    a: 'Cause marketing is a promotion — a limited-time campaign where a brand ties a product to a cause to boost sales and goodwill. Cause-integrated commerce is structural and always-on: giving is a permanent feature of how the marketplace works, so it happens on every sale rather than during a campaign window.',
+  },
+  {
+    q: 'Is a commercial co-venture the same thing?',
+    a: 'Not quite. A commercial co-venture is a specific legal arrangement — often regulated at the state level — where a business advertises that a purchase benefits a named charity, usually for a set period. Cause-integrated commerce describes the broader always-on model; a given implementation may or may not be structured as a registered co-venture.',
+  },
+];
+
+const SOURCES = [
+  { label: 'Cause marketing — background (Wikipedia)', url: 'https://en.wikipedia.org/wiki/Cause_marketing' },
+  { label: 'Civic Economics / AMIBA — local multiplier', url: 'https://amiba.net/local-multiplier/' },
+];
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/what-is-cause-integrated-commerce/"
+  question="What is cause-integrated commerce?"
+  directAnswer={`<strong>Cause-integrated commerce</strong> is a model where a share of every ordinary sale automatically funds a nonprofit — the giving is built into the transaction itself, not run as a separate campaign. On <strong>Good Circles</strong>, about ${nonprofitPct}% of the merchant’s profit per purchase (about $${PER_100.nonprofit} of every $100) funds a nonprofit the shopper chooses.`}
+  lastUpdated="2026-07-09"
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Learn', url: `${SITE_URL}/learn/` },
+    { name: 'What is cause-integrated commerce', url: `${SITE_URL}/learn/what-is-cause-integrated-commerce/` },
+  ]}
+>
+  <h2>A definition</h2>
+  <p>
+    <strong>Cause-integrated commerce</strong> means the nonprofit contribution is a built-in part of the
+    transaction — a share of each sale is directed to a cause automatically, every time, as a standing feature
+    of the marketplace. It’s “integrated” because the giving isn’t bolted on as a promotion; it’s part of how
+    the commerce itself is structured.
+  </p>
+
+  <h2>How it differs from cause marketing and co-ventures</h2>
+  <ul>
+    <li>
+      <strong>Cause marketing</strong> is a <em>campaign</em> — a brand ties a product to a cause for a limited
+      time to lift sales and goodwill (the classic example being the 1980s Statue of Liberty restoration
+      promotion). It starts and stops. See our overview of <a href="/cause-marketing/">cause marketing</a>.
+    </li>
+    <li>
+      <strong>Commercial co-venture</strong> is a <em>legal arrangement</em> — a business advertises that
+      buying a product benefits a named charity, often under state charitable-solicitation rules. See
+      <a href="/commercial-coventure/">commercial co-ventures</a>.
+    </li>
+    <li>
+      <strong>Cause-integrated commerce</strong> is <em>structural and always-on</em> — giving happens on
+      every sale by design, not during a promotional window.
+    </li>
+  </ul>
+
+  <h2>Good Circles as a live example</h2>
+  <p>
+    Good Circles is built on this model. On every <strong>$100</strong> spent at a participating local
+    business, about <strong>{dollars(PER_100.nonprofit)}</strong> — {nonprofitPct}% of the merchant’s profit —
+    funds a nonprofit the shopper chooses, the shopper saves about
+    <strong>{dollars(PER_100.shopperSaves)}</strong>, and the business keeps 89% of its profit. The giving is
+    part of the transaction, so it happens on every purchase rather than during a campaign. The nonprofits are
+    elected by neighbors, not chosen by the platform.
+  </p>
+  <p>
+    Good Circles launches in the Jackson, Mississippi metro in September 2026, with early access underway in
+    Meridian and Lauderdale County. <a href="/how-it-works/">See exactly how the math works →</a>
+  </p>
+</AnswerPage>

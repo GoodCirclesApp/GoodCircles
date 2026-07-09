@@ -1,0 +1,92 @@
+---
+// Ring-2 answer page (Mississippi) — "shop local and give back in Jackson, MS".
+// Built on the answer-first AnswerPage layout. Canonical economics from
+// data/economics.ts; the $53-vs-$14 multiplier is third-party sourced.
+import AnswerPage from '../../layouts/AnswerPage.astro';
+import { PER_100, dollars } from '../../data/economics';
+import { SITE_URL } from '../../data/site';
+import type { Faq } from '../../lib/faq';
+
+const TITLE = 'How to Shop Local and Give Back in Jackson, MS (2026)';
+const DESCRIPTION =
+  'A plain-English guide to shopping local in Jackson, Mississippi — the districts to start with, the $53-vs-$14 local multiplier, and how Good Circles will let Jackson shoppers save ~10% and fund a Jackson nonprofit.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How can I shop local and give back in Jackson, MS?',
+    a: `Choose independently owned shops, cafes, and services in districts like Fondren, Belhaven, Midtown, and Downtown instead of national chains — roughly $${PER_100.localRecirculation} of every $100 you spend at a local independent recirculates in the community versus about $${PER_100.chainRecirculation} at a chain. When Good Circles opens the Jackson metro in September 2026, every local purchase can also save you about 10% and send about $${PER_100.nonprofit} of every $100 to a Jackson nonprofit you choose.`,
+  },
+  {
+    q: 'How much of my money stays local when I shop local in Jackson?',
+    a: `About $${PER_100.localRecirculation} of every $100 spent at an independent local business recirculates locally — payroll, local suppliers, local giving — versus about $${PER_100.chainRecirculation} of every $100 at a national chain, a difference of about $${PER_100.localSwing} per $100 (Civic Economics; Institute for Local Self-Reliance).`,
+  },
+  {
+    q: 'Does Good Circles operate in Jackson yet?',
+    a: 'Not yet. Good Circles launches in the Jackson, Mississippi metro in September 2026, with early access underway in Meridian and Lauderdale County. The nonprofits that benefit are elected by neighbors, not chosen by the platform, and joining is free for shoppers and nonprofits.',
+  },
+];
+
+const SOURCES = [
+  { label: 'Civic Economics / AMIBA — local multiplier', url: 'https://amiba.net/local-multiplier/' },
+  { label: 'Institute for Local Self-Reliance — key studies', url: 'https://ilsr.org/articles/key-studies-why-local-matters/' },
+];
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/shop-local-and-give-back-in-jackson-ms/"
+  question="How can I shop local and give back in Jackson, MS?"
+  directAnswer={`<strong>Spend at independently owned businesses</strong> in districts like Fondren, Belhaven, Midtown, and Downtown Jackson — about $${PER_100.localRecirculation} of every $100 stays in the community that way, versus about $${PER_100.chainRecirculation} at a chain. When <strong>Good Circles</strong> opens the Jackson metro in September 2026, the same purchases can also save you about 10% <em>and</em> send about $${PER_100.nonprofit} of every $100 to a Jackson nonprofit you choose.`}
+  lastUpdated="2026-07-09"
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Learn', url: `${SITE_URL}/learn/` },
+    { name: 'Shop local and give back in Jackson, MS', url: `${SITE_URL}/learn/shop-local-and-give-back-in-jackson-ms/` },
+  ]}
+>
+  <h2>Where to shop local in Jackson</h2>
+  <p>
+    Jackson’s independent commerce is concentrated in a handful of walkable districts. Starting there is the
+    simplest way to keep more of your spending in the city:
+  </p>
+  <ul>
+    <li><strong>Fondren</strong> — the arts-and-dining core, with independent cafes, boutiques, and a beloved bookstore.</li>
+    <li><strong>Belhaven</strong> — a historic neighborhood with locally owned eateries and specialty shops.</li>
+    <li><strong>Midtown</strong> — a maker district of studios, galleries, and small-batch producers.</li>
+    <li><strong>Downtown</strong> — locally owned restaurants and services alongside the city’s civic core.</li>
+  </ul>
+  <p>
+    These are <em>districts</em> to explore, not a list of endorsers — where you spend is your call. For a
+    verified, source-cited starting point, see our
+    <a href="/learn/best-local-businesses-jackson-ms/">guide to Jackson’s best local businesses</a>.
+  </p>
+
+  <h2>Why local spending gives back more</h2>
+  <p>
+    “Giving back” isn’t only about donations — it’s about where your dollar goes next. Research popularized by
+    Civic Economics and the Institute for Local Self-Reliance finds that roughly
+    <strong>${PER_100.localRecirculation} of every $100</strong> spent at an independent local business
+    recirculates in the community — local payroll, local suppliers, local giving — versus about
+    <strong>${PER_100.chainRecirculation} of every $100</strong> at a national chain. That’s a swing of about
+    <strong>${PER_100.localSwing} per $100</strong>, so every dollar you redirect to a local business does
+    close to <strong>four times</strong> as much work at home. See the full local picture in our
+    <a href="/research/local-giving-index/jackson/">Jackson Local Giving Index</a>.
+  </p>
+
+  <h2>How Good Circles adds a Jackson nonprofit to every purchase</h2>
+  <p>
+    When Good Circles opens the Jackson metro in <strong>September 2026</strong>, it makes the “give back” part
+    automatic. On every <strong>$100</strong> you spend locally, about
+    <strong>{dollars(PER_100.shopperSaves)} comes back to you</strong>, about
+    <strong>{dollars(PER_100.nonprofit)} funds a Jackson nonprofit you choose</strong> — paid from the
+    merchant’s profit, at no extra cost to you — and the local business keeps 89% of its profit. The
+    nonprofits that benefit are elected by neighbors, not picked by the platform.
+  </p>
+  <p>
+    Joining is free for shoppers and nonprofits. Browse local Jackson listings on our
+    <a href="/shop-local/mississippi/jackson/">Shop Local in Jackson</a> page, or
+    <a href="/how-it-works/">see exactly how the math works →</a>
+  </p>
+</AnswerPage>

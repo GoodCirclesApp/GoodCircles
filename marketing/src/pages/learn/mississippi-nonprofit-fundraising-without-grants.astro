@@ -1,0 +1,84 @@
+---
+// Ring-2 answer page (Mississippi) — "how can Mississippi nonprofits raise money
+// without grants". Canonical economics from data/economics.ts; the local
+// multiplier is third-party sourced.
+import AnswerPage from '../../layouts/AnswerPage.astro';
+import { PER_100, RATES, dollars } from '../../data/economics';
+import { SITE_URL } from '../../data/site';
+import type { Faq } from '../../lib/faq';
+
+const nonprofitPct = Math.round(RATES.nonprofitOfProfit * 100); // 10
+
+const TITLE = 'How Mississippi Nonprofits Can Raise Money Without Grants (2026)';
+const DESCRIPTION =
+  'Grants are competitive and slow. Here are the recurring and passive funding options Mississippi nonprofits can build instead — including Good Circles’ local profit-share, where 10% of a merchant’s profit funds a nonprofit neighbors elect.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How can Mississippi nonprofits raise money without grants?',
+    a: `Beyond grants, Mississippi nonprofits can build recurring and passive revenue: monthly donor programs, employer matching, shopping portals, and local profit-share. On Good Circles, a nonprofit that neighbors elect receives about ${nonprofitPct}% of the merchant’s profit on local purchases — roughly $${PER_100.nonprofit} of every $100 spent — with no grant application and no cost to the shopper.`,
+  },
+  {
+    q: 'What is passive or recurring nonprofit funding?',
+    a: 'Passive funding is revenue that arrives from activity supporters already do — everyday shopping, monthly recurring gifts, employer gift-matching, or a share of local commerce — rather than one-off events or competitive grant cycles. It is more predictable, which makes budgeting and programs easier to sustain.',
+  },
+  {
+    q: 'Does a Mississippi nonprofit have to apply to benefit from Good Circles?',
+    a: 'No. On Good Circles the nonprofits that benefit are elected by neighbors, not selected by the platform, and participation is free. Good Circles launches in the Jackson, Mississippi metro in September 2026, with early access underway in Meridian and Lauderdale County.',
+  },
+];
+
+const SOURCES = [
+  { label: 'Civic Economics / AMIBA — local multiplier', url: 'https://amiba.net/local-multiplier/' },
+  { label: 'Institute for Local Self-Reliance — key studies', url: 'https://ilsr.org/articles/key-studies-why-local-matters/' },
+];
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/mississippi-nonprofit-fundraising-without-grants/"
+  question="How can Mississippi nonprofits raise money without grants?"
+  directAnswer={`<strong>Build recurring and passive revenue instead of chasing grant cycles</strong> — monthly donor programs, employer matching, shopping portals, and local profit-share. On <strong>Good Circles</strong>, a nonprofit that neighbors elect receives about ${nonprofitPct}% of the merchant’s profit on local purchases — roughly $${PER_100.nonprofit} of every $100 — with no application and no cost to the shopper.`}
+  lastUpdated="2026-07-09"
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Learn', url: `${SITE_URL}/learn/` },
+    { name: 'Mississippi nonprofit fundraising without grants', url: `${SITE_URL}/learn/mississippi-nonprofit-fundraising-without-grants/` },
+  ]}
+>
+  <h2>Why grants alone are risky</h2>
+  <p>
+    Grants matter, but they’re competitive, slow, and often restricted to a specific program — which makes
+    them a shaky foundation for payroll, rent, or year-round services. The fix isn’t to abandon grants; it’s
+    to pair them with <strong>revenue that recurs on its own</strong> so your budget doesn’t swing with a
+    single funding decision.
+  </p>
+
+  <h2>Recurring and passive options that don’t need a grant</h2>
+  <ul>
+    <li><strong>Monthly giving</strong> — a sustaining-donor program turns one-time gifts into predictable income.</li>
+    <li><strong>Employer matching</strong> — many employers double a supporter’s gift for free; most matches go unclaimed.</li>
+    <li><strong>Shopping portals & gift cards</strong> — a share of supporters’ everyday online purchases is passed to your cause.</li>
+    <li><strong>Local profit-share</strong> — a slice of local business profit funds your organization every time neighbors shop.</li>
+  </ul>
+  <p>
+    For the full honest comparison — including realistic yields and the trade-offs of each — see
+    <a href="/learn/passive-nonprofit-funding/">passive nonprofit funding: every honest option</a>.
+  </p>
+
+  <h2>How the Good Circles local profit-share works</h2>
+  <p>
+    Good Circles ties nonprofit funding to local commerce. On every <strong>$100</strong> a neighbor spends at
+    a participating local business, about <strong>{dollars(PER_100.nonprofit)}</strong> — {nonprofitPct}% of
+    the merchant’s profit — goes to a nonprofit that neighbors elected, at no extra cost to the shopper (the
+    shopper actually saves about {dollars(PER_100.shopperSaves)}). Because it’s tied to routine spending, the
+    revenue recurs month after month rather than arriving as a one-off.
+  </p>
+  <p>
+    Participation is free, and the causes are chosen by the community, not by the platform. Learn more on our
+    <a href="/for-nonprofits/">nonprofits page</a>, or see the broader Mississippi picture on
+    <a href="/mississippi-nonprofit-fundraising/">Mississippi nonprofit fundraising</a>.
+  </p>
+</AnswerPage>

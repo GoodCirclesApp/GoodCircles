@@ -1,0 +1,94 @@
+---
+// Ring-3 concept page — "how local businesses fund nonprofits through everyday
+// sales". Explains the per-sale profit-share mechanism. Canonical economics from
+// data/economics.ts; the local multiplier is third-party sourced.
+import AnswerPage from '../../layouts/AnswerPage.astro';
+import { PER_100, RATES, dollars } from '../../data/economics';
+import { SITE_URL } from '../../data/site';
+import type { Faq } from '../../lib/faq';
+
+const nonprofitPct = Math.round(RATES.nonprofitOfProfit * 100); // 10
+const merchantKeepPct = Math.round(RATES.merchantOfProfit * 100); // 89
+
+const TITLE = 'How Local Businesses Fund Nonprofits Through Everyday Sales (2026)';
+const DESCRIPTION =
+  'A local business can fund a nonprofit on every sale by sharing a slice of profit — not a one-off donation. Here is the mechanism, why it is sustainable, and the numbers (~$4 per $100).';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How can local businesses fund nonprofits through everyday sales?',
+    a: `A business can direct a fixed share of its profit on each sale to a nonprofit, so funding happens automatically every time someone buys. On Good Circles, about ${nonprofitPct}% of the merchant’s profit — roughly $${PER_100.nonprofit} of every $100 spent — funds a nonprofit the shopper chooses, while the business keeps ${merchantKeepPct}% of its profit.`,
+  },
+  {
+    q: 'Why is a profit-share more sustainable than one-off donations?',
+    a: 'A one-time donation is a single event a business has to decide to repeat. A per-sale profit-share is automatic and recurring — it scales with normal business activity, so the nonprofit receives steady support without the business having to run a new campaign each time.',
+  },
+  {
+    q: 'How much does a nonprofit get per sale?',
+    a: `On a $100 order at a roughly 40% margin — about $40 of profit — a nonprofit the shopper chooses receives about $${PER_100.nonprofit} (${nonprofitPct}% of profit), the platform fee is about ${dollars(PER_100.platform)}, and the business keeps the remaining ${merchantKeepPct}% of its profit.`,
+  },
+];
+
+const SOURCES = [
+  { label: 'Civic Economics / AMIBA — local multiplier', url: 'https://amiba.net/local-multiplier/' },
+  { label: 'Institute for Local Self-Reliance — key studies', url: 'https://ilsr.org/articles/key-studies-why-local-matters/' },
+];
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path="/learn/how-local-businesses-fund-nonprofits/"
+  question="How can local businesses fund nonprofits through everyday sales?"
+  directAnswer={`<strong>By sharing a fixed slice of profit on every sale</strong> instead of making one-off donations. On <strong>Good Circles</strong>, about ${nonprofitPct}% of the merchant’s profit — roughly $${PER_100.nonprofit} of every $100 spent — funds a nonprofit the shopper chooses, while the business keeps ${merchantKeepPct}% of its profit.`}
+  lastUpdated="2026-07-09"
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Learn', url: `${SITE_URL}/learn/` },
+    { name: 'How local businesses fund nonprofits', url: `${SITE_URL}/learn/how-local-businesses-fund-nonprofits/` },
+  ]}
+>
+  <h2>The mechanism: a share of profit per sale</h2>
+  <p>
+    Instead of writing a check once a year, a business can build giving into pricing — a fixed share of the
+    profit on <em>each</em> sale is routed to a nonprofit. Because it’s tied to the profit on every
+    transaction, the contribution happens automatically and scales with the business’s ordinary activity.
+  </p>
+  <p>
+    Here’s the split Good Circles uses on a <strong>$100</strong> order at a ~40% margin (about $40 profit):
+  </p>
+  <ul>
+    <li>about <strong>{dollars(PER_100.nonprofit)}</strong> to a nonprofit the shopper chooses ({nonprofitPct}% of profit),</li>
+    <li>about <strong>{dollars(PER_100.platform)}</strong> platform fee (1% of profit),</li>
+    <li>and the business keeps <strong>{merchantKeepPct}% of its profit</strong>.</li>
+  </ul>
+  <p>
+    The shopper also saves about <strong>{dollars(PER_100.shopperSaves)}</strong> per $100 — so funding the
+    cause doesn’t depend on anyone paying more.
+  </p>
+
+  <h2>Why it’s more sustainable than one-off donations</h2>
+  <p>
+    A single donation is a one-time decision a business has to remember to repeat, and it usually tracks a good
+    year. A per-sale profit-share is <strong>recurring by design</strong>: it arrives every time a customer
+    buys, so a nonprofit gets predictable support and the business gives in proportion to what it can actually
+    afford. Predictable revenue is easier for a nonprofit to budget and program around than an unpredictable
+    windfall.
+  </p>
+
+  <h2>It keeps money local, too</h2>
+  <p>
+    Because the spending stays with local independents, it also does more for the community: roughly
+    <strong>${PER_100.localRecirculation} of every $100</strong> at a local business recirculates locally
+    versus about <strong>${PER_100.chainRecirculation}</strong> at a national chain (Civic Economics;
+    Institute for Local Self-Reliance) — so the same purchase funds a nonprofit <em>and</em> keeps more
+    dollars circulating at home.
+  </p>
+  <p>
+    Good Circles launches in the Jackson, Mississippi metro in September 2026, with early access underway in
+    Meridian and Lauderdale County. If you run a business, start on our
+    <a href="/for-business/">for business page</a>, or
+    <a href="/how-it-works/">see exactly how the math works →</a>
+  </p>
+</AnswerPage>
