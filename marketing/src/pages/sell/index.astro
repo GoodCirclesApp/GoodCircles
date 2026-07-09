@@ -11,6 +11,7 @@ import CtaBand from "../../components/CtaBand.astro";
 import WhatYouKeepCalculator from "../../components/WhatYouKeepCalculator.astro";
 import { faqJsonLd, breadcrumbJsonLd, type Faq } from "../../lib/faq";
 import { serviceJsonLd, SITE_URL } from "../../data/site";
+import { WORKED_EXAMPLE as WE, dollars } from "../../data/economics";
 
 const TITLE = "Sell on Good Circles — Keep More, Give Your Customers 10% Back · Good Circles";
 const DESCRIPTION =
@@ -116,7 +117,7 @@ const FAQS: Faq[] = [
           Where every dollar of a $100 sale goes
         </h2>
         <p class="text-center text-white/60 text-sm mb-8" style="font-family:'Fira Sans',sans-serif">
-          Example: a $100 sale with $60 of cost. The platform's cut is what leaves your community.
+          Example: a $100 sale with $50 of cost. The platform's cut is what leaves your community.
         </p>
         <div class="grid sm:grid-cols-3 gap-4" style="font-family:'Fira Sans',sans-serif">
           <div class="rounded-xl p-5 bg-white/5" style="border:1px solid rgba(255,255,255,.12)">
@@ -125,7 +126,7 @@ const FAQS: Faq[] = [
               <strong class="text-white">$15.00</strong> to the platform<br />
               <strong class="text-white">$0</strong> to your customer<br />
               <strong class="text-white">$0</strong> to your community<br />
-              <span class="text-white/60">You keep $25.00 profit</span>
+              <span class="text-white/60">You keep $35.00 profit</span>
             </p>
           </div>
           <div class="rounded-xl p-5 bg-white/5" style="border:1px solid rgba(255,255,255,.12)">
@@ -134,22 +135,22 @@ const FAQS: Faq[] = [
               <strong class="text-white">$30.00</strong> to the platform<br />
               <strong class="text-white">$0</strong> to your customer<br />
               <strong class="text-white">$0</strong> to your community<br />
-              <span class="text-white/60">You keep $10.00 profit</span>
+              <span class="text-white/60">You keep $20.00 profit</span>
             </p>
           </div>
           <div class="rounded-xl p-5" style="background:linear-gradient(135deg,#4B2E84,#7851A9);border:1px solid rgba(255,255,255,.25)">
             <p class="text-xs font-black uppercase tracking-wider mb-3" style="color:#FADC9C">Good Circles</p>
             <p class="text-white/90 text-sm leading-relaxed">
-              <strong class="text-white">$0.30</strong> to the platform<br />
-              <strong class="text-white">$10.00</strong> to your customer<br />
-              <strong class="text-white">$3.00</strong> to your community<br />
-              <span class="text-white/75">You keep $26.70 profit (pre-tax)</span>
+              <strong class="text-white">{dollars(WE.platform)}</strong> to the platform<br />
+              <strong class="text-white">{dollars(WE.shopperSaves)}.00</strong> to your customer<br />
+              <strong class="text-white">{dollars(WE.nonprofit)}.00</strong> to your community<br />
+              <span class="text-white/75">You keep {dollars(WE.merchantProfitShare)} profit (pre-tax)</span>
             </p>
           </div>
         </div>
         <p class="text-center text-white/55 text-sm mt-6 max-w-2xl mx-auto" style="font-family:'Fira Sans',sans-serif">
-          You keep more here than on Amazon ($25.00) or DoorDash ($10.00) — and the $15–$30 those platforms pocket
-          becomes $10 for your customer and $3 for a local nonprofit. No ad spend, no credit card processing cost to
+          You keep more here than on Amazon ($35.00) or DoorDash ($20.00) — and the $15–$30 those platforms pocket
+          becomes $10 for your customer and $4 for a local nonprofit. No ad spend, no credit card processing cost to
           you, and the community giving is tax-deductible. Run your own numbers (and the after-tax view) in the
           calculator below.
         </p>

@@ -19,9 +19,9 @@ const TITLE = "Shopify / Own-Store Alternative — Get Local Customers (2026) ·
 const DESCRIPTION =
   "Your own Shopify or Square store has the lowest fees — but you pay to find every customer. Good Circles brings local customers at no ad cost, customers save ~10%, and every sale funds a local nonprofit.";
 
-const g = goodCircles(100, 60, 0.25); // $100 sale, $60 cost, 25% tax
-const os0 = competitor(100, 60, 3, 0.25, 0); // own store, organic traffic (no ad spend)
-const os15 = competitor(100, 60, 3, 0.25, 15); // own store, ~15% ad spend to drive traffic
+const g = goodCircles(100, 50, 0.25); // $100 sale, $50 cost, 25% tax (canonical: nonprofit $4)
+const os0 = competitor(100, 50, 3, 0.25, 0); // own store, organic traffic (no ad spend)
+const os15 = competitor(100, 50, 3, 0.25, 15); // own store, ~15% ad spend to drive traffic
 
 const FAQS: Faq[] = [
   {
@@ -89,7 +89,7 @@ const FAQS: Faq[] = [
       <div class="max-w-3xl mx-auto">
         <h2 class="text-3xl font-black text-slate-900 mb-6" style="letter-spacing:-0.02em">A $100 sale — it's about traffic, not fees</h2>
         <p class="text-slate-600 leading-relaxed mb-8" style="font-family:'Fira Sans',sans-serif">
-          A $100 sale with $60 of cost, at a 25% tax rate. With <em>free</em> traffic your own store keeps you the most.
+          A $100 sale with $50 of cost, at a 25% tax rate. With <em>free</em> traffic your own store keeps you the most.
           But the moment you pay to acquire the customer — which is most of the work — the math flips.
         </p>
         <div class="overflow-x-auto mb-4">
@@ -104,7 +104,7 @@ const FAQS: Faq[] = [
             </thead>
             <tbody style="font-family:'Fira Sans',sans-serif">
               <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Customer pays</td><td class="p-3 font-bold" style="color:#241247">${g.customerPays.toFixed(2)} (saves ${g.customerSaves.toFixed(2)})</td><td class="p-3 text-slate-500">$100.00</td><td class="p-3 text-slate-500">$100.00</td></tr>
-              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Cost of goods</td><td class="p-3 font-bold" style="color:#241247">($60.00)</td><td class="p-3 text-slate-500">($60.00)</td><td class="p-3 text-slate-500">($60.00)</td></tr>
+              <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Cost of goods</td><td class="p-3 font-bold" style="color:#241247">($50.00)</td><td class="p-3 text-slate-500">($50.00)</td><td class="p-3 text-slate-500">($50.00)</td></tr>
               <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Card processing</td><td class="p-3 font-bold" style="color:#241247">$0 (customer pays if card)</td><td class="p-3 text-slate-500">(${os0.fee.toFixed(2)})</td><td class="p-3 text-slate-500">(${os15.fee.toFixed(2)})</td></tr>
               <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Ad spend to get the customer</td><td class="p-3 font-bold" style="color:#241247">$0 (local nonprofits)</td><td class="p-3 text-slate-500">$0</td><td class="p-3 text-slate-500">(${os15.marketing.toFixed(2)})</td></tr>
               <tr style="border-bottom:1px solid #E7DCF2"><td class="p-3 font-bold text-slate-900">Good Circles fee · donation</td><td class="p-3 font-bold" style="color:#241247">(${g.platformFee.toFixed(2)}) · (${g.donation.toFixed(2)})</td><td class="p-3 text-slate-500">—</td><td class="p-3 text-slate-500">—</td></tr>

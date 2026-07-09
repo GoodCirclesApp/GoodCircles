@@ -8,6 +8,7 @@ import FaqList from '../components/FaqList.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { faqJsonLd, type Faq } from '../lib/faq';
 import { SITE_URL } from '../data/site';
+import { WORKED_EXAMPLE as WE, HOUSEHOLD, dollars, usd } from '../data/economics';
 
 const TITLE = 'How Good Circles Works — Save ~10%, Give & Keep Money Local';
 const DESCRIPTION =
@@ -65,12 +66,13 @@ const HOWTO_JSONLD = {
   ],
 };
 
-// Worked example fixed by the accuracy contract: $100 item, $40 cost.
+// Worked example — canonical unit economics (single source: data/economics.ts).
+// $100 item at a ~40% margin, $50 cost → $40 profit → $4 to a nonprofit.
 const MATH = [
-  { label: 'You pay', amount: '$90', who: 'a 10% discount, automatic at checkout' },
-  { label: 'Funds a nonprofit', amount: '$5', who: "10% of the merchant's profit ($50 profit after $40 cost)" },
-  { label: 'Platform fee', amount: '$0.50', who: '1% of profit — how Good Circles runs' },
-  { label: 'Merchant keeps', amount: '$84.50', who: '89% of profit + their costs' },
+  { label: 'You pay', amount: dollars(WE.paid), who: 'a 10% discount, automatic at checkout' },
+  { label: 'Funds a nonprofit', amount: dollars(WE.nonprofit), who: `10% of the merchant's profit ($${WE.profit} profit after $${WE.cost} cost)` },
+  { label: 'Platform fee', amount: dollars(WE.platform), who: '1% of profit — how Good Circles runs' },
+  { label: 'Merchant keeps', amount: dollars(WE.merchantKeeps), who: '89% of profit + their costs' },
 ];
 ---
 
@@ -135,7 +137,8 @@ const MATH = [
           <p class="text-slate-600 leading-relaxed" style="font-family:'Fira Sans',sans-serif">
             The nonprofit's share comes from the <strong>merchant's profit</strong>, not your
             wallet — so it's a few dollars per sale. The power is in the aggregate: a town of 500
-            regular shoppers sends roughly <strong>$36,000 a year</strong> to local causes, with
+            regular shoppers (each routing ~$200/month of local spending) sends roughly
+            <strong>{usd(500 * HOUSEHOLD.toNonprofit)} a year</strong> to local causes, with
             zero extra spending.
           </p>
         </div>

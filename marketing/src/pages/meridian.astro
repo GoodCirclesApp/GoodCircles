@@ -11,6 +11,7 @@ import Footer from '../components/Footer.astro';
 import FaqList from '../components/FaqList.astro';
 import { faqJsonLd, breadcrumbJsonLd, type Faq } from '../lib/faq';
 import { SITE_URL } from '../data/site';
+import { WORKED_EXAMPLE as WE, dollars } from '../data/economics';
 import MeridianElectionForm from '../components/react/MeridianElectionForm';
 
 const TITLE = 'Good Circles Meridian — Early Access | Shop Local & Give';
@@ -36,13 +37,13 @@ const FAQS: Faq[] = [
   },
 ];
 
-// Worked example fixed by the accuracy contract ($100 item, $40 cost) — the
-// same numbers as /how-it-works.
+// Worked example — canonical unit economics (single source: data/economics.ts),
+// the same numbers as /how-it-works: $100 item, $50 cost → $40 profit → $4.
 const MATH = [
-  { label: 'You pay', amount: '$90', note: 'about 10% off, automatic at checkout' },
-  { label: 'Your nonprofit gets', amount: '$5', note: "10% of the merchant's profit ($50 profit after $40 cost)" },
-  { label: 'Platform fee', amount: '$0.50', note: '1% of profit — how Good Circles runs' },
-  { label: 'The business keeps', amount: '$84.50', note: '89% of its profit, plus its costs' },
+  { label: 'You pay', amount: dollars(WE.paid), note: 'about 10% off, automatic at checkout' },
+  { label: 'Your nonprofit gets', amount: dollars(WE.nonprofit), note: `10% of the merchant's profit ($${WE.profit} profit after $${WE.cost} cost)` },
+  { label: 'Platform fee', amount: dollars(WE.platform), note: '1% of profit — how Good Circles runs' },
+  { label: 'The business keeps', amount: dollars(WE.merchantKeeps), note: '89% of its profit, plus its costs' },
 ];
 ---
 

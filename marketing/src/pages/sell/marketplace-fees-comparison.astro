@@ -18,9 +18,9 @@ const TITLE = "Marketplace Seller Fees Compared (2026) — Amazon, Etsy, DoorDas
 const DESCRIPTION =
   "A 2026 side-by-side of what every major marketplace takes from sellers — Amazon, Etsy, eBay, DoorDash, Groupon, Poshmark and more — and how Good Circles' 1%-of-profit model compares.";
 
-const ex = goodCircles(100, 60); // worked $100 sale, $60 cost, 25% tax
-const amz = competitor(100, 60, 15, 0.25, 10); // Amazon 15% + ~10% ads
-const dd = competitor(100, 60, 30, 0.25, 0); // DoorDash 30%
+const ex = goodCircles(100, 50); // worked $100 sale, $50 cost, 25% tax (canonical: nonprofit $4)
+const amz = competitor(100, 50, 15, 0.25, 10); // Amazon 15% + ~10% ads
+const dd = competitor(100, 50, 30, 0.25, 0); // DoorDash 30%
 const winsCash = COMPETITORS.filter((c) => c.verdict === "win");
 const depends = COMPETITORS.filter((c) => c.verdict === "depends");
 const redistribution = COMPETITORS.filter((c) => c.verdict === "redistribution");
@@ -195,7 +195,7 @@ const FAQS: Faq[] = [
 
     <section class="py-12 px-6" style="background:#241247">
       <div class="max-w-4xl mx-auto" style="font-family:'Fira Sans',sans-serif">
-        <h2 class="text-2xl font-black text-white mb-1 text-center" style="letter-spacing:-0.02em">Full per-sale accounting — $100 sale, $60 cost, 25% tax</h2>
+        <h2 class="text-2xl font-black text-white mb-1 text-center" style="letter-spacing:-0.02em">Full per-sale accounting — $100 sale, $50 cost, 25% tax</h2>
         <p class="text-white/60 text-sm mb-8 text-center">Every line to after-tax profit, then the value only Good Circles creates.</p>
         <div class="overflow-x-auto">
           <table class="w-full text-sm" style="border-collapse:collapse;color:rgba(255,255,255,.9)">
@@ -208,7 +208,7 @@ const FAQS: Faq[] = [
             <tbody>
               <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Revenue (list price)</td><td class="p-2.5">$100.00</td><td class="p-2.5">$100.00</td><td class="p-2.5 font-bold">$100.00</td></tr>
               <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: customer savings (10%)</td><td class="p-2.5">—</td><td class="p-2.5">—</td><td class="p-2.5 font-bold">(${ex.customerSaves.toFixed(2)})</td></tr>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: COGS</td><td class="p-2.5">($60.00)</td><td class="p-2.5">($60.00)</td><td class="p-2.5 font-bold">($60.00)</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: COGS</td><td class="p-2.5">($50.00)</td><td class="p-2.5">($50.00)</td><td class="p-2.5 font-bold">($50.00)</td></tr>
               <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: platform fee</td><td class="p-2.5">(${amz.fee.toFixed(2)})</td><td class="p-2.5">(${dd.fee.toFixed(2)})</td><td class="p-2.5 font-bold">(${ex.platformFee.toFixed(2)})</td></tr>
               <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: ad / marketing</td><td class="p-2.5">(${amz.marketing.toFixed(2)})</td><td class="p-2.5">$0.00</td><td class="p-2.5 font-bold">$0.00</td></tr>
               <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td class="p-2.5">Less: card processing</td><td class="p-2.5">(in fee)</td><td class="p-2.5">(in fee)</td><td class="p-2.5 font-bold">$0.00 (customer pays if card)</td></tr>
