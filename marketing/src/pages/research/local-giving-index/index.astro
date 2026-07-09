@@ -1,0 +1,190 @@
+---
+// The Good Circles Local Giving Index™ (Campaign 2 flagship research asset).
+// Answer-first, Article + Dataset + FAQPage schema, downloadable CSV, cite-this
+// block, inline SVG chart. GC-specific dollar OUTPUTS are modeled projections and
+// the AmazonSmile comparison is comparative — both [REVIEW]-gated. Third-party
+// facts (local multiplier; AmazonSmile end date) are sourced, not gated.
+// All figures derive from data/economics.ts (single source of truth).
+import AnswerPage from '../../../layouts/AnswerPage.astro';
+import Review from '../../../components/Review.astro';
+import { PER_100, HOUSEHOLD, SCALING, AMAZONSMILE, usd, dollars } from '../../../data/economics';
+import { datasetJsonLd, type Faq } from '../../../lib/faq';
+import { SITE_URL } from '../../../data/site';
+
+const PATH = '/research/local-giving-index/';
+const URL = `${SITE_URL}${PATH}`;
+const CSV = '/research/local-giving-index.csv';
+const UPDATED = '2026-07-09';
+
+const TITLE = 'The Local Giving Index — Every $100 Spent Locally, Measured';
+const DESCRIPTION =
+  'Original research: for every $100 spent at a local business through Good Circles, ~$53 stays in the local economy vs ~$14 at a chain — plus ~$4 to a nonprofit and ~$10 back to the shopper.';
+
+const FAQS: Faq[] = [
+  {
+    q: 'How much of every $100 stays local when you shop through Good Circles?',
+    a: `About $${PER_100.localRecirculation} of every $100 spent at a local independent business stays circulating in the local economy, versus about $${PER_100.chainRecirculation} at a national chain — a roughly $${PER_100.localSwing} local swing per $100 (Civic Economics local-multiplier research). On Good Circles the same purchase also returns about $${PER_100.shopperSaves} to the shopper and directs about $${PER_100.nonprofit} to a nonprofit the shopper chooses.`,
+  },
+  {
+    q: 'Are the Local Giving Index numbers real or projected?',
+    a: 'The local-multiplier and AmazonSmile figures are drawn from published third-party research (Civic Economics; NPR; Charity Navigator). The Good Circles-specific dollar outputs (per-household and community totals) are transparent modeled projections from stated assumptions, not measured results — they will be replaced with real, audited platform data after launch.',
+  },
+  {
+    q: 'What assumptions does the Local Giving Index use?',
+    a: 'Base case: a household routes about $200/month ($2,400/year) of local spending through Good Circles; shoppers save 10%; a nonprofit receives 10% of the merchant’s profit at a ~40% average margin; local independents recirculate ~53% of revenue locally versus ~14% at chains. All figures scale with adoption, spend, and margin.',
+  },
+];
+
+const SOURCES = [
+  { label: 'Civic Economics / AMIBA — local multiplier', url: 'https://amiba.net/local-multiplier/' },
+  { label: 'Institute for Local Self-Reliance', url: 'https://ilsr.org/' },
+  { label: 'NPR — AmazonSmile ends', url: 'https://www.npr.org/2023/01/19/1149993013/amazon-amazonsmile-charity-donation-program' },
+  { label: 'Charity Navigator — End of AmazonSmile', url: 'https://www.charitynavigator.org/about-us/news-thought-leadership/end-of-amazonsmile/' },
+];
+
+const DATASET = datasetJsonLd({
+  name: 'Good Circles Local Giving Index (v1, 2026)',
+  description:
+    'Modeled per-$100 and community-scale estimates of local economic value from cause-integrated local commerce: shopper savings, nonprofit funding, and local dollar recirculation, built on the Civic Economics local multiplier plus the Good Circles profit-share model.',
+  url: URL,
+  dateModified: UPDATED,
+  datePublished: UPDATED,
+  license: 'https://creativecommons.org/licenses/by/4.0/',
+  keywords: ['local giving', 'local multiplier', 'shop local', 'cause commerce', 'AmazonSmile alternative', 'Mississippi'],
+  distribution: [{ url: `${SITE_URL}${CSV}`, encodingFormat: 'text/csv' }],
+});
+
+// Inline bar chart geometry (no external libs — CSP-safe). Scale $/100 to px.
+const chartMax = 60;
+const barPx = (v: number) => Math.round((v / chartMax) * 220);
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path={PATH}
+  eyebrow="Good Circles Local Giving Index™ · v1"
+  question="How much of every $100 you spend locally actually stays local?"
+  directAnswer={`<strong>About $${PER_100.localRecirculation} of every $100</strong> you spend at a local business through Good Circles keeps circulating in your local economy — versus about <strong>$${PER_100.chainRecirculation}</strong> at a national chain. On top of that, about <strong>$${PER_100.nonprofit} funds a local nonprofit</strong> you choose, and about <strong>$${PER_100.shopperSaves} comes back to you</strong> in savings. Same purchase, very different math.`}
+  lastUpdated={UPDATED}
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Research', url: `${SITE_URL}/research/local-giving-index/` },
+    { name: 'Local Giving Index', url: URL },
+  ]}
+  extraJsonLd={[DATASET]}
+>
+  <h2>Every $100, broken down</h2>
+  <ul>
+    <li><strong>{dollars(PER_100.shopperSaves)} back to you</strong> — automatic ~10% savings on local purchases.</li>
+    <li><strong>{dollars(PER_100.nonprofit)} to a local nonprofit</strong> you choose — 10% of the merchant's profit (at a ~40% average margin), at no extra cost to you.</li>
+    <li><strong>${PER_100.localRecirculation} stays local</strong> — local independents recirculate about {PER_100.localRecirculation}% of revenue in the community versus about {PER_100.chainRecirculation}% at chains, a roughly ${PER_100.localSwing} local swing per $100.</li>
+  </ul>
+
+  <h2>Local value per $100: Good Circles vs a national chain</h2>
+  <figure aria-label={`Local dollars retained per $100: Good Circles about $${PER_100.localRecirculation}, national chain about $${PER_100.chainRecirculation}`}>
+    <svg viewBox="0 0 320 280" role="img" width="100%" height="auto" style="max-width:420px">
+      <title>Local dollars kept per $100</title>
+      <!-- axis -->
+      <line x1="50" y1="240" x2="300" y2="240" stroke="#CBB9E6" stroke-width="1" />
+      <!-- Good Circles bar -->
+      <rect x="80" y={240 - barPx(PER_100.localRecirculation)} width="70" height={barPx(PER_100.localRecirculation)} rx="4" fill="#7851A9" />
+      <text x="115" y={232 - barPx(PER_100.localRecirculation)} text-anchor="middle" font-size="16" font-weight="800" fill="#2E1B4E">${PER_100.localRecirculation}</text>
+      <text x="115" y="258" text-anchor="middle" font-size="11" fill="#4a4360">Good Circles</text>
+      <!-- Chain bar -->
+      <rect x="200" y={240 - barPx(PER_100.chainRecirculation)} width="70" height={barPx(PER_100.chainRecirculation)} rx="4" fill="#C2A76F" />
+      <text x="235" y={232 - barPx(PER_100.chainRecirculation)} text-anchor="middle" font-size="16" font-weight="800" fill="#2E1B4E">${PER_100.chainRecirculation}</text>
+      <text x="235" y="258" text-anchor="middle" font-size="11" fill="#4a4360">National chain</text>
+      <text x="30" y="244" text-anchor="end" font-size="10" fill="#8a83a0">$0</text>
+    </svg>
+    <figcaption style="font-size:0.8rem;color:#8a83a0">Local dollars retained per $100 spent (Civic Economics local multiplier).</figcaption>
+  </figure>
+
+  <h2>What it adds up to for one household</h2>
+  <Review id="lgi-household" basis="modeled projection; base case $200/mo, 40% margin, 10%/10%/53% assumptions" need="label as projection; confirm base-case assumptions">
+    <p>
+      A household routing about <strong>$200/month</strong> of local shopping through Good Circles would, in a
+      year, <strong>save about {usd(HOUSEHOLD.saved)}</strong>, send roughly <strong>{usd(HOUSEHOLD.toNonprofit)}</strong>
+      to a local nonprofit, and keep about <strong>{usd(HOUSEHOLD.keptLocal)}</strong> of additional spending
+      circulating in its own community — without spending a dollar more than it already does.
+      <em>(Modeled projection.)</em>
+    </p>
+  </Review>
+
+  <h2>Scaling it across a community</h2>
+  <Review id="lgi-scaling" basis="modeled projection; per-household figures × households" need="label as projection">
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:0.95rem">
+        <thead>
+          <tr style="background:#F0EBFF">
+            <th style="text-align:left;padding:10px">Households at ~$200/mo</th>
+            <th style="text-align:right;padding:10px">Saved by shoppers / yr</th>
+            <th style="text-align:right;padding:10px">To local nonprofits / yr</th>
+            <th style="text-align:right;padding:10px">Kept circulating locally / yr</th>
+          </tr>
+        </thead>
+        <tbody>
+          {SCALING.map((row) => (
+            <tr style="border-bottom:1px solid #E7DCF2">
+              <td style="padding:10px;font-weight:700">{row.households.toLocaleString('en-US')}</td>
+              <td style="padding:10px;text-align:right">{usd(row.saved)}</td>
+              <td style="padding:10px;text-align:right;color:#7851A9;font-weight:700">{usd(row.toNonprofit)}</td>
+              <td style="padding:10px;text-align:right">{usd(row.keptLocal)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.85rem;color:#8a83a0">Modeled projections at the base-case assumptions below. Real figures scale with adoption, spend, and margin.</p>
+  </Review>
+
+  <h2>The AmazonSmile contrast</h2>
+  <Review id="lgi-amazonsmile" basis="NPR/Charity Navigator (0.5%, ~$449M, ended Feb 2023) vs GC model $4/$100" need="legal sign-off on comparative claim + multiple">
+    <p>
+      Over roughly a decade, AmazonSmile directed about <strong>{AMAZONSMILE.ratePercent}% per purchase</strong> and
+      about <strong>${AMAZONSMILE.lifetimeMillions} million</strong> globally before Amazon ended it in
+      <strong>{AMAZONSMILE.ended}</strong>. Good Circles' model directs about <strong>{dollars(PER_100.nonprofit)} per $100</strong> —
+      on the order of <strong>{AMAZONSMILE.giveMultipleVsGoodCircles}× the per-dollar giving rate</strong> — and it keeps
+      the money local while paying the shopper. <em>(Comparative estimate — pending review.)</em>
+    </p>
+  </Review>
+
+  <h2>Methodology</h2>
+  <p>
+    <strong>Nature of the estimates.</strong> The local-multiplier and AmazonSmile figures are from published
+    third-party research. All Good Circles-specific dollar outputs are transparent modeled projections from the
+    assumptions below — not measured results. After launch they will be replaced with real, audited platform data
+    and the Index will be versioned.
+  </p>
+  <p><strong>Base-case assumptions:</strong></p>
+  <ul>
+    <li>Local spend routed through Good Circles per household: <strong>$200/month ($2,400/year)</strong>.</li>
+    <li>Shopper savings: <strong>10%</strong> of list.</li>
+    <li>Nonprofit share: <strong>10% of the merchant's profit</strong> at a <strong>~40% average margin</strong> → about ${PER_100.nonprofit} per $100.</li>
+    <li>Platform fee: <strong>1% of profit</strong> (stated for completeness; not part of local/giving totals).</li>
+    <li>Local recirculation: <strong>~{PER_100.localRecirculation}% local independents vs ~{PER_100.chainRecirculation}% chains</strong> (Civic Economics).</li>
+  </ul>
+  <p><strong>Formulas:</strong></p>
+  <ul>
+    <li>Shopper savings = savings_rate × annual_list_spend</li>
+    <li>Nonprofit funding ≈ 0.10 × margin × annual_spend</li>
+    <li>Incremental local recirculation = (0.{PER_100.localRecirculation} − 0.{PER_100.chainRecirculation}) × annual_spend</li>
+    <li>Community totals = per-household figures × participating households</li>
+  </ul>
+
+  <div style="background:#FBF7FE;border:1px solid #E7DCF2;border-radius:12px;padding:1.25rem;margin:1.5rem 0">
+    <p style="margin:0 0 0.5rem"><strong>Cite this</strong></p>
+    <p style="margin:0;font-style:italic;color:#4a4360">Good Circles Local Giving Index (v1, 2026), goodcircles.org/research/local-giving-index.</p>
+    <p style="margin:0.75rem 0 0">
+      <a href={CSV} download>Download the data (CSV) ↓</a>
+    </p>
+  </div>
+
+  <p>
+    Want the local numbers for your city? See the
+    <a href="/research/local-giving-index/jackson/">Jackson</a> and
+    <a href="/research/local-giving-index/meridian/">Meridian</a> editions, or
+    <a href="/how-it-works/">how the model works</a>.
+  </p>
+</AnswerPage>

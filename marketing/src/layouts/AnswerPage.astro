@@ -56,13 +56,15 @@ interface Props {
   author?: string;
   ogType?: 'website' | 'article';
   noindex?: boolean;
+  /** Extra JSON-LD blocks (e.g. Dataset, ItemList) merged after the auto ones. */
+  extraJsonLd?: object[];
 }
 
 const {
   title, description, path, question, directAnswer, lastUpdated,
   datePublished, faqs = [], faqHeading = 'Frequently asked questions',
   sources = [], breadcrumbs = [], eyebrow = 'Answer', badge, headline,
-  author, ogType = 'article', noindex = false,
+  author, ogType = 'article', noindex = false, extraJsonLd = [],
 } = Astro.props;
 
 const pageUrl = `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
@@ -83,6 +85,7 @@ if (breadcrumbs.length) {
     breadcrumbJsonLd([{ name: 'Home', url: `${SITE_URL}/` }, ...breadcrumbs]),
   );
 }
+jsonLd.push(...extraJsonLd);
 
 const updatedLabel = new Date(`${lastUpdated}T00:00:00Z`).toLocaleDateString('en-US', {
   year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',

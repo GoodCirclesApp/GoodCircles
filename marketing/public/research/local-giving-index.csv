@@ -1,0 +1,24 @@
+Good Circles Local Giving Index (v1 2026) — modeled projections; figures derived from data/economics.ts
+Cite as,"Good Circles Local Giving Index (v1, 2026), goodcircles.org/research/local-giving-index"
+
+Per $100 of local spending,Amount USD,Notes
+Shopper savings,10,~10% automatic
+To chosen nonprofit,4,10% of merchant profit at a ~40% margin
+Platform fee,0.40,1% of profit
+Local recirculation (independent local business),53,Civic Economics
+Local recirculation (national chain),14,Civic Economics
+Net local swing,39,53 minus 14
+
+Per household per year (base case $200/month local spend),Amount USD
+Saved by shopper,240
+To local nonprofit,96
+Kept circulating locally (incremental),936
+
+Households at ~$200/mo,Saved by shoppers per year USD,To local nonprofits per year USD,Extra kept circulating locally per year USD
+1000,240000,96000,936000
+10000,2400000,960000,9360000
+50000,12000000,4800000,46800000
+
+Sources,,
+Local multiplier,Civic Economics; AMIBA; Institute for Local Self-Reliance,https://amiba.net/local-multiplier/
+AmazonSmile,NPR; Charity Navigator (0.5% rate; ~$449M; ended Feb 20 2023),https://www.charitynavigator.org/about-us/news-thought-leadership/end-of-amazonsmile/

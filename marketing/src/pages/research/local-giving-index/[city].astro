@@ -1,0 +1,105 @@
+---
+// Localized Local Giving Index editions (Ring-2 geographic moat). Reads
+// INDEX_CITIES; publishes the per-$100 + per-household figures for the city today.
+// The community-scale total needs a real household count (TODO in the data file),
+// so that block renders a [REVIEW]-gated, clearly-flagged placeholder until the
+// count is confirmed — never a fabricated number.
+import AnswerPage from '../../../layouts/AnswerPage.astro';
+import Review from '../../../components/Review.astro';
+import { PER_100, HOUSEHOLD, usd, dollars } from '../../../data/economics';
+import { INDEX_CITIES } from '../../../data/local-giving-index';
+import { SITE_URL } from '../../../data/site';
+import type { Faq } from '../../../lib/faq';
+
+export function getStaticPaths() {
+  return INDEX_CITIES.map((c) => ({ params: { city: c.slug }, props: { city: c } }));
+}
+
+const { city } = Astro.props;
+const PATH = `/research/local-giving-index/${city.slug}/`;
+const URL = `${SITE_URL}${PATH}`;
+const UPDATED = '2026-07-09';
+
+const TITLE = `${city.name} Local Giving Index — Every $100 Spent Locally`;
+const DESCRIPTION =
+  `How much of every $100 spent locally stays in ${city.name}: about $${PER_100.localRecirculation} at a local independent vs about $${PER_100.chainRecirculation} at a chain, plus ~$${PER_100.nonprofit} to a nonprofit and ~$${PER_100.shopperSaves} back to you.`;
+
+const FAQS: Faq[] = [
+  {
+    q: `How much of every $100 spent in ${city.name} stays local?`,
+    a: `About $${PER_100.localRecirculation} of every $100 spent at a ${city.name} local independent stays in the community, versus about $${PER_100.chainRecirculation} at a national chain (Civic Economics). Through Good Circles the same purchase also returns about $${PER_100.shopperSaves} to the shopper and about $${PER_100.nonprofit} to a local nonprofit.`,
+  },
+  {
+    q: `Is Good Circles live in ${city.name}?`,
+    a: `Good Circles launches in September 2026 in the Jackson, Mississippi metro, with early access already underway in Meridian & Lauderdale County. The figures here are modeled projections based on published local-multiplier research and the Good Circles model.`,
+  },
+];
+
+const SOURCES = [
+  { label: 'Civic Economics / AMIBA — local multiplier', url: 'https://amiba.net/local-multiplier/' },
+  { label: 'Good Circles Local Giving Index', url: `${SITE_URL}/research/local-giving-index/` },
+];
+---
+
+<AnswerPage
+  title={TITLE}
+  description={DESCRIPTION}
+  path={PATH}
+  eyebrow={`Local Giving Index · ${city.name}`}
+  question={`How much of every $100 you spend locally stays in ${city.name}?`}
+  directAnswer={`<strong>About $${PER_100.localRecirculation} of every $100</strong> spent at a ${city.name} local independent stays circulating in the community — versus about <strong>$${PER_100.chainRecirculation}</strong> at a national chain. Through Good Circles that same $100 also returns about <strong>$${PER_100.shopperSaves}</strong> to you and directs about <strong>$${PER_100.nonprofit}</strong> to a ${city.name} nonprofit you choose.`}
+  lastUpdated={UPDATED}
+  faqs={FAQS}
+  sources={SOURCES}
+  breadcrumbs={[
+    { name: 'Research', url: `${SITE_URL}/research/local-giving-index/` },
+    { name: 'Local Giving Index', url: `${SITE_URL}/research/local-giving-index/` },
+    { name: city.name, url: URL },
+  ]}
+>
+  <p>
+    This is the {city.name} edition of the
+    <a href="/research/local-giving-index/">Good Circles Local Giving Index</a> — the same methodology, localized to
+    {city.market}.
+  </p>
+
+  <h2>Every $100 spent locally in {city.name}</h2>
+  <ul>
+    <li><strong>{dollars(PER_100.shopperSaves)} back to you</strong> — automatic ~10% savings.</li>
+    <li><strong>{dollars(PER_100.nonprofit)} to a {city.name} nonprofit</strong> you choose — 10% of the merchant's profit.</li>
+    <li><strong>${PER_100.localRecirculation} stays in {city.name}</strong> vs about ${PER_100.chainRecirculation} at a chain — a ~${PER_100.localSwing} local swing per $100.</li>
+  </ul>
+
+  <h2>What one {city.name} household adds up to</h2>
+  <Review id={`lgi-${city.slug}-household`} basis="modeled projection; $200/mo base case" need="label as projection">
+    <p>
+      A {city.name} household routing about <strong>$200/month</strong> of local shopping through Good Circles would,
+      in a year, save about <strong>{usd(HOUSEHOLD.saved)}</strong>, send roughly <strong>{usd(HOUSEHOLD.toNonprofit)}</strong>
+      to a local nonprofit, and keep about <strong>{usd(HOUSEHOLD.keptLocal)}</strong> circulating in {city.name} —
+      without spending a dollar more. <em>(Modeled projection.)</em>
+    </p>
+  </Review>
+
+  <h2>If {city.name} shopped local together</h2>
+  {city.households != null ? (
+    <Review id={`lgi-${city.slug}-community`} basis={`modeled; ${city.households} households × 5% adoption`} need="label as projection">
+      <p>
+        If just 1 in 20 of {city.name}'s ~{city.households.toLocaleString('en-US')} households shopped local through
+        Good Circles, the community could send an estimated
+        <strong>{usd(Math.round(city.households * 0.05 * HOUSEHOLD.toNonprofit))} a year</strong> to local nonprofits
+        and keep an estimated <strong>{usd(Math.round(city.households * 0.05 * HOUSEHOLD.keptLocal))}</strong>
+        circulating locally — with no one spending an extra dollar. <em>(Modeled projection.)</em>
+      </p>
+    </Review>
+  ) : (
+    <p style="background:#fbf6ec;border-left:4px solid #C2A76F;padding:0.75rem 1rem;border-radius:0 8px 8px 0">
+      <strong>Community-scale total coming soon.</strong> We publish the “if 1 in 20 households took part” figure only
+      once we have a verified household count for {city.market} — we won't estimate from an unconfirmed number. See the
+      per-household math above in the meantime. <!-- TODO(TODO.md): set households in data/local-giving-index.ts from Census/ACS -->
+    </p>
+  )}
+
+  <p>
+    <a href="/meridian/">Meridian early access is live →</a> · <a href="/research/local-giving-index/">See the full Index & methodology</a>
+  </p>
+</AnswerPage>
